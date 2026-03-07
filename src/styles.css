@@ -1,0 +1,6 @@
+/* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+
+@plugin "daisyui" {
+  themes: bumblebee, cupcake, emerald, corporate, retro, cyberpunk, valentine, wireframe, aqua, lofi, pastel, fantasy, luxury, dracula, night, coffee, lucid;
+}

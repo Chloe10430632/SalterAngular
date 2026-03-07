@@ -1,0 +1,140 @@
+<header class="sticky top-0 z-50 bg-primary">
+  <div class="lg:hidden navbar bg-base-100 shadow-sm bg-primary text-primary-content">
+    <div class="navbar-start">
+      <div class="dropdown">
+        <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+          </svg>
+        </div>
+        <ul tabindex="-1" class="menu menu-md dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
+          <li>
+            <details>
+              <summary>討論板</summary>
+              <ul>
+                <li><a>全部看板</a></li>
+                <li><a>熱門看板</a></li>
+                <li><a>最新看板</a></li>
+
+              </ul>
+            </details>
+          </li>
+          <li><a>揪團行程</a></li>
+
+        </ul>
+      </div>
+    </div>
+    <div class="navbar-center">
+      <a class=" text-xl"><img src="salter-logo.svg" alt="Salter Logo" width="130px"></a>
+    </div>
+    <div class="navbar-end">
+      <button class="btn btn-ghost btn-circle">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+      </button>
+      <button class="btn btn-ghost btn-circle">
+        <div class="indicator">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+          </svg>
+          <span class="badge badge-xs badge-error indicator-item"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+
+  <div class="lg:hidden dock">
+    <button class="text-primary-content font-bold dock-active">
+      <i class="bi bi-signpost-2-fill text-[1.1em]"></i>
+      <span class="dock-label mb-3">討論</span>
+    </button>
+
+    <button class="text-primary-content font-bold">
+      <i class="bi bi-suitcase-fill text-[1.1em]"></i>
+      <span class="dock-label mb-3">揪團</span>
+    </button>
+
+    <button class="text-primary-content font-bold">
+      <i class="bi bi-tsunami text-[1.1em]"></i>
+      <span class="dock-label mb-3">體驗</span>
+    </button>
+
+    <button class="text-primary-content font-bold">
+      <i class="bi bi-house-add-fill text-[1.1em]"></i>
+      <span class="dock-label mb-3">房源</span>
+    </button>
+
+    <button class="text-primary-content font-bold">
+      <i class="bi bi-person-fill-gear text-[1.1em]"></i>
+      <span class="dock-label mb-3">會員中心</span>
+    </button>
+  </div>
+
+  <div
+    class="hidden lg:grid navbar bg-primary text-primary-content px-20 py-2 grid-cols-12 container mx-auto px-4 md:px-30">
+    <div class="col-span-6 flex items-center">
+      <a class="w-1/4 rounded font-bold mr-6 pl-3" href="#"><img src="salter-logo.svg" alt="" width="130px"></a>
+
+      <div class="w-3/4 form-control hidden md:block">
+        <div class="relative flex items-center">
+          <input type="text" placeholder="搜尋 中角灣 ......" class="input input-bordered w-full text-base-content h-10" />
+          <button class="absolute right-3 text-gray-400">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- <div class="col-span-4 font-black flex items-center justify-end">
+                <div class="hidden md:flex gap-8 ">
+                    <a class="hover:text-gray-100 cursor-pointer"><i
+                            class="bi bi-signpost-2-fill text-[1.5em] mr-2"></i></a>
+                    <a class="hover:text-gray-100 cursor-pointer"><i
+                            class="bi bi-suitcase-fill text-[1.5em] mr-2"></i></a>
+                    <a class="hover:text-gray-100 cursor-pointer"><i
+                            class="bi bi-house-add-fill text-[1.5em] mr-2"></i></a>
+                    <a class="hover:text-gray-100 cursor-pointer"><i class="bi bi-tsunami text-[1.5em] mr-2"></i></a>
+                </div>
+            </div> -->
+
+    <div class="col-span-6 font-medium flex items-center justify-end">
+
+      <div class="hidden md:flex gap-8 mr-3">
+        <a class="hover:text-gray-100 cursor-pointer"><i class="bi bi-signpost-2-fill text-[1.5em] mr-2"></i></a>
+        <a class="hover:text-gray-100 cursor-pointer"><i class="bi bi-suitcase-fill text-[1.5em] mr-2"></i></a>
+        <a class="hover:text-gray-100 cursor-pointer"><i class="bi bi-house-add-fill text-[1.5em] mr-2"></i></a>
+        <a class="hover:text-gray-100 cursor-pointer"><i class="bi bi-tsunami text-[1.5em] mr-2"></i></a>
+      </div>
+      <div class="flex items-center gap-3 ml-4">
+        <div class="dropdown dropdown-end mr-4">
+          <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+            <div class="w-10 rounded-full">
+              <img alt="Tailwind CSS Navbar component"
+                src="https://img.daisyui.com/images/profile/demo/yellingwoman@192.webp" />
+            </div>
+          </div>
+          <ul tabindex="-1" class="menu menu-md dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
+            <li>
+              <a class="justify-between">
+                Profile
+                <span class="badge">New</span>
+              </a>
+            </li>
+            <li><a>Settings</a></li>
+            <li><a>Logout</a></li>
+          </ul>
+        </div>
+      </div>
+      <!-- <div class="text-right leading-tight block">
+                    <div class="text-md font-bold">chloe451295</div>
+                    <div class="text-sm opacity-80">Points : 0 </div>
+                </div> -->
+    </div>
+  </div>
+
+
+
+</header>
