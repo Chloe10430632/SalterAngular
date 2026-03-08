@@ -1,0 +1,143 @@
+<header class="sticky top-0 z-50 bg-primary shadow-md">
+  <!-- 平板 -->
+  <div class="lg:hidden navbar bg-primary text-primary-content h-16">
+    <div class="navbar-start">
+      <div class="dropdown">
+        <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+          </svg>
+        </div>
+        <ul tabindex="-1"
+          class="menu menu-md dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow text-base-content">
+          <li>
+            <details>
+              <summary class="font-bold">討論板</summary>
+              <ul>
+                <li><a>全部看板</a></li>
+                <li><a>熱門看板</a></li>
+                <li><a>最新看板</a></li>
+              </ul>
+            </details>
+          </li>
+          <li><a class="font-bold">揪團行程</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="navbar-center">
+      <a class="flex items-center" href="/">
+        <img src="salter-logo.svg" alt="Salter Logo" width="110px">
+      </a>
+    </div>
+    <div class="navbar-end">
+      <button class="btn btn-ghost btn-circle">
+        <i class="bi bi-search text-xl"></i>
+      </button>
+      <button class="btn btn-ghost btn-circle">
+        <div class="indicator">
+          <i class="bi bi-bell text-xl"></i>
+          <span class="badge badge-xs badge-error indicator-item"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+  <!-- 手機 -->
+  <div class="lg:hidden dock bg-base-100 border-t border-base-300">
+    <button class="text-primary font-bold">
+      <i class="bi bi-signpost-2-fill text-2xl"></i>
+      <span class="dock-label">討論</span>
+    </button>
+
+    <button class="text-base-content opacity-60">
+      <i class="bi bi-suitcase-fill text-2xl"></i>
+      <span class="dock-label">揪團</span>
+    </button>
+
+    <button class="text-base-content opacity-60">
+      <i class="bi bi-tsunami text-2xl"></i>
+      <span class="dock-label">體驗</span>
+    </button>
+
+    <button class="text-base-content opacity-60">
+      <i class="bi bi-house-add-fill text-2xl"></i>
+      <span class="dock-label">房源</span>
+    </button>
+
+    <button class="text-base-content opacity-60">
+      <i class="bi bi-person-fill text-2xl"></i>
+      <span class="dock-label">會員</span>
+    </button>
+  </div>
+  <!-- 電腦 -->
+  <div class="hidden lg:grid navbar bg-primary text-primary-content px-4 py-2 grid-cols-12 container mx-auto md:px-35">
+    <div class="col-span-6 flex items-center gap-4">
+      <a class="flex-shrink-0 transition-transform hover:scale-105" href="#">
+        <img src="salter-logo.svg" alt="Logo" width="130px">
+      </a>
+
+      <div class="flex-grow max-w-md ml-4">
+        <div class="relative group">
+          <input type="text" placeholder="搜尋討論、行程或房源..."
+            class="input input-bordered w-full text-base-content h-10 rounded-full bg-base-100/90 focus:bg-white transition-all pl-10" />
+          <div class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-span-6 flex items-center justify-end gap-2">
+      <div class="flex items-center gap-6 mr-4">
+        <div class="tooltip tooltip-bottom" data-tip="討論區">
+          <a class="btn btn-ghost btn-circle hover:bg-white/20">
+            <i class="bi bi-signpost-2-fill text-2xl"></i>
+          </a>
+        </div>
+        <div class="tooltip tooltip-bottom" data-tip="揪團">
+          <a class="btn btn-ghost btn-circle hover:bg-white/20">
+            <i class="bi bi-suitcase-fill text-2xl"></i>
+          </a>
+        </div>
+        <div class="tooltip tooltip-bottom" data-tip="房源">
+          <a class="btn btn-ghost btn-circle hover:bg-white/20">
+            <i class="bi bi-house-add-fill text-2xl"></i>
+          </a>
+        </div>
+        <div class="tooltip tooltip-bottom" data-tip="體驗">
+          <a class="btn btn-ghost btn-circle hover:bg-white/20">
+            <i class="bi bi-tsunami text-2xl"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 border-l border-white/20 pl-4">
+        <button class="btn btn-ghost btn-circle hover:bg-white/20">
+          <div class="indicator">
+            <i class="bi bi-bell text-2xl"></i>
+            <span class="badge badge-xs badge-error indicator-item"></span>
+          </div>
+        </button>
+
+        <div class="dropdown dropdown-end">
+          <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar online">
+            <div class="w-10 rounded-full ring ring-offset-2 ring-primary-content">
+              <img alt="User Avatar" src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+            </div>
+          </div>
+          <ul tabindex="-1"
+            class="menu menu-md dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow text-base-content">
+            <div class="px-4 py-2 font-bold border-b border-base-200 mb-1 text-primary-content">
+              chloe451295
+            </div>
+            <li><a class="justify-between">個人檔案 <span class="badge badge-primary">New</span></a></li>
+            <li><a>我的收藏</a></li>
+            <li><a>點數中心 (0 pts)</a></li>
+            <li><a>設定</a></li>
+            <hr class="my-1 opacity-20" />
+            <li><a class="text-error">登出</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
