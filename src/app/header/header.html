@@ -88,22 +88,25 @@
 
     <div class="col-span-6 flex items-center justify-end gap-2">
       <div class="flex items-center gap-6 mr-4">
-        <div class="tooltip tooltip-bottom" data-tip="討論區">
+        <div class="tooltip tooltip-bottom" data-tip="討論區" (click)="btnForumActive()">
           <a class="btn btn-ghost btn-circle hover:bg-white/20">
-            <i class="bi bi-signpost-2-fill text-2xl"></i>
+            <i [ngClass]="{'active': isForumActive}" class="bi bi-signpost-2-fill text-2xl"></i>
           </a>
         </div>
-        <div class="tooltip tooltip-bottom" data-tip="揪團">
+        <div [ngClass]="{'active': isTripActive}" class="tooltip tooltip-bottom" data-tip="揪團"
+          (click)="btnTripActive()">
           <a class="btn btn-ghost btn-circle hover:bg-white/20">
             <i class="bi bi-suitcase-fill text-2xl"></i>
           </a>
         </div>
-        <div class="tooltip tooltip-bottom" data-tip="房源">
+        <div [ngClass]="{'active': isHouseActive}" class="tooltip tooltip-bottom" data-tip="房源"
+          (click)="btnHouseActive()">
           <a class="btn btn-ghost btn-circle hover:bg-white/20">
             <i class="bi bi-house-add-fill text-2xl"></i>
           </a>
         </div>
-        <div class="tooltip tooltip-bottom" data-tip="體驗">
+        <div [ngClass]="{'active': isExperienceActive}" class="tooltip tooltip-bottom" data-tip="體驗"
+          (click)="btnExperienceActive()">
           <a class="btn btn-ghost btn-circle hover:bg-white/20">
             <i class="bi bi-tsunami text-2xl"></i>
           </a>
