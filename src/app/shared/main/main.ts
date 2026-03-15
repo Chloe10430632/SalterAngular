@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { Index } from "../forum/index";
+import { Index } from '../../forum/component/index/index';
+
 
 @Component({
   selector: 'app-main',
