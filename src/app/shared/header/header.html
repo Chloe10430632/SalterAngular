@@ -1,5 +1,5 @@
 <header class="sticky top-0 z-50 bg-primary shadow-md">
-  <!-- 平板 -->
+  <!-- 手機板Navbar -->
   <div class="lg:hidden navbar bg-primary text-primary-content h-16">
     <div class="navbar-start">
       <div class="dropdown">
@@ -41,37 +41,37 @@
       </button>
     </div>
   </div>
-  <!-- 手機 -->
+  <!-- 手機Dock-->
   <div class="lg:hidden dock bg-base-100 border-t border-base-300">
-    <button class="text-primary font-bold">
+    <a class="text-base-content opacity-60" routerLink="forum" routerLinkActive="text-primary">
       <i class="bi bi-signpost-2-fill text-2xl"></i>
       <span class="dock-label">討論</span>
-    </button>
+    </a>
 
-    <button class="text-base-content opacity-60">
+    <a class="text-base-content opacity-60">
       <i class="bi bi-suitcase-fill text-2xl"></i>
       <span class="dock-label">揪團</span>
-    </button>
+    </a>
 
-    <button class="text-base-content opacity-60">
+    <a class="text-base-content opacity-60" routerLink="experience" routerLinkActive="text-primary">
       <i class="bi bi-tsunami text-2xl"></i>
       <span class="dock-label">體驗</span>
-    </button>
+    </a>
 
-    <button class="text-base-content opacity-60">
+    <a class="text-base-content opacity-60">
       <i class="bi bi-house-add-fill text-2xl"></i>
       <span class="dock-label">房源</span>
-    </button>
+    </a>
 
-    <button class="text-base-content opacity-60">
+    <a class="text-base-content opacity-60">
       <i class="bi bi-person-fill text-2xl"></i>
       <span class="dock-label">會員</span>
-    </button>
+    </a>
   </div>
-  <!-- 電腦 -->
+  <!-- 電腦板Navbar -->
   <div class="hidden lg:grid navbar bg-primary text-primary-content px-4 py-2 grid-cols-12 container mx-auto md:px-35">
     <div class="col-span-6 flex items-center gap-4">
-      <a class="flex-shrink-0 transition-transform hover:scale-105" href="#">
+      <a class="flex-shrink-0 transition-transform hover:scale-105" routerLink="forum">
         <img src="salter-logo.svg" alt="Logo" width="130px">
       </a>
 
@@ -88,26 +88,23 @@
 
     <div class="col-span-6 flex items-center justify-end gap-2">
       <div class="flex items-center gap-6 mr-4">
-        <div class="tooltip tooltip-bottom" data-tip="討論區" (click)="btnForumActive()">
-          <a class="btn btn-ghost btn-circle hover:bg-white/20">
-            <i [ngClass]="{'active': isForumActive}" class="bi bi-signpost-2-fill text-2xl"></i>
+        <div class="tooltip tooltip-bottom" data-tip="討論區">
+          <a class="btn btn-ghost btn-circle hover:bg-white/20" routerLink="/forum" routerLinkActive="active">
+            <i class="bi bi-signpost-2-fill text-2xl"></i>
           </a>
         </div>
-        <div [ngClass]="{'active': isTripActive}" class="tooltip tooltip-bottom" data-tip="揪團"
-          (click)="btnTripActive()">
+        <div class="tooltip tooltip-bottom" data-tip="揪團">
           <a class="btn btn-ghost btn-circle hover:bg-white/20">
             <i class="bi bi-suitcase-fill text-2xl"></i>
           </a>
         </div>
-        <div [ngClass]="{'active': isHouseActive}" class="tooltip tooltip-bottom" data-tip="房源"
-          (click)="btnHouseActive()">
+        <div class="tooltip tooltip-bottom" data-tip="房源">
           <a class="btn btn-ghost btn-circle hover:bg-white/20">
             <i class="bi bi-house-add-fill text-2xl"></i>
           </a>
         </div>
-        <div [ngClass]="{'active': isExperienceActive}" class="tooltip tooltip-bottom" data-tip="體驗"
-          (click)="btnExperienceActive()">
-          <a class="btn btn-ghost btn-circle hover:bg-white/20">
+        <div class="tooltip tooltip-bottom" data-tip="體驗">
+          <a class="btn btn-ghost btn-circle hover:bg-white/20" routerLink="experience" routerLinkActive="active">
             <i class="bi bi-tsunami text-2xl"></i>
           </a>
         </div>

@@ -1,3 +1,5 @@
 .active {
-  color: white;
+  color: #ffffff;
+  /* 這裡設定你想要的顏色 */
+  font-weight: bold;
 }
