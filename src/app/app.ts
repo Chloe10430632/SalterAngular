@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 import { Header } from "./shared/header/header";
 import { Main } from './shared/main/main';
 
@@ -12,4 +12,6 @@ import { Main } from './shared/main/main';
 })
 export class App {
   protected readonly title = signal('Salter');
+
+  constructor(public router: Router) { }
 }
