@@ -33,6 +33,14 @@ export const routes: Routes = [
 
     ]
   },
+  //房屋路由
+  {
+    path: 'house',
+    children: [{
+      path: '', //預設路由
+      loadComponent: () => import('./house/components/index/index').then(m => m.HomeComponent)
+    }]
+  },
   {
     path: 'experience',
     children: [
