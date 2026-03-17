@@ -13,8 +13,8 @@
         @if (step === 1) {
         <div class="flex flex-col items-center gap-4">
           <div class="avatar">
-            <div class="w-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-              <img [src]="previewUrl || 'assets/default-avatar.png'" />
+            <div class="w-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 mb-5">
+              <img class="object-cover object-top" [src]="previewUrl || '/user/default-avatar.png'" />
             </div>
           </div>
 
