@@ -1,0 +1,87 @@
+<aside [class]="isCollapsed ? 'w-14' : 'w-56'"
+  class="shrink-0 h-full bg-base-100 border border-base-300 transition-all duration-200 overflow-hidden rounded-lg m-2">
+
+  <nav class="flex flex-col py-3 px-2 space-y-0.5">
+
+    <!-- 收合按鈕 -->
+    <button (click)="toggle()"
+      class="flex items-center justify-center w-8 h-8 rounded-lg hover:bg-base-200 text-base-content/40 mb-2 self-end">
+      <i class="bi text-base" [class.bi-layout-sidebar]="!isCollapsed"
+        [class.bi-layout-sidebar-reverse]="isCollapsed"></i>
+    </button>
+
+    @if (!isDetailPage) {
+    <p *ngIf="!isCollapsed" class="px-3 mb-1 text-xs font-bold text-base-content/30 uppercase tracking-wider">行程</p>
+
+    <a routerLink="/trip/explore" routerLinkActive="bg-primary/10 text-primary font-semibold"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors hover:bg-base-200 text-base-content">
+      <i class="bi bi-compass text-base w-5 text-center shrink-0"></i>
+      <span *ngIf="!isCollapsed">探索行程</span>
+    </a>
+
+    <a routerLink="/trip/create" routerLinkActive="bg-primary/10 text-primary font-semibold"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors hover:bg-base-200 text-base-content">
+      <i class="bi bi-plus-circle text-base w-5 text-center shrink-0"></i>
+      <span *ngIf="!isCollapsed">建立揪團</span>
+    </a>
+
+    <a routerLink="/trip/my-trips" routerLinkActive="bg-primary/10 text-primary font-semibold"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors hover:bg-base-200 text-base-content">
+      <i class="bi bi-calendar3 text-base w-5 text-center shrink-0"></i>
+      <span *ngIf="!isCollapsed">我的行程</span>
+    </a>
+
+    <p *ngIf="!isCollapsed" class="px-3 pt-4 pb-1 text-xs font-bold text-base-content/30 uppercase tracking-wider">個人
+    </p>
+
+    <a routerLink="/trip/favorites" routerLinkActive="bg-primary/10 text-primary font-semibold"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors hover:bg-base-200 text-base-content">
+      <i class="bi bi-heart text-base w-5 text-center shrink-0"></i>
+      <span *ngIf="!isCollapsed">收藏行程</span>
+    </a>
+
+    <a routerLink="/trip/reminders" routerLinkActive="bg-primary/10 text-primary font-semibold"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors hover:bg-base-200 text-base-content">
+      <i class="bi bi-bell text-base w-5 text-center shrink-0"></i>
+      <span *ngIf="!isCollapsed">提醒設定</span>
+    </a>
+    }
+
+    @if (isDetailPage) {
+    <p *ngIf="!isCollapsed" class="px-3 mb-1 text-xs font-bold text-base-content/30 uppercase tracking-wider">行程內容</p>
+
+    <a routerLink="." fragment="info"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors hover:bg-base-200 text-base-content">
+      <i class="bi bi-card-text text-base w-5 text-center shrink-0"></i>
+      <span *ngIf="!isCollapsed">行程詳情</span>
+    </a>
+
+    <a routerLink="." fragment="map"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors hover:bg-base-200 text-base-content">
+      <i class="bi bi-geo-alt text-base w-5 text-center shrink-0"></i>
+      <span *ngIf="!isCollapsed">地點地圖</span>
+    </a>
+
+    <a routerLink="." fragment="announcement"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors hover:bg-base-200 text-base-content">
+      <i class="bi bi-megaphone text-base w-5 text-center shrink-0"></i>
+      <span *ngIf="!isCollapsed">行程公告</span>
+    </a>
+
+    <a routerLink="." fragment="gear"
+      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors hover:bg-base-200 text-base-content">
+      <i class="bi bi-backpack2 text-base w-5 text-center shrink-0"></i>
+      <span *ngIf="!isCollapsed">裝備清單</span>
+    </a>
+
+    <div class="border-t border-base-300 mt-4 pt-3">
+      <a routerLink="/trip/my-trips"
+        class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors hover:bg-base-200 text-base-content/50">
+        <i class="bi bi-arrow-left text-base w-5 text-center shrink-0"></i>
+        <span *ngIf="!isCollapsed">返回我的行程</span>
+      </a>
+    </div>
+    }
+
+  </nav>
+</aside>

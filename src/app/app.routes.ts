@@ -68,6 +68,28 @@ export const routes: Routes = [
       }
     ]
   },
+  //行程路由
+  {
+    path: 'trip',
+    loadComponent: () => import('./shared/layouts/with-navbar/with-navbar').then(m => m.WithNavbar),
+    children: [
+      {
+        path: '',
+        loadComponent: () => import('./trip/trip-layout/trip-layout').then(m => m.TripLayout),
+        children: [
+          {
+            path: '',
+            redirectTo: 'explore',
+            pathMatch: 'full'
+          },
+          {
+            path: 'explore',
+            loadComponent: () => import('./trip/components/explore/explore').then(m => m.Explore),
+          }
+        ]
+      }
+    ]
+  },
   {
     path: '**', //萬用路由404
     loadComponent: () => import('./shared/layouts/with-navbar/with-navbar').then(m => m.WithNavbar),
