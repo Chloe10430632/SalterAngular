@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { NavbarLayout } from './shared/layouts/navbar-layout/navbar-layout';
+import { BlankLayout } from './shared/layouts/blank-layout/blank-layout';
 
 export const routes: Routes = [
   {
@@ -8,7 +9,12 @@ export const routes: Routes = [
     children: [
       {
         path: '', //因為小孩的 path 也是 ''，所以當你進入首頁時，它會自動抓到小孩。
-        loadComponent: () => import('./forum/components/index/index').then(m => m.Index)
+        loadComponent: () => import('./forum/components/index/index').then(m => m.Index),
+        children: [
+          {
+            path: '',
+            loadComponent: () => import('./forum/components/index/index').then(m => m.Index)
+          }],
       }
     ]
 
@@ -50,7 +56,13 @@ export const routes: Routes = [
 
   {
     path: 'login',
-    loadComponent: () => import('./user/components/login/login').then(m => m.Login)
+    component: BlankLayout,
+    children: [
+      {
+        path: '', //預設路由
+        loadComponent: () => import('./user/components/login/login').then(m => m.Login)
+      },
+    ]
   },
   {
     path: 'register',
