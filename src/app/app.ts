@@ -4,6 +4,7 @@ import { Header } from "./shared/header/header";
 import { Main } from './shared/main/main';
 
 
+
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, Header, Main],
