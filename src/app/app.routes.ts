@@ -38,7 +38,7 @@ export const routes: Routes = [
     path: 'house',
     children: [{
       path: '', //預設路由
-      loadComponent: () => import('./house/components/index/index').then(m => m.HomeComponent)
+      loadComponent: () => import('./house/components/index/index').then(m => m.Index)
     }]
   },
   {

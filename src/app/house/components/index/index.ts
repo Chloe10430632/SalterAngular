@@ -7,7 +7,7 @@ import { Component } from '@angular/core';
   templateUrl: './index.html',
   styleUrl: './index.css',
 })
-export class HomeComponent {
+export class Index {
   // 模擬從後端 API 抓回來的房屋資料
   properties = [
     { id: 1, name: '極簡風山景小屋', location: '南投縣', price: 4200, rating: 4.9, img: 'https://picsum.photos/id/1016/400/400' },
