@@ -37,113 +37,48 @@
       <div class="divider px-4 my-0"></div>
       <div class="flex-1 overflow-y-auto p-2 scrollbar">
 
+        <!-- 熱門即時看板 -->
         <ul class="menu menu-md w-full">
+
           <li class="menu-title text-sm text-primary-content font-black
                                 bg-primary rounded-lg mx-2 px-4 py-1.5 mb-3
                                 shadow-sm flex justify-between items-center group">
-            即時熱門看板
+            大家都在瀏覽
           </li>
+
+          @for (board of boardListPop5; track board.boardId) {
           <li>
             <a class="mx-2 py-2 px-6 hover:bg-primary/10 hover:text-primary transition-all duration-300 group">
               <img class="mask mask-squircle w-8 h-8 mr-2 shadow-sm group-hover:scale-110 transition-transform"
-                src="../imgs/20260216191154衝浪.png">
-              <span class="font-medium">衝浪</span>
-              <span class="badge badge-sm badge-ghost ml-auto text-xs opacity-50">NEW</span>
+                [src]="board.boardImgUrl">
+              <span class="font-medium" [id]="'pop'+board.boardId">{{board.boardTitle}}</span>
+              <span class="badge badge-xs badge-ghost ml-auto text-xs opacity-80">{{board.viewCount}} 次瀏覽</span>
             </a>
           </li>
-          <li>
-            <a class="mx-2 py-2 px-6 hover:bg-primary/10 hover:text-primary transition-all duration-300 group">
-              <img class="mask mask-squircle w-8 h-8 mr-2 shadow-sm group-hover:scale-110 transition-transform"
-                src="../imgs/20260216192212水肺潛水.png">
-              <span class="font-medium">水肺潛水</span>
-              <span class="badge badge-sm badge-ghost ml-auto text-xs opacity-50">NEW</span>
-            </a>
-          </li>
-          <li>
-            <a class="mx-2 py-2 px-6 hover:bg-primary/10 hover:text-primary transition-all duration-300 group">
-              <img class="mask mask-squircle w-8 h-8 mr-2 shadow-sm group-hover:scale-110 transition-transform"
-                src="../imgs/20260216191206SUP立槳.png">
-              <span class="font-medium">SUP立槳</span>
-              <span class="badge badge-sm badge-ghost ml-auto text-xs opacity-50">NEW</span>
-            </a>
-          </li>
-          <li>
-            <a class="mx-2 py-2 px-6 hover:bg-primary/10 hover:text-primary transition-all duration-300 group">
-              <img class="mask mask-squircle w-8 h-8 mr-2 shadow-sm group-hover:scale-110 transition-transform"
-                src="../imgs/20260216191332獨木舟、輕艇.png">
-              <span class="font-medium">獨木舟</span>
-            </a>
-          </li>
-          <li>
-            <a class="mx-2 py-2 px-6 hover:bg-primary/10 hover:text-primary transition-all duration-300 group">
-              <img class="mask mask-squircle w-8 h-8 mr-2 shadow-sm group-hover:scale-110 transition-transform"
-                src="../imgs/20260216191215風箏衝浪.png">
-              <span class="font-medium">風箏衝浪</span>
-            </a>
-          </li>
-          <li>
-            <a class="mx-2 py-2 px-6 hover:bg-primary/10 hover:text-primary transition-all duration-300 group">
-              <img class="mask mask-squircle w-8 h-8 mr-2 shadow-sm group-hover:scale-110 transition-transform"
-                src="../imgs/20260216192135水上摩托車.png">
-              <span class="font-medium">水上摩托車</span>
-            </a>
-          </li>
+          }
+
+
         </ul>
 
+        <!-- 追蹤推薦看板 -->
         <ul class="menu menu-md w-full mt-4">
           <li class="menu-title text-sm text-primary-content font-black
                                 bg-primary rounded-lg mx-2 px-4 py-1.5 mb-3
                                 shadow-sm flex justify-between items-center group">
-            收藏最多看板
+            大家都在追蹤
           </li>
+
+          @for (board of boardListFollow5; track board.boardId) {
           <li>
             <a class="mx-2 py-2 px-6 hover:bg-primary/10 hover:text-primary transition-all duration-300 group">
               <img class="mask mask-squircle w-8 h-8 mr-2 shadow-sm group-hover:scale-110 transition-transform"
-                src="../imgs/20260216191154衝浪.png">
-              <span class="font-medium">衝浪</span>
-              <span class="badge badge-sm badge-ghost ml-auto text-xs opacity-50">NEW</span>
+                [src]="board.boardImgUrl">
+              <span class="font-medium" [id]="'pop'+board.boardId">{{board.boardTitle}}</span>
+              <span class="badge badge-xs badge-ghost ml-auto text-xs opacity-80">{{board.followCount}} 次追蹤</span>
             </a>
           </li>
-          <li>
-            <a class="mx-2 py-2 px-6 hover:bg-primary/10 hover:text-primary transition-all duration-300 group">
-              <img class="mask mask-squircle w-8 h-8 mr-2 shadow-sm group-hover:scale-110 transition-transform"
-                src="../imgs/20260216192212水肺潛水.png">
-              <span class="font-medium">水肺潛水</span>
-              <span class="badge badge-sm badge-ghost ml-auto text-xs opacity-50">NEW</span>
-            </a>
-          </li>
-          <li>
-            <a class="mx-2 py-2 px-6 hover:bg-primary/10 hover:text-primary transition-all duration-300 group">
-              <img class="mask mask-squircle w-8 h-8 mr-2 shadow-sm group-hover:scale-110 transition-transform"
-                src="../imgs/20260216191206SUP立槳.png">
-              <span class="font-medium">SUP立槳</span>
-              <span class="badge badge-sm badge-ghost ml-auto text-xs opacity-50">NEW</span>
-            </a>
-          </li>
-          <li>
-            <a class="mx-2 py-2 px-6 hover:bg-primary/10 hover:text-primary transition-all duration-300 group">
-              <img class="mask mask-squircle w-8 h-8 mr-2 shadow-sm group-hover:scale-110 transition-transform"
-                src="../imgs/20260216191154衝浪.png">
-              <span class="font-medium">衝浪</span>
-              <span class="badge badge-sm badge-ghost ml-auto text-xs opacity-50">NEW</span>
-            </a>
-          </li>
-          <li>
-            <a class="mx-2 py-2 px-6 hover:bg-primary/10 hover:text-primary transition-all duration-300 group">
-              <img class="mask mask-squircle w-8 h-8 mr-2 shadow-sm group-hover:scale-110 transition-transform"
-                src="../imgs/20260216192212水肺潛水.png">
-              <span class="font-medium">水肺潛水</span>
-              <span class="badge badge-sm badge-ghost ml-auto text-xs opacity-50">NEW</span>
-            </a>
-          </li>
-          <li>
-            <a class="mx-2 py-2 px-6 hover:bg-primary/10 hover:text-primary transition-all duration-300 group">
-              <img class="mask mask-squircle w-8 h-8 mr-2 shadow-sm group-hover:scale-110 transition-transform"
-                src="../imgs/20260216191206SUP立槳.png">
-              <span class="font-medium">SUP立槳</span>
-              <span class="badge badge-sm badge-ghost ml-auto text-xs opacity-50">NEW</span>
-            </a>
-          </li>
+          }
+
 
         </ul>
 
