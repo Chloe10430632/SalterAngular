@@ -2,7 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { IUploadUserPicture } from '../interfaces/IUploadUserPicture';
 import { Observable } from 'rxjs';
-import { IRegister, RegisterResponse } from '../interfaces/IRegister';
+import { IRegister, IRegisterResponse } from '../interfaces/IRegister';
+import { IVerifyRegisterOtp } from '../interfaces/IVerifyRegisterOtp';
+import { IResendOtp } from '../interfaces/IResendOtp';
+
 
 @Injectable({
   providedIn: 'root',
@@ -23,10 +26,22 @@ export class UserService {
     );
   }
 
-  postRegister(data: IRegister): Observable<RegisterResponse> {
-    return this.http.post<RegisterResponse>(
+  postRegister(data: IRegister): Observable<IRegisterResponse> {
+    return this.http.post<IRegisterResponse>(
       'https://localhost:7017/api/User/User/Register', data
     )
+  }
+
+  postVerifyRegisterOtp(data: IVerifyRegisterOtp) {
+    const url = 'https://localhost:7017/api/User/User/VerifyRegisterOtp';
+    return this.http.post<any>(url, data);
+  }
+
+  postResendOtp(data: IResendOtp) {
+
+    const url = 'https://localhost:7017/api/User/User/ResendOtp';
+
+    return this.http.post<IResendOtp>(url, data)
   }
 
 
