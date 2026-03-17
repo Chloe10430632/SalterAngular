@@ -26,6 +26,23 @@
 
           <div class="divide-y divide-gray-300">
 
+            @if(boardList.length === 0) {
+            @for (i of [1,2,3,4,5]; track i) {
+            <div class="flex items-center gap-4 p-4">
+              <div class="skeleton w-4 h-4 rounded opacity-50"></div>
+
+              <div class="avatar">
+                <div class="skeleton w-10 h-10 rounded mr-5 shrink-0"></div>
+              </div>
+
+              <div class="flex-1">
+                <div class="skeleton h-5 w-3/4 rounded"></div>
+              </div>
+
+              <div class="skeleton w-16 h-8 rounded-full shrink-0"></div>
+            </div>
+            }
+            }@else {
             @for (board of boardList; track $index) {
 
             <div class="flex items-center gap-4 p-4 hover:bg-base-200/30 transition-colors group cursor-pointer">
@@ -44,6 +61,9 @@
             </div>
 
             }
+
+            }
+
 
 
 

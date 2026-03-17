@@ -90,18 +90,26 @@
                 </div>
 
                 <div class="flex items-center gap-6 mt-5 ml-2 text-base-content/60">
-                  <button class="flex items-center gap-1.5 hover:text-red-500 transition-colors">
-                    <i class="fa-regular fa-heart text-xl"></i>
-                    <span class="text-[11px] font-bold">8,867</span>
+                  <!-- 愛心按鈕：點擊後變紅並跳動 -->
+                  <button (click)="toggleLike()" [class.text-error]="isLiked"
+                    class="flex items-center gap-1.5 transition-all duration-300 active:scale-90 hover:text-error group">
+                    <i [class]="isLiked ? 'fa-solid fa-heart animate-bounce-once' : 'fa-regular fa-heart'"
+                      class="text-xl transition-transform group-hover:scale-110"></i>
+                    <span class="text-[11px] font-bold">{{ likeCount | number }}</span>
                   </button>
+                  <!-- 留言按鈕：點擊後導頁到詳細貼文 -->
                   <button class="flex items-center gap-1.5 hover:text-blue-500 transition-colors">
                     <i class="fa-regular fa-comment text-xl"></i>
                     <span class="text-[11px] font-bold">42</span>
                   </button>
-                  <button class="flex items-center gap-1.5 hover:text-warning transition-colors">
-                    <i class="fa-regular fa-bookmark text-lg"></i>
-                    <span class="text-[11px] font-bold">102</span>
+                  <!-- 收藏按鈕：點擊後變黃 -->
+                  <button (click)="toggleBookmark()" [class.text-warning]="isBookmarked"
+                    class="flex items-center gap-1.5 transition-all duration-300 active:scale-90 hover:text-warning group">
+                    <i [class]="isBookmarked ? 'fa-solid fa-bookmark' : 'fa-regular fa-bookmark'"
+                      class="text-lg transition-transform group-hover:scale-110"></i>
+                    <span class="text-[11px] font-bold">{{ bookmarkCount | number }}</span>
                   </button>
+                  <!-- 分享按鈕：點擊後彈出分享介面 -->
                   <button class="flex items-center gap-1.5 hover:text-green-500 transition-colors">
                     <i class="fa-regular fa-paper-plane text-lg"></i>
                     <span class="text-[11px] font-bold">10</span>
