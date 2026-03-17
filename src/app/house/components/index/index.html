@@ -1,9 +1,88 @@
+<div class="flex justify-center py-10 px-4 w-full sticky top-0 z-30 bg-base-200/50 backdrop-blur-md">
+
+  <div
+    class="flex items-center w-full max-w-4xl border border-base-300 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-full bg-white p-2 group">
+
+    <div class="dropdown flex-[1.4]">
+      <div tabindex="0" role="button"
+        class="px-8 py-3 hover:bg-base-200 rounded-full transition-colors cursor-pointer w-full text-left">
+        <span class="block font-bold text-xs uppercase tracking-wider text-base-content mb-0.5">地點</span>
+        <span class="text-base font-medium text-gray-500 block">搜尋目的地</span>
+      </div>
+
+      <div tabindex="0"
+        class="dropdown-content z-[2] menu p-6 shadow-2xl bg-base-100 rounded-[2.5rem] w-80 mt-4 border border-base-200">
+        <h3 class="text-xs font-bold mb-4 ml-4 text-gray-400">目的地建議</h3>
+        <div class="space-y-2">
+          <div class="flex items-center gap-4 p-4 hover:bg-base-200 rounded-2xl cursor-pointer">
+            <div class="bg-base-200 p-3 rounded-xl text-primary"><i class="bi bi-geo-alt-fill"></i></div>
+            <div class="font-bold text-sm">附近</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="h-8 w-[1px] bg-base-300"></div>
+
+    <div (click)="openCalendar($event)"
+      class="flex-1 px-8 py-3 hover:bg-base-200 rounded-full transition-colors hidden sm:block cursor-pointer">
+      <span class="block font-bold text-xs uppercase tracking-wider text-base-content mb-0.5">時間</span>
+      <span class="text-base font-medium text-gray-500">選擇日期</span>
+    </div>
+
+    <div class="h-8 w-[1px] bg-base-300"></div>
+
+    <div
+      class="flex-[1.2] pl-8 pr-3 py-2 flex items-center justify-between hover:bg-base-200 rounded-full transition-colors cursor-pointer">
+      <div class="min-w-0 text-left">
+        <span class="block font-bold text-xs uppercase tracking-wider text-base-content mb-0.5">客人</span>
+        <span class="text-gray-500 text-base font-medium truncate">新增人數</span>
+      </div>
+      <button
+        class="btn btn-primary btn-circle btn-lg ml-4 border-none shadow-md group-hover:scale-105 transition-transform">
+        <i class="bi bi-search text-white text-xl"></i>
+      </button>
+    </div>
+
+  </div>
+</div>
+<!-- 新增隱藏的Modal -->
+<dialog id="calendar_modal" class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box bg-white max-w-2xl rounded-[2rem] p-10">
+    <h3 class="font-bold text-2xl mb-6 text-center text-base-content">選擇日期</h3>
+
+    <div class="flex flex-col md:flex-row gap-6">
+      <div class="flex-1">
+        <label class="label"><span class="label-text font-bold">入住</span></label>
+        <input type="date" class="input input-bordered w-full rounded-xl focus:border-primary" />
+      </div>
+      <div class="flex-1">
+        <label class="label"><span class="label-text font-bold">退房</span></label>
+        <input type="date" class="input input-bordered w-full rounded-xl focus:border-primary" />
+      </div>
+    </div>
+
+    <div class="modal-action mt-8">
+      <form method="dialog" class="w-full flex justify-between items-center">
+        <button class="btn btn-ghost text-gray-500 underline">清除日期</button>
+        <button class="btn btn-primary px-10 rounded-full text-white">儲存</button>
+      </form>
+    </div>
+  </div>
+
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
+
+<!-- 標題區 -->
 <div class="mb-8">
-  <h1 class="text-2xl font-bold text-base-content">探索房源</h1>
-  <p class="text-gray-500">找到最適合你的休憩之地</p>
+  <h1 class="text-3xl font-extrabold text-base-content">探索房源</h1>
+  <p class="text-base-content/80 font-medium text-lg leading-relaxed">找到最適合你的休憩之地</p>
 </div>
 
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+<!-- 房屋卡片區 -->
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-4">
   <div *ngFor="let item of properties" class="group cursor-pointer">
     <div class="relative aspect-square overflow-hidden rounded-2xl shadow-sm">
       <img [src]="item.img"

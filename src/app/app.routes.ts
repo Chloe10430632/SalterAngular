@@ -68,6 +68,15 @@ export const routes: Routes = [
       }
     ]
   },
+  //House路由
+  {
+    path: 'house',
+    loadComponent: () => import('./shared/layouts/with-navbar/with-navbar').then(m => m.WithNavbar),
+    children: [{
+      path: '',
+      loadComponent: () => import('./house/components/index/index').then(m => m.Index),
+    }]
+  },
   {
     path: '**', //萬用路由404
     loadComponent: () => import('./shared/layouts/with-navbar/with-navbar').then(m => m.WithNavbar),

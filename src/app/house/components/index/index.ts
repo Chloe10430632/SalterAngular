@@ -16,4 +16,16 @@ export class Index {
     { id: 4, name: '工業風設計旅店', location: '台中市', price: 2900, rating: 4.7, img: 'https://picsum.photos/id/1040/400/400' },
     // 你可以多複製幾組，畫面會比較豐滿
   ];
+
+  openCalendar(event: any) {
+    console.log('點擊成功');
+
+    event.stopPropagation();
+    // 加上 event: Event 並調用 stopPropagation()
+    // 可以防止點擊時間的時候，地點建議的下拉選單也跑出來攪局
+    const modal = document.getElementById('calendar_modal') as HTMLDialogElement;
+    if (modal) {
+      modal.showModal();
+    }
+  }
 }
