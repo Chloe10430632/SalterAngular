@@ -26,11 +26,7 @@ export class Explore implements OnInit {
   categories = [
     { label: '全部', value: '' },
     { label: '🏄 衝浪', value: 'surf' },
-    { label: '🤿 浮潛', value: 'snorkel' },
-    { label: '🧗 登山', value: 'hiking' },
-    { label: '🏕️ 露營', value: 'camping' },
-    { label: '🚵 單車', value: 'cycling' },
-    { label: '🍜 美食', value: 'food' },
+    { label: '🤿 浮潛', value: 'snorkel' }
   ];
 
   // 篩選
@@ -146,11 +142,7 @@ export class Explore implements OnInit {
   getTripTypeLabel(type: string): string {
     const map: Record<string, string> = {
       surf: '🏄 衝浪',
-      snorkel: '🤿 浮潛',
-      hiking: '🧗 登山',
-      camping: '🏕️ 露營',
-      cycling: '🚵 單車',
-      food: '🍜 美食',
+      snorkel: '🤿 浮潛'
     };
     return map[type] ?? type;
   }
