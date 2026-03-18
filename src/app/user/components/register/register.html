@@ -43,12 +43,30 @@
 
           <div class="form-control">
             <label class="label"><span class="label-text">密碼</span></label>
-            <input type="password" formControlName="password" class="input input-bordered" />
+            <div class="relative w-full">
+              <input [type]="isPasswordVisible ? 'text' : 'password'" formControlName="password"
+                class="input input-bordered w-full pr-12" placeholder="請輸入密碼" />
+
+              <button type="button"
+                class="absolute inset-y-0 right-0 flex items-center px-4 text-gray-500 hover:text-primary transition-colors"
+                (click)="isPasswordVisible = !isPasswordVisible">
+                <i [class]="isPasswordVisible ? 'bi bi-eye' : 'bi bi-eye-slash'"></i>
+              </button>
+            </div>
           </div>
 
           <div class="form-control">
             <label class="label"><span class="label-text">確認密碼</span></label>
-            <input type="password" formControlName="confirmPassword" class="input input-bordered" />
+            <div class="relative w-full">
+              <input [type]="isConfirmPasswordVisible ? 'text' : 'password'" formControlName="confirmPassword"
+                class="input input-bordered w-full pr-12" placeholder="請再次輸入密碼" />
+
+              <button type="button"
+                class="absolute inset-y-0 right-0 flex items-center px-4 text-gray-500 hover:text-primary transition-colors"
+                (click)="isConfirmPasswordVisible = !isConfirmPasswordVisible">
+                <i [class]="isConfirmPasswordVisible ? 'bi bi-eye' : 'bi bi-eye-slash'"></i>
+              </button>
+            </div>
           </div>
 
           <div class="form-control">
@@ -62,19 +80,26 @@
               <option value="">請選擇</option>
               <option value="Male">男</option>
               <option value="Female">女</option>
-              <option value="Other">其他</option>
             </select>
           </div>
 
-          <div class="form-control md:col-span-2">
+          <div class="form-control">
             <label class="label"><span class="label-text">生日</span></label>
             <input type="date" formControlName="birthday" class="input input-bordered" />
           </div>
         </div>
 
         <div class="card-actions justify-between mt-8">
-          <button type="button" class="btn btn-ghost" (click)="step = 1">上一步</button>
-          <button type="submit" class="btn btn-primary" [disabled]="!isStep2Valid">發送驗證碼</button>
+          <button type="button" class="btn btn-ghost" [disabled]="isLoading" (click)="step = 1">上一步</button>
+
+          <button type="submit" class="btn btn-primary" [disabled]="!isStep2Valid || isLoading">
+            @if (isLoading) {
+            <span class="loading loading-spinner"></span>
+            正在發送...
+            } @else {
+            發送驗證碼
+            }
+          </button>
         </div>
         }
         @if (step === 3) {
@@ -95,7 +120,7 @@
               class="input input-bordered text-center text-2xl tracking-widest" maxlength="6" />
           </div>
 
-          <div class="w-full flex flex-col gap-2">
+          <div class="w-full max-w-xs flex flex-col gap-3">
             <button type="button" class="btn btn-secondary w-full"
               [disabled]="registerForm.get('otp')?.invalid || canResend" (click)="onVerifyOtp()">
               驗證並啟用帳號

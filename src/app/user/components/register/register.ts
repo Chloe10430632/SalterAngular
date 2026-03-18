@@ -28,10 +28,15 @@ export class Register {
 
   canResend: boolean = false; // 是否顯示「重新發送」按鈕
 
-
   step: number = 1;
 
+  isLoading = false;
+
   isResending: boolean = false;
+
+  isPasswordVisible = false; // 密碼是否可見
+
+  isConfirmPasswordVisible = false; // 確認密碼是否可見
 
   selectedFile: File | null = null;
 
@@ -103,7 +108,7 @@ export class Register {
       return;
     }
 
-    const { otp, ...otherValues } = this.registerForm.controls;
+    const { otp, gender, birthday, profilePicture, ...otherValues } = this.registerForm.controls;
 
     // 只要除了 otp 以外的欄位都 pass，就允許發送驗證碼
     const isBasicInfoValid = Object.keys(otherValues).every(key => {
@@ -114,15 +119,28 @@ export class Register {
 
     if (isBasicInfoValid) {
 
-      const requestData: IRegister = this.registerForm.value as IRegister;
+      this.isLoading = true;
+
+      const rawData = this.registerForm.value;
+
+      const requestData: IRegister = { ...rawData } as IRegister;
+
+      Object.keys(requestData).forEach(key => {
+        if ((requestData as any)[key] === '') {
+          (requestData as any)[key] = null;
+        }
+      });
+
+      delete (requestData as any).confirmPassword;
 
       this.UserService.postRegister(requestData).subscribe({
         next: (res) => {
-          alert('驗證碼已寄出，請檢查您的信箱');
+          this.isLoading = false;
           this.step = 3; // 跳到第三步
           this.startTimer();
         },
         error: (err) => {
+          this.isLoading = false;
           console.error('註冊失敗', err);
           alert(err.error?.message || '註冊發生錯誤');
         }
@@ -158,7 +176,7 @@ export class Register {
   }
 
   startTimer() {
-    this.countdown = 15;
+    this.countdown = 180;
     this.canResend = false;
 
     // 如果之前有計時器在跑，先取消它
