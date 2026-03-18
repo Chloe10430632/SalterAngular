@@ -50,4 +50,11 @@ export class BoardsService {
   GetTop5FollowBoardsApi() {
     return this.http.get<BoardList[]>('https://localhost:7017/api/Forum/Boards?sortBy=follow&takeSize=5');
   }
+
+
+  testInteraction() {
+    // 故意發送一個空的 POST 請求，通常會觸發後端的 400 Bad Request 或 401 (若沒帶 Token)
+    return this.http.post('https://localhost:7017/api/Forum/BoardInteractions', {});
+  }
+
 }

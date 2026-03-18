@@ -43,6 +43,10 @@ export class Boards implements OnInit {
         });
       }
 
+      this.boardsService.testInteraction().subscribe(data => {
+        console.log(data);
+      });
+
 
     });
 
