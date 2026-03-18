@@ -78,6 +78,14 @@ export const routes: Routes = [
     }]
   },
   {
+    path: 'houseDetail/:id',
+    loadComponent: () => import('./shared/layouts/with-navbar/with-navbar').then(m => m.WithNavbar),
+    children: [{
+      path: '',
+      loadComponent: () => import('./house/components/detail/detail').then(m => m.Detail),
+    }]
+  },
+  {
     path: '**', //萬用路由404
     loadComponent: () => import('./shared/layouts/with-navbar/with-navbar').then(m => m.WithNavbar),
     children: [

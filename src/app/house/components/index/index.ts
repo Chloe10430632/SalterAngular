@@ -1,13 +1,17 @@
+import { HouseListDTO } from './../../interface/ihouse';
 import { CommonModule, DecimalPipe } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { RouterLink } from "@angular/router";
+import { HouseService } from '../../service/index-service';
 
 @Component({
   selector: 'app-index',
-  imports: [CommonModule, DecimalPipe],
+  imports: [CommonModule, DecimalPipe, RouterLink],
   templateUrl: './index.html',
   styleUrl: './index.css',
 })
-export class Index {
+export class Index implements OnInit {
+
   // 模擬從後端 API 抓回來的房屋資料
   properties = [
     { id: 1, name: '極簡風山景小屋', location: '南投縣', price: 4200, rating: 4.9, img: 'https://picsum.photos/id/1016/400/400' },
@@ -17,7 +21,25 @@ export class Index {
     // 你可以多複製幾組，畫面會比較豐滿
   ];
 
-  openCalendar(event: any) {
+  adultCount: number = 0;
+  childCount: number = 0;
+  houses: HouseListDTO[] = [];
+  constructor(private houseService: HouseService) { }
+
+  ngOnInit(): void {
+    // 組件初始化時，去叫 Service 抓資料
+    this.houseService.getHouses().subscribe({
+      next: (data) => {
+        this.houses = data;
+        console.log('成功抓到房源資料：', this.houses);
+      },
+      error: (err) => {
+        console.error('API 連線失敗：', err);
+      }
+    });
+  }
+
+  openCalendar(event: Event) {
     console.log('點擊成功');
 
     event.stopPropagation();
@@ -28,4 +50,24 @@ export class Index {
       modal.showModal();
     }
   }
+  openGuest(event: Event) {
+    event.stopPropagation();
+    const modal = document.getElementById('guest_modal') as HTMLDialogElement;
+    if (modal) {
+      modal.showModal();
+    }
+  }
+
+
+  changeAdult(delta: number) {
+    this.adultCount += delta;
+    if (this.adultCount < 0) this.adultCount = 0; // 防止變成負數
+  }
+
+  changeChild(delta: number) {
+    this.childCount += delta;
+    if (this.childCount < 0) this.childCount = 0;
+  }
+
+
 }
