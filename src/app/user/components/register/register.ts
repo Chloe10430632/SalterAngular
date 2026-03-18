@@ -22,7 +22,7 @@ export class Register {
     private router: Router
   ) { }
 
-  countdown: number = 300; // 5 分鐘 = 300 秒
+  countdown: number = 300; // 倒數5 分鐘 = 300 秒
 
   timerSubscription?: Subscription;
 
@@ -109,6 +109,7 @@ export class Register {
     const isBasicInfoValid = Object.keys(otherValues).every(key => {
       return this.registerForm.get(key)?.valid;
     });
+
 
 
     if (isBasicInfoValid) {

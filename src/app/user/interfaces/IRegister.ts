@@ -10,7 +10,7 @@ export interface IRegister {
 }
 
 //後端寄回來
-export interface IRegisterResponse {
-  message: string;
-}
+// export interface IRegisterResponse {
+//   message: string;
+// }
 
