@@ -11,10 +11,10 @@ export class NotificationService {
   message$ = this.messageSource.asObservable();
 
   show(msg: string, type: 'success' | 'error' = 'success') {
-    this.messageSource.next({ msg, type });
+    this.messageSource.next({ msg, type }); //對他講話
 
     timer(4000).subscribe(() => {
-      this.messageSource.next(null);
+      this.messageSource.next(null); //會變成false family，讓 HTML 不見
     });
   }
 }

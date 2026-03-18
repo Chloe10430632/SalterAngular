@@ -25,7 +25,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       if (error.status === 0) {
         errorMessage = '無法連線至伺服器';
       } else {
-        // 根據不同狀態碼定義訊息 (保留你原本的邏輯)
         switch (error.status) {
           case 401:
             errorMessage = '登入逾時或尚未登入，請重新登入';
