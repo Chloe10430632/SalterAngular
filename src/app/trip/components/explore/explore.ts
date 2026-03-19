@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { TripService } from '../../services/trip';
+import { TripSummary } from '../../interfaces/trip';
 
 @Component({
   selector: 'app-explore',
@@ -11,8 +13,11 @@ import { Router } from '@angular/router';
 })
 export class Explore implements OnInit {
 
+  private tripService = inject(TripService);
+  private router = inject(Router);
+
   // 資料
-  trips: any[] = [];
+  trips: TripSummary[] = [];
   totalCount = 0;
   totalPages = 0;
   currentPage = 1;
@@ -26,22 +31,23 @@ export class Explore implements OnInit {
   categories = [
     { label: '全部', value: '' },
     { label: '🏄 衝浪', value: 'surf' },
-    { label: '🤿 浮潛', value: 'snorkel' }
+    { label: '🤿 深潛', value: 'dive' },
+    { label: '🤿 浮潛', value: 'snorkel' },
+    { label: '🚣 獨木舟', value: 'kayak' },
+    { label: '⛵ 帆船', value: 'sailing' },
+    { label: '🏄 立槳', value: 'sup' },
   ];
 
   // 篩選
-  filter = {
-    startFrom: '',
-    startTo: '',
-  };
+  filter = { startFrom: '', startTo: '' };
 
   // 人數
   selectedCapacity = '不限';
   capacities = [
-    { label: '不限', min: null, max: null },
+    { label: '不限', min: null as number | null, max: null as number | null },
     { label: '2–4', min: 2, max: 4 },
     { label: '5–8', min: 5, max: 8 },
-    { label: '9+', min: 9, max: null },
+    { label: '9+', min: 9, max: null as number | null },
   ];
 
   // 狀態
@@ -51,22 +57,42 @@ export class Explore implements OnInit {
     { label: '已結束', value: 'completed', checked: false },
   ];
 
-  constructor(private router: Router) { }
-
   ngOnInit() {
     this.loadTrips();
   }
 
   loadTrips() {
     this.isLoading = true;
-    // TODO: 串接 API
-    // 先用假資料測試
-    setTimeout(() => {
-      this.trips = [];
-      this.totalCount = 0;
-      this.totalPages = 1;
-      this.isLoading = false;
-    }, 500);
+
+    const selectedCap = this.capacities.find(c => c.label === this.selectedCapacity);
+    const selectedStatuses = this.statuses
+      .filter(s => s.checked)
+      .map(s => s.value)
+      .join(',');
+
+    this.tripService.getTrips({
+      keyword: this.searchKeyword || undefined,
+      tripType: this.selectedCategory || undefined,
+      status: selectedStatuses || undefined,
+      startFrom: this.filter.startFrom || undefined,
+      startTo: this.filter.startTo || undefined,
+      minCapacity: selectedCap?.min ?? undefined,
+      maxCapacity: selectedCap?.max ?? undefined,
+      page: this.currentPage,
+      pageSize: 9
+    }).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.trips = res.data.trips;
+          this.totalCount = res.data.totalCount;
+          this.totalPages = res.data.totalPages;
+        }
+        this.isLoading = false;
+      },
+      error: () => {
+        this.isLoading = false;
+      }
+    });
   }
 
   onSearch() {
@@ -109,7 +135,7 @@ export class Explore implements OnInit {
     return Array.from({ length: this.totalPages }, (_, i) => i + 1);
   }
 
-  toggleFavorite(trip: any, event: Event) {
+  toggleFavorite(trip: TripSummary, event: Event) {
     event.stopPropagation();
     trip.isFavorite = !trip.isFavorite;
     // TODO: 串接收藏 API
@@ -142,7 +168,11 @@ export class Explore implements OnInit {
   getTripTypeLabel(type: string): string {
     const map: Record<string, string> = {
       surf: '🏄 衝浪',
-      snorkel: '🤿 浮潛'
+      dive: '🤿 深潛',
+      snorkel: '🤿 浮潛',
+      kayak: '🚣 獨木舟',
+      sailing: '⛵ 帆船',
+      sup: '🏄 立槳'
     };
     return map[type] ?? type;
   }

@@ -1,5 +1,6 @@
 <aside [class]="isCollapsed ? 'w-14' : 'w-56'"
-  class="shrink-0 h-full bg-base-100 border border-base-300 transition-all duration-200 overflow-hidden rounded-lg m-2">
+  class="shrink-0 h-full bg-base-100 border border-base-300 transition-all duration-200 overflow-hidden rounded-lg m-2"
+  [class.transition-all]="isInitialized" [class.duration-200]="isInitialized">
 
   <nav class="flex flex-col py-3 px-2 space-y-0.5">
 

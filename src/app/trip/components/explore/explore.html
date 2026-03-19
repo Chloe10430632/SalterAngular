@@ -1,7 +1,7 @@
 <div class="flex flex-col min-h-full">
 
   <!-- 搜尋 Hero -->
-  <div class="bg-primary/10 py-8 px-6">
+  <div class="bg-primary/10 py-8 px-6 rounded-t-xl mx-2 mt-2">
     <div class="max-w-2xl mx-auto text-center">
       <h1 class="text-2xl font-bold text-base-content mb-1">找到你的下一趟冒險 🏄</h1>
       <p class="text-base-content/60 text-sm mb-4">與志同道合的夥伴一起探索台灣</p>
@@ -14,7 +14,7 @@
   </div>
 
   <!-- 分類列 -->
-  <div class="bg-base-100 border-b border-base-300 px-6 py-3 sticky top-14 z-30">
+  <div class="bg-base-100 border-b border-base-300 px-6 py-3 rounded-b-xl sticky top-14 z-30 mx-2">
     <div class="flex gap-2 flex-wrap items-center">
       <span class="text-xs text-base-content/40 font-medium shrink-0">分類</span>
       <div class="flex gap-1.5 flex-wrap">
@@ -80,11 +80,21 @@
 
       <!-- 載入中 -->
       @if (isLoading) {
-      <div class="flex justify-center py-20">
-        <span class="loading loading-spinner loading-lg text-primary"></span>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        @for (item of [1,2,3,4,5,6]; track item) {
+        <div class="card bg-base-100 shadow-sm border border-base-300 overflow-hidden">
+          <div class="skeleton h-44 w-full"></div>
+          <div class="card-body p-4 gap-3">
+            <div class="skeleton h-4 w-3/4"></div>
+            <div class="skeleton h-3 w-1/2"></div>
+            <div class="skeleton h-3 w-full"></div>
+            <div class="skeleton h-3 w-1/4"></div>
+            <div class="skeleton h-8 w-full mt-2"></div>
+          </div>
+        </div>
+        }
       </div>
       }
-
       <!-- 沒有資料 -->
       @if (!isLoading && trips.length === 0) {
       <div class="flex flex-col items-center justify-center py-20 text-base-content/30">
