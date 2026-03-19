@@ -36,8 +36,10 @@ export class AuthService {
       console.log('請看這裡！！內容是：', decoded);
       // 組合出全站通用的使用者物件
 
+      //判斷照片 沒照片帶預設，有照片看照片路徑是http開頭還是 /開頭，
+      // 來抓是google帳戶圖片，還是自己上傳圖片
       const getAvatarPath = (avatar: string | null): string => {
-        if (!avatar) return 'images/default-avatar.png';
+        if (!avatar) return 'user/default-avatar.png';
         if (avatar.startsWith('http')) return avatar;
         if (avatar.startsWith('/')) return `https://localhost:7017${avatar}`;
         return 'images/default-avatar.png';
@@ -56,7 +58,10 @@ export class AuthService {
       console.error('Token 解析失敗', error);
       this.logout();
     }
+
   }
+
+
 
   logout() {
     localStorage.removeItem('token');
