@@ -21,7 +21,7 @@ export class BtnCoachSwitch {
       this.router.navigate(['']);//createcoach
     }
     else {
-      this.router.navigate(['']); //edit
+      this.router.navigate(['/coachisland']); //edit
     }
   }
 

@@ -7,5 +7,6 @@ import { Component } from '@angular/core';
   styleUrl: './search.css',
 })
 export class Search {
+  constructor(private search: Search) { }
 
 }

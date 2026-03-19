@@ -51,9 +51,7 @@ export class Index implements OnInit {
     });
     //#endregion
 
-    //#region API拿申請教練資料
 
-    //#endregion
 
   }
 }

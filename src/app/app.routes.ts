@@ -70,8 +70,13 @@ export const routes: Routes = [
       {
         path: 'coachintro',
         loadComponent: () => import('./experience/components/coachintro/coachintro').then(m => m.Coachintro)
-
       },
+      {
+        path: 'coachisland',
+        loadComponent: () => import('./experience/components/coach-island/coach-island').then(m => m.CoachIsland)
+      },
+
+
     ]
   },
   {
