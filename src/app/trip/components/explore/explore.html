@@ -1,11 +1,11 @@
 <div class="flex flex-col min-h-full">
 
   <!-- 搜尋 Hero -->
-  <div class="bg-primary/10 py-8 px-6 rounded-t-xl mx-2 mt-2">
+  <div class="bg-primary/10 py-8 rounded-t-xl mt-2 mx-2 shadow-sm">
     <div class="max-w-2xl mx-auto text-center">
-      <h1 class="text-2xl font-bold text-base-content mb-1">找到你的下一趟冒險 🏄</h1>
+      <h1 class="text-2xl font-bold text-base-content mb-1">找到你的下一趟冒險</h1>
       <p class="text-base-content/60 text-sm mb-4">與志同道合的夥伴一起探索台灣</p>
-      <div class="join w-full shadow-sm">
+      <div class="join w-full">
         <input class="input input-bordered join-item flex-1 bg-base-100" placeholder="搜尋行程名稱、地點或活動類型…"
           [(ngModel)]="searchKeyword" />
         <button class="btn btn-primary join-item px-6" (click)="onSearch()">搜尋</button>
@@ -14,8 +14,8 @@
   </div>
 
   <!-- 分類列 -->
-  <div class="bg-base-100 border-b border-base-300 px-6 py-3 rounded-b-xl sticky top-14 z-30 mx-2">
-    <div class="flex gap-2 flex-wrap items-center">
+  <div class="bg-base-100 border-b border-base-300 py-3 rounded-b-xl sticky top-14 z-30 mx-2 px-0 shadow-sm">
+    <div class="flex gap-2 flex-wrap items-center px-2">
       <span class="text-xs text-base-content/40 font-medium shrink-0">分類</span>
       <div class="flex gap-1.5 flex-wrap">
         @for (cat of categories; track cat.value) {
@@ -29,7 +29,7 @@
   </div>
 
   <!-- 主體 -->
-  <div class="px-6 py-6 flex gap-6">
+  <div class="px-2 py-6 flex gap-6">
 
     <!-- 左側進階篩選 -->
     <aside class="w-56 shrink-0 hidden lg:block self-start sticky top-20">
@@ -110,8 +110,8 @@
         <div
           class="card bg-base-100 shadow-sm border border-base-300 hover:shadow-md hover:-translate-y-0.5 transition-all overflow-hidden flex flex-col h-full">
           <figure class="relative h-44">
-            <img [src]="trip.coverImageUrl || 'https://picsum.photos/seed/' + trip.id + '/400/200'"
-              class="w-full h-full object-cover" [alt]="trip.title" />
+            <img [src]="trip.coverImageUrl || 'trip/default-trip-cover.jpg'" class="w-full h-full object-cover"
+              [alt]="trip.title" />
             <span class="absolute top-2 left-2 badge text-xs font-semibold" [class]="getStatusBadgeClass(trip.status)">
               {{ getStatusLabel(trip.status) }}
             </span>

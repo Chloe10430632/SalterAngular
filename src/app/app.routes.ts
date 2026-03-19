@@ -83,8 +83,17 @@ export const routes: Routes = [
             pathMatch: 'full'
           },
           {
-            path: 'explore',
+            path: 'explore', // 行程探索
             loadComponent: () => import('./trip/components/explore/explore').then(m => m.Explore),
+          },
+          {
+            path: 'detail/:id',  // 行程詳情
+            children: [
+              {
+                path: 'location',  // 地點頁面
+                loadComponent: () => import('./trip/components/location/location').then(m => m.Location),
+              }
+            ]
           }
         ]
       }
