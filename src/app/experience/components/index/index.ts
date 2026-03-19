@@ -2,10 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { CoachCard } from '../../myComponents/coach-card/coach-card';
 import { HttpClient } from '@angular/common/http';
 import { NgClass } from '@angular/common';
+import { Search } from '../../myComponents/search/search';
 
 @Component({
   selector: 'app-index',
-  imports: [CoachCard, NgClass],
+  imports: [CoachCard, Search, NgClass],
   templateUrl: './index.html',
   styleUrl: './index.css',
 })
