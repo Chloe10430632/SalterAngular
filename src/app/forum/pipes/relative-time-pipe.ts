@@ -9,7 +9,7 @@ export class RelativeTimePipe implements PipeTransform {
   transform(value: string | number | Date): string {
     if (!value) return '';
 
-    const now = new Date();
+    const now = new Date('2026-02-12'); //基準日設定為2026-02-12
     const past = new Date(value);
     const diffInSeconds = Math.floor((now.getTime() - past.getTime()) / 1000);
 
@@ -37,7 +37,7 @@ export class RelativeTimePipe implements PipeTransform {
     }
 
     // 超過一週，回傳簡潔的日期格式
-    return past.toLocaleDateString('zh-TW', { month: 'short', day: 'numeric' });
+    return past.toLocaleDateString('zh-TW', { year: 'numeric', month: 'short', day: 'numeric' });
   }
 
 }

@@ -7,7 +7,8 @@ import { NotificationService } from '../shared/notifyService/notification-servic
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
   const notify = inject(NotificationService);
-  const token = localStorage.getItem('token');
+  //  const token = localStorage.getItem('token');
+  const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzMiIsImp0aSI6IjRiMDE2OGFlLTM3MTItNDZjNy1hM2E1LWMyZTQyNmFjYjI5YyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWVpZGVudGlmaWVyIjoiMzIiLCJVc2VyTmFtZSI6IkNobG9lMTA0MzA2MzIiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJhMjEzMDcwOTZAZ21haWwuY29tIiwiQXZhdGFyIjoiL2FkbWluL2ltZ3MvMjAyNjAzMTgxNjEzMjNfS2Vyb3JvLnBuZyIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6Ik5vcm1hbFVzZXIiLCJleHAiOjE3NzM5ODkzNDEsImlzcyI6IlNhbHRlcldlYkFwaSIsImF1ZCI6IlNhbHRlckFuZ3VsYXJDbGllbnQifQ.0exj2hTOO74MHBOdEbo_2vFNH3XBkkQendAJpWasOKc"; //測試用Chloe123456帳號
 
   // 1. 處理 Request (注入 Token)
   let authReq = req;
@@ -27,11 +28,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       } else {
         switch (error.status) {
           case 401:
-            errorMessage = '登入逾時或尚未登入，請重新登入';
+            errorMessage = '登入逾時或尚未登入，請登入後查看!';
             // router.navigate(['/login']);
             break;
           case 403:
-            errorMessage = '權限不足：無法修改他人資料！';
+            errorMessage = '權限不足：您的存取被禁止';
             break;
           case 400:
             errorMessage = error.error?.detail || error.error?.message || '請求參數錯誤';

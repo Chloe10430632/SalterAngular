@@ -3,15 +3,14 @@ import { Injectable } from '@angular/core';
 import { BoardList } from '../interfaces/boardList';
 import { timer, zip, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { BoardDetails } from '../interfaces/boardDetails';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BoardsService {
 
-  constructor(private http: HttpClient) {
-
-  }
+  constructor(private http: HttpClient) { }
 
   //GET 全部看板
   GetAllBoardsApi() {
@@ -29,6 +28,7 @@ export class BoardsService {
 
     // return this.http.get<BoardList[]>('https://localhost:7017/api/Forum/Boards');
   }
+
   //GET 熱門看板
   GetPopBoardsApi() {
     return this.http.get<BoardList[]>('https://localhost:7017/api/Forum/Boards?sortBy=popular');
@@ -51,10 +51,10 @@ export class BoardsService {
     return this.http.get<BoardList[]>('https://localhost:7017/api/Forum/Boards?sortBy=follow&takeSize=5');
   }
 
-
-  testInteraction() {
-    // 故意發送一個空的 POST 請求，通常會觸發後端的 400 Bad Request 或 401 (若沒帶 Token)
-    return this.http.post('https://localhost:7017/api/Forum/BoardInteractions', {});
+  //GET 單一看板
+  GetBoardByIdApi(boardId: number) {
+    return this.http.get<BoardDetails>(`https://localhost:7017/api/Forum/Boards/${boardId}`);
   }
+
 
 }

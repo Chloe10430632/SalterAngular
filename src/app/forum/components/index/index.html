@@ -97,10 +97,11 @@
 
           @for (board of boardListPop5; track board.boardId) {
           <li>
-            <a class="mx-2 py-2 px-6 hover:bg-primary/10 hover:text-primary transition-all duration-300 group">
+            <a class="mx-2 py-2 px-5 hover:bg-primary/10 hover:text-primary-content transition-all duration-100 group"
+              [routerLink]="'/forum/boards/'+board.boardId" routerLinkActive="btn btn-neutral py-6">
               <img class="mask mask-squircle w-8 h-8 mr-2 shadow-sm group-hover:scale-110 transition-transform"
                 [src]="board.boardImgUrl">
-              <span class="font-medium" [id]="'pop'+board.boardId">{{board.boardTitle}}</span>
+              <span class="font-medium">{{board.boardTitle}}</span>
               <span class="badge badge-xs badge-ghost ml-auto text-xs opacity-80">{{board.viewCount}} 次瀏覽</span>
             </a>
           </li>
@@ -119,10 +120,11 @@
 
           @for (board of boardListFollow5; track board.boardId) {
           <li>
-            <a class="mx-2 py-2 px-6 hover:bg-primary/10 hover:text-primary transition-all duration-300 group">
+            <a class="mx-2 py-2 px-6 hover:bg-primary/10 hover:text-primary-content transition-all duration-300 group"
+              [routerLink]="'/forum/boards/'+board.boardId" routerLinkActive="btn btn-neutral py-6">
               <img class="mask mask-squircle w-8 h-8 mr-2 shadow-sm group-hover:scale-110 transition-transform"
                 [src]="board.boardImgUrl">
-              <span class="font-medium" [id]="'pop'+board.boardId">{{board.boardTitle}}</span>
+              <span class="font-medium">{{board.boardTitle}}</span>
               <span class="badge badge-xs badge-ghost ml-auto text-xs opacity-80">{{board.followCount}} 次追蹤</span>
             </a>
           </li>

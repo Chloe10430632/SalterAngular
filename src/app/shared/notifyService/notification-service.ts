@@ -1,4 +1,4 @@
-// notification-service.ts
+// 推播通知中心
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, timer } from 'rxjs';
 
