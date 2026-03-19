@@ -71,5 +71,11 @@ export class AuthService {
     }
   }
 
+  //測試攔截器
+  getProfile() {
+    // 假設你的後端有一個 GET /api/user/profile
+    return this.http.get('https://localhost:7017/api/User/User/GetUserProfile');
+  }
+
 
 }

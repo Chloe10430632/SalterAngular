@@ -4,13 +4,13 @@ import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../../Services/user-service';
 import { LoginResult } from '../../interfaces/ILoginResponse';
 import { ILogin } from '../../interfaces/ILogin';
-import { AuthService } from '../../../shared/Services/auth-service';
+import { AuthService } from '../../../core/services/auth-service';
 import { IGoogleLogin } from '../../interfaces/IGoogleLogin';
 
 
 
 // 💡 告訴 TypeScript：google 這個變數是從外部載入的，不用擔心找不到
-declare var google: any;
+declare var google: any; //declare是用來定義外部全域變數的
 
 @Component({
   selector: 'app-login',
