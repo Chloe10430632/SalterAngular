@@ -1,0 +1,7 @@
+<div data-theme="bumblebee">
+  <button (click)="switchStatus()" class="btn btn-accent rounded-xl shadow-lg hover:scale-105 transition-transform">
+    @if(!isLogin){<span>我也想當教練!!</span>}
+    @else if(!hasProfile){<span>我也想當教練!!</span>}
+    @else {<span>進入我的小島</span>}
+  </button>
+</div>

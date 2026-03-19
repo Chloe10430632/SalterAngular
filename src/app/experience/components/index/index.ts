@@ -3,16 +3,17 @@ import { CoachCard } from '../../myComponents/coach-card/coach-card';
 import { HttpClient } from '@angular/common/http';
 import { NgClass } from '@angular/common';
 import { Search } from '../../myComponents/search/search';
+import { BtnCoachSwitch } from '../../myComponents/btn-coach-switch/btn-coach-switch';
 
 @Component({
   selector: 'app-index',
-  imports: [CoachCard, Search, NgClass],
+  imports: [BtnCoachSwitch, Search, CoachCard, NgClass],
   templateUrl: './index.html',
   styleUrl: './index.css',
 })
 export class Index implements OnInit {
 
-  //#region API拿資料
+  //#region API拿教練卡片資料
   //準備一個空籃子放 API 回傳的教練陣列
   coaches: any[] = [];
   isLoading = false;
@@ -50,7 +51,9 @@ export class Index implements OnInit {
     });
     //#endregion
 
+    //#region API拿申請教練資料
 
+    //#endregion
 
   }
 }
