@@ -2,6 +2,7 @@
   <!-- 手機板Navbar -->
   <div class="lg:hidden navbar bg-primary text-primary-content h-16">
     <div class="navbar-start">
+      @if (currentUser) {
       <div class="dropdown">
         <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -23,6 +24,7 @@
           <li><a class="font-bold">揪團行程</a></li>
         </ul>
       </div>
+      }
     </div>
     <div class="navbar-center">
       <a class="flex items-center" href="/">
@@ -30,6 +32,7 @@
       </a>
     </div>
     <div class="navbar-end">
+      @if (currentUser) {
       <button class="btn btn-ghost btn-circle">
         <i class="bi bi-search text-xl"></i>
       </button>
@@ -39,9 +42,13 @@
           <span class="badge badge-xs badge-error indicator-item"></span>
         </div>
       </button>
+      } @else {
+      <a class="btn btn-ghost btn-sm text-primary-content" routerLink="/login">登入</a>
+      }
     </div>
   </div>
   <!-- 手機Dock-->
+  @if (currentUser) {
   <div class="lg:hidden dock bg-base-100 border-t border-base-300">
     <a class="text-base-content opacity-60" routerLink="/forum/posts" routerLinkActive="text-primary">
       <i class="bi bi-signpost-2-fill text-2xl"></i>
@@ -68,13 +75,14 @@
       <span class="dock-label">會員</span>
     </a>
   </div>
+  }
   <!-- 電腦板Navbar -->
   <div class="hidden lg:grid navbar bg-primary text-primary-content px-4 py-2 grid-cols-12 container mx-auto md:px-35">
     <div class="col-span-6 flex items-center gap-4">
-      <a class="flex-shrink-0 transition-transform hover:scale-105" routerLink="forum">
+      <a class="flex-shrink-0 transition-transform hover:scale-105" routerLink="/forum">
         <img src="salter-logo.svg" alt="Logo" width="130px">
       </a>
-
+      @if (currentUser) {
       <div class="flex-grow max-w-md ml-4">
         <div class="relative group">
           <input type="text" placeholder="搜尋討論、行程或房源..."
@@ -84,9 +92,11 @@
           </div>
         </div>
       </div>
+      }
     </div>
 
     <div class="col-span-6 flex items-center justify-end gap-2">
+      @if (currentUser) {
       <div class="flex items-center gap-6 mr-4">
         <div class="tooltip tooltip-bottom" data-tip="討論區">
           <a class="btn btn-ghost btn-circle hover:bg-white/20" routerLink="/forum/posts" routerLinkActive="active">
@@ -110,8 +120,9 @@
           </a>
         </div>
       </div>
-
+      }
       <div class="flex items-center gap-2 border-l border-white/20 pl-4">
+        @if (currentUser) {
         <button class="btn btn-ghost btn-circle hover:bg-white/20">
           <div class="indicator">
             <i class="bi bi-bell text-2xl"></i>
@@ -122,22 +133,29 @@
         <div class="dropdown dropdown-end">
           <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar online">
             <div class="w-10 rounded-full ring ring-offset-2 ring-primary-content">
-              <img alt="User Avatar" src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+              <img alt="User Avatar" [src]="currentUser.picture" class="w-full h-full object-cover object-top"
+                style="image-rendering: -webkit-optimize-contrast;" />
             </div>
           </div>
           <ul tabindex="-1"
             class="menu menu-md dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow text-base-content">
             <div class="px-4 py-2 font-bold border-b border-base-200 mb-1 text-primary-content">
-              chloe451295
+              {{ currentUser.name }}
             </div>
             <li><a class="justify-between">個人檔案 <span class="badge badge-primary">New</span></a></li>
             <li><a>我的收藏</a></li>
             <li><a>點數中心 (0 pts)</a></li>
             <li><a>設定</a></li>
             <hr class="my-1 opacity-20" />
-            <li><a class="text-error">登出</a></li>
+            <li><a class="text-error font-semibold" (click)="onLogout()">登出</a></li>
           </ul>
         </div>
+        }@else {
+        <a class="btn btn-outline btn-sm rounded-full text-black hover:bg-white hover:text-black transition-all px-6"
+          routerLink="/login">
+          登入 / 註冊
+        </a>
+        }
       </div>
     </div>
   </div>

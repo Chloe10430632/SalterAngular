@@ -1,3 +1,4 @@
+import { ILogin } from './../interfaces/ILogin';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { IUploadUserPicture } from '../interfaces/IUploadUserPicture';
@@ -6,6 +7,7 @@ import { IRegister } from '../interfaces/IRegister';
 import { IVerifyRegisterOtp } from '../interfaces/IVerifyRegisterOtp';
 import { IResendOtp } from '../interfaces/IResendOtp';
 import { IBaseResponse } from '../interfaces/IBaseResponse';
+import { LoginResult } from '../interfaces/ILoginResponse';
 
 
 @Injectable({
@@ -42,6 +44,11 @@ export class UserService {
     const url = 'https://localhost:7017/api/User/User/ResendOtp';
     return this.http.post<IBaseResponse>(url, data)
   }
+
+  // postLogin(data: ILogin): Observable<LoginResult> {
+  //   const url = 'https://localhost:7017/api/User/User/Login';
+  //   return this.http.post<LoginResult>(url, data)
+  // }
 
 
 }
