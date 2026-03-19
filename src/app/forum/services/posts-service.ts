@@ -64,4 +64,23 @@ export class PostsService {
   }
 
 
+  //Get 看板貼文
+  GetBoardPostsApi(boardId: number, lastViewCount?: number, lastPostId?: number): Observable<PostList[]> {
+    let params = new HttpParams().set('boardId', boardId.toString());
+
+    if (lastViewCount !== undefined && lastPostId !== undefined) {
+      params = params
+        .set('lastViewCount', lastViewCount.toString())
+        .set('lastId', lastPostId.toString());
+    }
+
+    const apiData$ = this.http.get<PostList[]>('https://localhost:7017/api/Forum/Posts', { params });
+    const minimumDelay$ = timer(1000);
+    return zip(apiData$, minimumDelay$).pipe(
+      map(([data, _]) => data)
+    );
+
+  }
+
+
 }

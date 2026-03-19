@@ -1,4 +1,4 @@
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { DecimalPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { RelativeTimePipe } from '../../pipes/relative-time-pipe';
@@ -10,7 +10,7 @@ import { BoardDetails } from '../../interfaces/boardDetails';
 
 @Component({
   selector: 'app-select-board-posts',
-  imports: [DecimalPipe, RelativeTimePipe, InfiniteScrollDirective],
+  imports: [DecimalPipe, RelativeTimePipe, InfiniteScrollDirective, RouterLink],
   templateUrl: './select-board-posts.html',
   styleUrl: './select-board-posts.css',
 })
@@ -38,52 +38,63 @@ export class SelectBoardPosts implements OnInit {
   /**是否已沒有更多資料 */
   isFinished = false;
 
-  constructor(private postsService: PostsService, private boardsService: BoardsService, private activatedRoute: ActivatedRoute) { }
+  /**目前選中的看板ID */
   boardId: number | null = null;
+
+  constructor(private postsService: PostsService, private boardsService: BoardsService, private activatedRoute: ActivatedRoute) { }
 
   ngOnInit(): void {
 
 
-    // 監聽路由參數的變化
     this.activatedRoute.paramMap.subscribe(params => {
-      const id = params.get('id'); // 注意：名稱要跟你的 AppRoutingModule 設定一樣
+      const id = params.get('id');
       if (id) {
         this.boardId = +id; // 使用 + 號快速轉成 number
+        this.boardsService.GetBoardByIdApi(this.boardId).subscribe(data => {
+          this.boardDetails = data;
+        });
+        this.reset();
+        this.loadMore();
       }
     });
 
 
-    this.boardsService.GetBoardByIdApi(8).subscribe(data => {
-      this.boardDetails = data;
-    });
-    this.loadMore(8);
+  }
+
+  reset() {
+    this.postList = [];
+    this.isFinished = false;
+    this.isLoading = false;
   }
 
   // 無限滾動被動載入資料
   onScroll() {
-    // console.log('觸發捲動載入...');
-
-    // if (this.activeTab === 'popular') {
-    //   this.loadMore('popular');
-    // }
-
-    // if (this.activeTab === 'new') {
-    //   this.loadMore('new');
-    // }
-
-    // if (this.activeTab === 'follow') {
-    //   this.loadMore('follow');
-    // }
+    this.loadMore();
   }
 
 
 
-  loadMore(tab: number) {
+  loadMore() {
     if (this.isLoading || this.isFinished) return;
     this.isLoading = true;
     const lastPost = this.postList[this.postList.length - 1];
 
-
+    this.postsService.GetBoardPostsApi(this.boardId!, lastPost?.viewCount, lastPost?.postId)
+      .subscribe({
+        next: (newPosts) => {
+          if (newPosts.length === 0) {
+            this.isFinished = true;
+          } else {
+            console.log(newPosts);
+            this.postList = [...this.postList, ...newPosts]; // 將新資料併入舊陣列
+          }
+          this.isLoading = false;
+        },
+        error: (err) => {
+          console.error('載入失敗', err);
+          this.isLoading = false;
+        }
+      });
 
 
   }

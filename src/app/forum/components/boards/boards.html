@@ -43,9 +43,10 @@
             </div>
             }
             }@else {
-            @for (board of boardList; track $index) {
+            @for (board of boardList; track board.boardId) {
 
-            <div class="flex items-center gap-4 p-4 hover:bg-base-200/30 transition-colors group cursor-pointer">
+            <a class="flex items-center gap-4 p-4 hover:bg-base-200/30 transition-colors group cursor-pointer"
+              [routerLink]="'/forum/boards/'+board.boardId">
               <span class="w-4 text-center font-black text-error text-sm">{{$index+1}}</span>
               <div class="avatar">
                 <div class="w-10 h-10 rounded mr-5">
@@ -58,7 +59,7 @@
                 </div>
               </div>
               <button class="btn btn-neutral btn-outline btn-sm rounded-full px-5 hover:!text-white">追蹤</button>
-            </div>
+            </a>
 
             }
 

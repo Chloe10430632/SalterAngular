@@ -2,6 +2,7 @@ export interface PostList {
   postId: number;
   userName: string;
   avatarUrl: string;
+  boardId: number;
   boardTitle: string;
   locationTitle: string;
   contentPreview: string;

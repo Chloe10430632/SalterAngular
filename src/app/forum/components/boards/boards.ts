@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { BoardList } from '../../interfaces/boardList';
 import { BoardsService } from '../../services/boards-service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-boards',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './boards.html',
   styleUrl: './boards.css',
 })

@@ -4,10 +4,11 @@ import { Component, OnInit } from '@angular/core';
 import { PostsService } from '../../services/posts-service';
 import { RelativeTimePipe } from '../../pipes/relative-time-pipe';
 import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-posts',
-  imports: [DecimalPipe, RelativeTimePipe, InfiniteScrollDirective],
+  imports: [DecimalPipe, RelativeTimePipe, InfiniteScrollDirective, RouterLink],
   templateUrl: './posts.html',
   styleUrl: './posts.css',
 })
