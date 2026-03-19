@@ -1,0 +1,37 @@
+<div class="card bg-base-100 w-80 h-[480px] shadow-xl border border-base-200 flex flex-col" data-theme="bumblebee">
+  <figure class="px-4 pt-4 h-48 flex-shrink-0">
+    <img [src]="coachData.avatarUrl || '/assets/default-avatar.png'" [alt]="coachData.coachName"
+      class="rounded-xl h-48 w-full object-cover" />
+  </figure>
+
+  <div class="card-body flex-grow flex flex-col justify-between">
+    <h2 class="card-title text-primary">
+      {{ coachData.coachName }}
+      <!-- <div class="badge badge-secondary">教練</div> -->
+    </h2>
+
+    <div class="flex flex-wrap gap-1 mt-2">
+      @for (area of coachData.district; track area) {
+      <div class="badge badge-ghost badge-sm">{{ area }}</div>
+      }
+    </div>
+
+    <div class="flex items-center gap-2 mt-2">
+      <div class="rating rating-xs">
+        <input type="radio" class="mask mask-star-2 bg-orange-400" [checked]="true" />
+      </div>
+      <span class="text-sm font-bold">{{ coachData.avgRating }}</span>
+      <span class="text-xs text-base-content/60">({{ coachData.reviewCount }} 則評論)</span>
+    </div>
+
+    <div class="card-actions justify-start mt-3">
+      @for (spec of coachData.specialities; track spec) {
+      <div class="badge badge-outline badge-info">{{ spec }}</div>
+      }
+    </div>
+
+    <div class="card-actions justify-end mt-4">
+      <button class="btn btn-primary btn-sm">查看教練檔案</button>
+    </div>
+  </div>
+</div>

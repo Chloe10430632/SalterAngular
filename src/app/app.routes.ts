@@ -58,6 +58,7 @@ export const routes: Routes = [
     ]
   }
   ,
+  //教練課程路由
   {
     path: 'experience',
     loadComponent: () => import('./shared/layouts/with-navbar/with-navbar').then(m => m.WithNavbar),
@@ -65,7 +66,12 @@ export const routes: Routes = [
       {
         path: '',
         loadComponent: () => import('./experience/components/index/index').then(m => m.Index),
-      }
+      },
+      {
+        path: 'coachintro',
+        loadComponent: () => import('./experience/components/coachintro/coachintro').then(m => m.Coachintro)
+
+      },
     ]
   },
   {

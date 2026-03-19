@@ -1,1 +1,34 @@
-<p>experience index works!</p>
+<div class="flex flex-wrap justify-center gap-4 p-5" data-theme="bumblebee">
+  @for(c of coaches; track c.CoachId ){
+  <app-coach-card [coachData]="c"></app-coach-card>
+  }
+
+
+  @if (isLoading) {
+  @for (i of [1,2,3,4,5,6]; track i) {
+  <div class="card bg-base-100 w-80 h-[480px] shadow-sm border border-base-200 p-4 flex flex-col gap-4">
+    <div class="skeleton h-48 w-full rounded-xl"></div>
+    <div class="skeleton h-6 w-3/4"></div>
+    <div class="flex gap-2">
+      <div class="skeleton h-4 w-12"></div>
+      <div class="skeleton h-4 w-12"></div>
+    </div>
+    <div class="skeleton h-4 w-full mt-4"></div>
+    <div class="skeleton h-4 w-full"></div>
+    <div class="skeleton h-10 w-full mt-auto"></div>
+  </div>
+  }}
+</div>
+@if(!isLoading && coaches.length === 0){
+<div class="text-center py-20">教練還在海裡</div>
+}
+@if (!isEnd)
+{<div class="flex justify-center my-10">
+  <button class="btn btn-primary" [disabled]="isLoading" (click)="getPopRank()">
+    @if (isLoading) { <span class="loading loading-spinner"></span> }
+    {{ isLoading ? '搜尋中...' : '載入更多教練' }}
+  </button>
+</div>}
+@if(isEnd){
+<div class="text-center py-20" style="color: gray;">其他教練還在海裡</div>
+}
