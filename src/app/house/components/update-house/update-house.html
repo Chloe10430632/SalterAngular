@@ -1,0 +1,134 @@
+<div class="container mx-auto p-6 max-w-5xl">
+  <div class="card bg-base-100 shadow-2xl border border-base-300">
+    <div class="card-body gap-6">
+
+      <div class="flex items-center gap-4 mb-4">
+        <div class="p-3 bg-primary text-primary-content rounded-2xl">
+          <i class="fa-solid fa-hotel text-2xl"></i>
+        </div>
+        <div>
+          <h2 class="text-3xl font-black tracking-tight">編輯房屋資訊</h2>
+          <p class="text-base-content/60 text-sm">去你的寫到快爆炸</p>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <h3 class="text-lg font-bold flex items-center gap-2">
+          <i class="fa-solid fa-map-location-dot text-secondary"></i> 房屋位置
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="form-control">
+            <label class="label"><span class="label-text font-medium">縣市</span></label>
+            <input type="text" [(ngModel)]="houseForm.citie" placeholder="例如：台北市"
+              class="input input-bordered focus:input-primary" />
+          </div>
+          <div class="form-control">
+            <label class="label"><span class="label-text font-medium">行政區</span></label>
+            <input type="text" [(ngModel)]="houseForm.district" placeholder="例如：信義區"
+              class="input input-bordered focus:input-primary" />
+          </div>
+          <div class="form-control">
+            <label class="label"><span class="label-text font-medium">詳細地址</span></label>
+            <input type="text" [(ngModel)]="houseForm.location" placeholder="街道、門牌號碼..."
+              class="input input-bordered focus:input-primary" />
+          </div>
+        </div>
+        <div class="form-control">
+          <label class="label"><span class="label-text font-medium">房屋整體簡介</span></label>
+          <textarea [(ngModel)]="houseForm.houseDescription" class="textarea textarea-bordered h-20"
+            placeholder="描述房屋周邊環境、交通等..."></textarea>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="space-y-4">
+        <h3 class="text-lg font-bold flex items-center gap-2">
+          <i class="fa-solid fa-bed text-secondary"></i> 房型資訊
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="form-control">
+            <label class="label"><span class="label-text font-medium">房型名稱</span></label>
+            <input type="text" [(ngModel)]="houseForm.roomName" placeholder="例如：景觀豪華雙人房"
+              class="input input-bordered focus:input-secondary" />
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div class="form-control">
+              <label class="label"><span class="label-text font-medium">每晚價格</span></label>
+              <label class="input input-bordered flex items-center gap-2">
+                $ <input type="number" [(ngModel)]="houseForm.pricePerNight" class="grow" />
+              </label>
+            </div>
+            <div class="form-control">
+              <label class="label"><span class="label-text font-medium">容納人數</span></label>
+              <input type="number" [(ngModel)]="houseForm.capacity" class="input input-bordered" />
+            </div>
+          </div>
+        </div>
+        <div class="form-control">
+          <label class="label"><span class="label-text font-medium">房間內部描述</span></label>
+          <textarea [(ngModel)]="houseForm.roomDescription" class="textarea textarea-bordered h-24"
+            placeholder="描述房間內部的特色與設備..."></textarea>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="space-y-2">
+        <h3 class="text-lg font-bold flex items-center gap-2">
+          <i class="fa-solid fa-images text-secondary"></i> 房源照片
+        </h3>
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text-alt text-error font-bold">請貼上 Cloudinary 網址 (每行一個網址)</span>
+          </label>
+          <textarea [(ngModel)]="rawImageUrls"
+            class="textarea textarea-bordered w-full h-48 font-mono text-sm focus:textarea-primary leading-relaxed"
+            placeholder="https://res.cloudinary.com/..."></textarea>
+        </div>
+      </div>
+
+      <div class="space-y-4 mt-4">
+        <h3 class="text-lg font-bold flex items-center gap-2">
+          <i class="fa-solid fa-list-check text-secondary"></i> 提供設施
+        </h3>
+        <h3 class="text-lg font-bold mb-4">🏠 房屋設備 (勾選即更新)</h3>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+
+          @for (item of amenityList; track item.amenityId) {
+          <div class="flex items-center space-x-2 p-2 border rounded-lg hover:bg-gray-50">
+            <input type="checkbox" class="checkbox checkbox-primary" [id]="'amenity-' + item.amenityId"
+              [checked]="houseForm.amenityIds.includes(item.amenityId)"
+              (change)="onAmenityChange($event, item.amenityId)" />
+            <label [for]="'amenity-' + item.amenityId" class="cursor-pointer select-none">
+              <i [class]="item.iconCode"></i>
+              {{ item.name }}
+            </label>
+          </div>
+          }
+          <!-- 讀取動畫 -->
+          @empty {
+          <div class=" col-span-full flex flex-col items-center py-10">
+            <span class="loading loading-infinity loading-lg text-primary"></span>
+            <p class="text-base-content/50 mt-2">正在同步雲端設備清單...</p>
+          </div>
+          }
+        </div>
+      </div>
+
+      <div class="card-actions justify-end mt-12 pt-6 border-t border-base-300">
+        <button class="btn btn-ghost btn-sm text-error text-base font-bold" (click)="rawImageUrls = ''">
+          <i class="fa-solid fa-trash-can mr-2"></i> 清除房源照片內容
+        </button>
+        <button class="btn btn-primary btn-lg px-12 shadow-lg shadow-primary/20"
+          [disabled]="isLoading || !houseForm.roomName || !houseForm.location" (click)="onSubmit()">
+          @if (isLoading) {
+          <span class="loading loading-spinner"></span>
+          }
+          確認更改房源
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

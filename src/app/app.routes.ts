@@ -86,6 +86,22 @@ export const routes: Routes = [
     }]
   },
   {
+    path: 'createHouse',
+    loadComponent: () => import('./shared/layouts/with-navbar/with-navbar').then(m => m.WithNavbar),
+    children: [{
+      path: '',
+      loadComponent: () => import('./house/components/create-house/create-house').then(m => m.CreateHouse),
+    }]
+  },
+  {
+    path: 'updateHouse/:id',
+    loadComponent: () => import('./shared/layouts/with-navbar/with-navbar').then(m => m.WithNavbar),
+    children: [{
+      path: '',
+      loadComponent: () => import('./house/components/update-house/update-house').then(m => m.UpdateHouse),
+    }]
+  },
+  {
     path: '**', //萬用路由404
     loadComponent: () => import('./shared/layouts/with-navbar/with-navbar').then(m => m.WithNavbar),
     children: [
