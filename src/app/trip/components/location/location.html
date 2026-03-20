@@ -1,0 +1,159 @@
+<div class="flex gap-2" style="height: calc(100vh - 56px - 1rem)">
+
+
+  <!-- 左側地點面板 -->
+  <aside class="w-80 bg-base-100 border border-base-300 flex flex-col shadow-sm rounded-lg my-2">
+
+    <!-- 標題 + 新增 -->
+    <div class="p-4 border-b border-base-300">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="font-bold">行程地點</h2>
+        <button class="btn btn-primary btn-sm gap-1" (click)="openAddModal()">
+          <i class="bi bi-plus-lg"></i>
+          新增地點
+        </button>
+      </div>
+      <label class="input input-bordered input-sm flex items-center gap-2">
+        <i class="bi bi-search text-base-content/40"></i>
+        <input type="text" placeholder="搜尋地點…" class="grow text-sm" [(ngModel)]="searchKeyword" />
+      </label>
+    </div>
+
+    <!-- 地點清單 -->
+    <div class="flex-1 overflow-y-auto divide-y divide-base-200">
+
+      @if (isLoading) {
+      @for (item of [1,2,3]; track item) {
+      <div class="p-4">
+        <div class="flex items-start gap-3">
+          <div class="skeleton w-7 h-7 rounded-full shrink-0"></div>
+          <div class="flex-1 flex flex-col gap-2">
+            <div class="skeleton h-4 w-3/4"></div>
+            <div class="skeleton h-3 w-1/2"></div>
+          </div>
+        </div>
+      </div>
+      }
+      }
+
+      @if (!isLoading && locations.length === 0) {
+      <div class="flex flex-col items-center justify-center py-16 text-base-content/30">
+        <i class="bi bi-geo-alt text-4xl mb-2"></i>
+        <p class="text-sm">尚未新增地點</p>
+      </div>
+      }
+
+      @for (loc of locations; track loc.id; let i = $index) {
+      <div class="p-4 cursor-pointer transition-colors" [class.bg-primary]="selectedLocation?.id === loc.id"
+        [class.bg-opacity-5]="selectedLocation?.id === loc.id" [class.border-l-4]="selectedLocation?.id === loc.id"
+        [class.border-primary]="selectedLocation?.id === loc.id" (click)="selectLocation(loc)">
+        <div class="flex items-start gap-3">
+
+          <!-- 序號圓圈 -->
+          <div
+            class="w-7 h-7 rounded-full text-white flex items-center justify-center text-xs font-bold shrink-0 mt-0.5"
+            [style.background-color]="getLocationColor(i)">
+            {{ i + 1 }}
+          </div>
+
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between gap-1">
+              <span class="font-semibold text-sm truncate">{{ loc.locationName }}</span>
+
+              <!-- 操作選單 -->
+              <div class="dropdown dropdown-end">
+                <div tabindex="0" role="button" class="btn btn-ghost btn-xs" (click)="$event.stopPropagation()">
+                  <i class="bi bi-three-dots"></i>
+                </div>
+                <ul tabindex="-1"
+                  class="dropdown-content menu bg-base-100 rounded-box shadow border border-base-300 text-sm w-32 z-10">
+                  <li><a (click)="openEditModal(loc)">編輯</a></li>
+                  <li><a class="text-error" (click)="deleteLocation(loc.id)">刪除</a></li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- 標籤 -->
+            @if (loc.locationRole) {
+            <div class="flex gap-1 mt-1 flex-wrap">
+              <span class="badge badge-primary badge-xs">{{ loc.locationRole }}</span>
+            </div>
+            }
+
+            <!-- 備註 -->
+            @if (loc.note) {
+            <p class="text-xs text-base-content/50 mt-1.5 italic">{{ loc.note }}</p>
+            }
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+  </aside>
+
+  <!-- 地圖區（暫時佔位） -->
+  <div class="flex-1 relative bg-base-200 flex items-center justify-center">
+    <div class="card bg-base-100 shadow-lg border border-base-300 p-6 text-center max-w-sm">
+      <i class="bi bi-geo-alt text-5xl text-base-content/20 mb-3"></i>
+      <p class="font-bold text-base-content/70">Google Maps 嵌入區域</p>
+      <p class="text-sm text-base-content/40 mt-1">串接 Google Maps API 後顯示地圖</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- 新增/編輯地點 Modal -->
+<dialog id="location_modal" class="modal">
+  <div class="modal-box">
+    <h3 class="font-bold text-lg mb-4">
+      {{ isEditing ? '編輯地點' : '新增地點' }}
+    </h3>
+
+    <div class="flex flex-col gap-3">
+
+      <!-- 搜尋地點 -->
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text font-medium">地點名稱</span>
+        </label>
+        <input type="text" class="input input-bordered w-full" placeholder="搜尋地點名稱…" [(ngModel)]="form.locationName" />
+      </div>
+
+      <!-- 用途標籤 -->
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text font-medium">用途標籤</span>
+        </label>
+        <select class="select select-bordered w-full" [(ngModel)]="form.locationRole">
+          <option value="">請選擇</option>
+          <option value="集合點">集合點</option>
+          <option value="住宿">住宿</option>
+          <option value="餐廳">餐廳</option>
+          <option value="景點">景點</option>
+          <option value="活動">活動</option>
+          <option value="其他">其他</option>
+        </select>
+      </div>
+
+      <!-- 備註 -->
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text font-medium">備註</span>
+        </label>
+        <textarea class="textarea textarea-bordered w-full" rows="3" placeholder="輸入備註…"
+          [(ngModel)]="form.note"></textarea>
+      </div>
+
+    </div>
+
+    <div class="modal-action">
+      <button class="btn btn-ghost" onclick="location_modal.close()">取消</button>
+      <button class="btn btn-primary" (click)="saveLocation()">
+        {{ isEditing ? '儲存' : '新增' }}
+      </button>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
