@@ -7,13 +7,23 @@ import { NotificationService } from '../shared/notifyService/notification-servic
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
   const notify = inject(NotificationService);
-  //  const token = localStorage.getItem('token');
-  const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyOSIsImp0aSI6IjhmOGE0MDFlLTEyMjgtNGY4My1hMjVlLTJjOWI1MTIyMjM0OSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWVpZGVudGlmaWVyIjoiMjkiLCJVc2VyTmFtZSI6ImJhYnViYWJ1MTExMSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImJhYnViYWJ1QHRlc3QuY29tIiwiQXZhdGFyIjoiL2FkbWluL2ltZ3MvMjAyNjAzMTEyMjUwX0tlcm9yby5wbmciLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJOb3JtYWxVc2VyIiwiZXhwIjoxNzc0MDIyODQ2LCJpc3MiOiJTYWx0ZXJXZWJBcGkiLCJhdWQiOiJTYWx0ZXJBbmd1bGFyQ2xpZW50In0.llXtRlMh9KNOTOs54Tm_4Wy0WtWZvSHj2913p_FbL3k"; //測試用Chloe123456帳號
+  const token = localStorage.getItem('token');
+
+  const skipUrls = [
+    '/Login',
+    '/Register',
+    '/GoogleLogin',
+    '/UploadUserPicture',
+    '/VerifyRegisterOtp',
+    '/ResendOtp'
+  ];
+  const isPublicApi = skipUrls.some(url => req.url.includes(url));
+
 
 
   // 1. 處理 Request (注入 Token)
   let authReq = req;
-  if (token) {
+  if (token && !isPublicApi) {
     authReq = req.clone({
       setHeaders: { Authorization: `Bearer ${token}` }
     });
