@@ -45,6 +45,7 @@ export class AuthService {
         return 'images/default-avatar.png';
       };
       const user = {
+        id: decoded.sub,
         token: token,
         name: decoded.UserName || '使用者',
         // 🎯 直接套用判斷邏輯
