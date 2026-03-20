@@ -11,6 +11,7 @@ import { forkJoin, of, throwError } from 'rxjs'; // of 用來處理空值
 import { inject } from '@angular/core/primitives/di';
 import { BtnRankPop } from "../../myComponents/btn-rank-pop/btn-rank-pop";
 import { BtnRankNew } from "../../myComponents/btn-rank-new/btn-rank-new";
+import { rankItem } from '../../Service/SRank';
 
 //#endregion
 
@@ -62,7 +63,7 @@ export class Index implements OnInit {
   }
   //#endregion
 
-  //#region search--用forkin
+  //#region ???search--用forkin
   searchReasult: any[] = [];
   indexSearch(text: string): void {
     const s_trim = text.trim();
@@ -85,6 +86,8 @@ export class Index implements OnInit {
         const combine = [...res.dist, ...res.spe, ...res.name];
 
         this.searchReasult = this.removeDuplicates(combine);
+        console.log("關鍵字整理後:", this.searchReasult);
+        this.coaches = this.searchReasult;
       },
       error: (err) => console.error('API 壞掉啦', err)
     });
@@ -93,11 +96,37 @@ export class Index implements OnInit {
     return data.filter((item, index, self) =>
       index === self.findIndex((t) => t.id === item.id));
   }
+
   //#endregion
 
+  //#region 排序
+  refreshData() {
+    this.coaches = []; // 先把舊資料清空，畫面就會變回初始狀態
+    this.currentPage = 1; // 頁碼回到第一頁
+    this.isEnd = false; // 重置結束狀態
 
+    this.getPopRank();// 重新呼叫你寫好的 API 抓取函式
+  }
+  handleRankUpdate() {
+    this.refreshData();
+  }
+  //#endregion
+
+  //#region 最新
+  displayRanks: rankItem[] = [];
+  //接收子組件傳來的 $event (即 data)
+  handleNewRank(data: rankItem[]) {
+    console.log("父組件：成功接到球了！", data);
+    this.displayRanks = data; // 更新畫面資料
+    this.coaches = data;
+  }
+  //#endregion
 
 }
+//#endregion
+
+
+
 
 //#region
 //#endregion

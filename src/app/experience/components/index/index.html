@@ -6,8 +6,8 @@
       <div class="flex items-start gap-4"> <app-search class="mt-0"></app-search>
 
         <div class="flex gap-2">
-          <app-btn-rank-pop></app-btn-rank-pop>
-          <app-btn-rank-new></app-btn-rank-new>
+          <app-btn-rank-pop (click)="handleRankUpdate()"></app-btn-rank-pop>
+          <app-btn-rank-new (rankUpdated)="handleNewRank($event)"></app-btn-rank-new>
         </div>
       </div>
 
