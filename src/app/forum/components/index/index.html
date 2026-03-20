@@ -149,8 +149,29 @@
 
   <div class="col-span-12 md:col-span-3 h-screen sticky top-20 z-10">
     <div class="sticky bottom-6 z-30">
+      @if (!adDetails) {
+      <div class="card bg-base-100 shadow-sm border border-base-300 overflow-hidden">
+        <!-- 頂部標題列 Skeleton -->
+        <div class="p-3 bg-base-200 flex justify-between items-center">
+          <div class="flex items-center gap-2">
+            <div class="skeleton h-4 w-4 rounded-md"></div> <!-- 模擬 Icon -->
+            <div class="skeleton h-4 w-12 rounded"></div> <!-- 模擬「贊助」文字 -->
+          </div>
+          <div class="skeleton h-4 w-4 rounded-full"></div> <!-- 模擬問號 Icon -->
+        </div>
 
-      <a routerLink="/experience" target="_blank" class="tooltip tooltip-bottom" data-tip="【海邊玩水，安全第一】2026夏季離岸流辨識與自救講座">
+        <!-- 主體圖片區域 Skeleton -->
+        <div class="m-4 border-2 border-base-300 rounded-lg overflow-hidden">
+          <!-- 這裡使用 animate-pulse 增加閃爍動態 -->
+          <div class="skeleton h-[400px] w-full flex items-center justify-center bg-base-200 animate-pulse">
+            <!-- 模擬中間的品牌 Logo 或圖示 -->
+            <div class="w-24 h-24 rounded-2xl bg-base-300/50 border border-base-300/30 shadow-inner"></div>
+          </div>
+        </div>
+      </div>
+      }@else{
+      <a [href]="adDetails?.targetUrl" target="_blank" class="tooltip tooltip-bottom"
+        [attr.data-tip]="adDetails?.tooltipText|| '前往體驗區'">
         <div class="card bg-base-100 shadow-sm border border-base-300 overflow-hidden">
           <div class="p-3 bg-base-200 text-sm font-bold flex justify-between items-center uppercase tracking-wider">
             <span class="flex items-center gap-2">
@@ -163,13 +184,15 @@
             class="h-[400px] m-4 border-2 border-base-300 relative flex items-center justify-center rounded-lg overflow-hidden bg-base-50">
             <div class="relative z-10 text-center scale-104 cursor-pointer hover:scale-110 transition-transform">
 
-              <img src="https://res.cloudinary.com/dbyzfq61h/image/upload/v1773757079/ads_8_qgnzfa.jpg" alt="">
+              <img [src]="adDetails?.imageUrl" alt="贊助商廣告">
 
             </div>
           </div>
         </div>
 
       </a>
+      }
+
 
 
 

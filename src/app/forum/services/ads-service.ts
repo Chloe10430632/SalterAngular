@@ -1,5 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { AdData } from '../interfaces/adData';
+import { map, timer, zip } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +17,11 @@ export class AdsService {
 
   //GET 廣告
   GetAdsApi() {
-    // return this.http.get<adData>('https://localhost:7017/api/Forum/Ads');
+    const apiData$ = this.http.get<AdData>('https://localhost:7017/api/Forum/Ads');
+    const minimumDelay$ = timer(700);
+    return zip(apiData$, minimumDelay$).pipe(
+      map(([data, _]) => data)
+    );
   }
 
 

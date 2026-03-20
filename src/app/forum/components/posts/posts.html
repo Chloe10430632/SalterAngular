@@ -183,9 +183,9 @@
 
                 <div class="flex items-center gap-6 mt-5 ml-2 text-base-content/60">
                   <!-- 愛心按鈕：點擊後變紅並跳動 -->
-                  <button (click)="toggleLike()" [class.text-error]="isLiked"
+                  <button (click)="handleInteraction(post, 'like')" [class.text-error]="post.isLiked"
                     class="flex items-center gap-1.5 transition-all duration-300 active:scale-90 hover:text-error group">
-                    <i [class]="isLiked ? 'fa-solid fa-heart animate-bounce-once' : 'fa-regular fa-heart'"
+                    <i [class]="post.isLiked ? 'fa-solid fa-heart animate-bounce-once' : 'fa-regular fa-heart'"
                       class="text-xl transition-transform group-hover:scale-110"></i>
                     <span class="text-[11px] font-bold">{{ post.likeCount | number }}</span>
                   </button>
@@ -195,9 +195,9 @@
                     <span class="text-[11px] font-bold">{{post.commentCount | number}}</span>
                   </button>
                   <!-- 收藏按鈕：點擊後變黃 -->
-                  <button (click)="toggleBookmark()" [class.text-warning]="isBookmarked"
+                  <button (click)="handleInteraction(post, 'collect')" [class.text-warning]="post.isCollected"
                     class="flex items-center gap-1.5 transition-all duration-300 active:scale-90 hover:text-warning group">
-                    <i [class]="isBookmarked ? 'fa-solid fa-bookmark' : 'fa-regular fa-bookmark'"
+                    <i [class]="post.isCollected ? 'fa-solid fa-bookmark' : 'fa-regular fa-bookmark'"
                       class="text-lg transition-transform group-hover:scale-110"></i>
                     <span class="text-[11px] font-bold">{{ post.collectCount | number }}</span>
                   </button>

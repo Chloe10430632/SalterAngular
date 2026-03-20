@@ -1,7 +1,9 @@
+import { AdsService } from './../../services/ads-service';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router, RouterOutlet, RouterLinkWithHref, RouterLinkActive } from '@angular/router';
 import { BoardList } from '../../interfaces/boardList';
 import { BoardsService } from '../../services/boards-service';
+import { AdData } from '../../interfaces/adData';
 
 @Component({
   selector: 'app-index',
@@ -18,7 +20,10 @@ export class Index implements OnInit {
   /**Top5追蹤推薦看板列表 */
   boardListFollow5: BoardList[] = [];
 
-  constructor(private boardsService: BoardsService) {
+  /**廣告資料 */
+  adDetails?: AdData;
+
+  constructor(private boardsService: BoardsService, private adsService: AdsService) {
 
   }
 
@@ -29,6 +34,10 @@ export class Index implements OnInit {
 
     this.boardsService.GetTop5FollowBoardsApi().subscribe(data => {
       this.boardListFollow5 = data;
+    });
+
+    this.adsService.GetAdsApi().subscribe(data => {
+      this.adDetails = data;
     });
 
 

@@ -1,3 +1,4 @@
+
 import { PostList } from './../../interfaces/postList';
 import { DecimalPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
@@ -5,6 +6,9 @@ import { PostsService } from '../../services/posts-service';
 import { RelativeTimePipe } from '../../pipes/relative-time-pipe';
 import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
 import { RouterLink } from '@angular/router';
+import { PostInteractionsService } from '../../services/post-interactions-service';
+import { PostInteractionsRequest } from '../../interfaces/postInteractionsRequest';
+
 
 @Component({
   selector: 'app-posts',
@@ -13,12 +17,6 @@ import { RouterLink } from '@angular/router';
   styleUrl: './posts.css',
 })
 export class Posts implements OnInit {
-  /**按讚變數 */
-  isLiked = false;
-  likeCount = 8867;
-  /**收藏變數 */
-  isBookmarked = false;
-  bookmarkCount = 102;
 
   /**貼文篩選變數，預設為popular */
   activeTab: 'popular' | 'new' | 'follow' = 'popular';
@@ -38,7 +36,7 @@ export class Posts implements OnInit {
   isFinished = false;
 
 
-  constructor(private postsService: PostsService) { }
+  constructor(private postsService: PostsService, private postInteractionsService: PostInteractionsService) { }
 
   ngOnInit(): void {
     this.loadMore('popular');
@@ -146,18 +144,94 @@ export class Posts implements OnInit {
 
 
 
+  handleInteraction(post: PostList, type: string) {
+    if (type === 'like') {
+      post.isLiked = !post.isLiked;
+      if (post.isLiked) {
+        post.likeCount++;
+      } else {
+        post.likeCount--;
+      }
+
+    } else if (type === 'collect') {
+      post.isCollected = !post.isCollected;
+      if (post.isCollected) {
+        post.collectCount++;
+      } else {
+        post.collectCount--;
+      }
+    }
 
 
-  toggleLike() {
-    this.isLiked = !this.isLiked;
-    // 邏輯處理：奇數次加1，偶數次減1
-    this.isLiked ? this.likeCount++ : this.likeCount--;
+    const request: PostInteractionsRequest = {
+      postId: post.postId,
+      type: type as 'like' | 'collect' | 'share' | 'report' | 'view',
+      reportReason: type === 'report' ? '......檢舉事由......' : undefined,
+    };
+
+
+    this.postInteractionsService.postPostInteractionsApi(request).subscribe({
+      next: (data) => console.log(`interaction success:`, data),
+      error: (err) => {
+        // 如果 API 失敗，要把 UI 狀態滾回 (視需求而定)
+        if (post.isLiked) {
+          post.likeCount--;
+        } else {
+          post.likeCount++;
+        }
+        console.error(`interaction failed`, err);
+      }
+    });
+
   }
 
-  toggleBookmark() {
-    this.isBookmarked = !this.isBookmarked;
-    this.isBookmarked ? this.bookmarkCount++ : this.bookmarkCount--;
-  }
+
+
+
+
+  // toggleLike(post: PostList) {
+  //   post.isLiked = !post.isLiked;
+
+  //   if (post.isLiked) {
+  //     post.likeCount++;
+  //   } else {
+  //     post.likeCount--;
+  //   }
+
+  //   const request: PostInteractionsRequest = {
+  //     postId: post.postId,
+  //     type: 'like',
+  //   };
+
+  //   this.postInteractionsService.postPostInteractionsApi(request).subscribe({
+  //     next: (data) => console.log(`interaction success:`, data),
+  //     error: (err) => {
+  //       // 如果 API 失敗，要把 UI 狀態滾回 (視需求而定)
+  //       if (post.isLiked) {
+  //         post.likeCount--;
+  //       } else {
+  //         post.likeCount++;
+  //       }
+  //       console.error(`interaction failed`, err);
+  //     }
+  //   });
+
+
+
+
+
+
+
+  // }
+
+  // toggleCollect(post: PostList) {
+  //   post.isCollected = !post.isCollected;
+  //   if (post.isCollected) {
+  //     post.collectCount++;
+  //   } else {
+  //     post.collectCount--;
+  //   }
+  // }
 
 
 }
