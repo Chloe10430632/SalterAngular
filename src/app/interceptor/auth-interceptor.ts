@@ -39,7 +39,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       } else {
         switch (error.status) {
           case 401:
-            errorMessage = '登入逾時或尚未登入，請登入後查看!';
+            errorMessage = error.error?.detail || error.error?.message || '登入逾時或尚未登入，請登入後查看!';
             router.navigate(['/login']);
             break;
           case 403:
