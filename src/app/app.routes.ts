@@ -1,3 +1,4 @@
+import { Component } from '@angular/core';
 import { Boards } from './forum/components/boards/boards';
 import { Routes } from '@angular/router';
 import { NavbarLayout } from './shared/layouts/navbar-layout/navbar-layout';
@@ -68,6 +69,30 @@ export const routes: Routes = [
       }
     ]
   },
+  //login路由
+  {
+    path: 'login',
+    component: BlankLayout,
+    children: [
+      {
+        path: '',
+        loadComponent: () => import('./user/components/login/login').then(m => m.Login),
+      },
+    ]
+  },
+  //註冊
+  {
+    path: 'register',
+    component: NavbarLayout,
+    children: [
+      {
+        path: '',
+        loadComponent: () => import('./user/components/register/register').then(m => m.Register),
+      },
+    ]
+  },
+
+
   //行程路由
   {
     path: 'trip',
@@ -141,7 +166,8 @@ export const routes: Routes = [
         loadComponent: () => import('./shared/notfound/notfound').then(m => m.Notfound),
       }
     ]
-  },
+  }
+
 
 
 

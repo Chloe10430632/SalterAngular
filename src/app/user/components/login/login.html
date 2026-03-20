@@ -7,24 +7,33 @@
 
     <div class="card bg-base-100 w-96 min-h-[400px] shrink-0 shadow-2xl">
       <div class="card-body justify-center">
-        <fieldset class="fieldset">
+        <fieldset class="fieldset" [formGroup]="loginForm">
           <label class="fieldset-label text-sm">信箱</label>
-          <input type="email" class="input input-bordered w-full mb-2" placeholder="Email" />
+          <input type="email" formControlName="email" class="input input-bordered w-full mb-2" placeholder="Email" />
 
           <label class="fieldset-label text-sm mt-2">密碼</label>
-          <input type="password" class="input input-bordered w-full" placeholder="Password" />
+          <div class="relative w-full">
+            <input [type]="isPasswordVisible ? 'text' : 'password'" formControlName="password"
+              class="input input-bordered w-full pr-12" placeholder="Password" />
+
+            <button type="button" (click)="togglePasswordVisibility()"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary transition-colors">
+              <i class="bi" [class.bi-eye]="!isPasswordVisible" [class.bi-eye-slash]="isPasswordVisible"></i>
+            </button>
+          </div>
 
           <div class="mt-2 flex justify-center gap-6">
             <a class="link link-hover text-xs opacity-50">忘記密碼?</a>
             <a class="link link-hover text-xs opacity-50" routerLink="/register"> 還沒有帳號？前往註冊</a>
           </div>
 
-
-
-          <button class="btn btn-primary btn-lg mt-3 uppercase tracking-widest">
+          <button class="btn btn-primary btn-lg mt-3 uppercase tracking-widest" (click)="onLogin()"
+            [disabled]="isLoading">
+            @if (isLoading) { <span class="loading loading-spinner"></span> }
             Login
           </button>
-          <button class="btn bg-white text-black border-[#e5e5e5]">
+
+          <button (click)="signInWithGoogle()" class="btn bg-white text-black border-[#e5e5e5]" type="button">
             <svg aria-label="Google logo" width="16" height="16" xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 512 512">
               <g>

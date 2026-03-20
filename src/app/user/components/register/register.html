@@ -1,4 +1,4 @@
-<div class="min-h-screen bg-base-200 flex flex-center py-10">
+<div class="min-h-screen bg-base-200 flex items-center justify-center py-10">
   <div class="card w-full max-w-2xl bg-base-100 shadow-xl">
     <div class="card-body">
       <h2 class="card-title text-2xl font-bold mb-6">會員註冊</h2>
@@ -6,6 +6,7 @@
       <ul class="steps w-full mb-8">
         <li class="step" [class.step-primary]="step >= 1">上傳頭像</li>
         <li class="step" [class.step-primary]="step >= 2">基本資料</li>
+        <li class="step" [class.step-primary]="step >= 3">信箱驗證</li>
       </ul>
 
       <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
@@ -13,8 +14,8 @@
         @if (step === 1) {
         <div class="flex flex-col items-center gap-4">
           <div class="avatar">
-            <div class="w-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-              <img [src]="previewUrl || 'assets/default-avatar.png'" />
+            <div class="w-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 mb-5">
+              <img class="object-cover object-top" [src]="previewUrl || '/user/default-avatar.png'" />
             </div>
           </div>
 
@@ -23,7 +24,7 @@
 
           <div class="card-actions justify-end w-full mt-6">
             <button type="button" class="btn btn-primary" [disabled]="!isPictureUploaded"
-              (click)="step = 2">下一步</button>
+              (click)="nextStep()">下一步</button>
           </div>
         </div>
         }
@@ -42,12 +43,30 @@
 
           <div class="form-control">
             <label class="label"><span class="label-text">密碼</span></label>
-            <input type="password" formControlName="password" class="input input-bordered" />
+            <div class="relative w-full">
+              <input [type]="isPasswordVisible ? 'text' : 'password'" formControlName="password"
+                class="input input-bordered w-full pr-12" placeholder="請輸入密碼" />
+
+              <button type="button"
+                class="absolute inset-y-0 right-0 flex items-center px-4 text-gray-500 hover:text-primary transition-colors"
+                (click)="isPasswordVisible = !isPasswordVisible">
+                <i [class]="isPasswordVisible ? 'bi bi-eye' : 'bi bi-eye-slash'"></i>
+              </button>
+            </div>
           </div>
 
           <div class="form-control">
             <label class="label"><span class="label-text">確認密碼</span></label>
-            <input type="password" formControlName="confirmPassword" class="input input-bordered" />
+            <div class="relative w-full">
+              <input [type]="isConfirmPasswordVisible ? 'text' : 'password'" formControlName="confirmPassword"
+                class="input input-bordered w-full pr-12" placeholder="請再次輸入密碼" />
+
+              <button type="button"
+                class="absolute inset-y-0 right-0 flex items-center px-4 text-gray-500 hover:text-primary transition-colors"
+                (click)="isConfirmPasswordVisible = !isConfirmPasswordVisible">
+                <i [class]="isConfirmPasswordVisible ? 'bi bi-eye' : 'bi bi-eye-slash'"></i>
+              </button>
+            </div>
           </div>
 
           <div class="form-control">
@@ -61,19 +80,58 @@
               <option value="">請選擇</option>
               <option value="Male">男</option>
               <option value="Female">女</option>
-              <option value="Other">其他</option>
             </select>
           </div>
 
-          <div class="form-control md:col-span-2">
+          <div class="form-control">
             <label class="label"><span class="label-text">生日</span></label>
             <input type="date" formControlName="birthday" class="input input-bordered" />
           </div>
         </div>
 
         <div class="card-actions justify-between mt-8">
-          <button type="button" class="btn btn-ghost" (click)="step = 1">上一步</button>
-          <button type="submit" class="btn btn-primary" [disabled]="registerForm.invalid">完成註冊</button>
+          <button type="button" class="btn btn-ghost" [disabled]="isLoading" (click)="step = 1">上一步</button>
+
+          <button type="submit" class="btn btn-primary" [disabled]="!isStep2Valid || isLoading">
+            @if (isLoading) {
+            <span class="loading loading-spinner"></span>
+            正在發送...
+            } @else {
+            發送驗證碼
+            }
+          </button>
+        </div>
+        }
+        @if (step === 3) {
+        <div class="flex flex-col items-center gap-6">
+          <div class="text-center">
+            <h3 class="text-lg font-semibold">驗證碼已寄送到您的信箱</h3>
+            <div class="text-sm text-gray-500 mt-2">
+              @if (!canResend) {
+              驗證碼有效時間：<span class="font-mono text-primary text-xl">{{ formatTime }}</span>
+              } @else {
+              <span class="text-error">驗證碼已過期，請重新獲取</span>
+              }
+            </div>
+          </div>
+
+          <div class="form-control w-full max-w-xs">
+            <input type="text" formControlName="otp" placeholder="請輸入 6 位數"
+              class="input input-bordered text-center text-2xl tracking-widest" maxlength="6" />
+          </div>
+
+          <div class="w-full max-w-xs flex flex-col gap-3">
+            <button type="button" class="btn btn-secondary w-full"
+              [disabled]="registerForm.get('otp')?.invalid || canResend" (click)="onVerifyOtp()">
+              驗證並啟用帳號
+            </button>
+
+            @if (canResend) {
+            <button type="button" class="btn btn-outline btn-ghost w-full mt-2" (click)="onResendOtp()">
+              沒收到信？重新發送驗證碼
+            </button>
+            }
+          </div>
         </div>
         }
 
