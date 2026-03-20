@@ -12,6 +12,7 @@ export class Search {
   @Output() searchEvent = new EventEmitter<string>();
 
   search(): void {
+    console.log('子元件：準備丟出球，內容是：', this.inputString); // 加這行測試
     this.searchEvent.emit(this.inputString)
   }
 
