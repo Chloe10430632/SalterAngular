@@ -4,10 +4,11 @@ import { HttpClient } from '@angular/common/http';
 import { NgClass } from '@angular/common';
 import { Search } from '../../myComponents/search/search';
 import { BtnCoachSwitch } from '../../myComponents/btn-coach-switch/btn-coach-switch';
+import { Footer } from '../../../shared/footer/footer';
 
 @Component({
   selector: 'app-index',
-  imports: [BtnCoachSwitch, Search, CoachCard, NgClass],
+  imports: [BtnCoachSwitch, Search, CoachCard, NgClass, Footer],
   templateUrl: './index.html',
   styleUrl: './index.css',
 })
