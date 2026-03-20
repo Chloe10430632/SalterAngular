@@ -1,1 +1,46 @@
-<p>coach-island works!</p>
+<div class="flex flex-col items-center w-full min-h-[80vh] bg-base-100 p-6 md:p-12" data-theme="bumblebee">
+
+  <div class="tabs tabs-boxed bg-transparent mb-16 gap-2">
+    <a class="tab tab-lg hover:tab-active transition-all">我的資料</a>
+
+    <div class="dropdown dropdown-hover">
+      <div tabindex="0" role="button" class="tab tab-lg flex items-center gap-1">
+        課程
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 opacity-50" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+      </div>
+      <ul tabindex="0"
+        class="dropdown-content menu bg-base-100 rounded-box z-[1] w-48 p-2 shadow-xl border border-base-200">
+        <li><a class="active:bg-primary [src]=" url"">本島主開的課</a></li>
+        <li><a class="active:bg-primary">別人家踏踏-我參加過的課</a></li>
+      </ul>
+    </div>
+
+    <a class="tab tab-lg hover:tab-active transition-all text-primary font-bold">收藏</a>
+    <a class="tab tab-lg hover:tab-active transition-all">營運</a>
+  </div>
+
+  <div class="flex flex-col items-center text-center max-w-lg">
+
+    <div class="w-48 h-48 md:w-56 md:h-56 rounded-[3rem] overflow-hidden shadow-2xl mb-10 border-8 border-white">
+      <img
+        src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJndXh3Zmxic3R6ZGp4Z3B4amYycTVicWp4Z3B4amYycTVicWp4ZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o7TKMGpxxcaO0K3S0/giphy.gif"
+        alt="Welcome GIF" class="w-full h-full object-cover" />
+    </div>
+
+    <h1 class="text-5xl md:text-6xl font-bold text-[#5D4037] mb-6 tracking-tight">
+      歡迎登島
+    </h1>
+
+    <p class="text-lg md:text-xl text-base-content/50 mb-10 leading-relaxed px-4">
+      !!恭候島主大駕光臨!!
+    </p>
+
+    <button
+      class="btn btn-neutral btn-wide btn-lg rounded-full text-white bg-[#4A423E] hover:bg-[#3E3733] border-none shadow-lg tracking-widest">
+      我想離島-回到首頁
+    </button>
+  </div>
+</div>
