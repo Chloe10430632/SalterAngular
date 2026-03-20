@@ -1,3 +1,4 @@
+import { Blank } from './shared/layouts/blank/blank';
 import { Component } from '@angular/core';
 import { Boards } from './forum/components/boards/boards';
 import { Routes } from '@angular/router';
@@ -53,6 +54,16 @@ export const routes: Routes = [
           {
             path: '',
             loadComponent: () => import('./forum/components/boards/boards').then(m => m.Boards)
+          }
+        ]
+      },
+      {
+        path: 'boards/:id',
+        loadComponent: () => import('./forum/components/index/index').then(m => m.Index),
+        children: [
+          {
+            path: '',
+            loadComponent: () => import('./forum/components/select-board-posts/select-board-posts').then(m => m.SelectBoardPosts)
           }
         ]
       }

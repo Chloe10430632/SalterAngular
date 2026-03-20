@@ -1,20 +1,50 @@
-<div class="sticky top-16 z-30 w-full bg-base-100/70 backdrop-blur-lg border border-base-300 rounded-xl mb-4 shadow-sm">
-  <div class="flex justify-center p-2">
-    <div class="join w-full">
-      <input
-        class="join-item btn btn-sm flex-1 btn-ghost border-b-2 border-transparent checked:border-primary checked:bg-transparent rounded-none font-bold"
-        type="radio" name="options" aria-label="熱門" [checked]="activeTab === 'popular'"
-        (change)="onTabChange('popular')" />
-      <input
-        class="join-item btn btn-sm flex-1 btn-ghost border-b-2 border-transparent checked:border-primary checked:bg-transparent rounded-none font-bold"
-        type="radio" name="options" aria-label="即時" [checked]="activeTab === 'new'" (change)="onTabChange('new')" />
-      <input
-        class="join-item btn btn-sm flex-1 btn-ghost border-b-2 border-transparent checked:border-primary checked:bg-transparent rounded-none font-bold"
-        type="radio" name="options" aria-label="追蹤" [checked]="activeTab === 'follow'"
-        (change)="onTabChange('follow')" />
+<div class="sticky top-16 z-30 w-full bg-base-100/80 backdrop-blur-lg border border-base-300 rounded-xl mb-4 shadow-sm">
+  <div class="flex items-center justify-between p-4 sm:px-6">
+
+    <!-- 左側：看板頭像與標題資訊 -->
+    <div class="flex items-center gap-4">
+      <!-- 看板圖片：縮小尺寸，保持精緻感 -->
+      <div class="avatar">
+        <div class="w-14 h-14 rounded-2xl border border-base-200 shadow-sm">
+          <img [src]="boardDetails?.boardImgUrl" alt="board-icon" />
+        </div>
+      </div>
+
+      <div class="flex flex-col">
+        <div class="flex items-center gap-2">
+          <h1 class="text-xl font-black text-base-content">{{boardDetails?.boardTitle}}</h1>
+          <div class="badge badge-primary badge-sm font-bold opacity-90">HOT</div>
+        </div>
+
+        <!-- 數據資訊：合併成一行 -->
+        <div class="flex items-center gap-3 mt-0.5 text-[13px] text-base-content/80 font-medium">
+          <span class="flex items-center gap-1"><i class="fa-regular fa-eye"></i> {{boardDetails?.viewCount |
+            number}} 次瀏覽</span>
+          <span class="opacity-30">•</span>
+          <span class="flex items-center gap-1"><i class="fa-solid fa-users"></i>{{boardDetails?.followCount | number}}
+            個浪友追蹤</span>
+        </div>
+      </div>
     </div>
+
+    <!-- 右側：追蹤與分享 -->
+    <div class="flex items-center gap-2">
+      <!-- 追蹤按鈕：稍微縮小尺寸，符合極簡感 -->
+      <button
+        class="btn btn-primary btn-sm rounded-full px-6 shadow-sm hover:scale-105 active:scale-95 transition-all font-bold">
+        追蹤
+      </button>
+
+      <!-- 更多功能：使用最小的 ghost 圓形按鈕 -->
+      <button class="btn btn-ghost btn-sm btn-circle text-base-content/40 hover:bg-base-200">
+        <i class="fa-solid fa-share-nodes"></i>
+      </button>
+    </div>
+
   </div>
 </div>
+
+
 <!-- 抽換內容: 貼文列表，觸發無限滾動的地方 -->
 <div class="bg-base-100 border border-base-300 rounded-xl overflow-hidden" infiniteScroll [infiniteScrollDistance]="3"
   [infiniteScrollThrottle]="50" (scrolled)="onScroll()">
@@ -222,7 +252,7 @@
 
       <div class="flex flex-col items-center gap-2 py-10 opacity-70">
         <div class="divider px-20 text-xs font-bold tracking-widest text-base-content/50">END</div>
-        <p class="text-sm font-medium">你已經滑到底囉，目前沒有更多貼文啦! 🌊</p>
+        <p class="text-sm font-medium">這個看板目前沒有更多貼文啦~ 現在就去發文吧! 🌊</p>
       </div>
 
 

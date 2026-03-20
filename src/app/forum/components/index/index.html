@@ -35,119 +35,110 @@
       </div>
 
       <div class="divider px-4 my-0"></div>
+
+
+      @if(boardListPop5.length === 0 || boardListFollow5.length === 0) {
+      <!-- Skeleton 載入狀態：當 Api 還沒打回來時顯示 -->
       <div class="flex-1 overflow-y-auto p-2 scrollbar">
 
+        <!-- 骨架：熱門即時看板 -->
         <ul class="menu menu-md w-full">
           <li class="menu-title text-sm text-primary-content font-black
                                 bg-primary rounded-lg mx-2 px-4 py-1.5 mb-3
                                 shadow-sm flex justify-between items-center group">
-            即時熱門看板
+            大家都在瀏覽
           </li>
-          <li>
-            <a class="mx-2 py-2 px-6 hover:bg-primary/10 hover:text-primary transition-all duration-300 group">
-              <img class="mask mask-squircle w-8 h-8 mr-2 shadow-sm group-hover:scale-110 transition-transform"
-                src="../imgs/20260216191154衝浪.png">
-              <span class="font-medium">衝浪</span>
-              <span class="badge badge-sm badge-ghost ml-auto text-xs opacity-50">NEW</span>
-            </a>
+
+          <!-- 產生 3-5 個重複的骨架項目 -->
+          <li class="flex flex-row items-center gap-4 px-6 py-2">
+            <div class="skeleton mask mask-squircle w-8 h-8 shrink-0"></div> <!-- 模擬圖片 -->
+            <div class="skeleton h-4 w-24"></div> <!-- 模擬看板標題 -->
+            <div class="skeleton h-3 w-16 ml-auto opacity-60"></div> <!-- 模擬數據 -->
           </li>
-          <li>
-            <a class="mx-2 py-2 px-6 hover:bg-primary/10 hover:text-primary transition-all duration-300 group">
-              <img class="mask mask-squircle w-8 h-8 mr-2 shadow-sm group-hover:scale-110 transition-transform"
-                src="../imgs/20260216192212水肺潛水.png">
-              <span class="font-medium">水肺潛水</span>
-              <span class="badge badge-sm badge-ghost ml-auto text-xs opacity-50">NEW</span>
-            </a>
+
+          <li class="flex flex-row items-center gap-4 px-6 py-2">
+            <div class="skeleton mask mask-squircle w-8 h-8 shrink-0"></div>
+            <div class="skeleton h-4 w-32"></div>
+            <div class="skeleton h-3 w-12 ml-auto opacity-60"></div>
           </li>
-          <li>
-            <a class="mx-2 py-2 px-6 hover:bg-primary/10 hover:text-primary transition-all duration-300 group">
-              <img class="mask mask-squircle w-8 h-8 mr-2 shadow-sm group-hover:scale-110 transition-transform"
-                src="../imgs/20260216191206SUP立槳.png">
-              <span class="font-medium">SUP立槳</span>
-              <span class="badge badge-sm badge-ghost ml-auto text-xs opacity-50">NEW</span>
-            </a>
-          </li>
-          <li>
-            <a class="mx-2 py-2 px-6 hover:bg-primary/10 hover:text-primary transition-all duration-300 group">
-              <img class="mask mask-squircle w-8 h-8 mr-2 shadow-sm group-hover:scale-110 transition-transform"
-                src="../imgs/20260216191332獨木舟、輕艇.png">
-              <span class="font-medium">獨木舟</span>
-            </a>
-          </li>
-          <li>
-            <a class="mx-2 py-2 px-6 hover:bg-primary/10 hover:text-primary transition-all duration-300 group">
-              <img class="mask mask-squircle w-8 h-8 mr-2 shadow-sm group-hover:scale-110 transition-transform"
-                src="../imgs/20260216191215風箏衝浪.png">
-              <span class="font-medium">風箏衝浪</span>
-            </a>
-          </li>
-          <li>
-            <a class="mx-2 py-2 px-6 hover:bg-primary/10 hover:text-primary transition-all duration-300 group">
-              <img class="mask mask-squircle w-8 h-8 mr-2 shadow-sm group-hover:scale-110 transition-transform"
-                src="../imgs/20260216192135水上摩托車.png">
-              <span class="font-medium">水上摩托車</span>
-            </a>
+
+          <li class="flex flex-row items-center gap-4 px-6 py-2">
+            <div class="skeleton mask mask-squircle w-8 h-8 shrink-0"></div>
+            <div class="skeleton h-4 w-20"></div>
+            <div class="skeleton h-3 w-14 ml-auto opacity-60"></div>
           </li>
         </ul>
 
+        <!-- 骨架：追蹤推薦看板 -->
+        <ul class="menu menu-md w-full mt-4 border-t border-base-200 pt-4">
+          <li class="menu-title text-sm text-primary-content font-black
+                                bg-primary rounded-lg mx-2 px-4 py-1.5 mb-3
+                                shadow-sm flex justify-between items-center group">
+            大家都在追蹤
+          </li>
+          <div class="skeleton h-8 w-32 mx-4 mb-3 rounded-lg opacity-50"></div>
+          <li class="flex flex-row items-center gap-4 px-6 py-2">
+            <div class="skeleton mask mask-squircle w-8 h-8 shrink-0"></div>
+            <div class="skeleton h-4 w-28"></div>
+            <div class="skeleton h-3 w-16 ml-auto opacity-60"></div>
+          </li>
+        </ul>
+      </div>
+      }@else {
+      <div class="flex-1 overflow-y-auto p-2 scrollbar">
+        <!-- 熱門即時看板 -->
+        <ul class="menu menu-md w-full">
+
+          <li class="menu-title text-sm text-primary-content font-black
+                                bg-primary rounded-lg mx-2 px-4 py-1.5 mb-3
+                                shadow-sm flex justify-between items-center group">
+            大家都在瀏覽
+          </li>
+
+          @for (board of boardListPop5; track board.boardId) {
+          <li>
+            <a class="mx-2 py-2 px-5 hover:bg-primary/10 hover:text-primary-content transition-all duration-100 group"
+              [routerLink]="'/forum/boards/'+board.boardId" routerLinkActive="btn btn-neutral py-6">
+              <img class="mask mask-squircle w-8 h-8 mr-2 shadow-sm group-hover:scale-110 transition-transform"
+                [src]="board.boardImgUrl">
+              <span class="font-medium">{{board.boardTitle}}</span>
+              <span class="badge badge-xs badge-ghost ml-auto text-xs opacity-80">{{board.viewCount}} 次瀏覽</span>
+            </a>
+          </li>
+          }
+
+
+        </ul>
+
+        <!-- 追蹤推薦看板 -->
         <ul class="menu menu-md w-full mt-4">
           <li class="menu-title text-sm text-primary-content font-black
                                 bg-primary rounded-lg mx-2 px-4 py-1.5 mb-3
                                 shadow-sm flex justify-between items-center group">
-            收藏最多看板
+            大家都在追蹤
           </li>
+
+          @for (board of boardListFollow5; track board.boardId) {
           <li>
-            <a class="mx-2 py-2 px-6 hover:bg-primary/10 hover:text-primary transition-all duration-300 group">
+            <a class="mx-2 py-2 px-6 hover:bg-primary/10 hover:text-primary-content transition-all duration-300 group"
+              [routerLink]="'/forum/boards/'+board.boardId" routerLinkActive="btn btn-neutral py-6">
               <img class="mask mask-squircle w-8 h-8 mr-2 shadow-sm group-hover:scale-110 transition-transform"
-                src="../imgs/20260216191154衝浪.png">
-              <span class="font-medium">衝浪</span>
-              <span class="badge badge-sm badge-ghost ml-auto text-xs opacity-50">NEW</span>
+                [src]="board.boardImgUrl">
+              <span class="font-medium">{{board.boardTitle}}</span>
+              <span class="badge badge-xs badge-ghost ml-auto text-xs opacity-80">{{board.followCount}} 次追蹤</span>
             </a>
           </li>
-          <li>
-            <a class="mx-2 py-2 px-6 hover:bg-primary/10 hover:text-primary transition-all duration-300 group">
-              <img class="mask mask-squircle w-8 h-8 mr-2 shadow-sm group-hover:scale-110 transition-transform"
-                src="../imgs/20260216192212水肺潛水.png">
-              <span class="font-medium">水肺潛水</span>
-              <span class="badge badge-sm badge-ghost ml-auto text-xs opacity-50">NEW</span>
-            </a>
-          </li>
-          <li>
-            <a class="mx-2 py-2 px-6 hover:bg-primary/10 hover:text-primary transition-all duration-300 group">
-              <img class="mask mask-squircle w-8 h-8 mr-2 shadow-sm group-hover:scale-110 transition-transform"
-                src="../imgs/20260216191206SUP立槳.png">
-              <span class="font-medium">SUP立槳</span>
-              <span class="badge badge-sm badge-ghost ml-auto text-xs opacity-50">NEW</span>
-            </a>
-          </li>
-          <li>
-            <a class="mx-2 py-2 px-6 hover:bg-primary/10 hover:text-primary transition-all duration-300 group">
-              <img class="mask mask-squircle w-8 h-8 mr-2 shadow-sm group-hover:scale-110 transition-transform"
-                src="../imgs/20260216191154衝浪.png">
-              <span class="font-medium">衝浪</span>
-              <span class="badge badge-sm badge-ghost ml-auto text-xs opacity-50">NEW</span>
-            </a>
-          </li>
-          <li>
-            <a class="mx-2 py-2 px-6 hover:bg-primary/10 hover:text-primary transition-all duration-300 group">
-              <img class="mask mask-squircle w-8 h-8 mr-2 shadow-sm group-hover:scale-110 transition-transform"
-                src="../imgs/20260216192212水肺潛水.png">
-              <span class="font-medium">水肺潛水</span>
-              <span class="badge badge-sm badge-ghost ml-auto text-xs opacity-50">NEW</span>
-            </a>
-          </li>
-          <li>
-            <a class="mx-2 py-2 px-6 hover:bg-primary/10 hover:text-primary transition-all duration-300 group">
-              <img class="mask mask-squircle w-8 h-8 mr-2 shadow-sm group-hover:scale-110 transition-transform"
-                src="../imgs/20260216191206SUP立槳.png">
-              <span class="font-medium">SUP立槳</span>
-              <span class="badge badge-sm badge-ghost ml-auto text-xs opacity-50">NEW</span>
-            </a>
-          </li>
+          }
+
 
         </ul>
 
       </div>
+      }
+
+
+
+
     </div>
   </div>
 
@@ -159,28 +150,29 @@
   <div class="col-span-12 md:col-span-3 h-screen sticky top-20 z-10">
     <div class="sticky bottom-6 z-30">
 
-      <div class="card bg-base-100 shadow-sm border border-base-300 overflow-hidden">
-        <div class="p-3 bg-base-200 text-sm font-bold flex justify-between items-center uppercase tracking-wider">
-          <span class="flex items-center gap-2">
-            <i class="fa-solid fa-rectangle-ad text-primary"></i> 贊助
-          </span>
-          <i class="fa-regular fa-circle-question cursor-help opacity-50"></i>
+      <a routerLink="/experience" target="_blank" class="tooltip tooltip-bottom" data-tip="【海邊玩水，安全第一】2026夏季離岸流辨識與自救講座">
+        <div class="card bg-base-100 shadow-sm border border-base-300 overflow-hidden">
+          <div class="p-3 bg-base-200 text-sm font-bold flex justify-between items-center uppercase tracking-wider">
+            <span class="flex items-center gap-2">
+              <i class="fa-solid fa-rectangle-ad text-primary"></i> 贊助
+            </span>
+            <i class="fa-regular fa-circle-question cursor-help opacity-50"></i>
+          </div>
+
+          <div
+            class="h-[400px] m-4 border-2 border-base-300 relative flex items-center justify-center rounded-lg overflow-hidden bg-base-50">
+            <div class="relative z-10 text-center scale-104 cursor-pointer hover:scale-110 transition-transform">
+
+              <img src="https://res.cloudinary.com/dbyzfq61h/image/upload/v1773757079/ads_8_qgnzfa.jpg" alt="">
+
+            </div>
+          </div>
         </div>
 
-        <div
-          class="h-[400px] m-4 border-2 border-base-300 relative flex items-center justify-center rounded-lg overflow-hidden bg-base-50">
-          <div class="absolute inset-0">
-            <svg class="w-full h-full text-base-300 opacity-50" preserveAspectRatio="none">
-              <line x1="0" y1="0" x2="100%" y2="100%" stroke="currentColor" stroke-width="1" />
-              <line x1="100%" y1="0" x2="0" y2="100%" stroke="currentColor" stroke-width="1" />
-            </svg>
-          </div>
-          <div class="relative z-10 text-center">
-            <i class="fa-solid fa-image text-4xl text-base-300/50 mb-2 block"></i>
-            <span class="text-xs text-base-300 font-bold">ADVERTISING</span>
-          </div>
-        </div>
-      </div>
+      </a>
+
+
+
 
       <!-- 發布貼文按鈕 -->
       <div class="flex flex-col items-end gap-2 pr-2 mt-4">
