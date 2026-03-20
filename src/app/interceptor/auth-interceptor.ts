@@ -10,12 +10,12 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const token = localStorage.getItem('token');
 
   const skipUrls = [
-    '/Login',
-    '/Register',
-    '/GoogleLogin',
-    '/UploadUserPicture',
-    '/VerifyRegisterOtp',
-    '/ResendOtp'
+    '/login',
+    '/register',
+    '/google-login',
+    '/upload-user-picture',
+    '/verify-register-otp',
+    '/resend-otp'
   ];
   const isPublicApi = skipUrls.some(url => req.url.includes(url));
 
@@ -40,7 +40,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         switch (error.status) {
           case 401:
             errorMessage = '登入逾時或尚未登入，請登入後查看!';
-            // router.navigate(['/login']);
+            router.navigate(['/login']);
             break;
           case 403:
             errorMessage = '權限不足：您的存取被禁止';
