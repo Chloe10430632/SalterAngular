@@ -12,7 +12,7 @@
       <app-btn-coach-switch></app-btn-coach-switch>
     </div>
 
-    <div class="flex flex-wrap gap-6 justify-start">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
       @for(c of coaches; track c.CoachId ){
       <app-coach-card [coachData]="c"></app-coach-card>
       }
@@ -32,7 +32,7 @@
       }}
     </div>
     @if(!isLoading && coaches.length === 0){
-    <div class="text-center py-20">教練還在海裡</div>
+    <div class="text-center py-20 text-base-content/50">教練還在海裡</div>
     }
     @if (!isEnd)
     {<div class="flex justify-center my-10">
