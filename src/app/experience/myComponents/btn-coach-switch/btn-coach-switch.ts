@@ -15,13 +15,13 @@ export class BtnCoachSwitch {
 
   switchStatus() {
     if (!this.isLogin) {
-      this.router.navigate(['']);//登入
+      this.router.navigate(['/login']);//登入
     }
     else if (this.isLogin && !this.hasProfile) {
-      this.router.navigate(['']);//createcoach
+      this.router.navigate(['/coachcreate']);//createcoach
     }
     else {
-      this.router.navigate(['/coachisland']); //edit
+      this.router.navigate(['/coachisland']); //functions
     }
   }
 

@@ -76,16 +76,20 @@ export const routes: Routes = [
         loadComponent: () => import('./experience/components/coach-detail/coach-detail').then(m => m.CoachDetail)
       },
       {
-        path: 'coachcourse', //自介(進入後再用編輯按鈕)
+        path: 'coachcourse', //教練本人開的課
         loadComponent: () => import('./experience/components/coach-course/coach-course').then(m => m.CoachCourse)
       },
       {
-        path: 'coachattend', //自介(進入後再用編輯按鈕)
+        path: 'coachattend', //報名過的課
         loadComponent: () => import('./experience/components/coach-attend/coach-attend').then(m => m.CoachAttend)
       },
       {
-        path: 'coachfav', //自介(進入後再用編輯按鈕)
+        path: 'coachfav', //收藏
         loadComponent: () => import('./experience/components/coach-favorite/coach-favorite').then(m => m.CoachFavorite)
+      },
+      {
+        path: 'coachcreate', //自介(進入後再用編輯按鈕)
+        loadComponent: () => import('./experience/components/coach-create/coach-create').then(m => m.CoachCreate)
       },
       {
         path: 'coachintro', //看其他教練介紹
