@@ -100,8 +100,12 @@ export const routes: Routes = [
         loadComponent: () => import('./experience/components/coach-favorite/coach-favorite').then(m => m.CoachFavorite)
       },
       {
-        path: 'coachcreate', //自介(進入後再用編輯按鈕)
+        path: 'coachcreate', //空白自介
         loadComponent: () => import('./experience/components/coach-create/coach-create').then(m => m.CoachCreate)
+      },
+      {
+        path: 'coachprofile', //空白自介
+        loadComponent: () => import('./experience/components/coach-profile/coach-profile').then(m => m.CoachProfile)
       },
       {
         path: 'coachintro', //看其他教練介紹
