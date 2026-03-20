@@ -1,9 +1,21 @@
-<label class="input ">
-  <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-    <g stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5" fill="none" stroke="currentColor">
-      <circle cx="11" cy="11" r="8"></circle>
-      <path d="m21 21-4.3-4.3"></path>
-    </g>
-  </svg>
-  <input type="search" required placeholder="輸入地區/專業..." />
-</label>
+<div data-theme="bumblebee" class="w-full max-w-lg">
+  <div class="join w-full">
+    <label class="input input-bordered join-item flex items-center gap-2 grow">
+      <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <g stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5" fill="none" stroke="currentColor">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.3-4.3"></path>
+        </g>
+      </svg>
+      <input type="search" [(ngModel)]="inputString" placeholder="輸入教練名字/地區/專業..." class="grow" required />
+    </label>
+
+    <button (click)="search()" class="btn btn-accent join-item rounded-r-xl">
+      搜尋
+    </button>
+  </div>
+
+  <p class="mt-2 ml-1 text-[10pt] text-base-content/60 italic">
+    ** 使用空白鍵在關鍵字之間，讓搜尋更精準吧 **
+  </p>
+</div>

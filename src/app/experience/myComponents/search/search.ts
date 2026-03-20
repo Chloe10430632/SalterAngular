@@ -1,12 +1,18 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-search',
-  imports: [],
+  imports: [FormsModule],
   templateUrl: './search.html',
   styleUrl: './search.css',
 })
 export class Search {
-  // constructor(private search: Search) { }
+  inputString = "";
+  @Output() searchEvent = new EventEmitter<string>();
+
+  search(): void {
+    this.searchEvent.emit(this.inputString)
+  }
 
 }
