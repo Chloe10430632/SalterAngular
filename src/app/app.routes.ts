@@ -59,6 +59,7 @@ export const routes: Routes = [
     ]
   }
   ,
+  //教練課程路由
   {
     path: 'experience',
     loadComponent: () => import('./shared/layouts/with-navbar/with-navbar').then(m => m.WithNavbar),
@@ -66,7 +67,37 @@ export const routes: Routes = [
       {
         path: '',
         loadComponent: () => import('./experience/components/index/index').then(m => m.Index),
-      }
+      },
+      {
+        path: 'coachisland', //教練功能畫面
+        loadComponent: () => import('./experience/components/coach-island/coach-island').then(m => m.CoachIsland)
+      },
+      {
+        path: 'coachdetail', //自介(進入後再用編輯按鈕)
+        loadComponent: () => import('./experience/components/coach-detail/coach-detail').then(m => m.CoachDetail)
+      },
+      {
+        path: 'coachcourse', //教練本人開的課
+        loadComponent: () => import('./experience/components/coach-course/coach-course').then(m => m.CoachCourse)
+      },
+      {
+        path: 'coachattend', //報名過的課
+        loadComponent: () => import('./experience/components/coach-attend/coach-attend').then(m => m.CoachAttend)
+      },
+      {
+        path: 'coachfav', //收藏
+        loadComponent: () => import('./experience/components/coach-favorite/coach-favorite').then(m => m.CoachFavorite)
+      },
+      {
+        path: 'coachcreate', //自介(進入後再用編輯按鈕)
+        loadComponent: () => import('./experience/components/coach-create/coach-create').then(m => m.CoachCreate)
+      },
+      {
+        path: 'coachintro', //看其他教練介紹
+        loadComponent: () => import('./experience/components/coachintro/coachintro').then(m => m.Coachintro)
+      },
+
+
     ]
   },
   //login路由
