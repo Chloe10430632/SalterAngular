@@ -1,42 +1,73 @@
-<div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+<div data-theme="bumblebee" class="min-h-screen bg-base-200 py-2 px-4">
+  <div class="max-w-3xl mx-auto card bg-base-100 shadow-2xl border border-base-300">
+    <div class="card-body p-8 md:p-12">
 
-  <div class="flex flex-col items-center text-center space-y-4">
-    <div class="avatar">
-      <div class="w-32 rounded-full ring ring-primary ring-offset-base-100 ring-offset-4 shadow-xl">
-        <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" alt="Avatar" />
+      <div class="mb-10 text-center">
+        <h2 class="text-3xl font-extrabold text-primary mb-2">教練資料設定</h2>
+        <div class="divider w-24 mx-auto divider-primary"></div>
       </div>
-    </div>
 
-    <div class="space-y-1">
-      <h1 class="text-2xl font-black text-base-content">Daisy 大師</h1>
-      <p class="text-base-content/60 font-bold text-sm">台北市 · 大安區</p>
-    </div>
+      <form class="space-y-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div class="form-control">
+            <label class="label pb-2"> <span class="label-text font-bold text-lg">姓名 <span
+                  class="text-error">*</span></span>
+            </label>
+            <input type="text" placeholder="請輸入姓名" class="input input-bordered input-primary w-full" />
+          </div>
 
-    <div class="flex flex-wrap justify-center gap-2 pt-2">
-      <span class="badge badge-primary font-bold py-3 px-4">健身教練</span>
-      <span class="badge badge-primary font-bold py-3 px-4">營養諮詢</span>
-    </div>
-  </div>
+          <div class="form-control">
+            <label class="label pb-2">
+              <span class="label-text font-bold text-lg">上傳個人頭像</span>
+            </label>
+            <input type="file" class="file-input file-input-bordered file-input-primary w-full" />
+          </div>
+        </div>
 
-  <div class="md:col-span-2">
-    <div class="divider divider-start font-black text-primary text-lg opacity-80">關於我</div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div class="form-control">
+            <label class="label pb-2">
+              <span class="label-text font-bold text-lg">服務縣市</span>
+            </label>
+            <select class="select select-bordered select-primary w-full">
+              <option disabled selected>請選擇縣市</option>
+              <option>台北市</option>
+            </select>
+          </div>
+          <div class="form-control">
+            <label class="label pb-2">
+              <span class="label-text font-bold text-lg">服務區域</span>
+            </label>
+            <select class="select select-bordered select-primary w-full">
+              <option disabled selected>請選擇行政區</option>
+              <option>大安區</option>
+            </select>
+          </div>
+        </div>
 
-    <div class="px-6 mt-4">
-      <p class="text-base-content/80 leading-loose text-lg text-justify">
-        擁有超過 10 年的專業教學經驗，專精於前端開發與 UI/UX 設計。致力於協助學生從零開始建構高品質的 Web 應用程式。我深信每位學員都有無限的潛力，只需透過系統化的引導。
-      </p>
+        <div class="form-control w-full">
+          <label class="label pb-4"> <span class="label-text font-bold text-lg text-primary">個人簡介</span>
+          </label>
+
+          <textarea class="textarea textarea-bordered textarea-primary h-40 text-base leading-relaxed mb-2  w-full"
+            placeholder="請詳細描述您的教學風格..."></textarea>
+
+          <label class="label pt-0"> <span class="label-text-alt text-base-content/50 italic font-medium">
+              💡 建議字數 100-300 字，包含您的專業證照與教學經歷以提升預約率。
+            </span>
+          </label>
+        </div>
+
+        <div class="divider pt-4"></div>
+
+        <div class="card-actions justify-end gap-4">
+          <button type="button" class="btn btn-ghost px-8">取消編輯</button>
+          <button type="submit" class="btn btn-primary px-12 shadow-lg">確認儲存</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
-
-<div class="mt-16 text-right border-t border-base-200 pt-5">
-  <div class="inline-flex items-center gap-1.5 text-base-content/40">
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-      class="w-3.5 h-3.5">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-    </svg>
-    <span class="text-[11px] font-bold tracking-tight uppercase">
-      最後更新：2026/03/20 — 15:43
-    </span>
-  </div>
+<div>
+  <app-footer></app-footer>
 </div>

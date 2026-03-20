@@ -72,7 +72,7 @@ export const routes: Routes = [
   ,
   //教練課程路由
   {
-    path: 'experience',
+    path: 'experience', //入口
     loadComponent: () => import('./shared/layouts/with-navbar/with-navbar').then(m => m.WithNavbar),
     children: [
       {
@@ -88,6 +88,10 @@ export const routes: Routes = [
         loadComponent: () => import('./experience/components/coach-detail/coach-detail').then(m => m.CoachDetail)
       },
       {
+        path: 'coachcreate', //空白自介
+        loadComponent: () => import('./experience/components/coach-create/coach-create').then(m => m.CoachCreate)
+      },
+      {
         path: 'coachcourse', //教練本人開的課
         loadComponent: () => import('./experience/components/coach-course/coach-course').then(m => m.CoachCourse)
       },
@@ -100,11 +104,7 @@ export const routes: Routes = [
         loadComponent: () => import('./experience/components/coach-favorite/coach-favorite').then(m => m.CoachFavorite)
       },
       {
-        path: 'coachcreate', //空白自介
-        loadComponent: () => import('./experience/components/coach-create/coach-create').then(m => m.CoachCreate)
-      },
-      {
-        path: 'coachprofile', //空白自介
+        path: 'coachprofile', //本人自介
         loadComponent: () => import('./experience/components/coach-profile/coach-profile').then(m => m.CoachProfile)
       },
       {

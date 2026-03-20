@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { Footer } from '../../../shared/footer/footer';
 
 @Component({
   selector: 'app-btn-coach-switch',
-  imports: [],
+  imports: [Footer],
   templateUrl: './btn-coach-switch.html',
   styleUrl: './btn-coach-switch.css',
 })
