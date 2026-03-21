@@ -5,6 +5,7 @@ import { LoginResult, ILoginSuccess } from '../../user/interfaces/ILoginResponse
 import { ILogin } from '../../user/interfaces/ILogin';
 import { jwtDecode } from "jwt-decode";
 import { IGoogleLogin } from '../../user/interfaces/IGoogleLogin';
+import { CurrentUser } from '../../forum/interfaces/currentUser';
 @Injectable({
   providedIn: 'root',
 })
@@ -80,7 +81,7 @@ export class AuthService {
   //測試攔截器
   getProfile() {
     // 假設你的後端有一個 GET /api/user/profile
-    return this.http.get('https://localhost:7017/api/User/User/GetUserProfile');
+    return this.http.get<CurrentUser>('https://localhost:7017/api/User/User/GetUserProfile');
   }
 
 

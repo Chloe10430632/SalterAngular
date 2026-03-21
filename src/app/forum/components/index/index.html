@@ -199,7 +199,7 @@
 
       <!-- 發布貼文按鈕 -->
       <div class="flex flex-col items-end gap-2 pr-2 mt-4">
-        <button onclick="post_modal.showModal()"
+        <button onclick="post_modal.showModal()" (click)="getUser()"
           class="btn btn-primary btn-rounded btn-lg shadow-2xl hover:scale-110 transition-all active:scale-95 group">
           <i class="fa-solid fa-plus text-2xl text-primary-content group-hover:rotate-90 transition-transform"></i>
         </button>
@@ -227,38 +227,75 @@
             <div class="flex items-center gap-3">
               <div class="avatar">
                 <div class="w-10 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-                  <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=chloe" />
+                  <img [src]="backendServer+currentUser?.profilePicture" />
                 </div>
               </div>
               <div class="flex flex-col">
-                <div class="flex items-center gap-2">
-                  <span class="font-black text-sm">chloe451295</span>
-                  <div class="dropdown">
-                    <span tabindex="0" role="button"
-                      class="text-primary text-xs cursor-pointer hover:underline font-bold">❯
-                      選擇看板</span>
+                <div class="flex items-center gap-5">
+                  <span class="font-black text-sm">{{currentUser?.userName}}</span>
+                  <div class="dropdown" (click)="getAllBoardList()">
+                    @if (selectedBoard) {
+                    <div tabindex="0" role="button"
+                      class="badge badge-primary font-bold gap-2 px-3 py-3 cursor-pointer transition-colors">
+                      {{selectedBoard.boardTitle}}
+                      <i class="fa-solid fa-chevron-down text-[10px] opacity-50"></i>
+                    </div>
+                    }@else {
+                    <div tabindex="0" role="button"
+                      class="badge badge-soft badge-accent font-bold gap-2 px-3 py-3 cursor-pointer transition-colors">
+                      選擇看板
+                      <i class="fa-solid fa-chevron-down text-[10px] opacity-50"></i>
+                    </div>
+                    }
+
                     <ul tabindex="0"
                       class="dropdown-content z-[110] menu p-2 shadow-xl bg-base-100 rounded-box w-40 border border-base-200">
-                      <li><a>🌊 衝浪討論區</a></li>
-                      <li><a>📷 攝影分享</a></li>
-                      <li><a>🛠️ 裝備維護</a></li>
+                      @if(allBoardList.length === 0){
+                      @for (i of [1, 2, 3]; track $index) {
+                      <li class="p-2">
+                        <div class="skeleton h-4 w-full opacity-50"></div>
+                      </li>
+                      }
+                      }
+                      @for (board of allBoardList; track board.boardId) {
+                      <li><a (click)="selectBoard(board)">{{board.boardTitle}}</a></li>
+                      }
+
+
+
+
+
                     </ul>
                   </div>
                 </div>
               </div>
             </div>
 
+            @if(selectedLocation){
+            <div class="badge badge-soft badge-accent mt-2 tracking-wider">{{selectedLocation.name}}</div>
+            }
+
             <textarea
-              class="textarea textarea-ghost w-full text-lg focus:outline-none min-h-[120px] p-0 placeholder:text-base-content/30 resize-none"
-              placeholder="分享你的海上生活......"></textarea>
+              class="textarea textarea-ghost w-full focus:outline-none min-h-[60px] p-0 placeholder:text-base-content/30 resize-none"
+              placeholder="今天發生了什麼有趣的事呢......"></textarea>
 
             <div id="image_preview_container" class="flex flex-wrap gap-2 py-2">
+              @for (src of previews(); track $index) {
+              <div class="preview-item relative flex-shrink-0 w-30 h-30 group cursor-grab active:cursor-grabbing">
+                <img [src]="src" class="w-full h-full object-cover rounded-xl border-2 border-base-200 shadow-sm" />
+                <button (click)="removeImage($index)"
+                  class="btn btn-circle btn-xs btn-error absolute -top-1 -right-1 opacity-0 group-hover:opacity-100 transition-opacity shadow-md">
+                  <i class="fa-solid fa-xmark text-[10px]"></i>
+                </button>
+              </div>
+              }
             </div>
 
             <div class="flex gap-4 text-base-content/40 border-t border-base-200 pt-4">
               <label class="hover:text-primary transition-colors cursor-pointer">
                 <i class="fa-regular fa-image text-2xl"></i>
-                <input type="file" id="image_input" class="hidden" accept="image/*" multiple />
+                <input type="file" id="image_input" class="hidden" accept="image/*" (change)="onFileChange($event)"
+                  multiple />
               </label>
 
               <div class="dropdown">
@@ -267,26 +304,34 @@
                 </div>
                 <ul tabindex="0"
                   class="dropdown-content z-[100] menu p-2 shadow-xl bg-base-100 rounded-box w-40 border border-base-200 text-base-content">
-                  <li><a>宜蘭外澳</a></li>
-                  <li><a>墾丁南灣</a></li>
-                  <li><a>台東都蘭</a></li>
+                  @if(allLocationList.length === 0){
+                  @for (i of [1, 2, 3]; track $index) {
+                  <li class="p-2">
+                    <div class="skeleton h-4 w-full opacity-50"></div>
+                  </li>
+                  }
+                  }
+                  @for (location of allLocationList; track location.id) {
+                  <li><a (click)="selectLocation(location)">{{location.name}}</a></li>
+                  }
                 </ul>
               </div>
             </div>
 
             <div class="space-y-2">
-              <p class="text-xs font-bold text-base-content/60">選擇標籤 / 輸入標籤</p>
+              <p class="text-xs font-bold text-base-content/60">輸入HashTag標籤</p>
+              @for (tag of tags(); track $index) {
+              <span class="badge badge-info badge-outline font-bold gap-1 px-3 py-3 tracking-wider mr-3">
+                #{{ tag }}
+                <i class="fa-solid fa-xmark text-[10px] cursor-pointer ml-3" (click)="removeTag($index)"></i>
+              </span>
+              }
               <div id="tag_area"
-                class="flex flex-wrap gap-2 p-3 border-2 border-base-200 rounded-xl bg-base-50 focus-within:border-primary transition-all">
-                <div class="dropdown dropdown-bottom w-full mt-1">
-                  <input type="text" id="tag_input" tabindex="0" placeholder="輸入後按 Enter..."
-                    class="bg-transparent border-none focus:outline-none text-sm w-full" />
-                  <ul tabindex="0"
-                    class="dropdown-content menu p-2 shadow-xl bg-base-100 rounded-box w-full border border-base-200 mb-2">
-                    <li><a>#夏季穿搭</a></li>
-                    <li><a>#新手教學</a></li>
-                    <li><a>#今日浪況</a></li>
-                  </ul>
+                class="flex flex-wrap gap-2 p-2 pl-5 border-2 border-base-200 rounded-xl bg-base-50 focus-within:border-primary transition-all">
+                <div class="w-full mt-1">
+                  <input type="text" tabindex="0" placeholder="輸入後按 Enter..."
+                    class="bg-transparent border-none focus:outline-none text-sm w-full"
+                    (keydown.enter)="addTag($event)" />
                 </div>
               </div>
             </div>
@@ -297,13 +342,13 @@
               *您所輸入的文字包含違規字眼：「...」
             </p>
             <div class="flex justify-end">
-              <button class="btn btn-primary px-10 shadow-lg text-lg rounded-xl">發佈</button>
+              <button [disabled]="!selectedBoard" class="btn btn-primary px-10 shadow-lg text-lg rounded-xl">發佈</button>
             </div>
           </div>
         </div>
 
         <form method="dialog" class="modal-backdrop">
-          <button>close</button>
+          <button (click)="clearPost()">close</button>
         </form>
       </dialog>
       <!-- 儲存草稿視窗 -->
