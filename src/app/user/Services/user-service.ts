@@ -8,6 +8,9 @@ import { IVerifyRegisterOtp } from '../interfaces/IVerifyRegisterOtp';
 import { IResendOtp } from '../interfaces/IResendOtp';
 import { IBaseResponse } from '../interfaces/IBaseResponse';
 import { LoginResult } from '../interfaces/ILoginResponse';
+import { IResetPassword } from '../interfaces/IResetPassword';
+import { IForgotPassword } from '../interfaces/IForgotPassword';
+import { IUserProfile } from '../interfaces/IUserProfile';
 
 
 @Injectable({
@@ -51,4 +54,34 @@ export class UserService {
   // }
 
 
+  private _tempEmail: string = '';
+
+  setTempEmail(email: string) {
+    this._tempEmail = email;
+  }
+
+  // 取出 Email
+  getTempEmail(): string {
+    return this._tempEmail;
+  }
+
+  forgotPassword(data: IForgotPassword): Observable<IBaseResponse> {
+    const url = 'https://localhost:7017/api/User/User/ForgotPassword'
+    return this.http.post<IBaseResponse>(url, data);
+  }
+
+  resetPassword(data: IResetPassword): Observable<IBaseResponse> {
+    const url = 'https://localhost:7017/api/User/User/ResetPassword'
+    return this.http.post<IBaseResponse>(url, data);
+  }
+
+  getUserProfile(): Observable<IUserProfile> {
+
+    return this.http.get<IUserProfile>('https://localhost:7017/api/User/User/GetUserProfile');
+  }
+
+
 }
+
+
+

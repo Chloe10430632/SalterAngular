@@ -6,6 +6,8 @@ import { LoginResult } from '../../interfaces/ILoginResponse';
 import { ILogin } from '../../interfaces/ILogin';
 import { AuthService } from '../../../core/services/auth-service';
 import { IGoogleLogin } from '../../interfaces/IGoogleLogin';
+import { CommonModule } from '@angular/common';
+import { Footer } from "../../../shared/footer/footer";
 
 
 
@@ -14,7 +16,7 @@ declare var google: any; //declare是用來定義外部全域變數的
 
 @Component({
   selector: 'app-login',
-  imports: [RouterLink, ReactiveFormsModule],
+  imports: [RouterLink, ReactiveFormsModule, CommonModule],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
@@ -30,6 +32,10 @@ export class Login implements OnInit {
 
   isPasswordVisible = false;
 
+  errorMessage: string | null = null;
+
+  currentSlide = 1;
+
   ngOnInit(): void {
     if (typeof google !== 'undefined') {
       google.accounts.id.initialize({
@@ -39,6 +45,8 @@ export class Login implements OnInit {
       });
     }
   }
+
+
 
   signInWithGoogle() {
     // 💡 直接執行，不要包在 prompt 的 callback 裡面
@@ -63,7 +71,7 @@ export class Login implements OnInit {
   }
 
 
-
+  get f() { return this.loginForm.controls; }
 
 
   loginForm = new FormGroup({
@@ -73,11 +81,12 @@ export class Login implements OnInit {
 
   onLogin() {
     if (this.loginForm.invalid) {
-      alert('請填寫正確的帳號密碼');
+      this.errorMessage = '請檢查帳號密碼格式是否正確';
       return;
     }
 
     this.isLoading = true;
+    this.errorMessage = null;
     const loginData: ILogin = this.loginForm.value as ILogin;
 
     this.authService.postLogin(loginData).subscribe({
@@ -104,7 +113,7 @@ export class Login implements OnInit {
           // 例如：this.router.navigate(['/register'], { queryParams: { step: 3, email: loginData.email } });
         } else {
           // 一般錯誤 (400 或其他)
-          alert(res?.message || '登入失敗，請檢查網路連線');
+          // alert(res?.message || '登入失敗，請檢查網路連線');
         }
       }
     });

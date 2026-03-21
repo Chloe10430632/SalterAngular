@@ -133,7 +133,17 @@ export const routes: Routes = [
       },
     ]
   },
-
+  //忘記密碼
+  {
+    path: 'ForgotPassword',
+    component: NavbarLayout,
+    children: [
+      {
+        path: '',
+        loadComponent: () => import('./user/components/forgot-password/forgot-password').then(m => m.ForgotPassword),
+      },
+    ]
+  },
 
   //行程路由
   {
