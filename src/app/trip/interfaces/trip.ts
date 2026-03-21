@@ -127,3 +127,14 @@ export interface TripDistrict {
   id: number;
   name: string;
 }
+
+//所有地點
+export interface TripLocationSearch {
+  id: number;
+  name: string;
+  addressText: string | null;
+  cityName: string | null;
+  districtName: string | null;
+  lat: number | null;
+  lng: number | null;
+}
