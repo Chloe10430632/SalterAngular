@@ -12,6 +12,7 @@ import { inject } from '@angular/core/primitives/di';
 import { BtnRankPop } from "../../myComponents/btn-rank-pop/btn-rank-pop";
 import { BtnRankNew } from "../../myComponents/btn-rank-new/btn-rank-new";
 import { rankItem } from '../../Service/SRank';
+import { AuthService } from '../../../core/services/auth-service';
 
 //#endregion
 
@@ -23,7 +24,7 @@ import { rankItem } from '../../Service/SRank';
   styleUrl: './index.css',
 })
 export class Index implements OnInit {
-
+  currentUser: any = null;
   //#region 網頁載入時拿教練卡片資料
   //準備一個空籃子放 API 回傳的教練陣列
   coaches: any[] = [];
@@ -31,10 +32,14 @@ export class Index implements OnInit {
   isEnd = false;
   currentPage = 1;
   //注入HttpClient
-  constructor(private client: HttpClient) { }
+  constructor(private client: HttpClient, private authService: AuthService) { }
 
   ngOnInit(): void {
+    this.authService.currentUser$.subscribe(user => {
+      this.currentUser = user;
+    })
     this.getPopRank();
+
   }
   getPopRank() {
     if (this.isLoading || this.isEnd) return; // 防止重複點擊
@@ -53,7 +58,7 @@ export class Index implements OnInit {
           //console.log('API 拿到的資料：', data);
           //關閉遮蓋效果
           this.isLoading = false;
-        }, 1500);
+        }, 1000);
       }, //延遲1.5秒
       error: (err) => {
         console.error('API 壞掉啦：', err);
@@ -116,16 +121,26 @@ export class Index implements OnInit {
   handleRankUpdate() {
     this.refreshData();
   }
-  //#endregion
 
   //#region 最新
   displayRanks: rankItem[] = [];
   //接收子組件傳來的 $event (即 data)
   handleNewRank(data: rankItem[]) {
-    console.log("父組件：成功接到球了！", data);
-    this.displayRanks = data; // 更新畫面資料
-    this.coaches = data;
+    //打開遮罩
+    this.isLoading = true;
+    setTimeout(() => {
+      this.displayRanks = data; // 更新畫面資料
+      this.coaches = data;
+      // 重新校正分頁狀態（假設重新搜尋後回到第一頁）
+      this.currentPage = 1;
+      this.isEnd = data.length < 6;
+
+      // 3. 最後一步：大功告成，關閉遮罩！
+      this.isLoading = false;
+
+    }, 1000);
   }
+  //#endregion
   //#endregion
 
 }

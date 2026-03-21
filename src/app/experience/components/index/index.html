@@ -1,7 +1,7 @@
 <div class="flex justify-center w-full p-5 mt-5" data-theme="bumblebee">
 
   <div class="flex flex-col w-full max-w-[1008px]">
-
+    <!-- 搜尋 & 按鈕 -->
     <div class="flex justify-between items-start mb-3 mt-2 w-full px-1">
       <div class="flex items-start gap-4"> <app-search (searchEvent)="indexSearch($event)" class=" mt-0"></app-search>
 
@@ -12,9 +12,14 @@
       </div>
 
       <div class="h-[3rem] flex items-center">
-        <app-btn-coach-switch class="h-[3rem]"></app-btn-coach-switch>
+        <app-btn-coach-switch class="h-[3rem]">
+
+
+        </app-btn-coach-switch>
       </div>
     </div>
+    <!-- end -->
+    <!-- 卡片 -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
       @for(c of coaches; track c.CoachId ){
       <app-coach-card [coachData]="c"></app-coach-card>
@@ -37,19 +42,20 @@
     @if(!isLoading && coaches.length === 0){
     <div class="text-center py-20 text-base-content/50">教練還在海裡</div>
     }
-    @if (!isEnd)
-    {<div class="flex justify-center my-10">
+    @if (!isEnd){
+    <div class="flex justify-center my-10">
       <button class="btn btn-primary" [disabled]="isLoading" (click)="getPopRank()">
         @if (isLoading) { <span class="loading loading-spinner"></span> }
         {{ isLoading ? '搜尋中...' : '載入更多教練' }}
       </button>
     </div>}
     @if(isEnd){
-    <div class="text-center py-20" style="color: gray;">...其他教練還在海裡...</div>
-    }
-
+    <div class="text-center py-20" style="color: gray;">...其他教練還在海裡...
+    </div>}
   </div>
+  <!-- end -->
 </div>
+
 <div>
   <app-footer></app-footer>
 </div>
