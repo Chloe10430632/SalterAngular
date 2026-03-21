@@ -91,13 +91,16 @@
     </div>
   </aside>
 
-  <!-- 地圖區（暫時佔位） -->
-  <div class="flex-1 relative bg-base-200 flex items-center justify-center">
-    <div class="card bg-base-100 shadow-lg border border-base-300 p-6 text-center max-w-sm">
-      <i class="bi bi-geo-alt text-5xl text-base-content/20 mb-3"></i>
-      <p class="font-bold text-base-content/70">Google Maps 嵌入區域</p>
-      <p class="text-sm text-base-content/40 mt-1">串接 Google Maps API 後顯示地圖</p>
-    </div>
+  <!-- 地圖區 -->
+  <div class="flex-1 relative mt-2 mb-2 mr-2 rounded-lg overflow-hidden">
+    <google-map [center]="mapCenter" [zoom]="mapZoom" [options]="mapOptions" width="100%" height="100%">
+
+      @for (marker of markers; track marker.title) {
+      <map-marker [position]="marker.position" [title]="marker.title" [label]="marker.label">
+      </map-marker>
+      }
+
+    </google-map>
   </div>
 
 </div>
@@ -112,11 +115,34 @@
     <div class="flex flex-col gap-3">
 
       <!-- 搜尋地點 -->
-      <div class="form-control">
+      <div class="form-control relative">
         <label class="label">
-          <span class="label-text font-medium">地點名稱</span>
+          <span class="label-text font-medium">搜尋地點</span>
         </label>
-        <input type="text" class="input input-bordered w-full" placeholder="搜尋地點名稱…" [(ngModel)]="form.locationName" />
+        <input type="text" class="input input-bordered w-full" placeholder="輸入地點名稱搜尋…" [(ngModel)]="form.locationName"
+          (input)="onSearchInput(form.locationName)" />
+
+        <!-- 搜尋結果下拉 -->
+        @if (showDropdown && autocompleteResults.length > 0) {
+        <div
+          class="absolute top-full left-0 right-0 bg-base-100 border border-base-300 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto">
+          @for (result of autocompleteResults; track result.id) {
+          <div class="px-4 py-2 hover:bg-base-200 cursor-pointer text-sm" (click)="selectSearchResult(result)">
+            <p class="font-medium">{{ result.name }}</p>
+            @if (result.addressText) {
+            <p class="text-xs text-base-content/50">{{ result.addressText }}</p>
+            }
+          </div>
+          }
+        </div>
+        }
+
+        @if (isSearching) {
+        <div
+          class="absolute top-full left-0 right-0 bg-base-100 border border-base-300 rounded-lg p-3 text-center text-sm text-base-content/50">
+          搜尋中...
+        </div>
+        }
       </div>
 
       <!-- 用途標籤 -->

@@ -79,6 +79,8 @@ export interface TripLocation {
   locationRole: string;
   note: string;
   sortOrder: number;
+  lat?: number | null;
+  lng?: number | null;
 }
 
 // 公告
