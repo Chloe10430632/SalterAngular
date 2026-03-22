@@ -147,6 +147,9 @@ export class TripService {
   deleteLocation(locationId: number): Observable<ApiResponse<string>> {
     return this.http.delete<ApiResponse<string>>(`${this.baseUrl}/locations/${locationId}`);
   }
+  updateLocationSort(tripId: number, items: { locationId: number; sortOrder: number }[]): Observable<ApiResponse<string>> {
+    return this.http.put<ApiResponse<string>>(`${this.baseUrl}/${tripId}/locations/sort`, { items });
+  }
 
   // ── 提醒 ──
 
@@ -180,7 +183,9 @@ export class TripService {
   getAllLocations(keyword?: string): Observable<ApiResponse<TripLocationSearch[]>> {
     let params = new HttpParams();
     if (keyword) params = params.set('keyword', keyword);
-    return this.http.get<ApiResponse<TripLocationSearch[]>>(`${this.baseUrl}/locations/all`, { params });
+    return this.http.get<ApiResponse<TripLocationSearch[]>>(
+      `${this.baseUrl}/all-locations`, { params }  // 改這裡
+    );
   }
 }
 

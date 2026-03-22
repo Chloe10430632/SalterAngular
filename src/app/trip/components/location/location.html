@@ -1,10 +1,8 @@
 <div class="flex gap-2" style="height: calc(100vh - 56px - 1rem)">
 
-
   <!-- 左側地點面板 -->
   <aside class="w-80 bg-base-100 border border-base-300 flex flex-col shadow-sm rounded-lg my-2">
 
-    <!-- 標題 + 新增 -->
     <div class="p-4 border-b border-base-300">
       <div class="flex items-center justify-between mb-3">
         <h2 class="font-bold">行程地點</h2>
@@ -13,14 +11,10 @@
           新增地點
         </button>
       </div>
-      <label class="input input-bordered input-sm flex items-center gap-2">
-        <i class="bi bi-search text-base-content/40"></i>
-        <input type="text" placeholder="搜尋地點…" class="grow text-sm" [(ngModel)]="searchKeyword" />
-      </label>
     </div>
 
-    <!-- 地點清單 -->
-    <div class="flex-1 overflow-y-auto divide-y divide-base-200">
+    <!-- 地點清單 加上 cdkDropList -->
+    <div class="flex-1 overflow-y-auto divide-y divide-base-200" cdkDropList (cdkDropListDropped)="onDrop($event)">
 
       @if (isLoading) {
       @for (item of [1,2,3]; track item) {
@@ -44,12 +38,17 @@
       }
 
       @for (loc of locations; track loc.id; let i = $index) {
-      <div class="p-4 cursor-pointer transition-colors" [class.bg-primary]="selectedLocation?.id === loc.id"
+      <!-- 加上 cdkDrag -->
+      <div class="p-4 cursor-pointer transition-colors" cdkDrag [class.bg-primary]="selectedLocation?.id === loc.id"
         [class.bg-opacity-5]="selectedLocation?.id === loc.id" [class.border-l-4]="selectedLocation?.id === loc.id"
         [class.border-primary]="selectedLocation?.id === loc.id" (click)="selectLocation(loc)">
-        <div class="flex items-start gap-3">
 
-          <!-- 序號圓圈 -->
+        <!-- 拖曳把手 -->
+        <div class="flex items-start gap-3">
+          <div cdkDragHandle class="cursor-grab mt-1 text-base-content/30 hover:text-base-content/60">
+            <i class="bi bi-grip-vertical"></i>
+          </div>
+
           <div
             class="w-7 h-7 rounded-full text-white flex items-center justify-center text-xs font-bold shrink-0 mt-0.5"
             [style.background-color]="getLocationColor(i)">
@@ -59,8 +58,6 @@
           <div class="flex-1 min-w-0">
             <div class="flex items-center justify-between gap-1">
               <span class="font-semibold text-sm truncate">{{ loc.locationName }}</span>
-
-              <!-- 操作選單 -->
               <div class="dropdown dropdown-end">
                 <div tabindex="0" role="button" class="btn btn-ghost btn-xs" (click)="$event.stopPropagation()">
                   <i class="bi bi-three-dots"></i>
@@ -73,14 +70,12 @@
               </div>
             </div>
 
-            <!-- 標籤 -->
             @if (loc.locationRole) {
             <div class="flex gap-1 mt-1 flex-wrap">
               <span class="badge badge-primary badge-xs">{{ loc.locationRole }}</span>
             </div>
             }
 
-            <!-- 備註 -->
             @if (loc.note) {
             <p class="text-xs text-base-content/50 mt-1.5 italic">{{ loc.note }}</p>
             }
@@ -98,6 +93,11 @@
       @for (marker of markers; track marker.title) {
       <map-marker [position]="marker.position" [title]="marker.title" [label]="marker.label">
       </map-marker>
+      }
+
+      <!-- 地點連線 -->
+      @if (polylinePath.length > 1) {
+      <map-polyline [path]="polylinePath" [options]="polylineOptions"></map-polyline>
       }
 
     </google-map>
@@ -119,14 +119,14 @@
         <label class="label">
           <span class="label-text font-medium">搜尋地點</span>
         </label>
-        <input type="text" class="input input-bordered w-full" placeholder="輸入地點名稱搜尋…" [(ngModel)]="form.locationName"
-          (input)="onSearchInput(form.locationName)" />
+        <input type="text" class="input input-bordered w-full" placeholder="輸入地點名稱搜尋…" [ngModel]="form.locationName"
+          (ngModelChange)="form.locationName = $event; onSearchInput($event)" />
 
         <!-- 搜尋結果下拉 -->
         @if (showDropdown && autocompleteResults.length > 0) {
         <div
           class="absolute top-full left-0 right-0 bg-base-100 border border-base-300 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto">
-          @for (result of autocompleteResults; track result.id) {
+          @for (result of autocompleteResults; track result.placeId) {
           <div class="px-4 py-2 hover:bg-base-200 cursor-pointer text-sm" (click)="selectSearchResult(result)">
             <p class="font-medium">{{ result.name }}</p>
             @if (result.addressText) {

@@ -133,10 +133,12 @@ export interface TripDistrict {
 //所有地點
 export interface TripLocationSearch {
   id: number;
+  placeId?: string;
   name: string;
-  addressText: string | null;
-  cityName: string | null;
-  districtName: string | null;
-  lat: number | null;
-  lng: number | null;
+  addressText?: string;
+  lat: number;
+  lng: number;
+  cityName?: string;
+  districtName?: string;
+
 }

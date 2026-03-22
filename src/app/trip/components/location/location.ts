@@ -1,13 +1,14 @@
-import { Component, OnInit, inject, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, inject, AfterViewInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { TripService } from '../../services/trip';
 import { TripLocation, TripLocationSearch } from '../../interfaces/trip';
 import { GoogleMapsModule } from '@angular/google-maps';
+import { CdkDragDrop, moveItemInArray, DragDropModule } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-location',
-  imports: [FormsModule, GoogleMapsModule],
+  imports: [FormsModule, GoogleMapsModule, DragDropModule],
   templateUrl: './location.html',
   styleUrl: './location.css'
 })
@@ -16,8 +17,6 @@ export class Location implements OnInit, AfterViewInit {
   private tripService = inject(TripService);
   private route = inject(ActivatedRoute);
 
-  @ViewChild('searchInput') searchInput!: ElementRef;
-
   tripId = 0;
   locations: TripLocation[] = [];
   selectedLocation: TripLocation | null = null;
@@ -25,8 +24,7 @@ export class Location implements OnInit, AfterViewInit {
   isEditing = false;
   searchKeyword = '';
 
-  // Google Maps 設定
-  mapCenter: google.maps.LatLngLiteral = { lat: 23.6978, lng: 120.9605 }; // 台灣中心
+  mapCenter: google.maps.LatLngLiteral = { lat: 23.6978, lng: 120.9605 };
   mapZoom = 8;
   mapOptions: google.maps.MapOptions = {
     mapTypeControl: false,
@@ -34,16 +32,24 @@ export class Location implements OnInit, AfterViewInit {
     fullscreenControl: false,
   };
 
-  // 地圖上的 Markers
   markers: { position: google.maps.LatLngLiteral; label: string; title: string; color: string }[] = [];
 
-  // Autocomplete 搜尋結果
+  // 地圖連線
+  polylinePath: google.maps.LatLngLiteral[] = [];
+  polylineOptions: google.maps.PolylineOptions = {
+    strokeColor: '#3b82f6',
+    strokeOpacity: 0.8,
+    strokeWeight: 3
+  };
+
   autocompleteResults: TripLocationSearch[] = [];
   selectedLocationSearch: TripLocationSearch | null = null;
   isSearching = false;
   showDropdown = false;
 
-  // 表單
+  private autocompleteService!: google.maps.places.AutocompleteService;
+  private placesService!: google.maps.places.PlacesService;
+
   form = {
     locationId: 0,
     locationName: '',
@@ -52,7 +58,6 @@ export class Location implements OnInit, AfterViewInit {
     sortOrder: 0
   };
 
-  // 地點顏色
   colors = [
     '#ef4444', '#f97316', '#eab308',
     '#22c55e', '#3b82f6', '#8b5cf6', '#ec4899'
@@ -65,7 +70,13 @@ export class Location implements OnInit, AfterViewInit {
     });
   }
 
-  ngAfterViewInit() { }
+  ngAfterViewInit() {
+    this.autocompleteService = new google.maps.places.AutocompleteService();
+    const mapDiv = document.createElement('div');
+    this.placesService = new google.maps.places.PlacesService(
+      new google.maps.Map(mapDiv)
+    );
+  }
 
   loadLocations() {
     this.isLoading = true;
@@ -81,7 +92,6 @@ export class Location implements OnInit, AfterViewInit {
     });
   }
 
-  // 更新地圖上的 Markers
   updateMarkers() {
     this.markers = this.locations
       .filter(loc => loc.lat && loc.lng)
@@ -92,7 +102,9 @@ export class Location implements OnInit, AfterViewInit {
         color: this.colors[i % this.colors.length]
       }));
 
-    // 如果有地點，地圖移到第一個地點
+    // 更新連線路徑
+    this.polylinePath = this.markers.map(m => m.position);
+
     if (this.markers.length > 0) {
       this.mapCenter = this.markers[0].position;
       this.mapZoom = 12;
@@ -101,7 +113,6 @@ export class Location implements OnInit, AfterViewInit {
 
   selectLocation(loc: TripLocation) {
     this.selectedLocation = loc;
-    // 地圖移到選中的地點
     if (loc.lat && loc.lng) {
       this.mapCenter = { lat: Number(loc.lat), lng: Number(loc.lng) };
       this.mapZoom = 15;
@@ -112,8 +123,21 @@ export class Location implements OnInit, AfterViewInit {
     return this.colors[index % this.colors.length];
   }
 
-  // 搜尋地點（呼叫後端 API）
+  // 拖曳排序
+  onDrop(event: CdkDragDrop<TripLocation[]>) {
+    moveItemInArray(this.locations, event.previousIndex, event.currentIndex);
+    this.updateMarkers();
+
+    const items = this.locations.map((loc, i) => ({
+      locationId: loc.id,
+      sortOrder: i + 1
+    }));
+
+    this.tripService.updateLocationSort(this.tripId, items).subscribe();
+  }
+
   onSearchInput(keyword: string) {
+    this.form.locationName = keyword;
     if (!keyword || keyword.length < 2) {
       this.autocompleteResults = [];
       this.showDropdown = false;
@@ -121,29 +145,59 @@ export class Location implements OnInit, AfterViewInit {
     }
 
     this.isSearching = true;
-    this.tripService.getAllLocations(keyword).subscribe({
-      next: (res) => {
-        if (res.success) {
-          this.autocompleteResults = res.data;
-          this.showDropdown = true;
-        }
+    this.autocompleteService.getPlacePredictions(
+      { input: keyword, language: 'zh-TW' },
+      (predictions, status) => {
         this.isSearching = false;
+        if (status === google.maps.places.PlacesServiceStatus.OK && predictions) {
+          this.autocompleteResults = predictions.map(p => ({
+            id: 0,
+            placeId: p.place_id,
+            name: p.structured_formatting.main_text,
+            addressText: p.structured_formatting.secondary_text,
+            lat: 0,
+            lng: 0
+          }));
+          this.showDropdown = true;
+        } else {
+          this.autocompleteResults = [];
+          this.showDropdown = false;
+        }
       }
-    });
+    );
   }
 
-  // 選擇搜尋結果
   selectSearchResult(result: TripLocationSearch) {
-    this.selectedLocationSearch = result;
-    this.form.locationId = result.id;
     this.form.locationName = result.name;
     this.showDropdown = false;
 
-    // 地圖移到選中的地點
-    if (result.lat && result.lng) {
-      this.mapCenter = { lat: result.lat, lng: result.lng };
-      this.mapZoom = 15;
-    }
+    this.placesService.getDetails(
+      { placeId: result.placeId!, fields: ['geometry', 'name', 'address_components', 'formatted_address'] },
+      (place, status) => {
+        if (status === google.maps.places.PlacesServiceStatus.OK && place?.geometry?.location) {
+          const lat = place.geometry.location.lat();
+          const lng = place.geometry.location.lng();
+
+          const components = place.address_components || [];
+          const cityComp = components.find(c => c.types.includes('administrative_area_level_1'));
+          const districtComp = components.find(c =>
+            c.types.includes('administrative_area_level_2') || c.types.includes('locality')
+          );
+
+          this.selectedLocationSearch = {
+            ...result,
+            lat,
+            lng,
+            cityName: cityComp?.long_name ?? '',
+            districtName: districtComp?.long_name ?? '',
+            addressText: place.formatted_address ?? result.addressText
+          };
+
+          this.mapCenter = { lat, lng };
+          this.mapZoom = 15;
+        }
+      }
+    );
   }
 
   openAddModal() {
@@ -181,7 +235,13 @@ export class Location implements OnInit, AfterViewInit {
     } else {
       if (!this.selectedLocationSearch) return;
       this.tripService.createLocation(this.tripId, {
-        locationId: this.selectedLocationSearch.id,
+        locationName: this.selectedLocationSearch.name,
+        addressText: this.selectedLocationSearch.addressText,
+        googlePlaceId: this.selectedLocationSearch.placeId,
+        cityName: this.selectedLocationSearch.cityName,
+        districtName: this.selectedLocationSearch.districtName,
+        lat: this.selectedLocationSearch.lat,
+        lng: this.selectedLocationSearch.lng,
         locationRole: this.form.locationRole,
         note: this.form.note,
         sortOrder: this.form.sortOrder
