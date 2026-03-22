@@ -1,61 +1,38 @@
-/* 1. 錯誤時的抖動動畫 */
-@keyframes shake {
-
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-
-  25% {
-    transform: translateX(-6px);
-  }
-
-  75% {
-    transform: translateX(6px);
-  }
+input[type="date"].ng-dirty.ng-valid {
+  color: #5D4037 !important;
+  /* 換成你的深棕色，或是 slate-900 */
 }
 
-.animate-shake {
-  animation: shake 0.2s ease-in-out 0s 2;
+/* 確保原生預設的灰色被覆蓋 */
+input[type="date"] {
+  color: #A17A5A;
+  /* 這是未選取時的淺棕色 (根據你截圖的顏色) */
 }
 
-/* 2. 成功勾勾的進場動畫 */
-.animate-in {
-  animation: fadeIn zoomIn 0.3s ease-out;
+/* 💡 修正下拉選單箭頭位置 */
+
+/* 確保父容器是相對定位，以便定位內部的自訂箭頭 */
+.custom-select-wrapper {
+  @apply relative;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
+/* 隱藏所有瀏覽器的原生下拉箭頭 */
+.custom-select-wrapper select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 
-@keyframes zoomIn {
-  from {
-    transform: scale(0.5) translateY(-50%);
-  }
 
-  to {
-    transform: scale(1) translateY(-50%);
-  }
+
+
+/* --- 4. 字體顏色修正：選完後變深 --- */
+/* 生日選完變深 */
+input[type="date"]:not(:placeholder-shown) {
+  color: #5D4037 !important;
 }
 
-/* 3. 修正後的輸入框錯誤狀態 (不使用 @apply) */
-/* 當 input 同時擁有 .input-error 類別時的樣式 */
-.input.input-error {
-  background-color: rgba(255, 88, 97, 0.05) !important;
-  /* 淡淡的紅 */
-  border: 1.5px solid rgba(255, 88, 97, 0.5) !important;
-  box-shadow: 0 0 0 2px rgba(255, 88, 97, 0.1) !important;
-}
-
-/* 讓 input 聚焦時更有質感 */
-.input:focus {
-  outline: none;
-  box-shadow: 0 0 0 4px rgba(255, 205, 0, 0.2);
-  /* Salter Primary 黃色的發光感 */
+/* 下拉選單選完變深 (利用 Angular 的類別) */
+select.ng-dirty.ng-valid {
+  color: #5D4037 !important;
 }

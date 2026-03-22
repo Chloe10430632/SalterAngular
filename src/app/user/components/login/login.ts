@@ -1,13 +1,19 @@
-import { Component, NgZone, OnInit } from '@angular/core';
+import { Component, NgZone, OnInit, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../../Services/user-service';
 import { LoginResult } from '../../interfaces/ILoginResponse';
 import { ILogin } from '../../interfaces/ILogin';
+import { IRegister } from '../../interfaces/IRegister';
+import { IVerifyRegisterOtp } from '../../interfaces/IVerifyRegisterOtp';
+import { IResendOtp } from '../../interfaces/IResendOtp';
 import { AuthService } from '../../../core/services/auth-service';
 import { IGoogleLogin } from '../../interfaces/IGoogleLogin';
 import { CommonModule } from '@angular/common';
-import { Footer } from "../../../shared/footer/footer";
+import { interval, Subscription } from 'rxjs';
+import { takeWhile } from 'rxjs/operators'
+
+
 
 
 
@@ -24,17 +30,84 @@ export class Login implements OnInit {
 
   constructor(
     private authService: AuthService,
+    private userService: UserService,
     private router: Router,
     private ngZone: NgZone
   ) { }
 
+
+  // 狀態控制
+  isLoginModalOpen = false;
+
+  isRegisterModalOpen = false;
+
+  isRegistering = false;
+
   isLoading = false;
 
-  isPasswordVisible = false;
+  isSuccess = false;
 
+  activeModal: 'STAY' | 'COACH' | 'TRIP' | 'FORUM' | null = null;
+
+  isLoginPasswordVisible = false;
+
+  isRegPasswordVisible = false;
+  isRegConfirmVisible = false;
+
+  isStoryOpen = false;
+  currentSlide = 0;
+
+  //登入
+  loginForm = new FormGroup({
+    email: new FormControl('', [Validators.required, Validators.email]),
+    password: new FormControl('', [Validators.required, Validators.minLength(6)])
+  });
+
+  //註冊
+  step = 1;
+
+  isGoogleLoading = false;
+
+  isGoogleSuccess = false;
+
+  isConfirmPasswordVisible = false;
+
+  selectedFile: File | null = null;
+
+  previewUrl: string | null = null;
+
+  isPictureUploaded = false;
+
+  countdown = 180;
+
+  resendCountdown = 60;
+
+  timerSubscription?: Subscription;
+
+  canResend = false;
+
+  isResending = false;
+
+  registerForm = new FormGroup({
+    email: new FormControl('', [Validators.required, Validators.email]),
+    password: new FormControl('', [Validators.required, Validators.minLength(6)]),
+    confirmPassword: new FormControl('', [Validators.required]),
+    userName: new FormControl('', [Validators.required]),
+    phone: new FormControl(''),
+    gender: new FormControl(''),
+    birthday: new FormControl(''),
+    profilePicture: new FormControl(''),
+    otp: new FormControl('', [Validators.required, Validators.pattern('^[0-9]{6}$')])
+  });
+
+
+  //錯誤訊息
   errorMessage: string | null = null;
 
-  currentSlide = 1;
+  get f() { return this.loginForm.controls; }
+
+  get rf() { return this.registerForm.controls; } // 註冊專用
+
 
   ngOnInit(): void {
     if (typeof google !== 'undefined') {
@@ -46,42 +119,211 @@ export class Login implements OnInit {
     }
   }
 
-
-
-  signInWithGoogle() {
-    // 💡 直接執行，不要包在 prompt 的 callback 裡面
-    const googleBtnWrapper = document.createElement('div');
-
-    // 1. 叫 Google 在記憶體裡畫出一個按鈕
-    google.accounts.id.renderButton(googleBtnWrapper, {
-      theme: 'outline',
-      size: 'large'
-    });
-
-    // 2. 找到這個畫出來的按鈕中的「可點擊元素」
-    const googleBtn = googleBtnWrapper.querySelector('div[role=button]') as HTMLElement;
-
-    if (googleBtn) {
-      console.log('✅ 成功觸發 Google 視窗');
-      googleBtn.click(); // 💡 模擬點擊，這會直接彈出選帳號視窗
-    } else {
-      console.log('⚠️ 自動點擊失敗，嘗試備案');
-      google.accounts.id.prompt(); // 備案：如果暴力點擊失敗，才用原本的方法
-    }
+  ngOnDestroy() {
+    this.timerSubscription?.unsubscribe();
   }
 
 
-  get f() { return this.loginForm.controls; }
+  toggleRegisterMode() {
+    this.isRegistering = !this.isRegistering;
+    this.step = 1; // 每次切換回註冊都從第一步開始
+  }
 
 
-  loginForm = new FormGroup({
-    email: new FormControl('', [Validators.required, Validators.email]),
-    password: new FormControl('', [Validators.required, Validators.minLength(6)])
-  });
+  onFileSelected(event: any) {
+    const file: File = event.target.files[0];
+    if (file) {
+      this.selectedFile = file; // 暫存檔案，先不傳！
 
+      // 顯示前端預覽
+      const reader = new FileReader();
+      reader.onload = (e: any) => this.previewUrl = e.target.result;
+      reader.readAsDataURL(file);
+
+      this.isPictureUploaded = true; // 這裡先假裝成功，讓「下一步」可以點
+    }
+  }
+
+  nextStep() {
+    // 如果根本沒選新檔案，或是圖片已經上傳過且路徑已存在，直接進第二步
+    if (!this.selectedFile || (this.registerForm.get('profilePicture')?.value && this.isPictureUploaded)) {
+      this.step = 2;
+      return;
+    }
+    // 開始上傳，這時候可以把按鈕 disabled 或顯示 Loading
+    this.userService.postUploadUserPictureApi(this.selectedFile).subscribe({
+      next: (res) => {
+        this.registerForm.patchValue({ profilePicture: res.path });
+        this.isPictureUploaded = true; // 標記已實質上傳成功
+        this.step = 2;
+      },
+      error: (err) => {
+        console.error(err);
+        alert('圖片處理失敗，請稍後再試');
+      }
+    });
+  }
+
+  onRegister() {
+    if (this.registerForm.value.password !== this.registerForm.value.confirmPassword) {
+      alert('兩次密碼輸入不一致');
+      return;
+    }
+
+    const { otp, gender, birthday, profilePicture, ...otherValues } = this.registerForm.controls;
+
+    // 只要除了 otp 以外的欄位都 pass，就允許發送驗證碼
+    const isBasicInfoValid = Object.keys(otherValues).every(key => {
+      return this.registerForm.get(key)?.valid;
+    });
+
+
+
+    if (isBasicInfoValid) {
+
+      this.isLoading = true;
+
+      const rawData = this.registerForm.value;
+
+      const requestData: IRegister = { ...rawData } as IRegister;
+
+      Object.keys(requestData).forEach(key => {
+        if ((requestData as any)[key] === '') {
+          (requestData as any)[key] = null;
+        }
+      });
+
+      delete (requestData as any).confirmPassword;
+
+      this.userService.postRegister(requestData).subscribe({
+        next: (res) => {
+          this.isLoading = false;
+          this.step = 3; // 跳到第三步
+          this.startTimer();
+        },
+        error: (err) => {
+          this.isLoading = false;
+          console.error('註冊失敗', err);
+
+        }
+      });
+    } else {
+      alert('請檢查欄位是否填寫正確');
+    }
+
+  }
+
+  onVerifyOtp() {
+    const email = this.registerForm.get('email')?.value ?? '';
+    const otp = this.registerForm.get('otp')?.value ?? '';
+
+    if (this.registerForm.get('otp')?.invalid) {
+      // alert('請輸入正確的 6 位數驗證碼');
+      return;
+    }
+
+    this.isLoading = true; // 1. 開始轉圈圈
+    this.isSuccess = false;
+
+    const verifyData: IVerifyRegisterOtp = { email, otp };
+
+    this.userService.postVerifyRegisterOtp(verifyData).subscribe({
+      next: (_) => {
+
+        this.isLoading = false;
+        this.isSuccess = true;
+
+        this.timerSubscription?.unsubscribe();
+
+        setTimeout(() => {
+          this.isRegistering = false;
+          this.step = 1;
+          this.loginForm.patchValue({ email: email });
+          this.registerForm.reset();
+          this.isSuccess = false; // 重置狀態供下次使用
+        }, 1500);
+
+      },
+      error: (err) => {
+        console.error('驗證失敗', err);
+        // 顯示後端傳回來的錯誤訊息，例如「驗證碼過期」
+        alert(err.error?.message || '驗證失敗，請檢查驗證碼');
+      }
+    });
+  }
+
+  startTimer() {
+    this.countdown = 180;
+    this.canResend = false;
+
+    // 如果之前有計時器在跑，先取消它
+    this.timerSubscription?.unsubscribe();
+
+    this.timerSubscription = interval(1000) // 每秒跳一次
+      .pipe(takeWhile(() => this.countdown > 0)) // 當秒數 > 0 時繼續
+      .subscribe({
+        next: () => this.countdown--,
+        complete: () => this.canResend = true // 時間到，允許重新發送
+      });
+  }
+
+  get formatTime(): string {
+    const minutes = Math.floor(this.countdown / 60);
+    const seconds = this.countdown % 60;
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  }
+
+  get isStep2Valid(): boolean {
+    const controls = this.registerForm.controls;
+    // 檢查除了 otp 以外的必填項
+    return (controls.email.valid &&
+      controls.password.valid &&
+      controls.userName.valid &&
+      controls.confirmPassword.valid);
+  }
+
+  onResendOtp() {
+
+    if (this.isResending) return;
+    this.isResending = true;
+
+    const emailValue = this.registerForm.get('email')?.value;
+
+    if (!emailValue) {
+      alert('找不到 Email 資訊，請重新註冊');
+      this.step = 2;
+      return;
+    }
+
+    const resendData: IResendOtp = { email: emailValue };
+
+    this.userService.postResendOtp(resendData).subscribe({
+      next: () => {
+        alert('新的驗證碼已寄送到您的信箱');
+        this.isResending = false;
+        this.startTimer();
+
+        this.registerForm.patchValue({ otp: '' });
+      },
+      error: (err) => {
+        this.isResending = false;
+        console.error('重發失敗', err);
+        alert(err.error?.message || '重發失敗，請稍後再試');
+      }
+    })
+
+  }
+
+
+
+
+
+
+  //登入
   onLogin() {
+    this.loginForm.markAllAsTouched();
     if (this.loginForm.invalid) {
-      this.errorMessage = '請檢查帳號密碼格式是否正確';
+      // this.errorMessage = '請檢查帳號密碼格式是否正確';
       return;
     }
 
@@ -98,8 +340,15 @@ export class Login implements OnInit {
           // 狀況：登入成功
           this.authService.setCurrentUser(res.token);
 
-          alert('歡迎回來！');
-          this.router.navigate(['/']); // 導向首頁
+
+          this.isSuccess = true;
+
+
+          setTimeout(() => {
+            this.isLoginModalOpen = false;
+            this.router.navigate(['/']);
+            this.isSuccess = false; // 重置狀態
+          }, 1200);
         }
       },
       error: (err) => {
@@ -119,14 +368,53 @@ export class Login implements OnInit {
     });
   }
 
-  togglePasswordVisibility() {
-    this.isPasswordVisible = !this.isPasswordVisible;
+  toggleLoginPasswordVisibility() {
+    this.isLoginPasswordVisible = !this.isLoginPasswordVisible;
+  }
+
+  toggleRegPassword() {
+    this.isRegPasswordVisible = !this.isRegPasswordVisible;
+  }
+
+  toggleRegConfirm() {
+    this.isRegConfirmVisible = !this.isRegConfirmVisible;
+  }
+
+
+  signInWithGoogle() {
+
+    this.isGoogleLoading = true;
+
+    // 💡 直接執行，不要包在 prompt 的 callback 裡面
+    const googleBtnWrapper = document.createElement('div');
+
+    // 1. 叫 Google 在記憶體裡畫出一個按鈕
+    google.accounts.id.renderButton(googleBtnWrapper, {
+      theme: 'outline',
+      size: 'large'
+    });
+
+    // 2. 找到這個畫出來的按鈕中的「可點擊元素」
+    const googleBtn = googleBtnWrapper.querySelector('div[role=button]') as HTMLElement;
+
+    if (googleBtn) {
+      console.log('✅ 成功觸發 Google 視窗');
+      googleBtn.click(); // 💡 模擬點擊，這會直接彈出選帳號視窗
+    } else {
+      console.log('⚠️ 自動點擊失敗，嘗試備案');
+      google.accounts.id.prompt(); // 備案：如果暴力點擊失敗，才用原本的方法
+    }
+    setTimeout(() => {
+      if (this.isGoogleLoading && !this.isGoogleSuccess) {
+        this.isGoogleLoading = false;
+      }
+    }, 10000);
   }
 
 
 
-
   handleGoogleLogin(response: any) {
+
     // 1. 封裝成 IGoogleLogin 物件
     const loginData: IGoogleLogin = {
       idToken: response.credential
@@ -141,20 +429,64 @@ export class Login implements OnInit {
           this.authService.setCurrentUser(res.token);
 
           // 🎯 使用 NgZone 強制 Angular 回到熱區進行頁面跳轉
+
           this.ngZone.run(() => {
-            this.router.navigate(['/']);
+            this.isGoogleLoading = false;
+            this.isGoogleSuccess = true;
+
+            setTimeout(() => {
+              this.isLoginModalOpen = false;
+              this.router.navigate(['/']);
+            }, 1500);
           });
-        } else {
-          // ❌ 失敗：顯示後端傳回的 message
-          alert(res.message || '登入失敗');
         }
       },
       error: (err: any) => {
-        console.error('API 呼叫出錯:', err);
-        alert('無法連線至伺服器');
+        this.ngZone.run(() => {
+          this.isGoogleLoading = false;
+        });
       }
     });
   }
+
+  openLoginModal() {
+    this.isLoginModalOpen = true;
+  }
+
+
+  closeLoginModal() {
+    this.isLoginModalOpen = false;
+  }
+
+
+
+  openRegisterModal() {
+    this.isRegisterModalOpen = true;
+  }
+
+  openActiveModal(modalType: 'STAY' | 'COACH' | 'TRIP' | 'FORUM') {
+    this.activeModal = modalType;
+  }
+
+  closeRegisterModal() {
+    this.isRegisterModalOpen = false;
+  }
+
+  closeActiveModal() {
+    this.activeModal = null;
+
+  }
+
+
+  openStory() {
+    this.isStoryOpen = true;
+    this.currentSlide = 0;
+  }
+
+  closeStory() {
+    this.isStoryOpen = false;
+  }
+
 
 
 
