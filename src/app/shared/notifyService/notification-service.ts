@@ -13,7 +13,7 @@ export class NotificationService {
   show(msg: string, type: 'success' | 'error' = 'success') {
     this.messageSource.next({ msg, type }); //對他講話
 
-    timer(5000).subscribe(() => {
+    timer(4000).subscribe(() => {
       this.messageSource.next(null); //會變成false family，讓 HTML 不見
     });
   }

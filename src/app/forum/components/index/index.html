@@ -144,6 +144,41 @@
 
   <div class="col-span-12 md:col-span-6 space-y-4">
     <router-outlet></router-outlet>
+    <!-- 全域發佈進度條 (僅在發佈中顯示) -->
+    @if (isPublishing()) {
+    <div class="fixed inset-x-0 bottom-10 z-[200] px-4 animate-in fade-in slide-in-from-bottom-10 duration-500">
+      <!-- 使用 glass 類別增加通透感 -->
+      <div class="max-w-md mx-auto glass rounded-2xl p-6 shadow-2xl border border-white/20 relative overflow-hidden">
+
+        <!-- 背景微光動畫 -->
+        <div class="absolute inset-0 bg-gradient-to-r from-primary/10 to-accent/10 animate-pulse"></div>
+
+        <div class="relative z-10 space-y-4">
+          <div class="flex justify-between items-end">
+            <div class="flex flex-col gap-1">
+
+              <h4 class="text-sm font-bold text-base-content">正在建立您的專屬回憶...</h4>
+            </div>
+            <div class="text-right">
+              <span class="text-base">{{ uploadProgress() }}%</span>
+            </div>
+          </div>
+
+          <!-- 增強型進度條：加入 progress-secondary 混合感與動畫條紋 -->
+          <div class="relative h-4 w-full bg-base-300 rounded-full overflow-hidden shadow-inner">
+            <div
+              class="h-full bg-gradient-to-r from-info to-primary transition-all duration-500 ease-out flex items-center justify-end px-2"
+              [style.width.%]="uploadProgress()">
+              <!-- 進度條內部的發光小點 -->
+              <div class="w-2 h-2 bg-white rounded-full shadow-[0_0_10px_#fff] animate-ping"></div>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+    }
   </div>
 
 
@@ -199,14 +234,14 @@
 
       <!-- 發布貼文按鈕 -->
       <div class="flex flex-col items-end gap-2 pr-2 mt-4">
-        <button onclick="post_modal.showModal()" (click)="getUser()"
+        <button onclick="post_modal.showModal()" (click)="isLogin()"
           class="btn btn-primary btn-rounded btn-lg shadow-2xl hover:scale-110 transition-all active:scale-95 group">
           <i class="fa-solid fa-plus text-2xl text-primary-content group-hover:rotate-90 transition-transform"></i>
         </button>
       </div>
       <!-- 發布貼文Modal視窗 -->
       <dialog id="post_modal" class="modal modal-bottom sm:modal-middle">
-        <div
+        <div [formGroup]="postForm"
           class="modal-box p-0 overflow-hidden border-2 border-base-content/10 shadow-xl bg-base-100 flex flex-col max-h-[90vh]">
 
           <div class="flex justify-between items-center p-4 border-b-2 border-dashed border-base-300 shrink-0">
@@ -227,12 +262,12 @@
             <div class="flex items-center gap-3">
               <div class="avatar">
                 <div class="w-10 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-                  <img [src]="backendServer+currentUser?.profilePicture" />
+                  <img [src]="currentUser?.picture" alt="使用者頭貼" />
                 </div>
               </div>
               <div class="flex flex-col">
                 <div class="flex items-center gap-5">
-                  <span class="font-black text-sm">{{currentUser?.userName}}</span>
+                  <span class="font-black text-sm">{{currentUser?.name}}</span>
                   <div class="dropdown" (click)="getAllBoardList()">
                     @if (selectedBoard) {
                     <div tabindex="0" role="button"
@@ -275,8 +310,8 @@
             <div class="badge badge-soft badge-accent mt-2 tracking-wider">{{selectedLocation.name}}</div>
             }
 
-            <textarea
-              class="textarea textarea-ghost w-full focus:outline-none min-h-[60px] p-0 placeholder:text-base-content/30 resize-none"
+            <textarea formControlName="content"
+              class="px-2 textarea textarea-ghost w-full focus:outline-none min-h-[60px] p-0 placeholder:text-base-content/30"
               placeholder="今天發生了什麼有趣的事呢......"></textarea>
 
             <div id="image_preview_container" class="flex flex-wrap gap-2 py-2">
@@ -342,7 +377,8 @@
               *您所輸入的文字包含違規字眼：「...」
             </p>
             <div class="flex justify-end">
-              <button [disabled]="!selectedBoard" class="btn btn-primary px-10 shadow-lg text-lg rounded-xl">發佈</button>
+              <button (click)="onSubmit(true)" [disabled]="postForm.invalid"
+                class="btn btn-primary px-10 shadow-lg text-base rounded-xl">發佈</button>
             </div>
           </div>
         </div>
@@ -358,7 +394,7 @@
           <div class="modal-action justify-center gap-2">
             <form method="dialog" class="flex gap-2 w-full">
               <button class="btn btn-ghost flex-1 text-sm">放棄</button>
-              <button class="btn btn-primary flex-1 text-white text-sm">儲存草稿</button>
+              <button class="btn btn-primary flex-1 text-white text-sm" (click)="onSubmit(false)">儲存草稿</button>
             </form>
           </div>
         </div>

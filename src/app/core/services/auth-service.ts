@@ -14,6 +14,8 @@ export class AuthService {
   private apiUrl = 'https://localhost:7017/api'
 
   private currentUserSource = new BehaviorSubject<any | null>(null);
+
+  /**目前登入的使用者 */
   currentUser$ = this.currentUserSource.asObservable();
 
   constructor(private http: HttpClient) {
@@ -45,8 +47,8 @@ export class AuthService {
         if (avatar.startsWith('/')) return `https://localhost:7017${avatar}`;
         return 'images/default-avatar.png';
       };
-      const user = {
-        id: decoded.sub,
+      const user: CurrentUser = {
+        id: +decoded.sub, //+號自動轉型成number
         token: token,
         name: decoded.UserName || '使用者',
         // 🎯 直接套用判斷邏輯
@@ -83,6 +85,7 @@ export class AuthService {
     // 假設你的後端有一個 GET /api/user/profile
     return this.http.get<CurrentUser>('https://localhost:7017/api/User/User/GetUserProfile');
   }
+
 
 
 }
