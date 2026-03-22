@@ -2,6 +2,7 @@ import { Component, OnInit, inject, AfterViewInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { TripService } from '../../services/trip';
+import { LocationSearchService } from '../../services/location-search';
 import { TripLocation, TripLocationSearch } from '../../interfaces/trip';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { CdkDragDrop, moveItemInArray, DragDropModule } from '@angular/cdk/drag-drop';
@@ -15,6 +16,7 @@ import { CdkDragDrop, moveItemInArray, DragDropModule } from '@angular/cdk/drag-
 export class Location implements OnInit, AfterViewInit {
 
   private tripService = inject(TripService);
+  private locationSearchService = inject(LocationSearchService);
   private route = inject(ActivatedRoute);
 
   tripId = 0;
@@ -32,9 +34,14 @@ export class Location implements OnInit, AfterViewInit {
     fullscreenControl: false,
   };
 
-  markers: { position: google.maps.LatLngLiteral; label: string; title: string; color: string }[] = [];
+  markers: {
+    position: google.maps.LatLngLiteral;
+    label: string;
+    title: string;
+    color: string;
+    icon: { url: string; scaledSize: google.maps.Size };
+  }[] = [];
 
-  // 地圖連線
   polylinePath: google.maps.LatLngLiteral[] = [];
   polylineOptions: google.maps.PolylineOptions = {
     strokeColor: '#3b82f6',
@@ -46,9 +53,6 @@ export class Location implements OnInit, AfterViewInit {
   selectedLocationSearch: TripLocationSearch | null = null;
   isSearching = false;
   showDropdown = false;
-
-  private autocompleteService!: google.maps.places.AutocompleteService;
-  private placesService!: google.maps.places.PlacesService;
 
   form = {
     locationId: 0,
@@ -71,11 +75,7 @@ export class Location implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.autocompleteService = new google.maps.places.AutocompleteService();
-    const mapDiv = document.createElement('div');
-    this.placesService = new google.maps.places.PlacesService(
-      new google.maps.Map(mapDiv)
-    );
+    this.locationSearchService.init();
   }
 
   loadLocations() {
@@ -99,10 +99,18 @@ export class Location implements OnInit, AfterViewInit {
         position: { lat: Number(loc.lat), lng: Number(loc.lng) },
         label: String(i + 1),
         title: loc.locationName,
-        color: this.colors[i % this.colors.length]
+        color: this.colors[i % this.colors.length],
+        icon: {
+          url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
+            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36">
+              <circle cx="18" cy="18" r="16" fill="${this.colors[i % this.colors.length]}" stroke="white" stroke-width="2"/>
+              <text x="18" y="23" text-anchor="middle" fill="white" font-size="13" font-weight="bold" font-family="Arial">${i + 1}</text>
+            </svg>
+          `)}`,
+          scaledSize: new google.maps.Size(36, 36)
+        }
       }));
 
-    // 更新連線路徑
     this.polylinePath = this.markers.map(m => m.position);
 
     if (this.markers.length > 0) {
@@ -123,7 +131,6 @@ export class Location implements OnInit, AfterViewInit {
     return this.colors[index % this.colors.length];
   }
 
-  // 拖曳排序
   onDrop(event: CdkDragDrop<TripLocation[]>) {
     moveItemInArray(this.locations, event.previousIndex, event.currentIndex);
     this.updateMarkers();
@@ -145,59 +152,27 @@ export class Location implements OnInit, AfterViewInit {
     }
 
     this.isSearching = true;
-    this.autocompleteService.getPlacePredictions(
-      { input: keyword, language: 'zh-TW' },
-      (predictions, status) => {
+    this.locationSearchService.search(keyword).subscribe({
+      next: (results) => {
+        this.autocompleteResults = results;
+        this.showDropdown = results.length > 0;
         this.isSearching = false;
-        if (status === google.maps.places.PlacesServiceStatus.OK && predictions) {
-          this.autocompleteResults = predictions.map(p => ({
-            id: 0,
-            placeId: p.place_id,
-            name: p.structured_formatting.main_text,
-            addressText: p.structured_formatting.secondary_text,
-            lat: 0,
-            lng: 0
-          }));
-          this.showDropdown = true;
-        } else {
-          this.autocompleteResults = [];
-          this.showDropdown = false;
-        }
-      }
-    );
+      },
+      error: () => this.isSearching = false
+    });
   }
 
   selectSearchResult(result: TripLocationSearch) {
     this.form.locationName = result.name;
     this.showDropdown = false;
 
-    this.placesService.getDetails(
-      { placeId: result.placeId!, fields: ['geometry', 'name', 'address_components', 'formatted_address'] },
-      (place, status) => {
-        if (status === google.maps.places.PlacesServiceStatus.OK && place?.geometry?.location) {
-          const lat = place.geometry.location.lat();
-          const lng = place.geometry.location.lng();
-
-          const components = place.address_components || [];
-          const cityComp = components.find(c => c.types.includes('administrative_area_level_1'));
-          const districtComp = components.find(c =>
-            c.types.includes('administrative_area_level_2') || c.types.includes('locality')
-          );
-
-          this.selectedLocationSearch = {
-            ...result,
-            lat,
-            lng,
-            cityName: cityComp?.long_name ?? '',
-            districtName: districtComp?.long_name ?? '',
-            addressText: place.formatted_address ?? result.addressText
-          };
-
-          this.mapCenter = { lat, lng };
-          this.mapZoom = 15;
-        }
+    this.locationSearchService.getDetails(result).subscribe({
+      next: (detail) => {
+        this.selectedLocationSearch = detail;
+        this.mapCenter = { lat: detail.lat, lng: detail.lng };
+        this.mapZoom = 15;
       }
-    );
+    });
   }
 
   openAddModal() {
