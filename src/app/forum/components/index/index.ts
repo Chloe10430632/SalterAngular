@@ -91,9 +91,11 @@ export class Index implements OnInit {
   /**發佈貼文資料結構 */
   postForm!: FormGroup;
 
+  /**控制進度條顯示 */
+  isPublishing = signal(false);
 
-  isPublishing = signal(false);     // 控制進度條顯示
-  uploadProgress = signal(0);       // 控制進度百分比
+  /**控制進度百分比 */
+  uploadProgress = signal(0);
 
   /**Sortable是否已初始化 */
   isSortableInitialized = false;
@@ -252,7 +254,6 @@ export class Index implements OnInit {
     this.tags.update(prev => prev.filter((_, i) => i !== index));
   }
 
-
   /** 圖片預覽與排序 */
   async onFileChange(event: any) {
     const files = Array.from(event.target.files as FileList);
@@ -281,7 +282,7 @@ export class Index implements OnInit {
       console.error(error);
     }
 
-    this.initSortable(); // 👈 搬到外面，且內部有 isSortableInitialized 防護
+    this.initSortable();
     event.target.value = '';
   }
 
@@ -348,6 +349,7 @@ export class Index implements OnInit {
     this.selectedBoard = undefined;
     this.tags.set([]);
     this.previews.set([]);
+    this.selectedFiles.set([]);
 
     // 3. 重置 HTML 原生元素 (重要！)
     // 找到 Modal 裡的 textarea 並清空文字
