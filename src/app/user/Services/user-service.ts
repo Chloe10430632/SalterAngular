@@ -11,6 +11,7 @@ import { LoginResult } from '../interfaces/ILoginResponse';
 import { IResetPassword } from '../interfaces/IResetPassword';
 import { IForgotPassword } from '../interfaces/IForgotPassword';
 import { IUserProfile } from '../interfaces/IUserProfile';
+import { IVerifyOtp } from '../interfaces/IVerifyOtp';
 
 
 @Injectable({
@@ -72,6 +73,11 @@ export class UserService {
 
   resetPassword(data: IResetPassword): Observable<IBaseResponse> {
     const url = 'https://localhost:7017/api/User/User/ResetPassword'
+    return this.http.post<IBaseResponse>(url, data);
+  }
+
+  VerifyPasswordResetOtp(data: IVerifyOtp): Observable<IBaseResponse> {
+    const url = 'https://localhost:7017/api/User/User/VerifyPasswordResetOtp'
     return this.http.post<IBaseResponse>(url, data);
   }
 

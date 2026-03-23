@@ -43,6 +43,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
             // router.navigate(['/login']);
             break;
           case 403:
+            if (error.error?.status === 'NeedVerification') {
+              return throwError(() => error); //未啟用帳號須回傳狀態
+            }
             errorMessage = '權限不足：您的存取被禁止';
             break;
           case 400:

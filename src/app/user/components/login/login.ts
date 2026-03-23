@@ -12,6 +12,9 @@ import { IGoogleLogin } from '../../interfaces/IGoogleLogin';
 import { CommonModule } from '@angular/common';
 import { interval, Subscription } from 'rxjs';
 import { takeWhile } from 'rxjs/operators'
+import { IResetPassword } from '../../interfaces/IResetPassword';
+import { IForgotPassword } from '../../interfaces/IForgotPassword';
+import { NotificationService } from '../../../shared/notifyService/notification-service';
 
 
 
@@ -32,7 +35,8 @@ export class Login implements OnInit {
     private authService: AuthService,
     private userService: UserService,
     private router: Router,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private notification: NotificationService
   ) { }
 
 
@@ -57,11 +61,28 @@ export class Login implements OnInit {
   isStoryOpen = false;
   currentSlide = 0;
 
+  isForgotPassword = false;
+
+  forgotStep = 1;
+
+  hasSentEmail: boolean = false;
+
+
   //登入
   loginForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [Validators.required, Validators.minLength(6)])
   });
+
+
+  //忘記密碼
+  forgotForm = new FormGroup({
+    email: new FormControl('', [Validators.required, Validators.email]),
+    otp: new FormControl('', [Validators.required, Validators.pattern('^[0-9]{6}$')]),
+    newPassword: new FormControl('', [Validators.required, Validators.minLength(6)]),
+    confirmPassword: new FormControl('', [Validators.required])
+  });
+
 
   //註冊
   step = 1;
@@ -248,6 +269,10 @@ export class Login implements OnInit {
         console.error('驗證失敗', err);
         // 顯示後端傳回來的錯誤訊息，例如「驗證碼過期」
         alert(err.error?.message || '驗證失敗，請檢查驗證碼');
+
+        this.isLoading = false;
+        this.isSuccess = false;
+        this.registerForm.patchValue({ otp: '' });
       }
     });
   }
@@ -317,8 +342,6 @@ export class Login implements OnInit {
 
 
 
-
-
   //登入
   onLogin() {
     this.loginForm.markAllAsTouched();
@@ -357,7 +380,22 @@ export class Login implements OnInit {
 
         // 💡 檢查是否為「需要驗證」的狀況 (403)
         if (res && 'status' in res && res.status === 'NeedVerification') {
-          alert(res.message);
+          this.isRegistering = true;
+          this.step = 3;
+          const targetEmail = this.loginForm.value.email;
+          this.registerForm.patchValue({ email: targetEmail });
+          this.userService.postResendOtp({ email: targetEmail! }).subscribe({
+            next: () => {
+              // 通知使用者信件已發送
+              this.notification.show('帳號未啟用，已自動為您發送新的驗證碼！', 'success');
+              this.startTimer(); // 開始 180 秒倒數
+            },
+            error: (resendErr) => {
+              this.notification.show('驗證碼發送失敗，請稍後點擊手動重發', 'error');
+            }
+          });
+
+
           // 這裡你可以決定是否要跳轉到註冊的 Step 3
           // 例如：this.router.navigate(['/register'], { queryParams: { step: 3, email: loginData.email } });
         } else {
@@ -456,6 +494,10 @@ export class Login implements OnInit {
 
   closeLoginModal() {
     this.isLoginModalOpen = false;
+    this.isForgotPassword = false; // 重置狀態
+    this.isRegistering = false;    // 重置狀態
+    this.step = 1;                 // 重置步驟
+    this.forgotStep = 1;
   }
 
 
@@ -485,6 +527,135 @@ export class Login implements OnInit {
 
   closeStory() {
     this.isStoryOpen = false;
+  }
+
+
+  //忘記密碼
+  toggleForgotPassword() {
+    this.isForgotPassword = !this.isForgotPassword;
+    this.isRegistering = false; // 確保關閉註冊模式
+    this.forgotStep = 1;
+    this.forgotForm.reset();
+  }
+
+  onSendForgotEmail() {
+    if (this.forgotForm.controls.email.invalid) {
+      alert('請輸入正確的 Email');
+      return;
+    }
+
+    this.isLoading = true;
+    const data: IForgotPassword = { email: this.forgotForm.value.email! };
+
+    this.userService.forgotPassword(data).subscribe({
+      next: (res) => {
+        // 💡 只有在 API 成功回傳後，才開始跑 1.5 秒流程
+        setTimeout(() => {
+          this.isLoading = false;
+          this.forgotStep = 2; // ✅ 修正：跳轉到忘記密碼的第二步
+          this.startTimer();   // 啟動倒數
+        }, 1500);
+      },
+      error: (err) => {
+        this.isLoading = false;
+        alert(err.error?.message || '發送失敗，請檢查 Email 是否正確');
+      }
+    });
+  }
+
+  onResetPassword() {
+    if (this.forgotForm.value.newPassword !== this.forgotForm.value.confirmPassword) {
+      alert('兩次密碼輸入不一致');
+      return;
+    }
+
+    if (this.forgotForm.invalid) {
+      alert('請填寫完整資訊');
+      return;
+    }
+
+    this.isLoading = true;
+    const requestData: IResetPassword = {
+      email: this.forgotForm.value.email!,
+      otp: this.forgotForm.value.otp!,
+      newPassword: this.forgotForm.value.newPassword!
+    };
+
+    this.userService.resetPassword(requestData).subscribe({
+      next: (res) => {
+        this.isLoading = false;
+        this.isSuccess = true;
+
+        setTimeout(() => {
+          // 回到登入表單狀態
+          this.isForgotPassword = false;
+          this.isRegistering = false;
+          this.forgotStep = 1; // 重置步驟以便下次使用
+
+          // 自動把剛才重設的 Email 填入登入表單，增加體驗
+          this.loginForm.patchValue({ email: requestData.email });
+
+          this.isSuccess = false;
+          this.forgotForm.reset();
+        }, 1500);
+      },
+      error: (err) => {
+        this.isLoading = false;
+        alert(err.error?.message || '驗證碼錯誤或已失效');
+      }
+    });
+  }
+
+  // 驗證忘記密碼的 OTP (Step 2 -> Step 3)
+  onVerifyForgotOtp() {
+    const email = this.forgotForm.get('email')?.value ?? '';
+    const otp = this.forgotForm.get('otp')?.value ?? '';
+
+    if (this.forgotForm.get('otp')?.invalid) return;
+
+    this.isLoading = true;
+
+    // 💡 這裡呼叫後端驗證忘記密碼 OTP 的 API
+    // 如果你的後端是「最後一步才驗證」，這裡可以用 setTimeout 模擬驗證過程
+    this.userService.VerifyPasswordResetOtp({ email, otp }).subscribe({
+      next: (res) => {
+        this.isLoading = false;
+        this.forgotStep = 3; // 驗證成功，進入設定新密碼頁面
+      },
+      error: (err) => {
+        this.isLoading = false;
+        // 這裡就是你說的錯誤處理：彈出後端回傳的錯誤訊息
+        alert(err.error?.message || '驗證碼錯誤，請重新輸入');
+
+        this.forgotForm.patchValue({ otp: '' });
+      }
+    });
+  }
+
+  // 重新發送忘記密碼的 OTP
+  onResendForgotOtp() {
+    if (this.isResending) return;
+
+    const email = this.forgotForm.get('email')?.value;
+    if (!email) {
+      alert('找不到 Email 資訊，請返回第一步');
+      this.forgotStep = 1;
+      return;
+    }
+
+    this.isResending = true;
+    this.userService.forgotPassword({ email }).subscribe({
+      next: () => {
+        alert('新的驗證碼已寄出');
+        this.isResending = false;
+        this.startTimer(); // 重新開始倒數 180 秒
+        this.forgotForm.patchValue({ otp: '' }); // 清空舊的 OTP
+      },
+      error: (err) => {
+        this.isResending = false;
+        alert(err.error?.message || '重發失敗，請稍後再試');
+      }
+    });
   }
 
 
