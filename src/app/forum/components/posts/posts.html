@@ -155,7 +155,8 @@
                   @for(imgUrl of post.imageUrls; track $index ){
 
                   <!-- 圖片容器 -->
-                  <div class="aspect-square rounded-2xl overflow-hidden border border-base-200 shadow-sm group/img">
+                  <div (click)="openLightbox(imgUrl)"
+                    class="aspect-square rounded-2xl overflow-hidden border border-base-200 shadow-sm group/img">
                     <img [src]="imgUrl"
                       class="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-700" />
                   </div>
@@ -290,6 +291,38 @@
                 </form>
               </div>
             </div>
+          </dialog>
+
+          <!-- 圖片放大燈箱(Modal) -->
+          <dialog id="lightbox_modal" class="modal bg-black/40 backdrop-blur-lg transition-all duration-200"
+            (close)="closeLightbox()">
+            <div
+              class="modal-box max-w-5xl bg-transparent shadow-none p-0 overflow-visible flex flex-col items-center justify-center">
+
+              <form method="dialog">
+                <button class="btn btn-circle btn-ghost text-white absolute -top-12 right-0 hover:bg-white/20">
+                  <i class="fa-solid fa-xmark text-2xl"></i>
+                </button>
+              </form>
+
+              @if (selectedFullImage()) {
+              <div class="relative group">
+                <img [src]="selectedFullImage()"
+                  class="max-h-[85vh] max-w-full rounded-lg shadow-2xl animate-in zoom-in-95 duration-100 object-contain"
+                  alt="放大預覽" />
+
+                <div class="absolute -bottom-10 left-0 w-full text-center">
+                  <span class="text-white/60 text-xs tracking-widest uppercase font-bold">
+                    <i class="fa-solid fa-camera-retro mr-2"></i> Salter
+                  </span>
+                </div>
+              </div>
+              }
+            </div>
+
+            <form method="dialog" class="modal-backdrop">
+              <button>close</button>
+            </form>
           </dialog>
 
 

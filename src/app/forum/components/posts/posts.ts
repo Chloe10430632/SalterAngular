@@ -1,7 +1,7 @@
 
 import { PostList } from './../../interfaces/postList';
 import { DecimalPipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { PostsService } from '../../services/posts-service';
 import { RelativeTimePipe } from '../../pipes/relative-time-pipe';
 import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
@@ -39,6 +39,10 @@ export class Posts implements OnInit {
 
   /**用來記錄現在是哪篇貼文要被檢舉*/
   selectedPostForReport?: PostList;
+
+  /**儲存目前要放大顯示的圖片網址 */
+  selectedFullImage = signal<string | null>(null);
+
 
   constructor(private postsService: PostsService,
     private postInteractionsService: PostInteractionsService,
@@ -236,5 +240,16 @@ export class Posts implements OnInit {
     this.handleInteraction(post, 'report', reason);
   }
 
+  /**放大圖片 - 開啟燈箱 */
+  openLightbox(url: string) {
+    this.selectedFullImage.set(url);
+    const modal = document.getElementById('lightbox_modal') as HTMLDialogElement;
+    modal?.showModal();
+  }
+
+  /**放大圖片 - 關閉燈箱 */
+  closeLightbox() {
+    this.selectedFullImage.set(null);
+  }
 
 }

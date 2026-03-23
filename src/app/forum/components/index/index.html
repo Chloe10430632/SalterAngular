@@ -246,7 +246,8 @@
 
           <div class="flex justify-between items-center p-4 border-b-2 border-dashed border-base-300 shrink-0">
             <form method="dialog">
-              <button class="btn btn-sm btn-circle btn-warning shadow-sm"><i class="fa-solid fa-xmark"></i></button>
+              <button (click)="clearPost()" class="btn btn-sm btn-circle btn-warning shadow-sm"><i
+                  class="fa-solid fa-xmark"></i></button>
             </form>
             <h3 class="font-bold text-md tracking-wider text-base-content">製造海浪</h3>
             <div class="flex gap-2">
@@ -318,6 +319,10 @@
               @for (src of previews(); track $index) {
               <div class="preview-item relative flex-shrink-0 w-30 h-30 group cursor-grab active:cursor-grabbing">
                 <img [src]="src" class="w-full h-full object-cover rounded-xl border-2 border-base-200 shadow-sm" />
+                <button (click)="openLightbox(src)"
+                  class="btn btn-circle btn-xs btn-neutral absolute -top-1 -left-1 opacity-0 group-hover:opacity-100 transition-opacity shadow-md">
+                  預覽
+                </button>
                 <button (click)="removeImage($index)"
                   class="btn btn-circle btn-xs btn-error absolute -top-1 -right-1 opacity-0 group-hover:opacity-100 transition-opacity shadow-md">
                   <i class="fa-solid fa-xmark text-[10px]"></i>
@@ -406,6 +411,39 @@
           <button>close</button>
         </form>
       </dialog>
+
+      <!-- 圖片放大燈箱(Modal) -->
+      <dialog id="lightbox_modal_post" class="modal bg-black/40 backdrop-blur-lg transition-all duration-200"
+        (close)="closeLightbox()">
+        <div
+          class="modal-box max-w-5xl bg-transparent shadow-none p-0 overflow-visible flex flex-col items-center justify-center">
+
+          <form method="dialog">
+            <button class="btn btn-circle btn-ghost text-white absolute -top-12 right-0 hover:bg-white/20">
+              <i class="fa-solid fa-xmark text-2xl"></i>
+            </button>
+          </form>
+
+          @if (selectedFullImage()) {
+          <div class="relative group">
+            <img [src]="selectedFullImage()"
+              class="max-h-[85vh] max-w-full rounded-lg shadow-2xl animate-in zoom-in-95 duration-100 object-contain"
+              alt="放大預覽" />
+
+            <div class="absolute -bottom-10 left-0 w-full text-center">
+              <span class="text-white/60 text-xs tracking-widest uppercase font-bold">
+                <i class="fa-solid fa-camera-retro mr-2"></i> Salter
+              </span>
+            </div>
+          </div>
+          }
+        </div>
+
+        <form method="dialog" class="modal-backdrop">
+          <button>close</button>
+        </form>
+      </dialog>
+
 
 
 

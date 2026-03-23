@@ -100,6 +100,9 @@ export class Index implements OnInit {
   /**Sortable是否已初始化 */
   isSortableInitialized = false;
 
+  /**儲存目前要放大顯示的圖片網址 */
+  selectedFullImage = signal<string | null>(null);
+
   /**建構子注入 */
   constructor(
     private boardsService: BoardsService,
@@ -137,11 +140,6 @@ export class Index implements OnInit {
       tags: this.formBuilder.array([])
     });
 
-  }
-
-  /**選擇圖片 */
-  onFileSelect(event: any) {
-    this.selectedFiles.set(Array.from(event.target.files));
   }
 
   /**發佈貼文 - File */
@@ -345,6 +343,7 @@ export class Index implements OnInit {
 
   /**清除貼文內容 */
   clearPost() {
+    this.isSortableInitialized = false;
     this.selectedLocation = undefined;
     this.selectedBoard = undefined;
     this.tags.set([]);
@@ -364,6 +363,19 @@ export class Index implements OnInit {
     const modal = document.getElementById('post_modal') as HTMLDialogElement;
     if (modal) modal.close();
   }
+
+  /**放大圖片 - 開啟燈箱 */
+  openLightbox(url: string) {
+    this.selectedFullImage.set(url);
+    const modal = document.getElementById('lightbox_modal_post') as HTMLDialogElement;
+    modal?.showModal();
+  }
+
+  /**放大圖片 - 關閉燈箱 */
+  closeLightbox() {
+    this.selectedFullImage.set(null);
+  }
+
 
 }
 
