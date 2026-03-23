@@ -12,7 +12,7 @@
   <div class="absolute inset-0 z-10 pointer-events-none">
 
     <div class="absolute top-[6%] left-[40%] pointer-events-auto">
-      <button (click)="openActiveModal('STAY')" class="group flex flex-col items-center gap-3 cursor-pointer">
+      <button routerLink="/house" class="group flex flex-col items-center gap-3 cursor-pointer">
         <div
           class="relative w-64 h-64 flex items-center justify-center bg-white/40 backdrop-blur-xl rounded-full border-2 border-white/60 shadow-xl group-hover:bg-white/70 group-hover:-translate-y-3 transition-all duration-500">
           <img src="user/stay2.png"
@@ -27,7 +27,7 @@
     </div>
 
     <div class="absolute top-[18%] left-[54%] pointer-events-auto">
-      <button (click)="openActiveModal('COACH')" class="group flex flex-col items-center gap-3 cursor-pointer">
+      <button routerLink="/experience" class="group flex flex-col items-center gap-3 cursor-pointer">
         <div
           class="relative w-64 h-64 flex items-center justify-center bg-white/40 backdrop-blur-xl rounded-full border-2 border-white/60 shadow-xl group-hover:bg-white/70 group-hover:-translate-y-3 transition-all duration-500">
           <img src="user/coach2.png"
@@ -42,7 +42,7 @@
     </div>
 
     <div class="absolute top-[28%] left-[68%] pointer-events-auto">
-      <button (click)="openActiveModal('TRIP')" class="group flex flex-col items-center gap-3 cursor-pointer">
+      <button routerLink="/trip" class="group flex flex-col items-center gap-3 cursor-pointer">
         <div
           class="relative w-64 h-64 flex items-center justify-center bg-white/40 backdrop-blur-xl rounded-full border-2 border-white/60 shadow-xl group-hover:bg-white/70 group-hover:-translate-y-3 transition-all duration-500">
           <img src="user/trip2.png"
@@ -57,7 +57,7 @@
     </div>
 
     <div class="absolute top-[15%] left-[82%] pointer-events-auto">
-      <button (click)="openActiveModal('FORUM')" class="group flex flex-col items-center gap-3 cursor-pointer">
+      <button routerLink="/forum" class="group flex flex-col items-center gap-3 cursor-pointer">
         <div
           class="relative w-64 h-64 flex items-center justify-center bg-white/40 backdrop-blur-xl rounded-full border-2 border-white/60 shadow-xl group-hover:bg-white/70 group-hover:-translate-y-3 transition-all duration-500">
           <img src="user/forum2.png"
@@ -142,6 +142,59 @@
     </button>
   </div>
   <!-- 開啟你的海邊之旅按鈕結尾 -->
+  <!-- 關於我們 -->
+  <div class="fixed bottom-10 right-10 z-20">
+    <div class="fixed bottom-10 right-20 z-20">
+      <button
+        class="btn btn-lg border-none rounded-full px-14 h-20 text-xl font-black tracking-[0.25em] shadow-xl transition-all duration-300 hover:scale-105 active:scale-95"
+        style="background-color: oklch(85% 0.199 91.936); color: oklch(20% 0.04 91.936);"
+        onclick="carousel_modal.showModal()">
+        關於我們
+      </button>
+    </div>
+    <dialog id="carousel_modal" class="modal">
+      <div class="modal-box p-0 w-[800px] max-w-none h-[800px] overflow-hidden rounded-2xl relative bg-black">
+
+        <div id="carousel_container" class="carousel w-full h-full flex flex-nowrap overflow-hidden">
+          <div class="carousel-item w-full h-full flex-shrink-0">
+            <img src="user/talk.png" class="w-full h-full object-cover" />
+          </div>
+          <div class="carousel-item w-full h-full flex-shrink-0">
+            <img src="user/pain.png" class="w-full h-full object-cover" />
+          </div>
+          <div class="carousel-item w-full h-full flex-shrink-0">
+            <img src="user/go.png" class="w-full h-full object-cover" />
+          </div>
+          <div class="carousel-item w-full h-full flex-shrink-0">
+            <img src="user/play.png" class="w-full h-full object-cover" />
+          </div>
+          <div class="carousel-item w-full h-full flex-shrink-0">
+            <img src="user/house.png" class="w-full h-full object-cover" />
+          </div>
+          <div class="carousel-item w-full h-full flex-shrink-0">
+            <img src="user/post.png" class="w-full h-full object-cover" />
+          </div>
+        </div>
+
+        <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 justify-between pointer-events-none">
+          <button (click)="moveSlide(-1)" class="btn btn-circle btn-black/30 text-white pointer-events-auto">❮</button>
+          <button (click)="moveSlide(1)" class="btn btn-circle btn-black/30 text-white pointer-events-auto">❯</button>
+        </div>
+
+        <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+          <span class="badge badge-xs bg-white/50"></span>
+          <span class="badge badge-xs bg-white"></span>
+          <span class="badge badge-xs bg-white/50"></span>
+        </div>
+      </div>
+
+      <form method="dialog" class="modal-backdrop bg-black/80 backdrop-blur-sm">
+        <button>close</button>
+      </form>
+    </dialog>
+  </div>
+
+  <!-- 關於我們結束 -->
   <!-- 登入視窗是否開啟 -->
   @if (isLoginModalOpen) {
   <div
