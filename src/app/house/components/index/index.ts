@@ -60,5 +60,12 @@ export class Index implements OnInit {
     if (this.childCount < 0) this.childCount = 0;
   }
 
+  //讓 Cloudinary 自動幫你裁切 600x600 的縮圖，省下 80% 的流量
+  getCloudinaryThumb(url: string): string {
+    if (!url || url.includes('cloudinary'))
+      return url;
 
+    return url.replace('/upload/', '/upload/c_fill,w_600,h_600,g_auto/');
+    // 在 /upload/ 後面插入裁切參數：c_fill (填充), w_600 (寬600)
+  }
 }
