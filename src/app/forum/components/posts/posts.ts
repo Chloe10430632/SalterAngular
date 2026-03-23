@@ -9,6 +9,8 @@ import { RouterLink } from '@angular/router';
 import { PostInteractionsService } from '../../services/post-interactions-service';
 import { PostInteractionsRequest } from '../../interfaces/postInteractionsRequest';
 import { ToastrService } from 'ngx-toastr';
+import { AuthService } from '../../../core/services/auth-service';
+import { CurrentUser } from '../../interfaces/currentUser';
 
 
 @Component({
@@ -21,6 +23,9 @@ export class Posts implements OnInit {
 
   /**當前環境網址根目錄 */
   readonly domain = window.location.origin;
+
+  /**目前使用者 */
+  currentUser?: CurrentUser;
 
   /**貼文篩選變數，預設為popular */
   activeTab: 'popular' | 'new' | 'follow' = 'popular';
@@ -44,12 +49,17 @@ export class Posts implements OnInit {
   selectedFullImage = signal<string | null>(null);
 
 
-  constructor(private postsService: PostsService,
+  constructor(
+    private postsService: PostsService,
     private postInteractionsService: PostInteractionsService,
-    private toastr: ToastrService) { }
+    private toastr: ToastrService,
+    public authService: AuthService) { }
 
   ngOnInit(): void {
     this.loadMore('popular');
+    this.authService.currentUser$.subscribe(data => {
+      this.currentUser = data;
+    });
   }
 
   // 無限滾動被動載入資料
@@ -173,6 +183,8 @@ export class Posts implements OnInit {
       reportReason: type === 'report' ? reason : undefined,
     };
 
+    if (!this.currentUser) return;
+
     this.postInteractionsService.postPostInteractionsApi(request).subscribe({
       next: (data) => {
         if (type === 'report') {
@@ -180,19 +192,11 @@ export class Posts implements OnInit {
             '',
             '我們已收到您的檢舉，將會盡快處理。'
           );
-
-          console.log('檢舉內容:', { postId: post.postId, reason });
         }
       },
 
 
       error: (err) => {
-        // 如果 API 失敗，要把 UI 狀態滾回 (視需求而定)
-        if (post.isLiked) {
-          post.likeCount--;
-        } else {
-          post.likeCount++;
-        }
         console.error(`interaction failed`, err);
       }
     });

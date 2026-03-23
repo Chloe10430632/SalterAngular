@@ -133,7 +133,6 @@ export class Index implements OnInit {
 
     //貼文資料結構
     this.postForm = this.formBuilder.group({
-      userId: [this.currentUser?.id],
       boardId: [, Validators.required],
       content: ['', Validators.required],
       locationId: [null],
