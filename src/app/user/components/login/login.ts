@@ -268,7 +268,7 @@ export class Login implements OnInit {
       error: (err) => {
         console.error('驗證失敗', err);
         // 顯示後端傳回來的錯誤訊息，例如「驗證碼過期」
-        alert(err.error?.message || '驗證失敗，請檢查驗證碼');
+        //alert(err.error?.message || '驗證失敗，請檢查驗證碼');
 
         this.isLoading = false;
         this.isSuccess = false;
