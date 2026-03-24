@@ -1,3 +1,4 @@
+import { environment } from './../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { PostInteractionsRequest } from '../interfaces/postInteractionsRequest';
@@ -11,6 +12,6 @@ export class PostInteractionsService {
 
   //POST 貼文互動
   postPostInteractionsApi(request: PostInteractionsRequest) {
-    return this.http.post('https://localhost:7017/api/Forum/PostInteractions', request);
+    return this.http.post(`${environment.apiUrl}/Forum/PostInteractions`, request);
   }
 }

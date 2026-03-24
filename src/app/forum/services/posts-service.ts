@@ -1,3 +1,4 @@
+import { environment } from './../../../environments/environment';
 import { HttpClient, HttpEvent, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { PostList } from '../interfaces/postList';
@@ -5,6 +6,7 @@ import { Observable } from 'rxjs/internal/Observable';
 import { timer } from 'rxjs/internal/observable/timer';
 import { map, zip } from 'rxjs';
 import { CreatePostDto } from '../interfaces/CreatePostDto';
+
 
 @Injectable({
   providedIn: 'root',
@@ -24,7 +26,7 @@ export class PostsService {
         .set('lastId', lastPostId.toString());
     }
 
-    const apiData$ = this.http.get<PostList[]>('https://localhost:7017/api/Forum/Posts', { params });
+    const apiData$ = this.http.get<PostList[]>(`${environment.apiUrl}/Forum/Posts`, { params });
     const minimumDelay$ = timer(1200);
     return zip(apiData$, minimumDelay$).pipe(
       map(([data, _]) => data)
@@ -41,7 +43,7 @@ export class PostsService {
         .set('lastId', lastPostId.toString());
     }
 
-    const apiData$ = this.http.get<PostList[]>('https://localhost:7017/api/Forum/Posts', { params });
+    const apiData$ = this.http.get<PostList[]>(`${environment.apiUrl}/Forum/Posts`, { params });
     const minimumDelay$ = timer(1200);
     return zip(apiData$, minimumDelay$).pipe(
       map(([data, _]) => data)
@@ -57,7 +59,7 @@ export class PostsService {
         .set('lastId', lastPostId.toString());
     }
 
-    const apiData$ = this.http.get<PostList[]>('https://localhost:7017/api/Forum/Posts', { params });
+    const apiData$ = this.http.get<PostList[]>(`${environment.apiUrl}/Forum/Posts`, { params });
     const minimumDelay$ = timer(1200);
     return zip(apiData$, minimumDelay$).pipe(
       map(([data, _]) => data)
@@ -74,7 +76,7 @@ export class PostsService {
         .set('lastId', lastPostId.toString());
     }
 
-    const apiData$ = this.http.get<PostList[]>('https://localhost:7017/api/Forum/Posts', { params });
+    const apiData$ = this.http.get<PostList[]>(`${environment.apiUrl}/Forum/Posts`, { params });
     const minimumDelay$ = timer(1000);
     return zip(apiData$, minimumDelay$).pipe(
       map(([data, _]) => data)
@@ -86,14 +88,14 @@ export class PostsService {
   PostUploadImages(files: File[]): Observable<HttpEvent<string[]>> {
     const formData = new FormData();
     files.forEach(file => formData.append('files', file));
-    return this.http.post<string[]>('https://localhost:7017/api/Forum/Posts/Images', formData, {
+    return this.http.post<string[]>(`${environment.apiUrl}/Forum/Posts/Images`, formData, {
       reportProgress: true, // 關鍵：開啟進度回報
       observe: 'events'     // 關鍵：觀察所有事件（而不只是最後的結果）
     });
   }
   //POST 發佈貼文內容 Json
   PostCreatePost(payload: CreatePostDto): Observable<any> {
-    return this.http.post('https://localhost:7017/api/Forum/Posts', payload);
+    return this.http.post(`${environment.apiUrl}/Forum/Posts`, payload);
   }
 
 

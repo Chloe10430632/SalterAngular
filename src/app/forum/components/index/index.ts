@@ -14,6 +14,7 @@ import { switchMap } from 'rxjs';
 import { CreatePostDto } from '../../interfaces/CreatePostDto';
 import { TagDto } from '../../interfaces/TagDto';
 import { HttpEventType } from '@angular/common/http';
+import { environment } from './../../../../environments/environment';
 
 @Component({
   selector: 'app-index',
@@ -83,7 +84,7 @@ export class Index implements OnInit {
   selectedFiles = signal<File[]>([]);
 
   /**後端伺服器PORT */
-  backendServer = "https://localhost:7017";
+  backendServer = `${environment.domain}`;
 
   /**目前使用者 */
   currentUser?: CurrentUser;

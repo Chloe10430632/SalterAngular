@@ -14,6 +14,7 @@ import { BoardInteractionsRequest } from '../../interfaces/boardInteractionsRequ
 import { CurrentUser } from '../../interfaces/currentUser';
 import { AuthService } from '../../../core/services/auth-service';
 import { BoardInteractionsService } from '../../services/board-interactions-service';
+import { environment } from './../../../../environments/environment';
 
 @Component({
   selector: 'app-select-board-posts',
@@ -30,7 +31,7 @@ export class SelectBoardPosts implements OnInit {
   readonly domain = window.location.origin;
 
   /**後端伺服器PORT */
-  backendServer = "https://localhost:7017";
+  backendServer = `${environment.domain}`;
 
   /**看板詳細資料 */
   boardDetails?: BoardDetails;

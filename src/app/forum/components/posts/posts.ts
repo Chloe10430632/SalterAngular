@@ -11,6 +11,7 @@ import { PostInteractionsRequest } from '../../interfaces/postInteractionsReques
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../../core/services/auth-service';
 import { CurrentUser } from '../../interfaces/currentUser';
+import { environment } from './../../../../environments/environment';
 
 
 @Component({
@@ -31,7 +32,7 @@ export class Posts implements OnInit {
   activeTab: 'popular' | 'new' | 'follow' = 'popular';
 
   /**後端伺服器PORT */
-  backendServer = "https://localhost:7017";
+  backendServer = `${environment.domain}`;
 
   /**裝Api打回來的貼文資料 */
   postList: PostList[] = [];
