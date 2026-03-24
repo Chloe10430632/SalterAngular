@@ -115,4 +115,44 @@ export class UpdateHouse implements OnInit {
       this.houseForm.amenityIds = this.houseForm.amenityIds.filter((i: number) => i !== id);
     }
   }
+
+  // 🔍 在類別中新增此方法
+  onFileSelected(event: any) {
+    const files: FileList = event.target.files;
+    if (files.length === 0) return;
+
+    this.isLoading = true; // 開啟讀取條，因為上傳雲端需要時間
+
+    // 1. 準備 FormData
+    const formData = new FormData();
+    for (let i = 0; i < files.length; i++) {
+      formData.append('files', files[i]); // 'files' 要對應你後端 UploadController 的參數名
+    }
+
+    // 2. 呼叫你剛寫好的 Upload API
+    this.http.post<any>('https://localhost:7017/api/Upload/images', formData).subscribe({
+      next: (res) => {
+        // 假設後端回傳格式是 { urls: ["http...", "http..."] }
+        const newUrls = res.urls.join('\n');
+
+        // 3. 把新網址加到現有的 rawImageUrls 後面
+        if (this.rawImageUrls.trim() === '') {
+          this.rawImageUrls = newUrls;
+        } else {
+          this.rawImageUrls += '\n' + newUrls;
+        }
+
+        this.isLoading = false;
+        alert(`成功上傳 ${res.urls.length} 張圖片！`);
+      },
+      error: (err) => {
+        this.isLoading = false;
+        console.error('上傳失敗', err);
+        alert('圖片上傳失敗，請檢查 API 設定');
+      }
+    });
+
+    // 清空 input，讓使用者可以重複選同一個檔案
+    event.target.value = '';
+  }
 }
