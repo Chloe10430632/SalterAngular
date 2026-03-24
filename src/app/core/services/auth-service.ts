@@ -6,12 +6,14 @@ import { ILogin } from '../../user/interfaces/ILogin';
 import { jwtDecode } from "jwt-decode";
 import { IGoogleLogin } from '../../user/interfaces/IGoogleLogin';
 import { CurrentUser } from '../../forum/interfaces/currentUser';
+import { environment } from '../../../environments/environment';
+
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
 
-  private apiUrl = 'https://localhost:7017/api'
+  private readonly apiUrl = environment.apiUrl;
 
   private currentUserSource = new BehaviorSubject<any | null>(null);
 
@@ -35,7 +37,7 @@ export class AuthService {
   setCurrentUser(token: string) {
     try {
       const decoded: any = jwtDecode(token); // 👈 使用工具拆開 Token
-      const backendUrl = 'https://localhost:7017'; // 你的後端網址
+      // const backendUrl = 'https://localhost:7017'; // 你的後端網址
       console.log('請看這裡！！內容是：', decoded);
       // 組合出全站通用的使用者物件
 
@@ -83,7 +85,7 @@ export class AuthService {
   //測試攔截器
   getProfile() {
     // 假設你的後端有一個 GET /api/user/profile
-    return this.http.get<CurrentUser>('https://localhost:7017/api/User/User/GetUserProfile');
+    return this.http.get<CurrentUser>(`${this.apiUrl}/User/User/GetUserProfile`);
   }
 
 

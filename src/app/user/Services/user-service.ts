@@ -12,6 +12,7 @@ import { IResetPassword } from '../interfaces/IResetPassword';
 import { IForgotPassword } from '../interfaces/IForgotPassword';
 import { IUserProfile } from '../interfaces/IUserProfile';
 import { IVerifyOtp } from '../interfaces/IVerifyOtp';
+import { environment } from '../../../environments/environment';
 
 
 @Injectable({
@@ -22,30 +23,33 @@ export class UserService {
 
   }
 
+  private readonly apiUrl = environment.apiUrl;
+
+
   postUploadUserPictureApi(file: File): Observable<IUploadUserPicture> {
     const formData = new FormData();
 
     formData.append('file', file);//'file' 要跟後端  IFormFile file 一樣(對齊)
 
     return this.http.post<IUploadUserPicture>(
-      'https://localhost:7017/api/User/User/UploadUserPicture',
+      `${this.apiUrl}/User/User/UploadUserPicture`,
       formData
     );
   }
 
   postRegister(data: IRegister): Observable<IBaseResponse> {
     return this.http.post<IBaseResponse>(
-      'https://localhost:7017/api/User/User/Register', data
+      `${this.apiUrl}/User/User/Register`, data
     )
   }
 
   postVerifyRegisterOtp(data: IVerifyRegisterOtp): Observable<IBaseResponse> {
-    const url = 'https://localhost:7017/api/User/User/VerifyRegisterOtp';
+    const url = `${this.apiUrl}/User/User/VerifyRegisterOtp`;
     return this.http.post<IBaseResponse>(url, data);
   }
 
   postResendOtp(data: IResendOtp): Observable<IBaseResponse> {
-    const url = 'https://localhost:7017/api/User/User/ResendOtp';
+    const url = `${this.apiUrl}/User/User/ResendOtp`;
     return this.http.post<IBaseResponse>(url, data)
   }
 
@@ -67,23 +71,23 @@ export class UserService {
   }
 
   forgotPassword(data: IForgotPassword): Observable<IBaseResponse> {
-    const url = 'https://localhost:7017/api/User/User/ForgotPassword'
+    const url = `${this.apiUrl}/User/User/ForgotPassword`
     return this.http.post<IBaseResponse>(url, data);
   }
 
   resetPassword(data: IResetPassword): Observable<IBaseResponse> {
-    const url = 'https://localhost:7017/api/User/User/ResetPassword'
+    const url = `${this.apiUrl}/User/User/ResetPassword`
     return this.http.post<IBaseResponse>(url, data);
   }
 
   VerifyPasswordResetOtp(data: IVerifyOtp): Observable<IBaseResponse> {
-    const url = 'https://localhost:7017/api/User/User/VerifyPasswordResetOtp'
+    const url = `${this.apiUrl}/User/User/VerifyPasswordResetOtp`
     return this.http.post<IBaseResponse>(url, data);
   }
 
   getUserProfile(): Observable<IUserProfile> {
 
-    return this.http.get<IUserProfile>('https://localhost:7017/api/User/User/GetUserProfile');
+    return this.http.get<IUserProfile>(`${this.apiUrl}/User/User/GetUserProfile`);
   }
 
 
