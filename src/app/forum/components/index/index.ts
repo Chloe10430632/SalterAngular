@@ -4,7 +4,7 @@ import { Component, OnInit, signal, ViewEncapsulation } from '@angular/core';
 import { Router, RouterOutlet, RouterLinkWithHref, RouterLinkActive } from '@angular/router';
 import { BoardList } from '../../interfaces/boardList';
 import { BoardsService } from '../../services/boards-service';
-import { AdData } from '../../interfaces/adData';
+import { AdData } from '../../interfaces/AdData';
 import Sortable from 'sortablejs';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../../core/services/auth-service';
