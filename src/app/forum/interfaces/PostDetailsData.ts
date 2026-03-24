@@ -1,4 +1,4 @@
-export interface PostDetails {
+export interface PostDetailsData {
   postId: number;
   userName: string;
   avatarUrl: string;

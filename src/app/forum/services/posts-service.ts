@@ -6,6 +6,7 @@ import { Observable } from 'rxjs/internal/Observable';
 import { timer } from 'rxjs/internal/observable/timer';
 import { map, zip } from 'rxjs';
 import { CreatePostDto } from '../interfaces/CreatePostDto';
+import { PostDetailsData } from '../interfaces/PostDetailsData';
 
 
 @Injectable({
@@ -82,6 +83,11 @@ export class PostsService {
       map(([data, _]) => data)
     );
 
+  }
+
+  //GET 貼文詳細內容
+  GetPostDetailsApi(postId: number) {
+    return this.http.get<PostDetailsData>(`${environment.apiUrl}/Forum/Posts/${postId}`);
   }
 
   //POST 發佈貼文圖片 IFormFile
