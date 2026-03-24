@@ -93,7 +93,7 @@ export class UpdateHouse implements OnInit {
         next: (res) => {
           this.isLoading = false;
           alert('房源資料補齊成功！');
-          this.router.navigate(['/house-list']); // 成功後導回列表
+          this.router.navigate(['/']); // 成功後導回列表
         },
         error: (err) => {
           this.isLoading = false;

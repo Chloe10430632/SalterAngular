@@ -1,46 +1,60 @@
 <div class="max-w-6xl mx-auto p-4 md:p-8">
+  <!-- 等API請求時間 所以新增讀取遮罩 -->
+  @if(isLoading) {
+  <div class="flex flex-col justify-center items-center h-[60vh] space-y-4">
+    <span class="loading loading-spinner loading-lg text-primary"></span>
+    <p class="text-gray-500 animate-pulse">正在為您加載房源詳情...</p>
+  </div>
+  }@else {
   <div class="flex items-center justify-between mb-6">
     <button routerLink="/house" class="btn btn-ghost gap-2 rounded-full border border-base-300">
       <i class="bi bi-chevron-left"></i> 返回搜尋結果
     </button>
   </div>
 
+  <!-- 輪播區 -->
   <div class="relative group mb-8">
     <div class="carousel w-full h-[300px] md:h-[500px] rounded-3xl shadow-2xl overflow-hidden bg-base-200">
-      @for (img of selectedProperty?.AllImages; track $index) {
+      @for (img of selectedProperty?.allImages; track $index) {
       <div [id]="'slide' + $index" class="carousel-item relative w-full">
-        <img [src]="img" class="w-full h-full object-cover" />
+        <img [src]="img" class="w-full h-full object-cover" alt="房屋照片" />
+
         <div
           class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
-          <a [href]="'#slide' + ($index - 1)" class="btn btn-circle btn-sm btn-glass text-white">❮</a>
-          <a [href]="'#slide' + ($index + 1)" class="btn btn-circle btn-sm btn-glass text-white">❯</a>
+          <a (click)="$event.preventDefault(); scrollIntoView(getPrevIndex())"
+            class="btn btn-circle btn-sm btn-glass text-white cursor-pointer">❮</a>
+
+          <a (click)="$event.preventDefault(); scrollIntoView(getNextIndex())"
+            class="btn btn-circle btn-sm btn-glass text-white cursor-pointer">❯</a>
         </div>
       </div>
       }
     </div>
     <div class="absolute bottom-6 right-6 bg-black/50 text-white px-3 py-1 rounded-md text-sm">
-      1 / {{ selectedProperty?.AllImages?.length || 1 }}
+      {{ currentSlideIndex + 1 }} / {{ selectedProperty?.allImages?.length || 0 }}
     </div>
   </div>
 
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
     <div class="lg:col-span-2">
+      <!-- 評價次數 & 瀏覽次數 -->
       <div class="mb-6">
-        <h1 class="text-3xl font-bold text-base-content mb-2">{{ selectedProperty?.Name }}</h1>
+        <h1 class="text-3xl font-bold text-base-content mb-2">{{ selectedProperty?.name }}</h1>
         <div class="flex items-center gap-2 text-gray-500">
-          <span>{{ selectedProperty?.Citie }} · {{ selectedProperty?.District }}</span>
+          <span>{{ selectedProperty?.citie }} · {{ selectedProperty?.district}}</span>
           <span>•</span>
           <span class="flex items-center gap-1">
             <i class="bi bi-star-fill text-warning"></i>
-            {{ getAverageRating() }} ({{ selectedProperty?.Reviews?.length }} 則評價)
+            {{ getAverageRating() }} ({{ selectedProperty?.reviews?.length }} 則評價)
           </span>
           <span>•</span>
-          <span class="flex items-center gap-1"><i class="bi bi-eye"></i> {{ selectedProperty?.ViewCount }} 次瀏覽</span>
+          <span class="flex items-center gap-1"><i class="bi bi-eye"></i> {{ selectedProperty?.viewCount }} 次瀏覽</span>
         </div>
       </div>
 
       <div class="divider"></div>
 
+      <!-- 房源特色 & 容納人數 -->
       <div class="py-4">
         <h3 class="text-xl font-bold mb-4">房源特色</h3>
         <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -48,38 +62,37 @@
             <i class="bi bi-people text-2xl"></i>
             <div>
               <div class="font-bold">容納人數</div>
-              <div class="text-sm opacity-60">最多 {{ selectedProperty?.Capacity }} 人</div>
+              <div class="text-sm opacity-60">最多 {{ selectedProperty?.capacity }} 人</div>
             </div>
           </div>
         </div>
       </div>
 
       <div class="py-6 text-gray-600 leading-loose whitespace-pre-line">
-        {{ selectedProperty?.Description }}
+        {{ selectedProperty?.roomDescription }}
       </div>
-
       <div class="divider"></div>
-
+      <!-- 設備顯示區 -->
       <div class="py-6">
         <h3 class="text-xl font-bold mb-6">提供的設施</h3>
         <div class="grid grid-cols-2 gap-4">
-          @for (amenity of selectedProperty?.Amenities; track amenity) {
+          @for (amenity of selectedProperty?.amenities; track $index) {
           <div class="flex items-center gap-3 text-gray-600">
-            <i class="bi bi-check2-circle text-primary"></i>
-            <span>{{ amenity }}</span>
+            <i [class]="amenity.iconCode" class="text-primary text-xl"></i>
+            <span>{{amenity.name}}</span>
           </div>
           }
         </div>
       </div>
 
       <div class="divider"></div>
-
+      <!-- 留言區 -->
       <div class="py-10">
         <h3 class="text-2xl font-bold mb-8 flex items-center gap-2">
           <i class="bi bi-chat-left-dots"></i> 房客真實評價
         </h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-          @for (rv of selectedProperty?.Reviews; track $index) {
+          @for (rv of selectedProperty?.reviews; track $index) {
           <div class="space-y-4">
             <div class="flex items-center gap-4">
               <div class="avatar placeholder">
@@ -89,15 +102,15 @@
               </div>
               <div>
                 <div class="font-bold">房客 Guest</div>
-                <div class="text-xs opacity-50">{{ rv.CreatedTime | date:'yyyy年MM月dd日' }}</div>
+                <div class="text-xs opacity-50">{{ rv.createdTime | date:'yyyy年MM月dd日' }}</div>
               </div>
             </div>
             <div class="flex text-warning text-xs">
               @for (star of [1,2,3,4,5]; track star) {
-              <i class="bi bi-star-fill" [class.opacity-20]="star > rv.Rating"></i>
+              <i class="bi bi-star-fill" [class.opacity-20]="star > rv.rating"></i>
               }
             </div>
-            <p class="text-gray-600 leading-relaxed italic">「{{ rv.Comment }}」</p>
+            <p class="text-gray-600 leading-relaxed italic">「{{ rv.comment }}」</p>
           </div>
           } @empty {
           <p class="text-gray-400">目前尚無評價，成為第一個入住的人吧！</p>
@@ -105,11 +118,11 @@
         </div>
       </div>
     </div>
-
+    <!-- 右側顯示價格商品區 -->
     <div class="relative">
       <div class="card bg-white shadow-2xl border border-base-200 p-8 sticky top-28 rounded-3xl">
         <div class="flex justify-between items-baseline mb-6">
-          <div class="text-3xl font-bold text-primary">${{ selectedProperty?.PricePerNight | number }}</div>
+          <div class="text-3xl font-bold text-primary">${{ selectedProperty?.pricePerNight | number }}</div>
           <div class="text-gray-500">/ 晚</div>
         </div>
 
@@ -131,4 +144,5 @@
       </div>
     </div>
   </div>
+  }
 </div>

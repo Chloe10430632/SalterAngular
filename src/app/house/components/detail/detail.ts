@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 
@@ -10,37 +11,60 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 })
 export class Detail implements OnInit {
 
-  selectedProperty: any = null;
+  selectedProperty: any;
+  isLoading = true;
+  currentSlideIndex = 0;
 
-  constructor(private route: ActivatedRoute) { }
+  constructor(private route: ActivatedRoute,
+    private http: HttpClient
+  ) { }
 
   ngOnInit(): void {
-    const idFromUrl = this.route.snapshot.paramMap.get('id');
-    const id = Number(idFromUrl);
-
-    // 4. 這一區塊就是未來要換成 API 的地方
-    // 目前我們先用這組假資料模擬資料庫
-    const mockData = [
-      { id: 1, name: '極簡風山景小屋', location: '南投縣', price: 4200, rating: 4.9, img: 'https://picsum.photos/id/1016/800/600', host: '阿明', desc: '這是一間充滿森林氣息的小屋...' },
-      { id: 2, name: '日式禪風公寓', location: '台北市', price: 3500, rating: 4.8, img: 'https://picsum.photos/id/1018/800/600', host: '小雅', desc: '體驗最純正的榻榻米生活...' },
-      { id: 3, name: '海邊第一排別墅', location: '屏東縣', price: 6800, rating: 4.95, img: 'https://picsum.photos/id/1015/800/600', host: '波比', desc: '開窗就是海，走路 30 秒到沙灘...' }
-    ];
-
-    // 5. 根據 ID 找到對應的資料
-    this.selectedProperty = mockData.find(item => item.id === id);
-
-    // 6. 偵錯用：看看有沒有抓到
-    console.log('當前房屋資料：', this.selectedProperty);
-
-  }
-
-  getAverageRating(): string {
-    if (!this.selectedProperty?.Reviews || this.selectedProperty.Reviews.length === 0) {
-      return '新房源';
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.getHouseDetail(id);
     }
-    const sum = this.selectedProperty.Reviews.reduce((acc: number, cur: any) => acc + cur.Rating, 0);
-    return (sum / this.selectedProperty.Reviews.length).toFixed(1);
   }
 
+  getHouseDetail(id: string) {
+    this.http.get<any>(`https://localhost:7017/api/Home/${id}`).subscribe({
+      next: (data) => {
+        //這裡吧API資料存入變數
+        this.selectedProperty = data;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.log('API Error:', err);
+        this.isLoading = false;
+      }
+    })
+  }
 
+  // 計算平均評分
+  getAverageRating(): string {
+    const reviews = this.selectedProperty?.reviews;
+    if (!reviews || reviews.length === 0) return '0.0';
+    const total = reviews.reduce((sum: number, rv: any) => sum + rv.rating, 0);
+    return (total / reviews.length).toFixed(1);
+  }
+
+  // 圖片輪播控制
+  scrollIntoView(index: number) {
+    this.currentSlideIndex = index;
+    const id = 'slide' + index;
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'start' });
+    }
+  }
+
+  // 這兩個方法用來計算上一張和下一張的索引，讓輪播能無限循環
+  getPrevIndex(): number {
+    const total = this.selectedProperty?.allImages?.length || 0;
+    return (this.currentSlideIndex === 0 ? total - 1 : this.currentSlideIndex - 1);
+  }
+  getNextIndex(): number {
+    const total = this.selectedProperty?.allImages?.length || 0;
+    return (this.currentSlideIndex === total - 1) ? 0 : this.currentSlideIndex + 1;
+  }
 }
