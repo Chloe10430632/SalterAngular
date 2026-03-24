@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { TripQuery, ApiResponse, TripListResult, TripSummary, TripDetail, TripAnnouncement, TripGearItem, TripLocation, TripReminder, TripCity, TripDistrict } from '../interfaces/trip';
+import { TripQuery, ApiResponse, TripListResult, TripSummary, TripDetail, TripAnnouncement, TripGearItem, TripLocation, TripReminder, TripCity, TripDistrict, TripLocationSearch } from '../interfaces/trip';
 
 @Injectable({
   providedIn: 'root'
@@ -147,6 +147,9 @@ export class TripService {
   deleteLocation(locationId: number): Observable<ApiResponse<string>> {
     return this.http.delete<ApiResponse<string>>(`${this.baseUrl}/locations/${locationId}`);
   }
+  updateLocationSort(tripId: number, items: { locationId: number; sortOrder: number }[]): Observable<ApiResponse<string>> {
+    return this.http.put<ApiResponse<string>>(`${this.baseUrl}/${tripId}/locations/sort`, { items });
+  }
 
   // ── 提醒 ──
 
@@ -175,4 +178,15 @@ export class TripService {
   getDistricts(cityId: number): Observable<ApiResponse<TripDistrict[]>> {
     return this.http.get<ApiResponse<TripDistrict[]>>(`${this.baseUrl}/cities/${cityId}/districts`);
   }
+
+  //取得所有地點
+  getAllLocations(keyword?: string): Observable<ApiResponse<TripLocationSearch[]>> {
+    let params = new HttpParams();
+    if (keyword) params = params.set('keyword', keyword);
+    return this.http.get<ApiResponse<TripLocationSearch[]>>(
+      `${this.baseUrl}/all-locations`, { params }  // 改這裡
+    );
+  }
 }
+
+

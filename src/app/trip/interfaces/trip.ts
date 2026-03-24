@@ -79,6 +79,8 @@ export interface TripLocation {
   locationRole: string;
   note: string;
   sortOrder: number;
+  lat?: number | null;
+  lng?: number | null;
 }
 
 // 公告
@@ -126,4 +128,17 @@ export interface TripCity {
 export interface TripDistrict {
   id: number;
   name: string;
+}
+
+//所有地點
+export interface TripLocationSearch {
+  id: number;
+  placeId?: string;
+  name: string;
+  addressText?: string;
+  lat: number;
+  lng: number;
+  cityName?: string;
+  districtName?: string;
+
 }

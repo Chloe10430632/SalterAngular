@@ -1,26 +1,122 @@
 <div class="flex gap-2" style="height: calc(100vh - 56px - 1rem)">
 
-
   <!-- 左側地點面板 -->
-  <aside class="w-80 bg-base-100 border border-base-300 flex flex-col shadow-sm rounded-lg my-2">
+  <aside class="bg-base-100 border border-base-300 flex flex-col shadow-sm rounded-lg my-2 transition-all duration-300"
+    [class.w-80]="!showForm" [class.w-96]="showForm">
 
-    <!-- 標題 + 新增 -->
+    <!-- 標題 + 新增按鈕 -->
+    @if (!showForm) {
     <div class="p-4 border-b border-base-300">
-      <div class="flex items-center justify-between mb-3">
+      <div class="flex items-center justify-between">
         <h2 class="font-bold">行程地點</h2>
-        <button class="btn btn-primary btn-sm gap-1" (click)="openAddModal()">
+        <button class="btn btn-primary btn-sm gap-1" (click)="openAddForm()">
           <i class="bi bi-plus-lg"></i>
           新增地點
         </button>
       </div>
-      <label class="input input-bordered input-sm flex items-center gap-2">
-        <i class="bi bi-search text-base-content/40"></i>
-        <input type="text" placeholder="搜尋地點…" class="grow text-sm" [(ngModel)]="searchKeyword" />
-      </label>
     </div>
+    }
+
+    <!-- 新增/編輯表單 -->
+    @if (showForm) {
+    <div class="flex flex-col h-full">
+      <div class="p-4 border-b border-base-300 flex items-center gap-2">
+        <button class="btn btn-ghost btn-sm btn-circle" (click)="closeForm()">
+          <i class="bi bi-arrow-left"></i>
+        </button>
+        <h2 class="font-bold">{{ isEditing ? '編輯地點' : '新增地點' }}</h2>
+      </div>
+
+      <div class="flex-1 overflow-y-auto p-4 flex flex-col gap-3">
+
+        <!-- 搜尋地點 -->
+        @if (!isEditing) {
+        <div class="form-control relative">
+          <label class="label">
+            <span class="label-text font-medium">搜尋地點</span>
+          </label>
+          <input type="text" class="input input-bordered w-full" placeholder="輸入地點名稱搜尋…" [ngModel]="form.locationName"
+            (ngModelChange)="form.locationName = $event; onSearchInput($event)" />
+
+          @if (showDropdown && autocompleteResults.length > 0) {
+          <div
+            class="absolute top-full left-0 right-0 bg-base-100 border border-base-300 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto">
+            @for (result of autocompleteResults; track result.placeId) {
+            <div class="px-4 py-2 hover:bg-base-200 cursor-pointer text-sm" (click)="selectSearchResult(result)">
+              <p class="font-medium">{{ result.name }}</p>
+              @if (result.addressText) {
+              <p class="text-xs text-base-content/50">{{ result.addressText }}</p>
+              }
+            </div>
+            }
+          </div>
+          }
+
+          @if (isSearching) {
+          <div
+            class="absolute top-full left-0 right-0 bg-base-100 border border-base-300 rounded-lg p-3 text-center text-sm text-base-content/50">
+            搜尋中...
+          </div>
+          }
+          @if (isLocating) {
+          <div class="flex items-center gap-2 text-sm text-base-content/50 mt-1">
+            <span class="loading loading-spinner loading-xs"></span>
+            地圖定位中...
+          </div>
+          }
+        </div>
+        }
+
+        <!-- 編輯時顯示地點名稱 -->
+        @if (isEditing) {
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">地點名稱</span>
+          </label>
+          <input type="text" class="input input-bordered w-full" [value]="form.locationName" disabled />
+        </div>
+        }
+
+        <!-- 用途標籤 -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">用途標籤</span>
+          </label>
+          <select class="select select-bordered w-full" [(ngModel)]="form.locationRole">
+            <option value="">請選擇</option>
+            <option value="集合點">集合點</option>
+            <option value="住宿">住宿</option>
+            <option value="餐廳">餐廳</option>
+            <option value="景點">景點</option>
+            <option value="活動">活動</option>
+            <option value="其他">其他</option>
+          </select>
+        </div>
+
+        <!-- 備註 -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text font-medium">備註</span>
+          </label>
+          <textarea class="textarea textarea-bordered w-full" rows="4" placeholder="輸入備註…"
+            [(ngModel)]="form.note"></textarea>
+        </div>
+
+      </div>
+
+      <!-- 按鈕 -->
+      <div class="p-4 border-t border-base-300 flex gap-2">
+        <button class="btn btn-ghost flex-1" (click)="closeForm()">取消</button>
+        <button class="btn btn-primary flex-1" (click)="saveLocation()">
+          {{ isEditing ? '儲存' : '新增' }}
+        </button>
+      </div>
+    </div>
+    }
 
     <!-- 地點清單 -->
-    <div class="flex-1 overflow-y-auto divide-y divide-base-200">
+    @if (!showForm) {
+    <div class="flex-1 overflow-y-auto divide-y divide-base-200" cdkDropList (cdkDropListDropped)="onDrop($event)">
 
       @if (isLoading) {
       @for (item of [1,2,3]; track item) {
@@ -44,12 +140,15 @@
       }
 
       @for (loc of locations; track loc.id; let i = $index) {
-      <div class="p-4 cursor-pointer transition-colors" [class.bg-primary]="selectedLocation?.id === loc.id"
+      <div class="p-4 cursor-pointer transition-colors" cdkDrag [class.bg-primary]="selectedLocation?.id === loc.id"
         [class.bg-opacity-5]="selectedLocation?.id === loc.id" [class.border-l-4]="selectedLocation?.id === loc.id"
         [class.border-primary]="selectedLocation?.id === loc.id" (click)="selectLocation(loc)">
-        <div class="flex items-start gap-3">
 
-          <!-- 序號圓圈 -->
+        <div class="flex items-start gap-3">
+          <div cdkDragHandle class="cursor-grab mt-1 text-base-content/30 hover:text-base-content/60">
+            <i class="bi bi-grip-vertical"></i>
+          </div>
+
           <div
             class="w-7 h-7 rounded-full text-white flex items-center justify-center text-xs font-bold shrink-0 mt-0.5"
             [style.background-color]="getLocationColor(i)">
@@ -59,28 +158,26 @@
           <div class="flex-1 min-w-0">
             <div class="flex items-center justify-between gap-1">
               <span class="font-semibold text-sm truncate">{{ loc.locationName }}</span>
-
-              <!-- 操作選單 -->
               <div class="dropdown dropdown-end">
                 <div tabindex="0" role="button" class="btn btn-ghost btn-xs" (click)="$event.stopPropagation()">
                   <i class="bi bi-three-dots"></i>
                 </div>
                 <ul tabindex="-1"
                   class="dropdown-content menu bg-base-100 rounded-box shadow border border-base-300 text-sm w-32 z-10">
-                  <li><a (click)="openEditModal(loc)">編輯</a></li>
+                  <li><a (click)="openEditForm(loc)">編輯</a></li>
                   <li><a class="text-error" (click)="deleteLocation(loc.id)">刪除</a></li>
                 </ul>
               </div>
             </div>
 
-            <!-- 標籤 -->
             @if (loc.locationRole) {
             <div class="flex gap-1 mt-1 flex-wrap">
-              <span class="badge badge-primary badge-xs">{{ loc.locationRole }}</span>
+              <span class="badge badge-xs" [ngClass]="getRoleClass(loc.locationRole)">
+                {{ loc.locationRole }}
+              </span>
             </div>
             }
 
-            <!-- 備註 -->
             @if (loc.note) {
             <p class="text-xs text-base-content/50 mt-1.5 italic">{{ loc.note }}</p>
             }
@@ -89,71 +186,26 @@
       </div>
       }
     </div>
+    }
+
   </aside>
 
-  <!-- 地圖區（暫時佔位） -->
-  <div class="flex-1 relative bg-base-200 flex items-center justify-center">
-    <div class="card bg-base-100 shadow-lg border border-base-300 p-6 text-center max-w-sm">
-      <i class="bi bi-geo-alt text-5xl text-base-content/20 mb-3"></i>
-      <p class="font-bold text-base-content/70">Google Maps 嵌入區域</p>
-      <p class="text-sm text-base-content/40 mt-1">串接 Google Maps API 後顯示地圖</p>
-    </div>
+  <!-- 地圖區 -->
+  <div class="flex-1 relative mt-2 mb-2 mr-2 rounded-lg overflow-hidden">
+    <google-map [center]="mapCenter" [zoom]="mapZoom" [options]="mapOptions" width="100%" height="100%">
+      @for (marker of markers; track marker.title) {
+      <map-marker [position]="marker.position" [title]="marker.title" [options]="{ icon: marker.icon }">
+      </map-marker>
+      }
+
+      @if (previewMarker) {
+      <map-marker [position]="previewMarker.position"></map-marker>
+      }
+
+      @if (polylinePath.length > 1) {
+      <map-polyline [path]="polylinePath" [options]="polylineOptions"></map-polyline>
+      }
+    </google-map>
   </div>
 
 </div>
-
-<!-- 新增/編輯地點 Modal -->
-<dialog id="location_modal" class="modal">
-  <div class="modal-box">
-    <h3 class="font-bold text-lg mb-4">
-      {{ isEditing ? '編輯地點' : '新增地點' }}
-    </h3>
-
-    <div class="flex flex-col gap-3">
-
-      <!-- 搜尋地點 -->
-      <div class="form-control">
-        <label class="label">
-          <span class="label-text font-medium">地點名稱</span>
-        </label>
-        <input type="text" class="input input-bordered w-full" placeholder="搜尋地點名稱…" [(ngModel)]="form.locationName" />
-      </div>
-
-      <!-- 用途標籤 -->
-      <div class="form-control">
-        <label class="label">
-          <span class="label-text font-medium">用途標籤</span>
-        </label>
-        <select class="select select-bordered w-full" [(ngModel)]="form.locationRole">
-          <option value="">請選擇</option>
-          <option value="集合點">集合點</option>
-          <option value="住宿">住宿</option>
-          <option value="餐廳">餐廳</option>
-          <option value="景點">景點</option>
-          <option value="活動">活動</option>
-          <option value="其他">其他</option>
-        </select>
-      </div>
-
-      <!-- 備註 -->
-      <div class="form-control">
-        <label class="label">
-          <span class="label-text font-medium">備註</span>
-        </label>
-        <textarea class="textarea textarea-bordered w-full" rows="3" placeholder="輸入備註…"
-          [(ngModel)]="form.note"></textarea>
-      </div>
-
-    </div>
-
-    <div class="modal-action">
-      <button class="btn btn-ghost" onclick="location_modal.close()">取消</button>
-      <button class="btn btn-primary" (click)="saveLocation()">
-        {{ isEditing ? '儲存' : '新增' }}
-      </button>
-    </div>
-  </div>
-  <form method="dialog" class="modal-backdrop">
-    <button>close</button>
-  </form>
-</dialog>
