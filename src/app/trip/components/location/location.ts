@@ -18,7 +18,7 @@ import { NgClass } from '@angular/common';
 export class Location implements OnInit, AfterViewInit {
 
   private tripService = inject(TripService);
-  private locationSearchService = inject(LocationSearchService);
+  public locationSearchService = inject(LocationSearchService);
   private route = inject(ActivatedRoute);
   private searchSubject = new Subject<string>();
   tripId = 0;
@@ -96,6 +96,10 @@ export class Location implements OnInit, AfterViewInit {
           this.autocompleteResults = results;
           this.showDropdown = results.length > 0;
           this.isSearching = false;
+
+          if (results.length > 0) {
+            this.locationSearchService.prefetchDetails([results[0]]);
+          }
         },
         error: () => this.isSearching = false
       });

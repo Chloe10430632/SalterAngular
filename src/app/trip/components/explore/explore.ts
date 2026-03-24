@@ -119,8 +119,9 @@ export class Explore implements OnInit {
   clearFilter() {
     this.filter = { startFrom: '', startTo: '' };
     this.selectedCapacity = '不限';
-    this.statuses.forEach(s => s.checked = s.value === 'active');
+    this.statuses.forEach(s => s.checked = false);
     this.selectedCategory = '';
+    this.searchKeyword = '';
     this.currentPage = 1;
     this.loadTrips();
   }
