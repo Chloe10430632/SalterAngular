@@ -168,6 +168,10 @@ export const routes: Routes = [
             loadComponent: () => import('./trip/components/explore/explore').then(m => m.Explore),
           },
           {
+            path: 'create', // 建立行程
+            loadComponent: () => import('./trip/components/create-trip/create-trip').then(m => m.CreateTrip),
+          },
+          {
             path: 'detail/:id',  // 行程詳情
             children: [
               {

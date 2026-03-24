@@ -1,0 +1,326 @@
+<div class="max-w-2xl mx-auto px-4 py-8">
+
+  <!-- 步驟指示 -->
+  <ul class="steps steps-horizontal w-full mb-8 text-xs">
+    <li class="step" [class.step-primary]="currentStep >= 1">基本資訊</li>
+    <li class="step" [class.step-primary]="currentStep >= 2">地點設定</li>
+    <li class="step" [class.step-primary]="currentStep >= 3">裝備清單</li>
+    <li class="step" [class.step-primary]="currentStep >= 4">預覽發布</li>
+  </ul>
+
+  <div class="card bg-base-100 shadow-sm border border-base-300">
+    <div class="card-body p-6 gap-5">
+
+      <!-- ── 步驟一：基本資訊 ── -->
+      @if (currentStep === 1) {
+      <div>
+        <h2 class="text-xl font-bold">建立揪團行程</h2>
+        <p class="text-sm text-base-content/50 mt-0.5">填寫以下資訊，讓大家更容易找到你的行程</p>
+      </div>
+
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend font-semibold">行程名稱 <span class="text-error">*</span></legend>
+        <input type="text" placeholder="例如：墾丁 4 天潛水揪團" class="input input-bordered w-full"
+          [class.input-error]="errors['title']" [(ngModel)]="form.title" />
+        @if (errors['title']) { <p class="text-error text-xs mt-1">{{ errors['title'] }}</p> }
+      </fieldset>
+
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend font-semibold">行程簡介</legend>
+        <textarea class="textarea textarea-bordered w-full h-24 text-sm" placeholder="介紹行程亮點、費用說明、特別注意事項…"
+          [(ngModel)]="form.description"></textarea>
+      </fieldset>
+
+      <div class="grid grid-cols-2 gap-3">
+        <fieldset class="fieldset">
+          <legend class="fieldset-legend font-semibold">出發日期 <span class="text-error">*</span></legend>
+          <input type="date" class="input input-bordered w-full" [class.input-error]="errors['startAt']"
+            [(ngModel)]="form.startAt" />
+          @if (errors['startAt']) { <p class="text-error text-xs mt-1">{{ errors['startAt'] }}</p> }
+        </fieldset>
+        <fieldset class="fieldset">
+          <legend class="fieldset-legend font-semibold">結束日期</legend>
+          <input type="date" class="input input-bordered w-full" [class.input-error]="errors['endAt']"
+            [(ngModel)]="form.endAt" />
+          @if (errors['endAt']) { <p class="text-error text-xs mt-1">{{ errors['endAt'] }}</p> }
+        </fieldset>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <fieldset class="fieldset">
+          <legend class="fieldset-legend font-semibold">人數上限 <span class="text-error">*</span></legend>
+          <input type="number" placeholder="最多幾人" class="input input-bordered w-full"
+            [class.input-error]="errors['capacity']" min="2" max="50" [(ngModel)]="form.capacity" />
+          @if (errors['capacity']) { <p class="text-error text-xs mt-1">{{ errors['capacity'] }}</p> }
+        </fieldset>
+        <fieldset class="fieldset">
+          <legend class="fieldset-legend font-semibold">行程類型 <span class="text-error">*</span></legend>
+          <select class="select select-bordered w-full" [class.select-error]="errors['tripType']"
+            [(ngModel)]="form.tripType">
+            <option value="">請選擇</option>
+            <option value="surf">🏄 衝浪</option>
+            <option value="dive">🤿 深潛</option>
+            <option value="snorkel">🤿 浮潛</option>
+            <option value="kayak">🚣 獨木舟</option>
+            <option value="sailing">⛵ 帆船</option>
+            <option value="sup">🏄 立槳</option>
+          </select>
+          @if (errors['tripType']) { <p class="text-error text-xs mt-1">{{ errors['tripType'] }}</p> }
+        </fieldset>
+      </div>
+
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend font-semibold">封面圖片</legend>
+        @if (!form.coverImageUrl) {
+        <div
+          class="border-2 border-dashed border-base-300 rounded-box h-36 flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-primary hover:bg-primary/5 transition-all"
+          (click)="fileInput.click()">
+          @if (isUploading) {
+          <span class="loading loading-spinner loading-md text-primary"></span>
+          <span class="text-sm text-base-content/40">上傳中...</span>
+          } @else {
+          <i class="bi bi-cloud-upload text-3xl text-base-content/30"></i>
+          <span class="text-sm text-base-content/40">點擊上傳封面圖</span>
+          <span class="text-xs text-base-content/30">建議 1200×400，PNG / JPG</span>
+          }
+        </div>
+        }
+        @if (form.coverImageUrl) {
+        <div class="relative rounded-box overflow-hidden h-36">
+          <img [src]="form.coverImageUrl" class="w-full h-full object-cover" alt="封面圖" />
+          <button class="absolute top-2 right-2 btn btn-circle btn-xs bg-base-100/80" (click)="removeCover()">
+            <i class="bi bi-x"></i>
+          </button>
+        </div>
+        }
+        <input #fileInput type="file" accept="image/*" class="hidden" (change)="onFileSelected($event)" />
+      </fieldset>
+      }
+
+      <!-- ── 步驟二：地點設定 ── -->
+      @if (currentStep === 2) {
+      <div>
+        <h2 class="text-xl font-bold">地點設定</h2>
+        <p class="text-sm text-base-content/50 mt-0.5">新增行程中的地點，可以不填直接跳過</p>
+      </div>
+
+      <div class="form-control relative">
+        <label class="label"><span class="label-text font-medium">搜尋地點</span></label>
+        <input type="text" class="input input-bordered w-full" placeholder="輸入地點名稱搜尋…"
+          [ngModel]="locationForm.locationName"
+          (ngModelChange)="locationForm.locationName = $event; onSearchInput($event)" />
+
+        @if (showDropdown && autocompleteResults.length > 0) {
+        <div
+          class="absolute top-full left-0 right-0 bg-base-100 border border-base-300 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto mt-1">
+          @for (result of autocompleteResults; track result.placeId) {
+          <div class="px-4 py-2 hover:bg-base-200 cursor-pointer text-sm" (click)="selectSearchResult(result)">
+            <p class="font-medium">{{ result.name }}</p>
+            @if (result.addressText) {
+            <p class="text-xs text-base-content/50">{{ result.addressText }}</p>
+            }
+          </div>
+          }
+        </div>
+        }
+        @if (isSearching) {
+        <div
+          class="absolute top-full left-0 right-0 bg-base-100 border border-base-300 rounded-lg p-3 text-center text-sm text-base-content/50 mt-1">
+          搜尋中...
+        </div>
+        }
+        @if (isLocating) {
+        <div class="flex items-center gap-2 text-sm text-base-content/50 mt-1">
+          <span class="loading loading-spinner loading-xs"></span>
+          地圖定位中...
+        </div>
+        }
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div class="form-control">
+          <label class="label"><span class="label-text font-medium">用途標籤</span></label>
+          <select class="select select-bordered w-full" [(ngModel)]="locationForm.locationRole">
+            <option value="">請選擇</option>
+            <option value="集合點">集合點</option>
+            <option value="住宿">住宿</option>
+            <option value="餐廳">餐廳</option>
+            <option value="景點">景點</option>
+            <option value="活動">活動</option>
+            <option value="其他">其他</option>
+          </select>
+        </div>
+        <div class="form-control">
+          <label class="label"><span class="label-text font-medium">備註</span></label>
+          <input type="text" class="input input-bordered w-full" placeholder="備註…" [(ngModel)]="locationForm.note" />
+        </div>
+      </div>
+
+      <button class="btn btn-outline btn-primary w-full" (click)="addLocation()">
+        <i class="bi bi-plus-lg"></i> 加入地點
+      </button>
+
+      @if (locations.length > 0) {
+      <div class="flex flex-col gap-2 mt-2">
+        @for (loc of locations; track loc.locationName; let i = $index) {
+        <div class="flex items-center justify-between bg-base-200 rounded-lg px-4 py-2">
+          <div>
+            <p class="font-semibold text-sm">{{ loc.locationName }}</p>
+            @if (loc.locationRole) {
+            <span class="badge badge-xs badge-primary">{{ loc.locationRole }}</span>
+            }
+          </div>
+          <button class="btn btn-ghost btn-xs text-error" (click)="removeLocation(i)">
+            <i class="bi bi-trash"></i>
+          </button>
+        </div>
+        }
+      </div>
+      }
+
+      @if (locations.length === 0) {
+      <p class="text-sm text-base-content/40 text-center py-4">尚未新增地點</p>
+      }
+      }
+
+      <!-- ── 步驟三：裝備清單 ── -->
+      @if (currentStep === 3) {
+      <div>
+        <h2 class="text-xl font-bold">裝備清單</h2>
+        <p class="text-sm text-base-content/50 mt-0.5">列出需要準備的裝備，可以不填直接跳過</p>
+      </div>
+
+      <div class="flex gap-2">
+        <input type="text" class="input input-bordered flex-1" placeholder="裝備名稱…" [(ngModel)]="gearForm.itemName" />
+        <label class="flex items-center gap-2 cursor-pointer px-2">
+          <input type="checkbox" class="checkbox checkbox-primary checkbox-sm" [(ngModel)]="gearForm.isRequired" />
+          <span class="text-sm">必備</span>
+        </label>
+        <button class="btn btn-primary" (click)="addGear()">
+          <i class="bi bi-plus-lg"></i>
+        </button>
+      </div>
+
+      @if (gears.length > 0) {
+      <div class="flex flex-col gap-2 mt-2">
+        @for (gear of gears; track gear.itemName; let i = $index) {
+        <div class="flex items-center justify-between bg-base-200 rounded-lg px-4 py-2">
+          <div class="flex items-center gap-2">
+            <span class="text-sm font-medium">{{ gear.itemName }}</span>
+            @if (gear.isRequired) {
+            <span class="badge badge-xs badge-error">必備</span>
+            }
+          </div>
+          <button class="btn btn-ghost btn-xs text-error" (click)="removeGear(i)">
+            <i class="bi bi-trash"></i>
+          </button>
+        </div>
+        }
+      </div>
+      }
+
+      @if (gears.length === 0) {
+      <p class="text-sm text-base-content/40 text-center py-4">尚未新增裝備</p>
+      }
+      }
+
+      <!-- ── 步驟四：預覽發布 ── -->
+      @if (currentStep === 4) {
+      <div>
+        <h2 class="text-xl font-bold">預覽發布</h2>
+        <p class="text-sm text-base-content/50 mt-0.5">確認資訊無誤後，按下發布建立行程</p>
+      </div>
+
+      @if (form.coverImageUrl) {
+      <img [src]="form.coverImageUrl" class="w-full h-40 object-cover rounded-box" alt="封面圖" />
+      }
+
+      <div class="flex flex-col gap-2 text-sm">
+        <div class="flex justify-between">
+          <span class="text-base-content/50">行程名稱</span>
+          <span class="font-semibold">{{ form.title }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-base-content/50">類型</span>
+          <span>{{ getTripTypeLabel(form.tripType) }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-base-content/50">出發日期</span>
+          <span>{{ form.startAt }}</span>
+        </div>
+        @if (form.endAt) {
+        <div class="flex justify-between">
+          <span class="text-base-content/50">結束日期</span>
+          <span>{{ form.endAt }}</span>
+        </div>
+        }
+        <div class="flex justify-between">
+          <span class="text-base-content/50">人數上限</span>
+          <span>{{ form.capacity }} 人</span>
+        </div>
+        @if (form.description) {
+        <div class="flex flex-col gap-1">
+          <span class="text-base-content/50">行程簡介</span>
+          <p class="text-sm">{{ form.description }}</p>
+        </div>
+        }
+      </div>
+
+      @if (locations.length > 0) {
+      <div>
+        <p class="font-semibold text-sm mb-2">地點（{{ locations.length }} 個）</p>
+        <div class="flex flex-col gap-1">
+          @for (loc of locations; track loc.locationName; let i = $index) {
+          <div class="flex items-center gap-2 text-sm">
+            <span
+              class="w-5 h-5 rounded-full bg-primary text-primary-content flex items-center justify-center text-xs">{{ i
+              + 1 }}</span>
+            <span>{{ loc.locationName }}</span>
+            @if (loc.locationRole) { <span class="badge badge-xs badge-primary">{{ loc.locationRole }}</span> }
+          </div>
+          }
+        </div>
+      </div>
+      }
+
+      @if (gears.length > 0) {
+      <div>
+        <p class="font-semibold text-sm mb-2">裝備（{{ gears.length }} 項）</p>
+        <div class="flex flex-wrap gap-2">
+          @for (gear of gears; track gear.itemName) {
+          <span class="badge badge-outline">
+            {{ gear.itemName }}
+            @if (gear.isRequired) { <span class="badge badge-xs badge-error ml-1">必備</span> }
+          </span>
+          }
+        </div>
+      </div>
+      }
+      }
+
+      <!-- ── 底部按鈕 ── -->
+      <div class="flex justify-between items-center pt-3 border-t border-base-300">
+        @if (currentStep === 1) {
+        <button class="btn btn-ghost gap-1" (click)="goBack()">
+          <i class="bi bi-chevron-left"></i> 返回
+        </button>
+        } @else {
+        <button class="btn btn-ghost gap-1" (click)="prevStep()">
+          <i class="bi bi-chevron-left"></i> 上一步
+        </button>
+        }
+
+        @if (currentStep < 4) { <button class="btn btn-primary gap-1" (click)="nextStep()">
+          下一步 <i class="bi bi-chevron-right"></i>
+          </button>
+          } @else {
+          <button class="btn btn-primary font-bold gap-1" [disabled]="isSaving" (click)="submit()">
+            @if (isSaving) { <span class="loading loading-spinner loading-xs"></span> }
+            發布行程 <i class="bi bi-check-lg"></i>
+          </button>
+          }
+      </div>
+
+    </div>
+  </div>
+</div>
