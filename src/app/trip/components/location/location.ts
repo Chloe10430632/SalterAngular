@@ -6,10 +6,12 @@ import { LocationSearchService } from '../../services/location-search';
 import { TripLocation, TripLocationSearch } from '../../interfaces/trip';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { CdkDragDrop, moveItemInArray, DragDropModule } from '@angular/cdk/drag-drop';
-
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { NgClass } from '@angular/common';
 @Component({
   selector: 'app-location',
-  imports: [FormsModule, GoogleMapsModule, DragDropModule],
+  imports: [FormsModule, GoogleMapsModule, DragDropModule, NgClass],
   templateUrl: './location.html',
   styleUrl: './location.css'
 })
@@ -18,13 +20,15 @@ export class Location implements OnInit, AfterViewInit {
   private tripService = inject(TripService);
   private locationSearchService = inject(LocationSearchService);
   private route = inject(ActivatedRoute);
-
+  private searchSubject = new Subject<string>();
   tripId = 0;
   locations: TripLocation[] = [];
   selectedLocation: TripLocation | null = null;
   isLoading = false;
   isEditing = false;
   searchKeyword = '';
+  showForm = false;
+  isLocating = false;
 
   mapCenter: google.maps.LatLngLiteral = { lat: 23.6978, lng: 120.9605 };
   mapZoom = 8;
@@ -41,6 +45,9 @@ export class Location implements OnInit, AfterViewInit {
     color: string;
     icon: { url: string; scaledSize: google.maps.Size };
   }[] = [];
+
+  previewMarker: { position: google.maps.LatLngLiteral; icon: { url: string; scaledSize: google.maps.Size } } | any = null;
+
 
   polylinePath: google.maps.LatLngLiteral[] = [];
   polylineOptions: google.maps.PolylineOptions = {
@@ -72,7 +79,29 @@ export class Location implements OnInit, AfterViewInit {
       this.tripId = +params['id'];
       this.loadLocations();
     });
+
+    this.searchSubject.pipe(
+      debounceTime(500),
+      distinctUntilChanged()
+    ).subscribe(keyword => {
+      if (!keyword || keyword.length < 2) {
+        this.autocompleteResults = [];
+        this.showDropdown = false;
+        this.isSearching = false;
+        return;
+      }
+
+      this.locationSearchService.search(keyword).subscribe({
+        next: (results) => {
+          this.autocompleteResults = results;
+          this.showDropdown = results.length > 0;
+          this.isSearching = false;
+        },
+        error: () => this.isSearching = false
+      });
+    });
   }
+
 
   ngAfterViewInit() {
     this.locationSearchService.init();
@@ -126,7 +155,17 @@ export class Location implements OnInit, AfterViewInit {
       this.mapZoom = 15;
     }
   }
-
+  getRoleClass(role: string): string {
+    const map: Record<string, string> = {
+      '集合點': 'badge badge-soft badge-info',
+      '住宿': 'badge badge-soft badge-success',
+      '餐廳': 'badge badge-soft badge-warning',
+      '景點': 'badge badge-soft badge-error',
+      '活動': 'badge badge-soft badge-secondary',
+      '其他': 'badge badge-soft badge-neutral'
+    };
+    return map[role] ?? 'badge-primary';
+  }
   getLocationColor(index: number): string {
     return this.colors[index % this.colors.length];
   }
@@ -145,45 +184,42 @@ export class Location implements OnInit, AfterViewInit {
 
   onSearchInput(keyword: string) {
     this.form.locationName = keyword;
-    if (!keyword || keyword.length < 2) {
-      this.autocompleteResults = [];
-      this.showDropdown = false;
-      return;
-    }
-
     this.isSearching = true;
-    this.locationSearchService.search(keyword).subscribe({
-      next: (results) => {
-        this.autocompleteResults = results;
-        this.showDropdown = results.length > 0;
-        this.isSearching = false;
-      },
-      error: () => this.isSearching = false
-    });
+    this.searchSubject.next(keyword);
   }
 
   selectSearchResult(result: TripLocationSearch) {
     this.form.locationName = result.name;
     this.showDropdown = false;
+    this.isLocating = true;
+    this.previewMarker = null;
 
     this.locationSearchService.getDetails(result).subscribe({
       next: (detail) => {
         this.selectedLocationSearch = detail;
         this.mapCenter = { lat: detail.lat, lng: detail.lng };
         this.mapZoom = 15;
-      }
+        this.isLocating = false;
+
+        this.previewMarker = {
+          position: { lat: detail.lat, lng: detail.lng },
+          icon: null
+        };
+      },
+      error: () => this.isLocating = false
     });
   }
 
-  openAddModal() {
+
+  openAddForm() {
     this.isEditing = false;
     this.form = { locationId: 0, locationName: '', locationRole: '', note: '', sortOrder: this.locations.length + 1 };
     this.selectedLocationSearch = null;
     this.autocompleteResults = [];
-    (document.getElementById('location_modal') as HTMLDialogElement).showModal();
+    this.showForm = true;
   }
 
-  openEditModal(loc: TripLocation) {
+  openEditForm(loc: TripLocation) {
     this.isEditing = true;
     this.form = {
       locationId: loc.id,
@@ -192,7 +228,14 @@ export class Location implements OnInit, AfterViewInit {
       note: loc.note ?? '',
       sortOrder: loc.sortOrder
     };
-    (document.getElementById('location_modal') as HTMLDialogElement).showModal();
+    this.showForm = true;
+  }
+
+  closeForm() {
+    this.showForm = false;
+    this.autocompleteResults = [];
+    this.showDropdown = false;
+    this.previewMarker = null;
   }
 
   saveLocation() {
@@ -200,11 +243,10 @@ export class Location implements OnInit, AfterViewInit {
       this.tripService.updateLocation(this.form.locationId, {
         locationRole: this.form.locationRole,
         note: this.form.note,
-        sortOrder: this.form.sortOrder
       }).subscribe({
         next: () => {
           this.loadLocations();
-          (document.getElementById('location_modal') as HTMLDialogElement).close();
+          this.closeForm();
         }
       });
     } else {
@@ -223,7 +265,7 @@ export class Location implements OnInit, AfterViewInit {
       }).subscribe({
         next: () => {
           this.loadLocations();
-          (document.getElementById('location_modal') as HTMLDialogElement).close();
+          this.closeForm();
         }
       });
     }

@@ -28,7 +28,7 @@ export class LocationSearchService {
       }
 
       this.autocompleteService.getPlacePredictions(
-        { input: keyword, language: 'zh-TW' },
+        { input: keyword, language: 'zh-TW', componentRestrictions: { country: 'tw' } },
         (predictions, status) => {
           if (status === google.maps.places.PlacesServiceStatus.OK && predictions) {
             const results: TripLocationSearch[] = predictions.map(p => ({
@@ -49,11 +49,14 @@ export class LocationSearchService {
     });
   }
 
-  // 選擇地點後取得完整資訊（座標、城市、區域）
+  // 選擇地點後取得完整資訊
   getDetails(result: TripLocationSearch): Observable<TripLocationSearch> {
     return new Observable(observer => {
       this.placesService.getDetails(
-        { placeId: result.placeId!, fields: ['geometry', 'name', 'address_components', 'formatted_address'] },
+        {
+          placeId: result.placeId!,
+          fields: ['geometry', 'address_components']
+        },
         (place, status) => {
           if (status === google.maps.places.PlacesServiceStatus.OK && place?.geometry?.location) {
             const lat = place.geometry.location.lat();
@@ -71,7 +74,6 @@ export class LocationSearchService {
               lng,
               cityName: cityComp?.long_name ?? '',
               districtName: districtComp?.long_name ?? '',
-              addressText: place.formatted_address ?? result.addressText
             });
           } else {
             observer.error('無法取得地點資訊');
