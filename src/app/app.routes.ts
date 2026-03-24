@@ -48,6 +48,16 @@ export const routes: Routes = [
         ]
       },
       {
+        path: 'posts/:id',
+        loadComponent: () => import('./forum/components/index/index').then(m => m.Index),
+        children: [
+          {
+            path: '',
+            loadComponent: () => import('./forum/components/post-details/post-details').then(m => m.PostDetails),
+          }
+        ]
+      },
+      {
         path: 'boards',
         loadComponent: () => import('./forum/components/index/index').then(m => m.Index),
         children: [
