@@ -135,7 +135,7 @@
               </div>
             </div>
             <!-- 貼文內容 -->
-            <div class="flex gap-3">
+            <a class="flex gap-3" [routerLink]="'/forum/posts/'+post.postId">
 
               <div class="flex-1 pb-2 px-10">
                 @if(post.locationTitle){
@@ -242,7 +242,7 @@
                   </div>
                 </div>
               </div>
-            </div>
+            </a>
           </div>
 
 
