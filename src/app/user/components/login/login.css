@@ -1,0 +1,38 @@
+input[type="date"].ng-dirty.ng-valid {
+  color: #5D4037 !important;
+  /* 換成你的深棕色，或是 slate-900 */
+}
+
+/* 確保原生預設的灰色被覆蓋 */
+input[type="date"] {
+  color: #A17A5A;
+  /* 這是未選取時的淺棕色 (根據你截圖的顏色) */
+}
+
+/* 💡 修正下拉選單箭頭位置 */
+
+/* 確保父容器是相對定位，以便定位內部的自訂箭頭 */
+.custom-select-wrapper {
+  @apply relative;
+}
+
+/* 隱藏所有瀏覽器的原生下拉箭頭 */
+.custom-select-wrapper select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+
+
+
+/* --- 4. 字體顏色修正：選完後變深 --- */
+/* 生日選完變深 */
+input[type="date"]:not(:placeholder-shown) {
+  color: #5D4037 !important;
+}
+
+/* 下拉選單選完變深 (利用 Angular 的類別) */
+select.ng-dirty.ng-valid {
+  color: #5D4037 !important;
+}

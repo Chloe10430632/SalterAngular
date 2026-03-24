@@ -1,11 +1,22 @@
-import { Component, NgZone, OnInit } from '@angular/core';
+import { Component, NgZone, OnInit, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../../Services/user-service';
 import { LoginResult } from '../../interfaces/ILoginResponse';
 import { ILogin } from '../../interfaces/ILogin';
+import { IRegister } from '../../interfaces/IRegister';
+import { IVerifyRegisterOtp } from '../../interfaces/IVerifyRegisterOtp';
+import { IResendOtp } from '../../interfaces/IResendOtp';
 import { AuthService } from '../../../core/services/auth-service';
 import { IGoogleLogin } from '../../interfaces/IGoogleLogin';
+import { CommonModule } from '@angular/common';
+import { interval, Subscription } from 'rxjs';
+import { takeWhile } from 'rxjs/operators'
+import { IResetPassword } from '../../interfaces/IResetPassword';
+import { IForgotPassword } from '../../interfaces/IForgotPassword';
+import { NotificationService } from '../../../shared/notifyService/notification-service';
+
+
 
 
 
@@ -14,7 +25,7 @@ declare var google: any; //declare是用來定義外部全域變數的
 
 @Component({
   selector: 'app-login',
-  imports: [RouterLink, ReactiveFormsModule],
+  imports: [RouterLink, ReactiveFormsModule, CommonModule],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
@@ -22,13 +33,102 @@ export class Login implements OnInit {
 
   constructor(
     private authService: AuthService,
+    private userService: UserService,
     private router: Router,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private notification: NotificationService
   ) { }
+
+
+  // 狀態控制
+  isLoginModalOpen = false;
+
+  isRegisterModalOpen = false;
+
+  isRegistering = false;
 
   isLoading = false;
 
-  isPasswordVisible = false;
+  isSuccess = false;
+
+  activeModal: 'STAY' | 'COACH' | 'TRIP' | 'FORUM' | null = null;
+
+  isLoginPasswordVisible = false;
+
+  isRegPasswordVisible = false;
+  isRegConfirmVisible = false;
+
+  isStoryOpen = false;
+  currentSlide = 0;
+
+  isForgotPassword = false;
+
+  forgotStep = 1;
+
+  hasSentEmail: boolean = false;
+
+
+  //登入
+  loginForm = new FormGroup({
+    email: new FormControl('', [Validators.required, Validators.email]),
+    password: new FormControl('', [Validators.required, Validators.minLength(6)])
+  });
+
+
+  //忘記密碼
+  forgotForm = new FormGroup({
+    email: new FormControl('', [Validators.required, Validators.email]),
+    otp: new FormControl('', [Validators.required, Validators.pattern('^[0-9]{6}$')]),
+    newPassword: new FormControl('', [Validators.required, Validators.minLength(6)]),
+    confirmPassword: new FormControl('', [Validators.required])
+  });
+
+
+  //註冊
+  step = 1;
+
+  isGoogleLoading = false;
+
+  isGoogleSuccess = false;
+
+  isConfirmPasswordVisible = false;
+
+  selectedFile: File | null = null;
+
+  previewUrl: string | null = null;
+
+  isPictureUploaded = false;
+
+  countdown = 180;
+
+  resendCountdown = 60;
+
+  timerSubscription?: Subscription;
+
+  canResend = false;
+
+  isResending = false;
+
+  registerForm = new FormGroup({
+    email: new FormControl('', [Validators.required, Validators.email]),
+    password: new FormControl('', [Validators.required, Validators.minLength(6)]),
+    confirmPassword: new FormControl('', [Validators.required]),
+    userName: new FormControl('', [Validators.required]),
+    phone: new FormControl(''),
+    gender: new FormControl(''),
+    birthday: new FormControl(''),
+    profilePicture: new FormControl(''),
+    otp: new FormControl('', [Validators.required, Validators.pattern('^[0-9]{6}$')])
+  });
+
+
+  //錯誤訊息
+  errorMessage: string | null = null;
+
+  get f() { return this.loginForm.controls; }
+
+  get rf() { return this.registerForm.controls; } // 註冊專用
+
 
   ngOnInit(): void {
     if (typeof google !== 'undefined') {
@@ -40,7 +140,289 @@ export class Login implements OnInit {
     }
   }
 
+  ngOnDestroy() {
+    this.timerSubscription?.unsubscribe();
+  }
+
+
+  toggleRegisterMode() {
+    this.isRegistering = !this.isRegistering;
+    this.step = 1; // 每次切換回註冊都從第一步開始
+  }
+
+
+  onFileSelected(event: any) {
+    const file: File = event.target.files[0];
+    if (file) {
+      this.selectedFile = file; // 暫存檔案，先不傳！
+
+      // 顯示前端預覽
+      const reader = new FileReader();
+      reader.onload = (e: any) => this.previewUrl = e.target.result;
+      reader.readAsDataURL(file);
+
+      this.isPictureUploaded = true; // 這裡先假裝成功，讓「下一步」可以點
+    }
+  }
+
+  nextStep() {
+    // 如果根本沒選新檔案，或是圖片已經上傳過且路徑已存在，直接進第二步
+    if (!this.selectedFile || (this.registerForm.get('profilePicture')?.value && this.isPictureUploaded)) {
+      this.step = 2;
+      return;
+    }
+    // 開始上傳，這時候可以把按鈕 disabled 或顯示 Loading
+    this.userService.postUploadUserPictureApi(this.selectedFile).subscribe({
+      next: (res) => {
+        this.registerForm.patchValue({ profilePicture: res.path });
+        this.isPictureUploaded = true; // 標記已實質上傳成功
+        this.step = 2;
+      },
+      error: (err) => {
+        console.error(err);
+        alert('圖片處理失敗，請稍後再試');
+      }
+    });
+  }
+
+  onRegister() {
+    if (this.registerForm.value.password !== this.registerForm.value.confirmPassword) {
+      alert('兩次密碼輸入不一致');
+      return;
+    }
+
+    const { otp, gender, birthday, profilePicture, ...otherValues } = this.registerForm.controls;
+
+    // 只要除了 otp 以外的欄位都 pass，就允許發送驗證碼
+    const isBasicInfoValid = Object.keys(otherValues).every(key => {
+      return this.registerForm.get(key)?.valid;
+    });
+
+
+
+    if (isBasicInfoValid) {
+
+      this.isLoading = true;
+
+      const rawData = this.registerForm.value;
+
+      const requestData: IRegister = { ...rawData } as IRegister;
+
+      Object.keys(requestData).forEach(key => {
+        if ((requestData as any)[key] === '') {
+          (requestData as any)[key] = null;
+        }
+      });
+
+      delete (requestData as any).confirmPassword;
+
+      this.userService.postRegister(requestData).subscribe({
+        next: (res) => {
+          this.isLoading = false;
+          this.step = 3; // 跳到第三步
+          this.startTimer();
+        },
+        error: (err) => {
+          this.isLoading = false;
+          console.error('註冊失敗', err);
+
+        }
+      });
+    } else {
+      alert('請檢查欄位是否填寫正確');
+    }
+
+  }
+
+  onVerifyOtp() {
+    const email = this.registerForm.get('email')?.value ?? '';
+    const otp = this.registerForm.get('otp')?.value ?? '';
+
+    if (this.registerForm.get('otp')?.invalid) {
+      // alert('請輸入正確的 6 位數驗證碼');
+      return;
+    }
+
+    this.isLoading = true; // 1. 開始轉圈圈
+    this.isSuccess = false;
+
+    const verifyData: IVerifyRegisterOtp = { email, otp };
+
+    this.userService.postVerifyRegisterOtp(verifyData).subscribe({
+      next: (_) => {
+
+        this.isLoading = false;
+        this.isSuccess = true;
+
+        this.timerSubscription?.unsubscribe();
+
+        setTimeout(() => {
+          this.isRegistering = false;
+          this.step = 1;
+          this.loginForm.patchValue({ email: email });
+          this.registerForm.reset();
+          this.isSuccess = false; // 重置狀態供下次使用
+        }, 1500);
+
+      },
+      error: (err) => {
+        console.error('驗證失敗', err);
+        // 顯示後端傳回來的錯誤訊息，例如「驗證碼過期」
+        //alert(err.error?.message || '驗證失敗，請檢查驗證碼');
+
+        this.isLoading = false;
+        this.isSuccess = false;
+        this.registerForm.patchValue({ otp: '' });
+      }
+    });
+  }
+
+  startTimer() {
+    this.countdown = 180;
+    this.canResend = false;
+
+    // 如果之前有計時器在跑，先取消它
+    this.timerSubscription?.unsubscribe();
+
+    this.timerSubscription = interval(1000) // 每秒跳一次
+      .pipe(takeWhile(() => this.countdown > 0)) // 當秒數 > 0 時繼續
+      .subscribe({
+        next: () => this.countdown--,
+        complete: () => this.canResend = true // 時間到，允許重新發送
+      });
+  }
+
+  get formatTime(): string {
+    const minutes = Math.floor(this.countdown / 60);
+    const seconds = this.countdown % 60;
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  }
+
+  get isStep2Valid(): boolean {
+    const controls = this.registerForm.controls;
+    // 檢查除了 otp 以外的必填項
+    return (controls.email.valid &&
+      controls.password.valid &&
+      controls.userName.valid &&
+      controls.confirmPassword.valid);
+  }
+
+  onResendOtp() {
+
+    if (this.isResending) return;
+    this.isResending = true;
+
+    const emailValue = this.registerForm.get('email')?.value;
+
+    if (!emailValue) {
+      alert('找不到 Email 資訊，請重新註冊');
+      this.step = 2;
+      return;
+    }
+
+    const resendData: IResendOtp = { email: emailValue };
+
+    this.userService.postResendOtp(resendData).subscribe({
+      next: () => {
+        alert('新的驗證碼已寄送到您的信箱');
+        this.isResending = false;
+        this.startTimer();
+
+        this.registerForm.patchValue({ otp: '' });
+      },
+      error: (err) => {
+        this.isResending = false;
+        console.error('重發失敗', err);
+        alert(err.error?.message || '重發失敗，請稍後再試');
+      }
+    })
+
+  }
+
+
+
+
+  //登入
+  onLogin() {
+    this.loginForm.markAllAsTouched();
+    if (this.loginForm.invalid) {
+      // this.errorMessage = '請檢查帳號密碼格式是否正確';
+      return;
+    }
+
+    this.isLoading = true;
+    this.errorMessage = null;
+    const loginData: ILogin = this.loginForm.value as ILogin;
+
+    this.authService.postLogin(loginData).subscribe({
+      next: (res: LoginResult) => {
+        this.isLoading = false;
+
+        // 💡 使用 'in' 關鍵字來當偵探，拆開 LoginResult 包裹
+        if ('token' in res) {
+          // 狀況：登入成功
+          this.authService.setCurrentUser(res.token);
+
+
+          this.isSuccess = true;
+
+
+          setTimeout(() => {
+            this.isLoginModalOpen = false;
+            this.router.navigate(['/']);
+            this.isSuccess = false; // 重置狀態
+          }, 1200);
+        }
+      },
+      error: (err) => {
+        this.isLoading = false;
+        const res = err.error as LoginResult;
+
+        // 💡 檢查是否為「需要驗證」的狀況 (403)
+        if (res && 'status' in res && res.status === 'NeedVerification') {
+          this.isRegistering = true;
+          this.step = 3;
+          const targetEmail = this.loginForm.value.email;
+          this.registerForm.patchValue({ email: targetEmail });
+          this.userService.postResendOtp({ email: targetEmail! }).subscribe({
+            next: () => {
+              // 通知使用者信件已發送
+              this.notification.show('帳號未啟用，已自動為您發送新的驗證碼！', 'success');
+              this.startTimer(); // 開始 180 秒倒數
+            },
+            error: (resendErr) => {
+              this.notification.show('驗證碼發送失敗，請稍後點擊手動重發', 'error');
+            }
+          });
+
+
+          // 這裡你可以決定是否要跳轉到註冊的 Step 3
+          // 例如：this.router.navigate(['/register'], { queryParams: { step: 3, email: loginData.email } });
+        } else {
+          // 一般錯誤 (400 或其他)
+          // alert(res?.message || '登入失敗，請檢查網路連線');
+        }
+      }
+    });
+  }
+
+  toggleLoginPasswordVisibility() {
+    this.isLoginPasswordVisible = !this.isLoginPasswordVisible;
+  }
+
+  toggleRegPassword() {
+    this.isRegPasswordVisible = !this.isRegPasswordVisible;
+  }
+
+  toggleRegConfirm() {
+    this.isRegConfirmVisible = !this.isRegConfirmVisible;
+  }
+
+
   signInWithGoogle() {
+
+    this.isGoogleLoading = true;
+
     // 💡 直接執行，不要包在 prompt 的 callback 裡面
     const googleBtnWrapper = document.createElement('div');
 
@@ -60,64 +442,17 @@ export class Login implements OnInit {
       console.log('⚠️ 自動點擊失敗，嘗試備案');
       google.accounts.id.prompt(); // 備案：如果暴力點擊失敗，才用原本的方法
     }
-  }
-
-
-
-
-
-  loginForm = new FormGroup({
-    email: new FormControl('', [Validators.required, Validators.email]),
-    password: new FormControl('', [Validators.required, Validators.minLength(6)])
-  });
-
-  onLogin() {
-    if (this.loginForm.invalid) {
-      alert('請填寫正確的帳號密碼');
-      return;
-    }
-
-    this.isLoading = true;
-    const loginData: ILogin = this.loginForm.value as ILogin;
-
-    this.authService.postLogin(loginData).subscribe({
-      next: (res: LoginResult) => {
-        this.isLoading = false;
-
-        // 💡 使用 'in' 關鍵字來當偵探，拆開 LoginResult 包裹
-        if ('token' in res) {
-          // 狀況：登入成功
-          this.authService.setCurrentUser(res.token);
-
-          alert('歡迎回來！');
-          this.router.navigate(['/']); // 導向首頁
-        }
-      },
-      error: (err) => {
-        this.isLoading = false;
-        const res = err.error as LoginResult;
-
-        // 💡 檢查是否為「需要驗證」的狀況 (403)
-        if (res && 'status' in res && res.status === 'NeedVerification') {
-          alert(res.message);
-          // 這裡你可以決定是否要跳轉到註冊的 Step 3
-          // 例如：this.router.navigate(['/register'], { queryParams: { step: 3, email: loginData.email } });
-        } else {
-          // 一般錯誤 (400 或其他)
-          alert(res?.message || '登入失敗，請檢查網路連線');
-        }
+    setTimeout(() => {
+      if (this.isGoogleLoading && !this.isGoogleSuccess) {
+        this.isGoogleLoading = false;
       }
-    });
+    }, 10000);
   }
-
-  togglePasswordVisibility() {
-    this.isPasswordVisible = !this.isPasswordVisible;
-  }
-
 
 
 
   handleGoogleLogin(response: any) {
+
     // 1. 封裝成 IGoogleLogin 物件
     const loginData: IGoogleLogin = {
       idToken: response.credential
@@ -132,20 +467,220 @@ export class Login implements OnInit {
           this.authService.setCurrentUser(res.token);
 
           // 🎯 使用 NgZone 強制 Angular 回到熱區進行頁面跳轉
+
           this.ngZone.run(() => {
-            this.router.navigate(['/']);
+            this.isGoogleLoading = false;
+            this.isGoogleSuccess = true;
+
+            setTimeout(() => {
+              this.isLoginModalOpen = false;
+              this.router.navigate(['/']);
+            }, 1500);
           });
-        } else {
-          // ❌ 失敗：顯示後端傳回的 message
-          alert(res.message || '登入失敗');
         }
       },
       error: (err: any) => {
-        console.error('API 呼叫出錯:', err);
-        alert('無法連線至伺服器');
+        this.ngZone.run(() => {
+          this.isGoogleLoading = false;
+        });
       }
     });
   }
+
+  openLoginModal() {
+    this.isLoginModalOpen = true;
+  }
+
+
+  closeLoginModal() {
+    this.isLoginModalOpen = false;
+    this.isForgotPassword = false; // 重置狀態
+    this.isRegistering = false;    // 重置狀態
+    this.step = 1;                 // 重置步驟
+    this.forgotStep = 1;
+  }
+
+
+
+  openRegisterModal() {
+    this.isRegisterModalOpen = true;
+  }
+
+  openActiveModal(modalType: 'STAY' | 'COACH' | 'TRIP' | 'FORUM') {
+    this.activeModal = modalType;
+  }
+
+  closeRegisterModal() {
+    this.isRegisterModalOpen = false;
+  }
+
+  closeActiveModal() {
+    this.activeModal = null;
+
+  }
+
+
+  openStory() {
+    this.isStoryOpen = true;
+    this.currentSlide = 0;
+  }
+
+  closeStory() {
+    this.isStoryOpen = false;
+  }
+
+
+  //忘記密碼
+  toggleForgotPassword() {
+    this.isForgotPassword = !this.isForgotPassword;
+    this.isRegistering = false; // 確保關閉註冊模式
+    this.forgotStep = 1;
+    this.forgotForm.reset();
+  }
+
+  onSendForgotEmail() {
+    if (this.forgotForm.controls.email.invalid) {
+      alert('請輸入正確的 Email');
+      return;
+    }
+
+    this.isLoading = true;
+    const data: IForgotPassword = { email: this.forgotForm.value.email! };
+
+    this.userService.forgotPassword(data).subscribe({
+      next: (res) => {
+        // 💡 只有在 API 成功回傳後，才開始跑 1.5 秒流程
+        setTimeout(() => {
+          this.isLoading = false;
+          this.forgotStep = 2; // ✅ 修正：跳轉到忘記密碼的第二步
+          this.startTimer();   // 啟動倒數
+        }, 1500);
+      },
+      error: (err) => {
+        this.isLoading = false;
+        alert(err.error?.message || '發送失敗，請檢查 Email 是否正確');
+      }
+    });
+  }
+
+  onResetPassword() {
+    if (this.forgotForm.value.newPassword !== this.forgotForm.value.confirmPassword) {
+      alert('兩次密碼輸入不一致');
+      return;
+    }
+
+    if (this.forgotForm.invalid) {
+      alert('請填寫完整資訊');
+      return;
+    }
+
+    this.isLoading = true;
+    const requestData: IResetPassword = {
+      email: this.forgotForm.value.email!,
+      otp: this.forgotForm.value.otp!,
+      newPassword: this.forgotForm.value.newPassword!
+    };
+
+    this.userService.resetPassword(requestData).subscribe({
+      next: (res) => {
+        this.isLoading = false;
+        this.isSuccess = true;
+
+        setTimeout(() => {
+          // 回到登入表單狀態
+          this.isForgotPassword = false;
+          this.isRegistering = false;
+          this.forgotStep = 1; // 重置步驟以便下次使用
+
+          // 自動把剛才重設的 Email 填入登入表單，增加體驗
+          this.loginForm.patchValue({ email: requestData.email });
+
+          this.isSuccess = false;
+          this.forgotForm.reset();
+        }, 1500);
+      },
+      error: (err) => {
+        this.isLoading = false;
+        alert(err.error?.message || '驗證碼錯誤或已失效');
+      }
+    });
+  }
+
+  // 驗證忘記密碼的 OTP (Step 2 -> Step 3)
+  onVerifyForgotOtp() {
+    const email = this.forgotForm.get('email')?.value ?? '';
+    const otp = this.forgotForm.get('otp')?.value ?? '';
+
+    if (this.forgotForm.get('otp')?.invalid) return;
+
+    this.isLoading = true;
+
+    // 💡 這裡呼叫後端驗證忘記密碼 OTP 的 API
+    // 如果你的後端是「最後一步才驗證」，這裡可以用 setTimeout 模擬驗證過程
+    this.userService.VerifyPasswordResetOtp({ email, otp }).subscribe({
+      next: (res) => {
+        this.isLoading = false;
+        this.forgotStep = 3; // 驗證成功，進入設定新密碼頁面
+      },
+      error: (err) => {
+        this.isLoading = false;
+        // 這裡就是你說的錯誤處理：彈出後端回傳的錯誤訊息
+        alert(err.error?.message || '驗證碼錯誤，請重新輸入');
+
+        this.forgotForm.patchValue({ otp: '' });
+      }
+    });
+  }
+
+  // 重新發送忘記密碼的 OTP
+  onResendForgotOtp() {
+    if (this.isResending) return;
+
+    const email = this.forgotForm.get('email')?.value;
+    if (!email) {
+      alert('找不到 Email 資訊，請返回第一步');
+      this.forgotStep = 1;
+      return;
+    }
+
+    this.isResending = true;
+    this.userService.forgotPassword({ email }).subscribe({
+      next: () => {
+        alert('新的驗證碼已寄出');
+        this.isResending = false;
+        this.startTimer(); // 重新開始倒數 180 秒
+        this.forgotForm.patchValue({ otp: '' }); // 清空舊的 OTP
+      },
+      error: (err) => {
+        this.isResending = false;
+        alert(err.error?.message || '重發失敗，請稍後再試');
+      }
+    });
+  }
+
+  currentIndex: number = 0;
+
+  public moveSlide(direction: number): void {
+    const container = document.getElementById('carousel_container') as HTMLElement | null;
+    if (!container) return;
+
+    // 取得所有輪播項目
+    const items = container.querySelectorAll('.carousel-item');
+    const totalItems = items.length;
+
+    // 計算下一個索引（包含循環邏輯：最後一張點「下」會回第一張）
+    this.currentIndex = (this.currentIndex + direction + totalItems) % totalItems;
+
+    // 計算捲動位置：索引 * 容器寬度
+    const scrollAmount = this.currentIndex * container.offsetWidth;
+
+    container.scrollTo({
+      left: scrollAmount,
+      behavior: 'smooth'
+    });
+  }
+
+
 
 
 
