@@ -93,7 +93,7 @@ export class UpdateHouse implements OnInit {
         next: (res) => {
           this.isLoading = false;
           alert('房源資料補齊成功！');
-          this.router.navigate(['/']); // 成功後導回列表
+          this.router.navigate(['/house']); // 成功後導回列表
         },
         error: (err) => {
           this.isLoading = false;
@@ -116,7 +116,7 @@ export class UpdateHouse implements OnInit {
     }
   }
 
-  // 🔍 在類別中新增此方法
+
   onFileSelected(event: any) {
     const files: FileList = event.target.files;
     if (files.length === 0) return;

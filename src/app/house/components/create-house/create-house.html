@@ -78,13 +78,23 @@
         <h3 class="text-lg font-bold flex items-center gap-2">
           <i class="fa-solid fa-images text-secondary"></i> 房源照片
         </h3>
+
+        <div class="flex gap-2 mb-2">
+          <button type="button" class="btn btn-outline btn-primary btn-sm" (click)="fileInput.click()">
+            <i class="fa-solid fa-cloud-arrow-up"></i> 上傳本地圖片
+          </button>
+          <input #fileInput type="file" class="hidden" multiple (change)="onFileSelected($event)" accept="image/*">
+
+          <span class="text-xs text-gray-400 self-center">支援多張上傳，自動生成網址</span>
+        </div>
+
         <div class="form-control">
           <label class="label">
-            <span class="label-text-alt text-error font-bold">請貼上 Cloudinary 網址 (每行一個網址)</span>
+            <span class="label-text-alt text-error font-bold">圖片網址清單 (上傳後會自動增加)</span>
           </label>
           <textarea [(ngModel)]="rawImageUrls"
             class="textarea textarea-bordered w-full h-48 font-mono text-sm focus:textarea-primary leading-relaxed"
-            placeholder="https://res.cloudinary.com/..."></textarea>
+            placeholder="上傳圖片或手動貼上網址..."></textarea>
         </div>
       </div>
 
