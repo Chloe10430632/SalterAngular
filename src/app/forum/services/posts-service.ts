@@ -1,9 +1,10 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpEvent, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { PostList } from '../interfaces/postList';
 import { Observable } from 'rxjs/internal/Observable';
 import { timer } from 'rxjs/internal/observable/timer';
 import { map, zip } from 'rxjs';
+import { CreatePostDto } from '../interfaces/CreatePostDto';
 
 @Injectable({
   providedIn: 'root',
@@ -47,7 +48,7 @@ export class PostsService {
     );
   }
 
-  //Get 追蹤貼文
+  //GET 追蹤貼文
   GetFollowPostsApi(lastCreatedAt?: string, lastPostId?: number): Observable<PostList[]> {
     let params = new HttpParams().set('sortBy', 'follow');
     if (lastCreatedAt !== undefined && lastPostId !== undefined) {
@@ -63,8 +64,7 @@ export class PostsService {
     );
   }
 
-
-  //Get 看板貼文
+  //GET 看板貼文
   GetBoardPostsApi(boardId: number, lastViewCount?: number, lastPostId?: number): Observable<PostList[]> {
     let params = new HttpParams().set('boardId', boardId.toString());
 
@@ -80,6 +80,20 @@ export class PostsService {
       map(([data, _]) => data)
     );
 
+  }
+
+  //POST 發佈貼文圖片 IFormFile
+  PostUploadImages(files: File[]): Observable<HttpEvent<string[]>> {
+    const formData = new FormData();
+    files.forEach(file => formData.append('files', file));
+    return this.http.post<string[]>('https://localhost:7017/api/Forum/Posts/Images', formData, {
+      reportProgress: true, // 關鍵：開啟進度回報
+      observe: 'events'     // 關鍵：觀察所有事件（而不只是最後的結果）
+    });
+  }
+  //POST 發佈貼文內容 Json
+  PostCreatePost(payload: CreatePostDto): Observable<any> {
+    return this.http.post('https://localhost:7017/api/Forum/Posts', payload);
   }
 
 

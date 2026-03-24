@@ -116,14 +116,19 @@
                     </button>
                     <ul tabindex="0"
                       class="dropdown-content menu p-2 shadow-2xl bg-base-100 rounded-2xl w-44 border border-base-200 z-50 mt-2">
-                      <li><a class="py-3 text-sm"><i class="fa-regular fa-bookmark"></i>
+                      <li><a class="py-3 text-sm" (click)="handleInteraction(post,'collect')"><i
+                            class="fa-regular fa-bookmark"></i>
                           收藏貼文</a></li>
-                      <li><a class="py-3 text-sm"><i class="fa-regular fa-paper-plane"></i>
+                      <li><a class="py-3 text-sm" (click)="copyToClipboard(post.postId)"><i
+                            class="fa-regular fa-paper-plane"></i>
                           複製連結</a></li>
-                      <li><a class="py-3 text-sm"><i class="fa-regular fa-eye-slash"></i>
-                          隱藏內容</a></li>
                       <div class="divider my-0 opacity-50"></div>
-                      <li><a class="py-3 text-sm text-error font-bold"><i class="fa-solid fa-ban"></i> 檢舉</a></li>
+                      <li>
+                        <a (click)="openReportModal(post)" class="py-3 text-sm text-error font-bold">
+                          <i class="fa-solid fa-ban"></i> 檢舉
+                        </a>
+                      </li>
+
                     </ul>
                   </div>
                 </div>
@@ -150,7 +155,8 @@
                   @for(imgUrl of post.imageUrls; track $index ){
 
                   <!-- 圖片容器 -->
-                  <div class="aspect-square rounded-2xl overflow-hidden border border-base-200 shadow-sm group/img">
+                  <div (click)="openLightbox(imgUrl)"
+                    class="aspect-square rounded-2xl overflow-hidden border border-base-200 shadow-sm group/img">
                     <img [src]="imgUrl"
                       class="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-700" />
                   </div>
@@ -183,9 +189,9 @@
 
                 <div class="flex items-center gap-6 mt-5 ml-2 text-base-content/60">
                   <!-- 愛心按鈕：點擊後變紅並跳動 -->
-                  <button (click)="toggleLike()" [class.text-error]="isLiked"
+                  <button (click)="handleInteraction(post, 'like')" [class.text-error]="post.isLiked"
                     class="flex items-center gap-1.5 transition-all duration-300 active:scale-90 hover:text-error group">
-                    <i [class]="isLiked ? 'fa-solid fa-heart animate-bounce-once' : 'fa-regular fa-heart'"
+                    <i [class]="post.isLiked ? 'fa-solid fa-heart animate-bounce-once' : 'fa-regular fa-heart'"
                       class="text-xl transition-transform group-hover:scale-110"></i>
                     <span class="text-[11px] font-bold">{{ post.likeCount | number }}</span>
                   </button>
@@ -195,17 +201,45 @@
                     <span class="text-[11px] font-bold">{{post.commentCount | number}}</span>
                   </button>
                   <!-- 收藏按鈕：點擊後變黃 -->
-                  <button (click)="toggleBookmark()" [class.text-warning]="isBookmarked"
+                  <button (click)="handleInteraction(post, 'collect')" [class.text-warning]="post.isCollected"
                     class="flex items-center gap-1.5 transition-all duration-300 active:scale-90 hover:text-warning group">
-                    <i [class]="isBookmarked ? 'fa-solid fa-bookmark' : 'fa-regular fa-bookmark'"
+                    <i [class]="post.isCollected ? 'fa-solid fa-bookmark' : 'fa-regular fa-bookmark'"
                       class="text-lg transition-transform group-hover:scale-110"></i>
                     <span class="text-[11px] font-bold">{{ post.collectCount | number }}</span>
                   </button>
-                  <!-- 分享按鈕：點擊後彈出分享介面 -->
-                  <button class="flex items-center gap-1.5 hover:text-green-500 transition-colors">
-                    <i class="fa-regular fa-paper-plane text-lg"></i>
-                    <span class="text-[11px] font-bold">{{post.shareCount | number}}</span>
-                  </button>
+                  <!-- 分享按鈕：改用 dropdown 實作彈出效果 -->
+                  <div class="dropdown dropdown-right sm:dropdown-end">
+                    <button tabindex="0" role="button"
+                      class="flex items-center gap-1.5 hover:text-green-500 transition-colors active:scale-95">
+                      <i class="fa-regular fa-paper-plane text-lg"></i>
+                      <span class="text-[11px] font-bold">{{post.shareCount | number}}</span>
+                    </button>
+
+                    <!-- 彈出的分享介面 -->
+                    <div tabindex="0"
+                      class="dropdown-content ml-5 z-[60] card card-compact w-70 p-2 shadow-2xl bg-base-100 border border-base-200">
+                      <div class="card-body">
+                        <h3 class="card-title text-sm text-base-content/70">~分享給你所有的朋友~</h3>
+
+                        <div class="flex items-center gap-2 mt-1">
+                          <!-- 連結顯示區 -->
+                          <div
+                            class="flex-1 bg-base-200 px-3 py-2 rounded-lg text-[12px] truncate font-mono text-base-content/60 border border-base-300">
+                            {{ domain }}/post/{{post.postId}}
+                          </div>
+
+                          <!-- 複製按鈕 -->
+                          <div class="tooltip tooltip-neutral" data-tip="點擊複製">
+                            <button (click)="handleInteraction(post,'share')"
+                              class="btn btn-square btn-primary btn-sm rounded-lg hover:scale-110 transition-transform">
+                              <i class="fa-regular fa-copy text-sm"></i>
+                            </button>
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -214,8 +248,86 @@
 
           }
           }
-        </div>
 
+          <!-- 檢舉對話框 (Modal) -->
+          <dialog id="report_modal" class="modal modal-bottom sm:modal-middle">
+            <div class="modal-box bg-base-100 border border-base-200 shadow-2xl">
+              <h3 class="font-black text-lg text-error flex items-center gap-2">
+                <i class="fa-solid fa-triangle-exclamation"></i> 檢舉這篇貼文
+              </h3>
+              <p class="py-4 text-sm text-base-content/70">請告訴我們這篇貼文違規的原因，這將有助於維持海邊社群的安全環境。</p>
+
+              <!-- 檢舉原因輸入區 -->
+              <div class="form-control w-full">
+                <label class="label mb-4">
+                  <span class="label-text font-bold">檢舉原因</span>
+                </label>
+                <select class="select select-bordered w-full bg-base-200 focus:select-error" #reportReason>
+                  <option disabled selected>請選擇原因</option>
+                  <option>內容不當 / 暴力</option>
+                  <option>廣告垃圾訊息</option>
+                  <option>仇恨言論</option>
+                  <option>虛假資訊</option>
+                  <option>其他原因</option>
+                </select>
+              </div>
+
+              <div class="form-control w-full mt-4">
+                <label class="label mb-4">
+                  <span class="label-text font-bold">詳細說明 (選填)</span>
+                </label>
+                <textarea class="textarea textarea-bordered bg-base-200 w-full focus:textarea-error"
+                  placeholder="請提供更多細節..." #reportDetail></textarea>
+              </div>
+
+              <!-- 按鈕區 -->
+              <div class="modal-action">
+                <form method="dialog">
+                  <button class="btn btn-ghost">取消</button>
+                  <button class="btn btn-error text-white ml-2"
+                    (click)="confirmReport(selectedPostForReport, reportReason.value, reportDetail.value)">
+                    確認送出
+                  </button>
+                </form>
+              </div>
+            </div>
+          </dialog>
+
+          <!-- 圖片放大燈箱(Modal) -->
+          <dialog id="lightbox_modal" class="modal bg-black/40 backdrop-blur-lg transition-all duration-200"
+            (close)="closeLightbox()">
+            <div
+              class="modal-box max-w-5xl bg-transparent shadow-none p-0 overflow-visible flex flex-col items-center justify-center">
+
+              <form method="dialog">
+                <button class="btn btn-circle btn-ghost text-white absolute -top-12 right-0 hover:bg-white/20">
+                  <i class="fa-solid fa-xmark text-2xl"></i>
+                </button>
+              </form>
+
+              @if (selectedFullImage()) {
+              <div class="relative group">
+                <img [src]="selectedFullImage()"
+                  class="max-h-[85vh] max-w-full rounded-lg shadow-2xl animate-in zoom-in-95 duration-100 object-contain"
+                  alt="放大預覽" />
+
+                <div class="absolute -bottom-10 left-0 w-full text-center">
+                  <span class="text-white/60 text-xs tracking-widest uppercase font-bold">
+                    <i class="fa-solid fa-camera-retro mr-2"></i> Salter
+                  </span>
+                </div>
+              </div>
+              }
+            </div>
+
+            <form method="dialog" class="modal-backdrop">
+              <button>close</button>
+            </form>
+          </dialog>
+
+
+
+        </div>
       </div>
 
 

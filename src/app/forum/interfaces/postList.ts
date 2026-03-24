@@ -8,7 +8,9 @@ export interface PostList {
   contentPreview: string;
   imageUrls: string[];
   createdAt: string;
+  isLiked: boolean;
   likeCount: number;
+  isCollected: boolean;
   collectCount: number;
   shareCount: number;
   commentCount: number;

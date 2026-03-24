@@ -45,20 +45,28 @@
             }@else {
             @for (board of boardList; track board.boardId) {
 
-            <a class="flex items-center gap-4 p-4 hover:bg-base-200/30 transition-colors group cursor-pointer"
-              [routerLink]="'/forum/boards/'+board.boardId">
+            <a class="flex items-center gap-4 p-4 hover:bg-base-200/30 transition-colors group cursor-pointer">
               <span class="w-4 text-center font-black text-error text-sm">{{$index+1}}</span>
+
               <div class="avatar">
                 <div class="w-10 h-10 rounded mr-5">
                   <img [src]="board.boardImgUrl" />
                 </div>
               </div>
-              <div class="flex-1">
+              <div class="flex-1" [routerLink]="'/forum/boards/'+board.boardId"
+                (click)="handleInteraction(board,'view')">
                 <div class="font-bold text-base group-hover:text-primary transition-colors">
                   {{board.boardTitle}}
                 </div>
               </div>
-              <button class="btn btn-neutral btn-outline btn-sm rounded-full px-5 hover:!text-white">追蹤</button>
+              @if(board.isFollowed){
+              <button (click)="handleInteraction(board,'follow')"
+                class="btn btn-soft btn-sm rounded-full px-4 ">追蹤中</button>
+              }@else {
+              <button (click)="handleInteraction(board,'follow')"
+                class="btn btn-neutral btn-outline btn-sm rounded-full px-5 hover:!text-white">追蹤</button>
+              }
+
             </a>
 
             }

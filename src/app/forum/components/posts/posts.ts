@@ -1,10 +1,17 @@
+
 import { PostList } from './../../interfaces/postList';
 import { DecimalPipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { PostsService } from '../../services/posts-service';
 import { RelativeTimePipe } from '../../pipes/relative-time-pipe';
 import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
 import { RouterLink } from '@angular/router';
+import { PostInteractionsService } from '../../services/post-interactions-service';
+import { PostInteractionsRequest } from '../../interfaces/postInteractionsRequest';
+import { ToastrService } from 'ngx-toastr';
+import { AuthService } from '../../../core/services/auth-service';
+import { CurrentUser } from '../../interfaces/currentUser';
+
 
 @Component({
   selector: 'app-posts',
@@ -13,17 +20,15 @@ import { RouterLink } from '@angular/router';
   styleUrl: './posts.css',
 })
 export class Posts implements OnInit {
-  /**按讚變數 */
-  isLiked = false;
-  likeCount = 8867;
-  /**收藏變數 */
-  isBookmarked = false;
-  bookmarkCount = 102;
+
+  /**當前環境網址根目錄 */
+  readonly domain = window.location.origin;
+
+  /**目前使用者 */
+  currentUser?: CurrentUser;
 
   /**貼文篩選變數，預設為popular */
   activeTab: 'popular' | 'new' | 'follow' = 'popular';
-
-
 
   /**後端伺服器PORT */
   backendServer = "https://localhost:7017";
@@ -37,19 +42,28 @@ export class Posts implements OnInit {
   /**是否已沒有更多資料 */
   isFinished = false;
 
+  /**用來記錄現在是哪篇貼文要被檢舉*/
+  selectedPostForReport?: PostList;
 
-  constructor(private postsService: PostsService) { }
+  /**儲存目前要放大顯示的圖片網址 */
+  selectedFullImage = signal<string | null>(null);
+
+
+  constructor(
+    private postsService: PostsService,
+    private postInteractionsService: PostInteractionsService,
+    private toastr: ToastrService,
+    public authService: AuthService) { }
 
   ngOnInit(): void {
     this.loadMore('popular');
+    this.authService.currentUser$.subscribe(data => {
+      this.currentUser = data;
+    });
   }
-
-
 
   // 無限滾動被動載入資料
   onScroll() {
-    // console.log('觸發捲動載入...');
-
     if (this.activeTab === 'popular') {
       this.loadMore('popular');
     }
@@ -63,8 +77,6 @@ export class Posts implements OnInit {
     }
   }
 
-
-
   // 點擊切換 Tab 的時候觸發
   onTabChange(tab: 'popular' | 'new' | 'follow') {
     this.activeTab = tab;
@@ -77,6 +89,7 @@ export class Posts implements OnInit {
     this.loadMore(tab);
   }
 
+  //不同篩選條件執行分頁邏輯
   loadMore(tab: 'popular' | 'new' | 'follow') {
     if (this.isLoading || this.isFinished) return;
     this.isLoading = true;
@@ -142,22 +155,105 @@ export class Posts implements OnInit {
 
   }
 
+  //互動呼叫Api
+  handleInteraction(post: PostList, type: string, reason?: string) {
+    if (type === 'like') {
+      post.isLiked = !post.isLiked;
+      if (post.isLiked) {
+        post.likeCount++;
+      } else {
+        post.likeCount--;
+      }
+
+    } else if (type === 'collect') {
+      post.isCollected = !post.isCollected;
+      if (post.isCollected) {
+        post.collectCount++;
+      } else {
+        post.collectCount--;
+      }
+    } else if (type === 'share') {
+      post.shareCount++;
+      this.copyToClipboard(post.postId);
+    }
+
+    const request: PostInteractionsRequest = {
+      postId: post.postId,
+      type: type as 'like' | 'collect' | 'share' | 'report' | 'view',
+      reportReason: type === 'report' ? reason : undefined,
+    };
+
+    if (!this.currentUser) return;
+
+    this.postInteractionsService.postPostInteractionsApi(request).subscribe({
+      next: (data) => {
+        if (type === 'report') {
+          this.toastr.info(
+            '',
+            '我們已收到您的檢舉，將會盡快處理。'
+          );
+        }
+      },
 
 
+      error: (err) => {
+        console.error(`interaction failed`, err);
+      }
+    });
 
-
-
-
-  toggleLike() {
-    this.isLiked = !this.isLiked;
-    // 邏輯處理：奇數次加1，偶數次減1
-    this.isLiked ? this.likeCount++ : this.likeCount--;
   }
 
-  toggleBookmark() {
-    this.isBookmarked = !this.isBookmarked;
-    this.isBookmarked ? this.bookmarkCount++ : this.bookmarkCount--;
+  //複製貼文網址
+  copyToClipboard(postId: number) {
+    // 建立完整的 URL (根據你的環境調整)
+    const fullUrl = `${this.domain}/post/${postId}`;
+
+    navigator.clipboard.writeText(fullUrl).then(() => {
+
+      this.toastr.info('', '成功複製到剪貼簿！', {
+        toastClass: 'ngx-toastr shadow-xl rounded-2xl border-none',
+      });
+      if (document.activeElement instanceof HTMLElement) {
+        document.activeElement.blur();
+      }
+    }).catch(err => {
+      this.toastr.info('', '無法複製連結', {
+        toastClass: 'ngx-toastr shadow-xl rounded-2xl border-none',
+      });
+    });
   }
 
+  // 打開檢舉彈窗
+  openReportModal(post: PostList) {
+    this.selectedPostForReport = post;
+    console.log(this.selectedPostForReport);
+    const modal = document.getElementById('report_modal') as HTMLDialogElement;
+    if (modal) {
+      modal.showModal();
+    }
+  }
+
+  // 確認送出檢舉
+  confirmReport(post: any, reason: string, detail: string) {
+    if (reason === '請選擇原因') {
+      this.toastr.warning('請先選擇檢舉原因', '提示');
+      return;
+    }
+
+    reason = `${reason}:${detail}`;
+    this.handleInteraction(post, 'report', reason);
+  }
+
+  /**放大圖片 - 開啟燈箱 */
+  openLightbox(url: string) {
+    this.selectedFullImage.set(url);
+    const modal = document.getElementById('lightbox_modal') as HTMLDialogElement;
+    modal?.showModal();
+  }
+
+  /**放大圖片 - 關閉燈箱 */
+  closeLightbox() {
+    this.selectedFullImage.set(null);
+  }
 
 }
