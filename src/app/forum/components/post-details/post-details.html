@@ -50,7 +50,7 @@
 
               <!-- 圖片容器 -->
               <div (click)="openLightbox(imgUrl)"
-                class="aspect-square rounded-2xl overflow-hidden border border-base-200 shadow-sm group/img">
+                class="cursor-pointer aspect-square rounded-2xl overflow-hidden border border-base-200 shadow-sm group/img">
                 <img [src]="imgUrl"
                   class="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-700" />
               </div>
@@ -87,7 +87,7 @@
                 <span class="text-[11px] font-bold">{{ postDetailsData?.likeCount | number }}</span>
               </button>
               <!-- 留言按鈕：點擊後導頁到詳細貼文 -->
-              <a (click)="scrollToComment()"
+              <a (click)="resetToPostReply()"
                 class="cursor-pointer flex items-center gap-1.5 hover:text-blue-500 transition-colors">
                 <i class="fa-regular fa-comment text-xl"></i>
                 <span class="text-[11px] font-bold">{{postDetailsData?.commentCount | number}}</span>
@@ -153,10 +153,54 @@
             <div class="flex items-center gap-2">
               <span class="font-bold text-[13px]">{{comment.userName}}</span>
               <span class="text-[11px] text-base-content/40">{{comment.createdAt | relativeTime}}</span>
+
+
+              @if(this.currentUser?.id === comment.commentUserId){
+              <div class="flex items-center gap-2 ml-auto">
+                <button (click)="startEdit(comment)"
+                  class="btn btn-ghost btn-xs text-[13px] text-base-content/30 hover:text-info">
+                  <i class="fa-regular fa-pen-to-square mr-1"></i>
+                </button>
+
+                <button (click)="openDeleteModal(comment.commentId)"
+                  class="btn btn-ghost btn-xs text-[13px] text-base-content/30 hover:text-error">
+                  <i class="fa-regular fa-trash-can mr-1"></i>
+                </button>
+              </div>
+              }
+
+
             </div>
+
+
+
+            @if (editingCommentId == comment.commentId) {
+            <div class="join w-full flex animate-in fade-in zoom-in-95 duration-200">
+              <input type="text" [(ngModel)]="editContent" name="edit-{{comment.commentId}}"
+                class="input input-bordered join-item flex-1 bg-base-100 text-sm focus:outline-none focus:border-primary border-r-0"
+                (keyup.enter)="editComment(comment)" (keyup.esc)="cancelEdit()" />
+              <button (click)="editComment(comment)"
+                class="btn btn-primary join-item px-4 text-sm font-bold shadow-none border-l-0">
+                儲存
+              </button>
+              <button (click)="cancelEdit()"
+                class="btn btn-ghost join-item px-4 text-sm font-bold text-base-content/40">
+                取消
+              </button>
+            </div>
+            }@else {
             <p class="text-[14px] mt-1 text-base-content/80">{{comment.content}}</p>
-            <a (click)="scrollToComment()"
+            }
+
+
+
+
+
+
+            <a (click)="setReplyTarget(comment.commentId,comment.userName)"
               class="cursor-pointer text-[11px] font-bold mt-2 text-base-content/40 hover:text-primary transition-colors">回覆</a>
+
+
 
             @if(comment.replies.length>0){
             @for (reply of comment.replies; track reply.commentId) {
@@ -176,8 +220,42 @@
                     <span class="text-[12px] text-base-content/30 font-medium">作者</span>
                     }
 
+                    @if(this.currentUser?.id === reply.commentUserId){
+                    <div class="flex items-center gap-2 ml-auto">
+                      <button (click)="startEdit(reply)"
+                        class="btn btn-ghost btn-xs text-[13px] text-base-content/30 hover:text-info">
+                        <i class="fa-regular fa-pen-to-square mr-1"></i>
+                      </button>
+
+                      <button (click)="openDeleteModal(reply.commentId)"
+                        class="btn btn-ghost btn-xs text-[13px] text-base-content/30 hover:text-error">
+                        <i class="fa-regular fa-trash-can mr-1"></i>
+                      </button>
+                    </div>
+                    }
                   </div>
+
+
+
+                  @if (editingCommentId == reply.commentId) {
+                  <div class="join w-full flex animate-in fade-in zoom-in-95 duration-200">
+                    <input type="text" [(ngModel)]="editContent"
+                      class="input input-bordered join-item flex-1 bg-base-100 text-sm focus:outline-none focus:border-primary border-r-0"
+                      (keyup.enter)="editComment(reply)" (keyup.esc)="cancelEdit()" />
+                    <button (click)="editComment(reply)"
+                      class="btn btn-primary join-item px-4 text-sm font-bold shadow-none border-l-0">
+                      儲存
+                    </button>
+                    <button (click)="cancelEdit()"
+                      class="btn btn-ghost join-item px-4 text-sm font-bold text-base-content/40">
+                      取消
+                    </button>
+                  </div>
+                  }@else {
                   <p class="text-[14px] mt-1 text-base-content/80">{{reply.content}}</p>
+                  }
+
+
                 </div>
               </div>
             </div>
@@ -185,6 +263,9 @@
             }
             }
           </div>
+
+
+
         </div>
       </div>
       <div class="divider mx-4"></div>
@@ -195,7 +276,7 @@
 
 
 
-
+      @if(currentUser){
       <!-- 使用者留言 -->
       <div class="px-4 py-6 border-base-300 scroll-mt-20" id="comment-section">
         <div class="flex items-center gap-3">
@@ -207,9 +288,11 @@
 
           <div class="flex-1">
             <div class="join w-full flex">
-              <input #commentInput type="text" [placeholder]="'回覆'+postDetailsData?.userName+'......'"
+              <input #commentInput type="text" [placeholder]="'回覆'+replyStatus?.targetName+'......'"
+                [(ngModel)]="commentContent"
                 class="input input-bordered join-item flex-1 bg-base-100 text-sm focus:outline-none focus:border-primary border-r-0" />
-              <button class="btn btn-primary join-item px-6 text-sm font-bold shadow-none border-l-0">
+              <button (click)="submitComment()"
+                class="btn btn-primary join-item px-6 text-sm font-bold shadow-none border-l-0">
                 送出
               </button>
             </div>
@@ -218,6 +301,7 @@
           </div>
         </div>
       </div>
+      }
 
 
 
@@ -262,5 +346,30 @@
 
   <form method="dialog" class="modal-backdrop">
     <button>close</button>
+  </form>
+</dialog>
+
+<!-- 刪除留言的彈窗 -->
+<dialog #deleteModal class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box bg-base-100 border border-base-200 shadow-2xl">
+    <h3 class="font-black text-lg text-error flex items-center gap-2">
+      <i class="fa-solid fa-trash-can"></i> 確定要刪除留言嗎？
+    </h3>
+    <p class="py-4 text-sm text-base-content/70">
+      執行刪除後，這則留言的內容將會永久消失，無法復原喔 இдஇ !
+    </p>
+
+    <div class="modal-action">
+      <form method="dialog">
+        <button class="btn btn-ghost" (click)="closeDeleteModal()">再想想</button>
+        <button class="btn btn-error text-white ml-2" (click)="deleteComment()">
+          確認刪除
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <form method="dialog" class="modal-backdrop">
+    <button (click)="closeDeleteModal()">close</button>
   </form>
 </dialog>

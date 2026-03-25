@@ -1,5 +1,6 @@
 export interface PostDetailsData {
   postId: number;
+  userId: number;
   userName: string;
   avatarUrl: string;
   boardId: number;
@@ -23,6 +24,7 @@ export interface PostDetailsData {
 /**留言與回覆介面*/
 export interface PostComment {
   commentId: number;
+  commentUserId: number;
   userName: string;
   content: string;
   avatarUrl: string | null; // 處理如 t0m.____ 的 null 情況
@@ -33,6 +35,7 @@ export interface PostComment {
 /**第二層回覆介面 (雖然目前結構與 PostComment 相似，但分開定義利於未來擴充)*/
 export interface PostCommentReply {
   commentId: number;
+  commentUserId: number;
   userName: string;
   content: string;
   avatarUrl: string | null;

@@ -61,7 +61,8 @@ export class SelectBoardPosts implements OnInit {
     private toastr: ToastrService,
     private authService: AuthService,
     private postInteractionsService: PostInteractionsService,
-    private boardInteractionsService: BoardInteractionsService,) { }
+    private boardInteractionsService: BoardInteractionsService,
+    private router: Router) { }
 
   ngOnInit(): void {
 
@@ -267,6 +268,12 @@ export class SelectBoardPosts implements OnInit {
     this.selectedFullImage.set(null);
   }
 
+  /**貼文導頁 */
+  navigateToPost(event: Event, postId: number) {
+    // 子元素的 stopPropagation 會阻止事件傳到這裡
+    // 只有點擊卡片空白處、文字處，才會觸發這個導頁
+    this.router.navigate(['/forum/posts', postId]);
+  }
 }
 
 

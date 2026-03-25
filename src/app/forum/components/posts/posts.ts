@@ -1,11 +1,11 @@
 
 import { PostList } from './../../interfaces/postList';
 import { DecimalPipe } from '@angular/common';
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, ElementRef, OnInit, signal, ViewChild } from '@angular/core';
 import { PostsService } from '../../services/posts-service';
 import { RelativeTimePipe } from '../../pipes/relative-time-pipe';
 import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { PostInteractionsService } from '../../services/post-interactions-service';
 import { PostInteractionsRequest } from '../../interfaces/postInteractionsRequest';
 import { ToastrService } from 'ngx-toastr';
@@ -49,12 +49,21 @@ export class Posts implements OnInit {
   /**儲存目前要放大顯示的圖片網址 */
   selectedFullImage = signal<string | null>(null);
 
+  //-------刪除貼文-----------
+  // 取得刪除的 Modal 元素
+  @ViewChild('deleteModal') deleteModal!: ElementRef<HTMLDialogElement>;
+
+  // 暫存準備刪除的 ID
+  private pendingDeletePostId?: number;
+
+
 
   constructor(
     private postsService: PostsService,
     private postInteractionsService: PostInteractionsService,
     private toastr: ToastrService,
-    public authService: AuthService) { }
+    public authService: AuthService,
+    private router: Router) { }
 
   ngOnInit(): void {
     this.loadMore('popular');
@@ -156,6 +165,8 @@ export class Posts implements OnInit {
 
   }
 
+  /**刪除貼文 */
+
   //互動呼叫Api
   handleInteraction(post: PostList, type: string, reason?: string) {
     if (type === 'like') {
@@ -255,6 +266,42 @@ export class Posts implements OnInit {
   /**放大圖片 - 關閉燈箱 */
   closeLightbox() {
     this.selectedFullImage.set(null);
+  }
+
+  /**貼文導頁 */
+  navigateToPost(event: Event, postId: number) {
+    // 子元素的 stopPropagation 會阻止事件傳到這裡
+    // 只有點擊卡片空白處、文字處，才會觸發這個導頁
+    this.router.navigate(['/forum/posts', postId]);
+  }
+
+
+
+
+  /**打開刪除留言彈窗 */
+  openDeleteModal(postId: number) {
+    this.pendingDeletePostId = postId;
+    this.deleteModal.nativeElement.showModal();
+  }
+
+  /**關閉刪除留言彈窗 */
+  closeDeleteModal() {
+    this.deleteModal.nativeElement.close();
+    this.pendingDeletePostId = undefined;
+  }
+
+  /**送出刪除留言 */
+  deletePost() {
+    if (!this.pendingDeletePostId) return;
+    this.postsService.delDeletePost(this.pendingDeletePostId).subscribe({
+      next: (res) => {
+        this.toastr.info('您的貼文已刪除！');
+
+        //重新渲染畫面
+        this.onTabChange(this.activeTab);
+        this.loadMore(this.activeTab);
+      }
+    });
   }
 
 }

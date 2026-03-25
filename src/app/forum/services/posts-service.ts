@@ -104,5 +104,13 @@ export class PostsService {
     return this.http.post(`${environment.apiUrl}/Forum/Posts`, payload);
   }
 
+  //PUT 修改貼文
+
+
+  //DELETE 刪除貼文
+  delDeletePost(postId: number) {
+    return this.http.delete(`${environment.apiUrl}/Forum/Posts/${postId}`);
+  }
+
 
 }
