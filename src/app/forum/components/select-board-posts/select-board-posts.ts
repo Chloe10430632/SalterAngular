@@ -15,6 +15,7 @@ import { CurrentUser } from '../../interfaces/currentUser';
 import { AuthService } from '../../../core/services/auth-service';
 import { BoardInteractionsService } from '../../services/board-interactions-service';
 import { environment } from './../../../../environments/environment';
+import { HandleInteractions } from '../../services/handle-interactions';
 
 @Component({
   selector: 'app-select-board-posts',
@@ -60,6 +61,7 @@ export class SelectBoardPosts implements OnInit {
     private activatedRoute: ActivatedRoute,
     private toastr: ToastrService,
     private authService: AuthService,
+    public hadleService: HandleInteractions,
     private postInteractionsService: PostInteractionsService,
     private boardInteractionsService: BoardInteractionsService,
     private router: Router) { }

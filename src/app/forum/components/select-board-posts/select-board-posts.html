@@ -26,10 +26,10 @@
 
     <div class="flex items-center gap-2">
       @if(boardDetails?.isFollowed){
-      <button (click)="handleBoardInteraction(boardDetails!,'follow')"
+      <button (click)="hadleService.interactWithBoard(boardDetails!,'follow',currentUser)"
         class="btn btn-soft btn-sm rounded-full px-4 ">追蹤中</button>
       }@else {
-      <button (click)="handleBoardInteraction(boardDetails!,'follow')"
+      <button (click)="hadleService.interactWithBoard(boardDetails!,'follow',currentUser)"
         class="btn btn-primary btn-sm rounded-full px-6 shadow-sm hover:scale-105 active:scale-95 transition-all font-bold">
         追蹤
       </button>
