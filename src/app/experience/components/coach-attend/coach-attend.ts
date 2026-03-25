@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
+import { AttendCourseCard } from "../../myComponents/attend-course-card/attend-course-card";
 
 @Component({
   selector: 'app-coach-attend',
-  imports: [],
+  imports: [AttendCourseCard],
   templateUrl: './coach-attend.html',
   styleUrl: './coach-attend.css',
 })

@@ -13,13 +13,14 @@ import { BtnRankPop } from "../../myComponents/btn-rank-pop/btn-rank-pop";
 import { BtnRankNew } from "../../myComponents/btn-rank-new/btn-rank-new";
 import { rankItem } from '../../Service/SRank';
 import { AuthService } from '../../../core/services/auth-service';
+import { LittleIsland } from "../../myComponents/little-island/little-island";
 
 //#endregion
 
 
 @Component({
   selector: 'app-index',
-  imports: [BtnRankPop, CommonModule, BtnCoachSwitch, Search, CoachCard, NgClass, Footer, FormsModule, BtnRankNew],
+  imports: [LittleIsland, BtnRankPop, CommonModule, BtnCoachSwitch, Search, CoachCard, NgClass, Footer, FormsModule, BtnRankNew, LittleIsland],
   templateUrl: './index.html',
   styleUrl: './index.css',
 })
