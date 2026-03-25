@@ -1,0 +1,169 @@
+<div class="grid grid-cols-12 gap-6">
+
+  <div class="col-span-12 md:col-span-3 lg:h-screen lg:sticky top-20 z-10">
+    <div class="card bg-base-100 shadow-sm border border-base-300 flex flex-col h-[calc(100vh-120px)] overflow-hidden">
+
+      <div class="p-2 flex-none">
+        <ul class="menu menu-md w-full gap-1">
+          <li>
+            <a
+              class="flex items-center py-2 px-4 rounded-xl transition-all duration-300 ease-out hover:bg-primary/10 hover:pl-6 active:scale-95 group">
+              <i class="bi bi-person text-lg text-primary transition-transform duration-500 group-hover:scale-125"></i>
+              <span class="font-bold ml-1 text-base text-primary-content">會員資料</span>
+            </a>
+          </li>
+          <li>
+            <a
+              class="flex items-center py-2 px-4 rounded-xl transition-all duration-300 ease-out hover:bg-primary/10 hover:pl-6 active:scale-95 group">
+              <i
+                class="bi bi-suitcase text-lg text-primary transition-transform duration-500 group-hover:scale-125"></i>
+              <span class="font-bold ml-1 text-base text-primary-content">我的行程</span>
+            </a>
+          </li>
+          <li>
+            <a
+              class="flex items-center py-2 px-4 rounded-xl transition-all duration-300 ease-out hover:bg-primary/10 hover:pl-6 active:scale-95 group">
+              <i class="bi bi-house text-lg text-primary transition-transform duration-500 group-hover:scale-125"></i>
+              <span class="font-bold ml-1 text-base text-primary-content">我的訂房</span>
+            </a>
+          </li>
+          <li>
+            <a
+              class="flex items-center py-2 px-4 rounded-xl transition-all duration-300 ease-out hover:bg-primary/10 hover:pl-6 active:scale-95 group">
+              <i class="bi bi-tsunami text-lg text-primary transition-transform duration-500 group-hover:scale-125"></i>
+              <span class="font-bold ml-1 text-base text-primary-content">我的課程</span>
+            </a>
+          </li>
+          <li>
+            <a
+              class="flex items-center py-2 px-4 rounded-xl transition-all duration-300 ease-out hover:bg-primary/10 hover:pl-6 active:scale-95 group">
+              <i
+                class="bi bi-signpost text-lg text-primary transition-transform duration-500 group-hover:scale-125"></i>
+              <span class="font-bold ml-1 text-base text-primary-content">個人牆</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="divider px-4 my-0"></div>
+
+      <div class="flex-1 overflow-y-auto p-2 scrollbar">
+        <ul class="menu menu-md w-full">
+          <li
+            class="menu-title text-sm text-primary-content font-black bg-primary rounded-lg mx-2 px-4 py-1.5 mb-3 shadow-sm flex justify-between items-center">
+            大家都在瀏覽
+          </li>
+          <li>
+            <a class="mx-2 py-2 px-5 hover:bg-primary/10 hover:text-primary-content transition-all duration-100 group">
+              <div class="mask mask-squircle w-8 h-8 mr-2 shadow-sm bg-base-300"></div>
+              <span class="font-medium">看板名稱範例</span>
+              <span class="badge badge-xs badge-ghost ml-auto text-xs opacity-80">100 次瀏覽</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-span-12 md:col-span-6 space-y-4">
+    <router-outlet></router-outlet>
+    <!-- <div class="fixed inset-x-0 bottom-10 z-[200] px-4">
+      <div class="max-w-md mx-auto glass rounded-2xl p-6 shadow-2xl border border-white/20 relative overflow-hidden">
+        <div class="relative z-10 space-y-4">
+          <div class="flex justify-between items-end">
+            <h4 class="text-sm font-bold text-base-content">正在建立您的專屬回憶...</h4>
+            <span class="text-base">80%</span>
+          </div>
+          <div class="relative h-4 w-full bg-base-300 rounded-full overflow-hidden shadow-inner">
+            <div
+              class="h-full bg-gradient-to-r from-info to-primary transition-all duration-500 w-[80%] flex items-center justify-end px-2">
+              <div class="w-2 h-2 bg-white rounded-full shadow-[0_0_10px_#fff] animate-ping"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div> -->
+  </div>
+
+  <div class="col-span-12 md:col-span-3 h-screen sticky top-20 z-10">
+    <div class="sticky bottom-6 z-30">
+
+      <div class="card bg-base-100 shadow-sm border border-base-300 overflow-hidden">
+        <div class="p-3 bg-base-200 text-sm font-bold flex justify-between items-center uppercase tracking-wider">
+          <span class="flex items-center gap-2">
+            <i class="fa-solid fa-rectangle-ad text-primary"></i> 贊助
+          </span>
+          <i class="fa-regular fa-circle-question cursor-help opacity-50"></i>
+        </div>
+        <div
+          class="h-[400px] m-4 border-2 border-base-300 relative flex items-center justify-center rounded-lg overflow-hidden bg-base-50">
+          <div class="relative z-10 text-center scale-104 cursor-pointer hover:scale-110 transition-transform">
+
+            <img style="height: 380px;" src='user/aaa.jpg' alt="贊助商廣告">
+
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-col items-end gap-2 pr-2 mt-4">
+        <button
+          class="btn btn-primary btn-circle btn-lg shadow-2xl hover:scale-110 transition-all active:scale-95 group">
+          <i class="fa-solid fa-plus text-2xl text-primary-content group-hover:rotate-90 transition-transform"></i>
+        </button>
+      </div>
+
+      <!-- <footer class="pt-4">
+        <div class="flex flex-wrap gap-x-3 gap-y-2 text-sm text-gray-600 px-2 justify-end font-medium">
+          <a class="hover:text-primary cursor-pointer">服務條款</a>
+          <a class="hover:text-primary cursor-pointer">幫助中心</a>
+          <a class="text-right opacity-90 text-xs">© 2026 Salter</a>
+        </div>
+      </footer> -->
+    </div>
+  </div>
+
+  <div class="modal modal-bottom sm:modal-middle">
+    <div
+      class="modal-box p-0 overflow-hidden border-2 border-base-content/10 shadow-xl bg-base-100 flex flex-col max-h-[90vh]">
+      <div class="flex justify-between items-center p-4 border-b-2 border-dashed border-base-300 shrink-0">
+        <button class="btn btn-sm btn-circle btn-warning"><i class="fa-solid fa-xmark"></i></button>
+        <h3 class="font-bold text-md tracking-wider">製造海浪</h3>
+        <button class="btn btn-ghost btn-sm btn-square">
+          <i class="fa-solid fa-file-medical text-xl"></i>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-4 overflow-y-auto flex-1">
+        <div class="flex items-center gap-3">
+          <div class="avatar">
+            <div class="w-10 rounded-full ring ring-primary ring-offset-2">
+              <div class="bg-neutral text-neutral-content rounded-full w-10">U</div>
+            </div>
+          </div>
+          <div class="badge badge-soft badge-accent font-bold">選擇看板</div>
+        </div>
+
+        <textarea class="textarea textarea-ghost w-full focus:outline-none min-h-[80px] p-0"
+          placeholder="今天發生了什麼有趣的事呢......"></textarea>
+
+        <div class="flex gap-4 text-base-content/40 border-t border-base-200 pt-4">
+          <i class="fa-regular fa-image text-2xl cursor-pointer"></i>
+          <i class="fa-solid fa-location-dot text-2xl cursor-pointer"></i>
+        </div>
+
+        <div class="space-y-2">
+          <p class="text-xs font-bold text-base-content/60">輸入HashTag標籤</p>
+          <div class="flex flex-wrap gap-2 p-2 border-2 border-base-200 rounded-xl bg-base-50">
+            <input type="text" placeholder="輸入後按 Enter..."
+              class="bg-transparent border-none focus:outline-none text-sm w-full" />
+          </div>
+        </div>
+      </div>
+
+      <div class="p-4 bg-base-200/50 flex justify-end shrink-0 border-t border-base-200">
+        <button class="btn btn-primary px-10 shadow-lg rounded-xl">發佈</button>
+      </div>
+    </div>
+  </div>
+
+</div>

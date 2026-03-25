@@ -1,1 +1,178 @@
-<p>user-profile works!</p>
+<!-- <div class="sticky top-16 z-30 w-full bg-base-100/70 backdrop-blur-lg border border-base-300 rounded-xl mb-4 shadow-sm">
+  <div class="flex justify-center p-2">
+    <div class="join w-full">
+      <input
+        class="join-item btn btn-sm flex-1 btn-ghost border-b-2 border-transparent checked:border-primary checked:bg-transparent rounded-none font-bold"
+        type="radio" name="options" aria-label="熱門" checked />
+      <input
+        class="join-item btn btn-sm flex-1 btn-ghost border-b-2 border-transparent checked:border-primary checked:bg-transparent rounded-none font-bold"
+        type="radio" name="options" aria-label="即時" />
+      <input
+        class="join-item btn btn-sm flex-1 btn-ghost border-b-2 border-transparent checked:border-primary checked:bg-transparent rounded-none font-bold"
+        type="radio" name="options" aria-label="追蹤" />
+    </div>
+  </div>
+</div> -->
+
+<div class="card bg-base-100 shadow-xl border border-base-300 max-w-2xl mx-auto overflow-hidden">
+
+  <div class="bg-primary/5 px-8 py-6 flex justify-between items-center border-b border-base-200">
+    <div>
+      <h2 class="text-2xl font-black text-primary flex items-center gap-2">
+        <i class="bi bi-person-vcard-fill"></i> 會員基本資料
+      </h2>
+      <p class="text-[10px] opacity-50 font-bold uppercase tracking-widest mt-1">Profile Management Center</p>
+    </div>
+
+    <button class="btn btn-primary btn-outline btn-sm gap-2 shadow-sm" (click)="toggleEdit()" [disabled]="isLoading">
+      @if (isEditing) {
+      <i class="bi bi-arrow-left-short text-lg"></i> 取消編輯
+      } @else {
+      <i class="bi bi-pencil-square"></i> 編輯資料
+      }
+    </button>
+  </div>
+
+  <div class="card-body p-8">
+
+    <div class="flex flex-col items-center mb-10">
+      <div class="avatar relative group">
+        <div
+          class="w-32 h-32 rounded-full ring ring-primary ring-offset-base-100 ring-offset-4 shadow-2xl overflow-hidden bg-base-200">
+          <img [src]="previewUrl || currentUser?.picture || 'user/default-avatar.png'"
+            class="object-cover w-full h-full" alt="User Avatar" />
+        </div>
+
+        @if (isEditing) {
+        <label
+          class="absolute bottom-0 right-0 btn btn-circle btn-primary btn-sm border-2 border-base-100 shadow-lg cursor-pointer">
+          <i class="bi bi-camera-fill"></i>
+          <input type="file" class="hidden" (change)="onFileSelected($event)" accept="image/*" />
+        </label>
+        }
+      </div>
+
+      @if (selectedFile) {
+      <span class="text-[10px] text-success font-bold mt-2 animate-pulse">
+        <i class="bi bi-check-circle"></i> 已選擇新照片，儲存後生效
+      </span>
+      }
+    </div>
+
+    <div class="divider text-[10px] opacity-40 uppercase tracking-[0.2em] mb-8">Personal Details</div>
+
+    @if (!isEditing) {
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-y-10 gap-x-12 px-2">
+
+      <div class="space-y-1">
+        <p class="text-[10px] font-black opacity-40 uppercase tracking-tighter text-primary">Display Name</p>
+        <p class="text-xl font-bold text-base-content">{{ fullUserData?.userName || '未設定' }}</p>
+      </div>
+
+      <div class="space-y-1">
+        <p class="text-[10px] font-black opacity-40 uppercase tracking-tighter text-primary">Email Address</p>
+        <p class="text-lg font-medium text-base-content/70 italic">{{ fullUserData?.email || 'N/A' }}</p>
+      </div>
+
+      <div class="space-y-1">
+        <p class="text-[10px] font-black opacity-40 uppercase tracking-tighter text-primary">Account Role</p>
+        <div class="mt-1">
+          <span class="badge badge-secondary badge-md font-black italic gap-1">
+            <i class="bi bi-shield-lock"></i> {{ fullUserData?.roleName || '一般會員' }}
+          </span>
+        </div>
+      </div>
+
+      <div class="space-y-1">
+        <p class="text-[10px] font-black opacity-40 uppercase tracking-tighter text-primary">Phone Number</p>
+        <p class="text-lg font-medium">{{ fullUserData?.phone || '--' }}</p>
+      </div>
+
+      <div class="space-y-1">
+        <p class="text-[10px] font-black opacity-40 uppercase tracking-tighter text-primary">Gender / Birthday</p>
+        <p class="text-lg font-medium text-base-content/80">
+          {{ fullUserData?.gender || '未填' }} / {{ fullUserData?.birthday || '未填' }}
+        </p>
+      </div>
+    </div>
+
+    } @else {
+
+    <form [formGroup]="profileForm" (ngSubmit)="onSave()" class="space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+
+        <div class="form-control">
+          <label class="label"><span class="label-text font-bold opacity-50">電子信箱 (不可修改)</span></label>
+          <input type="text" [value]="fullUserData?.email"
+            class="input input-bordered bg-base-200 cursor-not-allowed text-base-content/50" readonly />
+        </div>
+
+        <div class="form-control">
+          <label class="label"><span class="label-text font-bold opacity-50">帳號權限</span></label>
+          <input type="text" [value]="fullUserData?.roleName"
+            class="input input-bordered bg-base-200 cursor-not-allowed text-base-content/50" readonly />
+        </div>
+
+        <div class="form-control">
+          <label class="label"><span class="label-text font-bold">暱稱 / 姓名</span></label>
+          <input type="text" formControlName="userName" class="input input-bordered focus:input-primary transition-all"
+            placeholder="請輸入顯示名稱" />
+        </div>
+
+        <div class="form-control">
+          <label class="label"><span class="label-text font-bold">聯絡電話</span></label>
+          <input type="text" formControlName="phone" class="input input-bordered focus:input-primary transition-all"
+            placeholder="09xx-xxx-xxx" />
+        </div>
+
+        <div class="form-control">
+          <label class="label"><span class="label-text font-bold">性別</span></label>
+          <select formControlName="gender" class="select select-bordered focus:select-primary">
+            <option value="Male">男</option>
+            <option value="Female">女</option>
+            <option value="Other">其他</option>
+          </select>
+        </div>
+
+        <div class="form-control">
+          <label class="label"><span class="label-text font-bold">出生日期</span></label>
+          <input type="date" formControlName="birthday" class="input input-bordered focus:input-primary" />
+        </div>
+      </div>
+
+      <div class="card-actions justify-end mt-10 pt-6 border-t border-base-200">
+        <button type="submit" [disabled]="isLoading || profileForm.invalid" class="btn btn-primary px-12 shadow-md">
+          @if (isLoading) {
+          <span class="loading loading-spinner loading-sm"></span>
+          儲存中...
+          } @else {
+          <i class="bi bi-cloud-check text-lg mr-2"></i>確認更新
+          }
+        </button>
+      </div>
+    </form>
+
+    }
+  </div>
+</div>
+
+<!-- <div class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box bg-base-100 border border-base-200 shadow-2xl">
+    <h3 class="font-black text-lg text-error flex items-center gap-2">
+      <i class="fa-solid fa-triangle-exclamation"></i> 檢舉這篇貼文
+    </h3>
+    <div class="form-control w-full mt-4">
+      <label class="label"><span class="label-text font-bold">檢舉原因</span></label>
+      <select class="select select-bordered w-full bg-base-200">
+        <option disabled selected>請選擇原因</option>
+        <option>內容不當 / 暴力</option>
+        <option>廣告垃圾訊息</option>
+      </select>
+    </div>
+    <div class="modal-action">
+      <button class="btn btn-ghost">取消</button>
+      <button class="btn btn-error text-white">確認送出</button>
+    </div>
+  </div>
+</div> -->

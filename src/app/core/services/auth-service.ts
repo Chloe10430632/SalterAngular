@@ -8,6 +8,7 @@ import { IGoogleLogin } from '../../user/interfaces/IGoogleLogin';
 import { CurrentUser } from '../../forum/interfaces/currentUser';
 import { environment } from '../../../environments/environment';
 
+
 @Injectable({
   providedIn: 'root',
 })
@@ -38,7 +39,6 @@ export class AuthService {
     try {
       const decoded: any = jwtDecode(token); // 👈 使用工具拆開 Token
       // const backendUrl = 'https://localhost:7017'; // 你的後端網址
-      console.log('請看這裡！！內容是：', decoded);
       // 組合出全站通用的使用者物件
 
       //判斷照片 沒照片帶預設，有照片看照片路徑是http開頭還是 /開頭，
@@ -46,8 +46,10 @@ export class AuthService {
       const getAvatarPath = (avatar: string | null): string => {
         if (!avatar) return 'user/default-avatar.png';
         if (avatar.startsWith('http')) return avatar;
-        if (avatar.startsWith('/')) return `https://localhost:7017${avatar}`;
-        return 'images/default-avatar.png';
+
+        const baseUrl = environment.domain;
+        const path = avatar.startsWith('/') ? avatar : `/${avatar}`;
+        return `${baseUrl}${path}`;
       };
       const user: CurrentUser = {
         id: +decoded.sub, //+號自動轉型成number

@@ -1,4 +1,5 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://localhost:7017/api' // 指向你現在的 Asp.net Port
+  apiUrl: 'https://localhost:7017/api', // 指向你現在的 Asp.net Port
+  domain: 'https://localhost:7017'
 };
