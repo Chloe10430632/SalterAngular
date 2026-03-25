@@ -35,7 +35,9 @@
 
         <div class="flex gap-3">
           <div class="flex-1 px-10">
+            @if(postDetailsData?.locationTitle){
             <div class="badge badge-soft badge-accent mt-2">{{postDetailsData?.locationTitle}}</div>
+            }
 
             <p class="text-[15px] leading-relaxed text-base-content mt-4">
               {{postDetailsData?.fullContent}}
@@ -79,20 +81,21 @@
               <!-- 愛心按鈕：點擊後變紅並跳動 -->
               <button (click)="handleInteraction(postDetailsData!, 'like')"
                 [class.text-error]="postDetailsData?.isLiked"
-                class="flex items-center gap-1.5 transition-all duration-300 active:scale-90 hover:text-error group">
+                class="cursor-pointer flex items-center gap-1.5 transition-all duration-300 active:scale-90 hover:text-error group">
                 <i [class]="postDetailsData?.isLiked ? 'fa-solid fa-heart animate-bounce-once' : 'fa-regular fa-heart'"
                   class="text-xl transition-transform group-hover:scale-110"></i>
                 <span class="text-[11px] font-bold">{{ postDetailsData?.likeCount | number }}</span>
               </button>
               <!-- 留言按鈕：點擊後導頁到詳細貼文 -->
-              <button class="flex items-center gap-1.5 hover:text-blue-500 transition-colors">
+              <a (click)="scrollToComment()"
+                class="cursor-pointer flex items-center gap-1.5 hover:text-blue-500 transition-colors">
                 <i class="fa-regular fa-comment text-xl"></i>
                 <span class="text-[11px] font-bold">{{postDetailsData?.commentCount | number}}</span>
-              </button>
+              </a>
               <!-- 收藏按鈕：點擊後變黃 -->
               <button (click)="handleInteraction(postDetailsData!, 'collect')"
                 [class.text-warning]="postDetailsData?.isCollected"
-                class="flex items-center gap-1.5 transition-all duration-300 active:scale-90 hover:text-warning group">
+                class="cursor-pointer flex items-center gap-1.5 transition-all duration-300 active:scale-90 hover:text-warning group">
                 <i [class]="postDetailsData?.isCollected ? 'fa-solid fa-bookmark' : 'fa-regular fa-bookmark'"
                   class="text-lg transition-transform group-hover:scale-110"></i>
                 <span class="text-[11px] font-bold">{{ postDetailsData?.collectCount | number }}</span>
@@ -100,7 +103,7 @@
               <!-- 分享按鈕：改用 dropdown 實作彈出效果 -->
               <div class="dropdown dropdown-right sm:dropdown-end">
                 <button tabindex="0" role="button"
-                  class="flex items-center gap-1.5 hover:text-green-500 transition-colors active:scale-95">
+                  class="cursor-pointer flex items-center gap-1.5 hover:text-green-500 transition-colors active:scale-95">
                   <i class="fa-regular fa-paper-plane text-lg"></i>
                   <span class="text-[11px] font-bold">{{postDetailsData?.shareCount | number}}</span>
                 </button>
@@ -152,8 +155,8 @@
               <span class="text-[11px] text-base-content/40">{{comment.createdAt | relativeTime}}</span>
             </div>
             <p class="text-[14px] mt-1 text-base-content/80">{{comment.content}}</p>
-            <button
-              class="text-[11px] font-bold mt-2 text-base-content/40 hover:text-primary transition-colors">回覆</button>
+            <a (click)="scrollToComment()"
+              class="cursor-pointer text-[11px] font-bold mt-2 text-base-content/40 hover:text-primary transition-colors">回覆</a>
 
             @if(comment.replies.length>0){
             @for (reply of comment.replies; track reply.commentId) {
@@ -170,7 +173,7 @@
                     <span class="font-bold text-[13px]">{{reply.userName}}</span>
 
                     @if(postDetailsData?.userName === reply.userName){
-                    <span class="text-[10px] text-base-content/30 font-medium">作者</span>
+                    <span class="text-[12px] text-base-content/30 font-medium">作者</span>
                     }
 
                   </div>
@@ -198,13 +201,13 @@
         <div class="flex items-center gap-3">
           <div class="avatar shrink-0">
             <div class="w-10 h-10 rounded-full ring-1 ring-base-200 shadow-sm">
-              <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=User" alt="current-user" />
+              <img [src]="currentUser?.picture" alt="current-user" />
             </div>
           </div>
 
           <div class="flex-1">
             <div class="join w-full flex">
-              <input type="text" placeholder="回覆 chloe451295 ......"
+              <input #commentInput type="text" [placeholder]="'回覆'+postDetailsData?.userName+'......'"
                 class="input input-bordered join-item flex-1 bg-base-100 text-sm focus:outline-none focus:border-primary border-r-0" />
               <button class="btn btn-primary join-item px-6 text-sm font-bold shadow-none border-l-0">
                 送出

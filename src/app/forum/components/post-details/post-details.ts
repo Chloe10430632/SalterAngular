@@ -1,11 +1,11 @@
 
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, ElementRef, OnInit, signal, ViewChild } from '@angular/core';
 import { PostDetailsData } from '../../interfaces/PostDetailsData';
 import { PostsService } from '../../services/posts-service';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { environment } from './../../../../environments/environment';
 import { RelativeTimePipe } from "../../pipes/relative-time-pipe";
-import { DecimalPipe } from '@angular/common';
+import { DecimalPipe, ViewportScroller } from '@angular/common';
 import { PostInteractionsRequest } from '../../interfaces/postInteractionsRequest';
 import { CurrentUser } from '../../interfaces/currentUser';
 import { AuthService } from '../../../core/services/auth-service';
@@ -37,12 +37,16 @@ export class PostDetails implements OnInit {
   /**儲存目前要放大顯示的圖片網址 */
   selectedFullImage = signal<string | null>(null);
 
+  /**取得 HTML 中的 input 元素 */
+  @ViewChild('commentInput') commentInput!: ElementRef<HTMLInputElement>;
+
   constructor(
     private postsService: PostsService,
     private activatedRoute: ActivatedRoute,
     public authService: AuthService,
     private postInteractionsService: PostInteractionsService,
     private toastr: ToastrService,
+    private scroller: ViewportScroller
   ) { }
 
   ngOnInit(): void {
@@ -63,10 +67,7 @@ export class PostDetails implements OnInit {
 
   }
 
-
-
-
-  //互動呼叫Api
+  /**互動呼叫Api */
   handleInteraction(post: PostDetailsData, type: string, reason?: string) {
     if (type === 'like') {
       post.isLiked = !post.isLiked;
@@ -114,7 +115,7 @@ export class PostDetails implements OnInit {
 
   }
 
-  //複製貼文網址
+  /**複製貼文網址 */
   copyToClipboard(postId: number) {
     // 建立完整的 URL (根據你的環境調整)
     const fullUrl = `${this.domain}/post/${postId}`;
@@ -134,8 +135,6 @@ export class PostDetails implements OnInit {
     });
   }
 
-
-
   /**放大圖片 - 開啟燈箱 */
   openLightbox(url: string) {
     this.selectedFullImage.set(url);
@@ -146,5 +145,11 @@ export class PostDetails implements OnInit {
   /**放大圖片 - 關閉燈箱 */
   closeLightbox() {
     this.selectedFullImage.set(null);
+  }
+
+  /**留言icon滑到input錨點 */
+  scrollToComment() {
+    this.scroller.scrollToAnchor('comment-section');
+    this.commentInput.nativeElement.focus();
   }
 }
