@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { environment } from '../../../../environments/environment.development';
 
 @Component({
   selector: 'app-update-house',
@@ -10,6 +11,10 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrl: './update-house.css',
 })
 export class UpdateHouse implements OnInit {
+
+  private readonly apiUrl = environment.apiUrl;
+
+
   // 1. 定義表單結構
   houseForm: any = {
     roomTypeId: 0,
@@ -38,7 +43,7 @@ export class UpdateHouse implements OnInit {
   ngOnInit() {
 
     // 先抓所有設施
-    this.http.get<any[]>('https://localhost:7017/api/Home/amenities').subscribe(res => {
+    this.http.get<any[]>(`${this.apiUrl}/Home/amenities`).subscribe(res => {
       this.amenityList = res;
     });
 

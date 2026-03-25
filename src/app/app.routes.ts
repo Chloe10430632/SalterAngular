@@ -214,6 +214,14 @@ export const routes: Routes = [
     }]
   },
   {
+    path: 'searchHouse',
+    loadComponent: () => import('./shared/layouts/with-navbar/with-navbar').then(m => m.WithNavbar),
+    children: [{
+      path: '',
+      loadComponent: () => import('./house/components/search-houses/search-houses').then(m => m.SearchHouses)
+    }]
+  },
+  {
     path: '**', //萬用路由404
     loadComponent: () => import('./shared/layouts/with-navbar/with-navbar').then(m => m.WithNavbar),
     children: [
