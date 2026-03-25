@@ -13,6 +13,8 @@ import { IForgotPassword } from '../interfaces/IForgotPassword';
 import { IUserProfile } from '../interfaces/IUserProfile';
 import { IVerifyOtp } from '../interfaces/IVerifyOtp';
 import { environment } from '../../../environments/environment';
+import { IUserEditRequest } from '../interfaces/IUserEditRequest';
+import { IUpdateProfileResponse } from '../interfaces/IUpdateProfileResponse';
 
 
 @Injectable({
@@ -88,6 +90,13 @@ export class UserService {
   getUserProfile(): Observable<IUserProfile> {
 
     return this.http.get<IUserProfile>(`${this.apiUrl}/User/User/GetUserProfile`);
+  }
+
+  putUpdateUserProfile(data: IUserEditRequest): Observable<IUpdateProfileResponse> {
+    return this.http.put<IUpdateProfileResponse>(
+      `${this.apiUrl}/User/User/UpdateUserProfile`,
+      data
+    );
   }
 
 
