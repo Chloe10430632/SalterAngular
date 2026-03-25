@@ -46,7 +46,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
             if (error.error?.status === 'NeedVerification') {
               return throwError(() => error); //未啟用帳號須回傳狀態
             }
-            errorMessage = '權限不足：您的存取被禁止';
+            errorMessage = error.error?.message || '權限不足：您的存取被禁止';
             break;
           case 400:
             errorMessage = error.error?.detail || error.error?.message || '請求參數錯誤';

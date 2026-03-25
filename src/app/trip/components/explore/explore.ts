@@ -36,6 +36,7 @@ export class Explore implements OnInit {
     { label: '🚣 獨木舟', value: 'kayak' },
     { label: '⛵ 帆船', value: 'sailing' },
     { label: '🏄 立槳', value: 'sup' },
+    { label: '🌊 其他', value: 'other' },
   ];
 
   // 篩選
@@ -139,7 +140,7 @@ export class Explore implements OnInit {
   toggleFavorite(trip: TripSummary, event: Event) {
     event.stopPropagation();
     trip.isFavorite = !trip.isFavorite;
-    // TODO: 串接收藏 API
+    // TODO:  串接收藏 API
   }
 
   goToDetail(id: number) {
@@ -173,7 +174,8 @@ export class Explore implements OnInit {
       snorkel: '🤿 浮潛',
       kayak: '🚣 獨木舟',
       sailing: '⛵ 帆船',
-      sup: '🏄 立槳'
+      sup: '🏄 立槳',
+      other: '🌊 其他'
     };
     return map[type] ?? type;
   }

@@ -29,6 +29,8 @@ export class Location implements OnInit, AfterViewInit {
   searchKeyword = '';
   showForm = false;
   isLocating = false;
+  hasPermission = true;
+
 
   mapCenter: google.maps.LatLngLiteral = { lat: 23.6978, lng: 120.9605 };
   mapZoom = 8;
@@ -121,7 +123,10 @@ export class Location implements OnInit, AfterViewInit {
         }
         this.isLoading = false;
       },
-      error: () => this.isLoading = false
+      error: () => {
+        this.isLoading = false;
+        this.hasPermission = false;
+      }
     });
   }
 

@@ -1,6 +1,5 @@
 <div class="max-w-2xl mx-auto px-4 py-8">
 
-  <!-- 步驟指示 -->
   <ul class="steps steps-horizontal w-full mb-8 text-xs">
     <li class="step" [class.step-primary]="currentStep >= 1">基本資訊</li>
     <li class="step" [class.step-primary]="currentStep >= 2">地點設定</li>
@@ -15,153 +14,207 @@
       @if (currentStep === 1) {
       <div>
         <h2 class="text-xl font-bold">建立揪團行程</h2>
-        <p class="text-sm text-base-content/50 mt-0.5">填寫以下資訊，讓大家更容易找到你的行程</p>
+        <p class="text-sm text-base-content/50 mt-0.5">完善行程細節，吸引志同道合的旅伴一起出發！</p>
       </div>
 
-      <fieldset class="fieldset">
-        <legend class="fieldset-legend font-semibold">行程名稱 <span class="text-error">*</span></legend>
-        <input type="text" placeholder="例如：墾丁 4 天潛水揪團" class="input input-bordered w-full"
-          [class.input-error]="errors['title']" [(ngModel)]="form.title" />
-        @if (errors['title']) { <p class="text-error text-xs mt-1">{{ errors['title'] }}</p> }
-      </fieldset>
+      <form [formGroup]="step1Form" class="flex flex-col gap-5">
 
-      <fieldset class="fieldset">
-        <legend class="fieldset-legend font-semibold">行程簡介</legend>
-        <textarea class="textarea textarea-bordered w-full h-24 text-sm" placeholder="介紹行程亮點、費用說明、特別注意事項…"
-          [(ngModel)]="form.description"></textarea>
-      </fieldset>
-
-      <div class="grid grid-cols-2 gap-3">
         <fieldset class="fieldset">
-          <legend class="fieldset-legend font-semibold">出發日期 <span class="text-error">*</span></legend>
-          <input type="date" class="input input-bordered w-full" [class.input-error]="errors['startAt']"
-            [(ngModel)]="form.startAt" />
-          @if (errors['startAt']) { <p class="text-error text-xs mt-1">{{ errors['startAt'] }}</p> }
-        </fieldset>
-        <fieldset class="fieldset">
-          <legend class="fieldset-legend font-semibold">結束日期</legend>
-          <input type="date" class="input input-bordered w-full" [class.input-error]="errors['endAt']"
-            [(ngModel)]="form.endAt" />
-          @if (errors['endAt']) { <p class="text-error text-xs mt-1">{{ errors['endAt'] }}</p> }
-        </fieldset>
-      </div>
-
-      <div class="grid grid-cols-2 gap-3">
-        <fieldset class="fieldset">
-          <legend class="fieldset-legend font-semibold">人數上限 <span class="text-error">*</span></legend>
-          <input type="number" placeholder="最多幾人" class="input input-bordered w-full"
-            [class.input-error]="errors['capacity']" min="2" max="50" [(ngModel)]="form.capacity" />
-          @if (errors['capacity']) { <p class="text-error text-xs mt-1">{{ errors['capacity'] }}</p> }
-        </fieldset>
-        <fieldset class="fieldset">
-          <legend class="fieldset-legend font-semibold">行程類型 <span class="text-error">*</span></legend>
-          <select class="select select-bordered w-full" [class.select-error]="errors['tripType']"
-            [(ngModel)]="form.tripType">
-            <option value="">請選擇</option>
-            <option value="surf">🏄 衝浪</option>
-            <option value="dive">🤿 深潛</option>
-            <option value="snorkel">🤿 浮潛</option>
-            <option value="kayak">🚣 獨木舟</option>
-            <option value="sailing">⛵ 帆船</option>
-            <option value="sup">🏄 立槳</option>
-          </select>
-          @if (errors['tripType']) { <p class="text-error text-xs mt-1">{{ errors['tripType'] }}</p> }
-        </fieldset>
-      </div>
-
-      <fieldset class="fieldset">
-        <legend class="fieldset-legend font-semibold">封面圖片</legend>
-        @if (!form.coverImageUrl) {
-        <div
-          class="border-2 border-dashed border-base-300 rounded-box h-36 flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-primary hover:bg-primary/5 transition-all"
-          (click)="fileInput.click()">
-          @if (isUploading) {
-          <span class="loading loading-spinner loading-md text-primary"></span>
-          <span class="text-sm text-base-content/40">上傳中...</span>
-          } @else {
-          <i class="bi bi-cloud-upload text-3xl text-base-content/30"></i>
-          <span class="text-sm text-base-content/40">點擊上傳封面圖</span>
-          <span class="text-xs text-base-content/30">建議 1200×400，PNG / JPG</span>
+          <legend class="fieldset-legend font-semibold">行程名稱 <span class="text-error">*</span></legend>
+          <input type="text" placeholder="例如：墾丁 4 天潛水揪團" class="input input-bordered w-full"
+            [class.input-error]="f['title'].touched && f['title'].invalid" formControlName="title" />
+          @if (f['title'].touched && f['title'].errors?.['required']) {
+          <p class="text-error text-xs mt-1">請填寫行程名稱</p>
           }
+        </fieldset>
+
+        <fieldset class="fieldset">
+          <legend class="fieldset-legend font-semibold">行程簡介</legend>
+          <textarea class="textarea textarea-bordered w-full h-24 text-sm" placeholder="介紹行程亮點、費用說明、特別注意事項…"
+            formControlName="description"></textarea>
+        </fieldset>
+
+        <div class="grid grid-cols-2 gap-3">
+          <fieldset class="fieldset relative">
+            <legend class="fieldset-legend font-semibold">出發日期 <span class="text-error">*</span></legend>
+            <input type="text" class="input input-bordered w-full cursor-pointer"
+              [class.input-error]="f['startAt'].touched && f['startAt'].invalid"
+              [value]="f['startAt'].value || '選擇出發日期'" readonly
+              (click)="showStartPicker = !showStartPicker; showEndPicker = false" />
+            @if (f['startAt'].touched && f['startAt'].errors?.['required']) {
+            <p class="text-error text-xs mt-1">請選擇出發日期</p>
+            }
+            @if (showStartPicker) {
+            <div class="absolute top-full left-0 z-50 mt-1">
+              <calendar-date class="cally bg-base-100 border border-base-300 shadow-lg rounded-box"
+                [value]="f['startAt'].value" [min]="today" (change)="onStartDateChange($event)">
+                <svg aria-label="Previous" class="fill-current size-4" slot="previous"
+                  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                  <path fill="currentColor" d="M15.75 19.5 8.25 12l7.5-7.5"></path>
+                </svg>
+                <svg aria-label="Next" class="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24">
+                  <path fill="currentColor" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
+                </svg>
+                <calendar-month></calendar-month>
+              </calendar-date>
+            </div>
+            }
+          </fieldset>
+
+          <fieldset class="fieldset relative">
+            <legend class="fieldset-legend font-semibold">結束日期</legend>
+            <input type="text" class="input input-bordered w-full cursor-pointer"
+              [class.input-error]="f['endAt'].touched && f['endAt'].invalid" [value]="f['endAt'].value || '選擇結束日期'"
+              readonly (click)="showEndPicker = !showEndPicker; showStartPicker = false" />
+            @if (f['endAt'].touched && f['endAt'].errors?.['endBeforeStart']) {
+            <p class="text-error text-xs mt-1">結束日期不能早於出發日期</p>
+            }
+            @if (showEndPicker) {
+            <div class="absolute top-full left-0 z-50 mt-1">
+              <calendar-date class="cally bg-base-100 border border-base-300 shadow-lg rounded-box"
+                [value]="f['endAt'].value" [min]="f['startAt'].value || today" (change)="onEndDateChange($event)">
+                <svg aria-label="Previous" class="fill-current size-4" slot="previous"
+                  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                  <path fill="currentColor" d="M15.75 19.5 8.25 12l7.5-7.5"></path>
+                </svg>
+                <svg aria-label="Next" class="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24">
+                  <path fill="currentColor" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
+                </svg>
+                <calendar-month></calendar-month>
+              </calendar-date>
+            </div>
+            }
+          </fieldset>
         </div>
-        }
-        @if (form.coverImageUrl) {
-        <div class="relative rounded-box overflow-hidden h-36">
-          <img [src]="form.coverImageUrl" class="w-full h-full object-cover" alt="封面圖" />
-          <button class="absolute top-2 right-2 btn btn-circle btn-xs bg-base-100/80" (click)="removeCover()">
-            <i class="bi bi-x"></i>
-          </button>
+
+        <div class="grid grid-cols-2 gap-3">
+          <fieldset class="fieldset">
+            <legend class="fieldset-legend font-semibold">人數上限 <span class="text-error">*</span></legend>
+            <input type="number" placeholder="最多幾人" class="input input-bordered w-full"
+              [class.input-error]="f['capacity'].touched && f['capacity'].invalid" min="2" max="50"
+              formControlName="capacity" />
+            @if (f['capacity'].touched && f['capacity'].errors?.['min']) {
+            <p class="text-error text-xs mt-1">人數至少 2 人</p>
+            }
+          </fieldset>
+          <fieldset class="fieldset">
+            <legend class="fieldset-legend font-semibold">行程類型 <span class="text-error">*</span></legend>
+            <select class="select select-bordered w-full"
+              [class.select-error]="f['tripType'].touched && f['tripType'].invalid" formControlName="tripType">
+              <option value="">請選擇</option>
+              <option value="surf">🏄 衝浪</option>
+              <option value="dive">🤿 深潛</option>
+              <option value="snorkel">🤿 浮潛</option>
+              <option value="kayak">🚣 獨木舟</option>
+              <option value="sailing">⛵ 帆船</option>
+              <option value="sup">🏄 立槳</option>
+              <option value="other">🌊 其他</option>
+            </select>
+            @if (f['tripType'].touched && f['tripType'].errors?.['required']) {
+            <p class="text-error text-xs mt-1">請選擇行程類型</p>
+            }
+          </fieldset>
         </div>
-        }
-        <input #fileInput type="file" accept="image/*" class="hidden" (change)="onFileSelected($event)" />
-      </fieldset>
+
+        <fieldset class="fieldset">
+          <legend class="fieldset-legend font-semibold">封面圖片</legend>
+          @if (!f['coverImageUrl'].value) {
+          <div
+            class="border-2 border-dashed border-base-300 rounded-box h-36 flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-primary hover:bg-primary/5 transition-all"
+            [class.border-primary]="isDragging" [class.bg-primary/5]="isDragging" (click)="fileInput.click()"
+            (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)" (drop)="onDrop($event)">
+            @if (isUploading) {
+            <span class="loading loading-spinner loading-md text-primary"></span>
+            <span class="text-sm text-base-content/40">上傳中...</span>
+            } @else {
+            <i class="bi bi-cloud-upload text-3xl text-base-content/30"></i>
+            <span class="text-sm text-base-content/40">點擊或拖曳圖片至此上傳</span>
+            <span class="text-xs text-base-content/30">建議 1200×400，PNG / JPG</span>
+            }
+          </div>
+          }
+          @if (f['coverImageUrl'].value) {
+          <div class="relative rounded-box overflow-hidden h-36">
+            <img [src]="f['coverImageUrl'].value" class="w-full h-full object-cover" alt="封面圖" />
+            <button type="button" class="absolute top-2 right-2 btn btn-circle btn-xs bg-base-100/80"
+              (click)="removeCover()">
+              <i class="bi bi-x"></i>
+            </button>
+          </div>
+          }
+          <input #fileInput type="file" accept="image/*" class="hidden" (change)="onFileSelected($event)" />
+        </fieldset>
+
+      </form>
       }
 
       <!-- ── 步驟二：地點設定 ── -->
       @if (currentStep === 2) {
       <div>
         <h2 class="text-xl font-bold">地點設定</h2>
-        <p class="text-sm text-base-content/50 mt-0.5">新增行程中的地點，可以不填直接跳過</p>
+        <p class="text-sm text-base-content/50 mt-0.5">此步驟可跳過，建立後仍可在『我的行程』中編輯地點。</p>
       </div>
 
-      <div class="form-control relative">
-        <label class="label"><span class="label-text font-medium">搜尋地點</span></label>
-        <input type="text" class="input input-bordered w-full" placeholder="輸入地點名稱搜尋…"
-          [ngModel]="locationForm.locationName"
-          (ngModelChange)="locationForm.locationName = $event; onSearchInput($event)" />
-
-        @if (showDropdown && autocompleteResults.length > 0) {
-        <div
-          class="absolute top-full left-0 right-0 bg-base-100 border border-base-300 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto mt-1">
-          @for (result of autocompleteResults; track result.placeId) {
-          <div class="px-4 py-2 hover:bg-base-200 cursor-pointer text-sm" (click)="selectSearchResult(result)">
-            <p class="font-medium">{{ result.name }}</p>
-            @if (result.addressText) {
-            <p class="text-xs text-base-content/50">{{ result.addressText }}</p>
+      <form [formGroup]="locationForm" class="flex flex-col gap-4">
+        <div class="form-control relative">
+          <label class="label"><span class="label-text font-medium">搜尋地點</span></label>
+          <input type="text" class="input input-bordered w-full" placeholder="輸入地點名稱搜尋…" formControlName="locationName"
+            (input)="onSearchInput($any($event.target).value)" />
+          @if (showDropdown && autocompleteResults.length > 0) {
+          <div
+            class="absolute top-full left-0 right-0 bg-base-100 border border-base-300 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto mt-1">
+            @for (result of autocompleteResults; track result.placeId) {
+            <div class="px-4 py-2 hover:bg-base-200 cursor-pointer text-sm" (click)="selectSearchResult(result)">
+              <p class="font-medium">{{ result.name }}</p>
+              @if (result.addressText) {
+              <p class="text-xs text-base-content/50">{{ result.addressText }}</p>
+              }
+            </div>
             }
           </div>
           }
+          @if (isSearching) {
+          <div
+            class="absolute top-full left-0 right-0 bg-base-100 border border-base-300 rounded-lg p-3 text-center text-sm text-base-content/50 mt-1">
+            搜尋中...
+          </div>
+          }
+          @if (isLocating) {
+          <div class="flex items-center gap-2 text-sm text-base-content/50 mt-1">
+            <span class="loading loading-spinner loading-xs"></span>
+            地圖定位中...
+          </div>
+          }
         </div>
-        }
-        @if (isSearching) {
-        <div
-          class="absolute top-full left-0 right-0 bg-base-100 border border-base-300 rounded-lg p-3 text-center text-sm text-base-content/50 mt-1">
-          搜尋中...
-        </div>
-        }
-        @if (isLocating) {
-        <div class="flex items-center gap-2 text-sm text-base-content/50 mt-1">
-          <span class="loading loading-spinner loading-xs"></span>
-          地圖定位中...
-        </div>
-        }
-      </div>
 
-      <div class="grid grid-cols-2 gap-3">
-        <div class="form-control">
-          <label class="label"><span class="label-text font-medium">用途標籤</span></label>
-          <select class="select select-bordered w-full" [(ngModel)]="locationForm.locationRole">
-            <option value="">請選擇</option>
-            <option value="集合點">集合點</option>
-            <option value="住宿">住宿</option>
-            <option value="餐廳">餐廳</option>
-            <option value="景點">景點</option>
-            <option value="活動">活動</option>
-            <option value="其他">其他</option>
-          </select>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="form-control">
+            <label class="label"><span class="label-text font-medium">用途標籤</span></label>
+            <select class="select select-bordered w-full" formControlName="locationRole">
+              <option value="">請選擇</option>
+              <option value="集合點">集合點</option>
+              <option value="住宿">住宿</option>
+              <option value="餐廳">餐廳</option>
+              <option value="景點">景點</option>
+              <option value="活動">活動</option>
+              <option value="其他">其他</option>
+            </select>
+          </div>
+          <div class="form-control">
+            <label class="label"><span class="label-text font-medium">備註</span></label>
+            <input type="text" class="input input-bordered w-full" placeholder="備註…" formControlName="note" />
+          </div>
         </div>
-        <div class="form-control">
-          <label class="label"><span class="label-text font-medium">備註</span></label>
-          <input type="text" class="input input-bordered w-full" placeholder="備註…" [(ngModel)]="locationForm.note" />
-        </div>
-      </div>
+      </form>
 
       <button class="btn btn-outline btn-primary w-full" (click)="addLocation()">
         <i class="bi bi-plus-lg"></i> 加入地點
       </button>
 
       @if (locations.length > 0) {
-      <div class="flex flex-col gap-2 mt-2">
+      <div class="flex flex-col gap-2">
         @for (loc of locations; track loc.locationName; let i = $index) {
         <div class="flex items-center justify-between bg-base-200 rounded-lg px-4 py-2">
           <div>
@@ -177,7 +230,6 @@
         }
       </div>
       }
-
       @if (locations.length === 0) {
       <p class="text-sm text-base-content/40 text-center py-4">尚未新增地點</p>
       }
@@ -187,22 +239,22 @@
       @if (currentStep === 3) {
       <div>
         <h2 class="text-xl font-bold">裝備清單</h2>
-        <p class="text-sm text-base-content/50 mt-0.5">列出需要準備的裝備，可以不填直接跳過</p>
+        <p class="text-sm text-base-content/50 mt-0.5">列出需要準備的裝備，建立後隨時可在『裝備清單』中新增或修改。</p>
       </div>
 
-      <div class="flex gap-2">
-        <input type="text" class="input input-bordered flex-1" placeholder="裝備名稱…" [(ngModel)]="gearForm.itemName" />
+      <form [formGroup]="gearForm" class="flex gap-2">
+        <input type="text" class="input input-bordered flex-1" placeholder="裝備名稱…" formControlName="itemName" />
         <label class="flex items-center gap-2 cursor-pointer px-2">
-          <input type="checkbox" class="checkbox checkbox-primary checkbox-sm" [(ngModel)]="gearForm.isRequired" />
+          <input type="checkbox" class="checkbox checkbox-primary checkbox-sm" formControlName="isRequired" />
           <span class="text-sm">必備</span>
         </label>
-        <button class="btn btn-primary" (click)="addGear()">
+        <button type="button" class="btn btn-primary" (click)="addGear()">
           <i class="bi bi-plus-lg"></i>
         </button>
-      </div>
+      </form>
 
       @if (gears.length > 0) {
-      <div class="flex flex-col gap-2 mt-2">
+      <div class="flex flex-col gap-2">
         @for (gear of gears; track gear.itemName; let i = $index) {
         <div class="flex items-center justify-between bg-base-200 rounded-lg px-4 py-2">
           <div class="flex items-center gap-2">
@@ -218,7 +270,6 @@
         }
       </div>
       }
-
       @if (gears.length === 0) {
       <p class="text-sm text-base-content/40 text-center py-4">尚未新增裝備</p>
       }
@@ -231,37 +282,37 @@
         <p class="text-sm text-base-content/50 mt-0.5">確認資訊無誤後，按下發布建立行程</p>
       </div>
 
-      @if (form.coverImageUrl) {
-      <img [src]="form.coverImageUrl" class="w-full h-40 object-cover rounded-box" alt="封面圖" />
+      @if (f['coverImageUrl'].value) {
+      <img [src]="f['coverImageUrl'].value" class="w-full h-40 object-cover rounded-box" alt="封面圖" />
       }
 
       <div class="flex flex-col gap-2 text-sm">
         <div class="flex justify-between">
           <span class="text-base-content/50">行程名稱</span>
-          <span class="font-semibold">{{ form.title }}</span>
+          <span class="font-semibold">{{ f['title'].value }}</span>
         </div>
         <div class="flex justify-between">
           <span class="text-base-content/50">類型</span>
-          <span>{{ getTripTypeLabel(form.tripType) }}</span>
+          <span>{{ getTripTypeLabel(f['tripType'].value) }}</span>
         </div>
         <div class="flex justify-between">
           <span class="text-base-content/50">出發日期</span>
-          <span>{{ form.startAt }}</span>
+          <span>{{ f['startAt'].value }}</span>
         </div>
-        @if (form.endAt) {
+        @if (f['endAt'].value) {
         <div class="flex justify-between">
           <span class="text-base-content/50">結束日期</span>
-          <span>{{ form.endAt }}</span>
+          <span>{{ f['endAt'].value }}</span>
         </div>
         }
         <div class="flex justify-between">
           <span class="text-base-content/50">人數上限</span>
-          <span>{{ form.capacity }} 人</span>
+          <span>{{ f['capacity'].value }} 人</span>
         </div>
-        @if (form.description) {
+        @if (f['description'].value) {
         <div class="flex flex-col gap-1">
           <span class="text-base-content/50">行程簡介</span>
-          <p class="text-sm">{{ form.description }}</p>
+          <p class="text-sm">{{ f['description'].value }}</p>
         </div>
         }
       </div>
@@ -276,7 +327,9 @@
               class="w-5 h-5 rounded-full bg-primary text-primary-content flex items-center justify-center text-xs">{{ i
               + 1 }}</span>
             <span>{{ loc.locationName }}</span>
-            @if (loc.locationRole) { <span class="badge badge-xs badge-primary">{{ loc.locationRole }}</span> }
+            @if (loc.locationRole) {
+            <span class="badge badge-xs badge-primary">{{ loc.locationRole }}</span>
+            }
           </div>
           }
         </div>
@@ -290,7 +343,9 @@
           @for (gear of gears; track gear.itemName) {
           <span class="badge badge-outline">
             {{ gear.itemName }}
-            @if (gear.isRequired) { <span class="badge badge-xs badge-error ml-1">必備</span> }
+            @if (gear.isRequired) {
+            <span class="badge badge-xs badge-error ml-1">必備</span>
+            }
           </span>
           }
         </div>
@@ -309,7 +364,6 @@
           <i class="bi bi-chevron-left"></i> 上一步
         </button>
         }
-
         @if (currentStep < 4) { <button class="btn btn-primary gap-1" (click)="nextStep()">
           下一步 <i class="bi bi-chevron-right"></i>
           </button>
@@ -324,3 +378,28 @@
     </div>
   </div>
 </div>
+
+<!-- 未登入提示 Modal -->
+@if (showLoginRequired) {
+<div class="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm">
+  <div
+    class="bg-base-100 rounded-3xl shadow-2xl p-10 max-w-md w-full mx-4 flex flex-col items-center gap-6 text-center animate-in zoom-in-95 duration-300">
+    <div class="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
+      <i class="bi bi-lock text-4xl text-primary"></i>
+    </div>
+    <div>
+      <h2 class="text-2xl font-black mb-2">需要先登入</h2>
+      <p class="text-base-content/60 text-sm leading-relaxed">
+        建立揪團行程需要登入帳號。<br />
+        請先至登入頁面右下角
+        <span class="inline-block px-4 py-1.5 rounded-full text-white font-black text-xs tracking-widest mx-1"
+          style="background-color: #8B5A2B">
+          開啟你的海邊之旅
+        </span><br />
+        登入後再來建立行程！
+      </p>
+    </div>
+    <p class="text-xs text-base-content/30">{{ countdown }} 秒後自動跳轉至登入頁面</p>
+  </div>
+</div>
+}
