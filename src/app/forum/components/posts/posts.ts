@@ -278,19 +278,19 @@ export class Posts implements OnInit {
 
 
 
-  /**打開刪除留言彈窗 */
+  /**打開刪除貼文彈窗 */
   openDeleteModal(postId: number) {
     this.pendingDeletePostId = postId;
     this.deleteModal.nativeElement.showModal();
   }
 
-  /**關閉刪除留言彈窗 */
+  /**關閉刪除貼文彈窗 */
   closeDeleteModal() {
     this.deleteModal.nativeElement.close();
     this.pendingDeletePostId = undefined;
   }
 
-  /**送出刪除留言 */
+  /**送出刪除貼文 */
   deletePost() {
     if (!this.pendingDeletePostId) return;
     this.postsService.delDeletePost(this.pendingDeletePostId).subscribe({

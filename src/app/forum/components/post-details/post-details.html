@@ -175,7 +175,7 @@
 
 
             @if (editingCommentId == comment.commentId) {
-            <div class="join w-full flex animate-in fade-in zoom-in-95 duration-200">
+            <div class="join w-full flex animate-in fade-in zoom-in-95 duration-200 my-3">
               <input type="text" [(ngModel)]="editContent" name="edit-{{comment.commentId}}"
                 class="input input-bordered join-item flex-1 bg-base-100 text-sm focus:outline-none focus:border-primary border-r-0"
                 (keyup.enter)="editComment(comment)" (keyup.esc)="cancelEdit()" />
@@ -183,8 +183,7 @@
                 class="btn btn-primary join-item px-4 text-sm font-bold shadow-none border-l-0">
                 儲存
               </button>
-              <button (click)="cancelEdit()"
-                class="btn btn-ghost join-item px-4 text-sm font-bold text-base-content/40">
+              <button (click)="cancelEdit()" class="btn btn-soft join-item px-4 text-sm font-bold">
                 取消
               </button>
             </div>
@@ -238,7 +237,7 @@
 
 
                   @if (editingCommentId == reply.commentId) {
-                  <div class="join w-full flex animate-in fade-in zoom-in-95 duration-200">
+                  <div class="join w-full flex animate-in fade-in zoom-in-95 duration-200 my-3">
                     <input type="text" [(ngModel)]="editContent"
                       class="input input-bordered join-item flex-1 bg-base-100 text-sm focus:outline-none focus:border-primary border-r-0"
                       (keyup.enter)="editComment(reply)" (keyup.esc)="cancelEdit()" />
@@ -246,8 +245,7 @@
                       class="btn btn-primary join-item px-4 text-sm font-bold shadow-none border-l-0">
                       儲存
                     </button>
-                    <button (click)="cancelEdit()"
-                      class="btn btn-ghost join-item px-4 text-sm font-bold text-base-content/40">
+                    <button (click)="cancelEdit()" class="btn btn-soft join-item px-4 text-sm font-bold">
                       取消
                     </button>
                   </div>
