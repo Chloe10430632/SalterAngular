@@ -181,7 +181,9 @@ export class Index implements OnInit {
         }, 3000);
         this.uploadProgress.set(100); // 強制滿格
         this.toastr.info('貼文發佈成功!');
-        this.router.navigate([`/forum/posts/${data.postId}`]);
+        this.router.navigate(['/forum/member/wall'], {
+          queryParams: { sortBy: 'posted' }
+        });
       },
       error: () => this.toastr.info('貼文發佈失敗')
     });

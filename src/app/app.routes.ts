@@ -76,6 +76,15 @@ export const routes: Routes = [
             loadComponent: () => import('./forum/components/select-board-posts/select-board-posts').then(m => m.SelectBoardPosts)
           }
         ]
+      }, {
+        path: 'member',
+        loadComponent: () => import('./forum/components/index/index').then(m => m.Index),
+        children: [
+          {
+            path: 'wall',
+            loadComponent: () => import('./forum/components/personal-wall/personal-wall').then(m => m.PersonalWall),
+          }
+        ]
       }
     ]
   }

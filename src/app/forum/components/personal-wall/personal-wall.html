@@ -1,21 +1,39 @@
-<div class="sticky top-16 z-30 w-full bg-base-100/70 backdrop-blur-lg border border-base-300 rounded-xl mb-4 shadow-sm">
-  <div class="flex justify-center p-2">
-    <div class="join w-full">
-      <input
-        class="join-item btn btn-sm flex-1 btn-ghost border-b-2 border-transparent checked:border-primary checked:bg-transparent rounded-none font-bold"
-        type="radio" name="options" aria-label="熱門" [checked]="queryPara === 'popular'" routerLink="/forum/posts"
-        [queryParams]="{ sortBy: 'popular' }" />
-      <input
-        class="join-item btn btn-sm flex-1 btn-ghost border-b-2 border-transparent checked:border-primary checked:bg-transparent rounded-none font-bold"
-        type="radio" name="options" aria-label="即時" [checked]="queryPara === 'new'" routerLink="/forum/posts"
-        [queryParams]="{ sortBy: 'new' }" />
-      <input
-        class="join-item btn btn-sm flex-1 btn-ghost border-b-2 border-transparent checked:border-primary checked:bg-transparent rounded-none font-bold"
-        type="radio" name="options" aria-label="追蹤" [checked]="queryPara === 'follow'" routerLink="/forum/posts"
-        [queryParams]="{ sortBy: 'follow' }" />
+<div class="flex flex-col items-center py-8 bg-base-100 rounded-t-2xl border-x border-t border-base-200">
+  <div class="avatar mb-3">
+    <div class="w-20 h-20 rounded-full ring-2 ring-primary ring-offset-2 shadow-sm">
+      <img [src]="currentUser?.picture" alt="avatar" />
     </div>
   </div>
+  <h2 class="text-xl font-bold text-base-content">{{currentUser?.name}}</h2>
+  <p class="text-base-content/40 text-xs tracking-tight">@{{currentUser?.name}}</p>
 </div>
+
+<div class="sticky top-0 z-30 w-full bg-base-100/95 backdrop-blur-md border-b border-base-200 shadow-sm">
+  <div class="flex w-full max-w-2xl mx-auto">
+
+    <label class="flex-1 cursor-pointer">
+      <input type="radio" name="profile_tabs" class="peer hidden" [checked]="currentSortBy === 'collect'"
+        [routerLink]="[]" [queryParams]="{ sortBy: 'collect' }" />
+      <div
+        class="flex items-center justify-center gap-2 py-4 border-b-2 border-transparent transition-all peer-checked:border-primary peer-checked:text-primary text-base-content/50">
+        <span class="font-bold text-sm">我的收藏</span>
+
+      </div>
+    </label>
+
+    <label class="flex-1 cursor-pointer">
+      <input type="radio" name="profile_tabs" class="peer hidden" [checked]="currentSortBy === 'posted'"
+        [routerLink]="[]" [queryParams]="{ sortBy: 'posted' }" />
+      <div
+        class="flex items-center justify-center gap-2 py-4 border-b-2 border-transparent transition-all peer-checked:border-primary peer-checked:text-primary text-base-content/50">
+        <span class="font-bold text-sm">我的文章</span>
+
+      </div>
+    </label>
+
+  </div>
+</div>
+
 <!-- 抽換內容: 貼文列表，觸發無限滾動的地方 -->
 <div class="bg-base-100 border border-base-300 rounded-xl overflow-hidden" infiniteScroll [infiniteScrollDistance]="3"
   [infiniteScrollThrottle]="50" (scrolled)="loadMore()">
@@ -370,6 +388,9 @@
     </div>
   </div>
 </div>
+
+
+
 
 
 
