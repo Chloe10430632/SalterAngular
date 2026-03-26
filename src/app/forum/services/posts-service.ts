@@ -154,6 +154,10 @@ export class PostsService {
   }
 
   //PUT 修改貼文
+  putEditPost(postId: number, dto: CreatePostDto) {
+    return this.http.put(`${environment.apiUrl}/Forum/Posts/${postId}`, dto);
+  }
+
 
 
   //DELETE 刪除貼文

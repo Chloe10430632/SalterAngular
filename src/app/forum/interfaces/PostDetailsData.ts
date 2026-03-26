@@ -5,6 +5,7 @@ export interface PostDetailsData {
   avatarUrl: string;
   boardId: number;
   boardTitle: string;
+  locationId: number;
   locationTitle: string;
   contentPreview: string;
   fullContent: string;

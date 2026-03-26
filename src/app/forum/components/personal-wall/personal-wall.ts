@@ -12,10 +12,16 @@ import { PostsService } from '../../services/posts-service';
 import { PostInteractionsService } from '../../services/post-interactions-service';
 import { ToastrService } from 'ngx-toastr';
 import { PostInteractionsRequest } from '../../interfaces/postInteractionsRequest';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { BoardList } from '../../interfaces/boardList';
+import { BoardsService } from '../../services/boards-service';
+import { TripService } from '../../../trip/services/trip';
+import { CreatePostDto } from '../../interfaces/CreatePostDto';
+import { PostDetailsData } from '../../interfaces/PostDetailsData';
 
 @Component({
   selector: 'app-personal-wall',
-  imports: [DecimalPipe, RelativeTimePipe, InfiniteScrollDirective, RouterLink],
+  imports: [DecimalPipe, RelativeTimePipe, InfiniteScrollDirective, RouterLink, ReactiveFormsModule],
   templateUrl: './personal-wall.html',
   styleUrl: './personal-wall.css',
 })
@@ -48,6 +54,34 @@ export class PersonalWall implements OnInit {
   /**儲存目前要放大顯示的圖片網址 */
   selectedFullImage = signal<string | null>(null);
 
+  //------修改貼文------------
+  /**貼文詳細資料 */
+  postDetailsData?: PostDetailsData;
+
+  /**編輯貼文模式 */
+  isEditMode = false;
+
+  /**暫存準備編輯的 ID */
+  editingPostId: number | null = null;
+
+  /**修改貼文資料結構 */
+  postForm!: FormGroup;
+
+  /**選擇的看板 */
+  selectedBoard?: BoardList;
+
+  /**選擇的打卡地點 */
+  selectedLocation?: any;
+
+  /**貼文標籤 */
+  tags = signal<string[]>([]);
+
+  /**全部看板選單列表 */
+  allBoardList: BoardList[] = [];
+
+  /**全部打卡地點選單列表 */
+  allLocationList: any[] = [];
+
   //-------刪除貼文-----------
   // 取得刪除的 Modal 元素
   @ViewChild('deleteModal') deleteModal!: ElementRef<HTMLDialogElement>;
@@ -58,10 +92,13 @@ export class PersonalWall implements OnInit {
   constructor(
     public authService: AuthService,
     private postsService: PostsService,
+    private boardsService: BoardsService,
     private postInteractionsService: PostInteractionsService,
     private toastr: ToastrService,
+    private tripService: TripService,
     private activatedRoute: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private formBuilder: FormBuilder
   ) { }
 
   ngOnInit(): void {
@@ -72,6 +109,14 @@ export class PersonalWall implements OnInit {
 
     this.authService.currentUser$.subscribe(data => {
       this.currentUser = data;
+    });
+
+    //貼文資料結構
+    this.postForm = this.formBuilder.group({
+      boardId: [, Validators.required],
+      content: ['', Validators.required],
+      locationId: [null],
+      tags: this.formBuilder.array([])
     });
   }
 
@@ -111,9 +156,6 @@ export class PersonalWall implements OnInit {
     this.isLoading = false;
     this.loadMore();
   }
-
-
-
 
   //互動呼叫Api
   handleInteraction(post: PostList, type: string, reason?: string) {
@@ -224,6 +266,132 @@ export class PersonalWall implements OnInit {
   }
 
 
+
+
+  /**打開編輯貼文彈窗 */
+  openEditModal(postId: number) {
+    this.isEditMode = true;
+    this.editingPostId = postId;
+
+    // 1. 抓取舊資料
+    this.postsService.GetPostDetailsApi(postId).subscribe(data => {
+      this.postDetailsData = data;
+
+
+      // 2. 帶入表單資料 (僅限：內容、看板)
+      this.postForm.patchValue({
+        content: data.fullContent,
+        boardId: data.boardId,
+        locationId: data.locationId
+      });
+
+      this.tags.set(data.postTags || []);
+
+      // 4. 顯示 Modal
+      const modal = document.getElementById('edit_modal') as HTMLDialogElement;
+      modal.showModal();
+    });
+  }
+
+  /**清除貼文內容 */
+  clearPost() {
+
+    this.selectedLocation = undefined;
+    this.selectedBoard = undefined;
+    this.tags.set([]);
+
+    // 3. 重置 HTML 原生元素 (重要！)
+    // 找到 Modal 裡的 textarea 並清空文字
+    const textarea = document.querySelector('#post_modal textarea') as HTMLTextAreaElement;
+    if (textarea) textarea.value = '';
+
+    // 4. (選做) 關閉 Modal 本身
+    const modal = document.getElementById('post_modal') as HTMLDialogElement;
+    if (modal) modal.close();
+  }
+
+  /**載入所有看板清單 */
+  getAllBoardList() {
+    if (this.allBoardList.length > 0) return;
+    this.boardsService.GetAllBoardsApi().subscribe(data => {
+      this.allBoardList = data;
+    });
+  }
+  /**選定發文看板 */
+  selectBoard(board: BoardList) {
+    this.selectedBoard = board;
+    this.postForm.patchValue({ boardId: board.boardId });
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+  }
+
+  /**讀取所有地點資料 */
+  getAllLocations() {
+    if (this.allLocationList.length > 0) return;
+    this.tripService.getAllLocations().subscribe({
+      next: (res) => {
+        this.allLocationList = res.data;
+      }
+    });
+  }
+
+  /**選定打卡地點 */
+  selectLocation(location: any) {
+    this.selectedLocation = location;
+    this.postForm.patchValue({ locationId: location.id });
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+  }
+
+  /** HashTag新增標籤 */
+  addTag(event: any) {
+    const input = event.target as HTMLInputElement;
+    const value = input.value.trim();
+
+    if (value && !this.tags().includes(value)) {
+      this.tags.update(prev => [...prev, value]);
+      input.value = '';
+    } else if (this.tags().includes(value)) {
+      this.toastr.info('標籤重複囉！');
+    }
+  }
+
+  /** HashTag移除標籤 */
+  removeTag(index: number) {
+    this.tags.update(prev => prev.filter((_, i) => i !== index));
+  }
+
+  // 送出按鈕邏輯
+  handleEditPostSubmit(isPosted: boolean) {
+    if (this.postForm.invalid) return;
+
+    // 1. 立即關閉 Modal 並啟動進度條
+    const modal = document.getElementById('edit_modal') as HTMLDialogElement;
+    if (modal) modal.close(); // 呼叫你原本關閉 dialog 的 method
+
+    const dto: CreatePostDto = {
+      ...this.postForm.value,
+      isPosted: isPosted,
+      tags: this.tags().map(tagName => ({
+        tagId: 0,
+        tagName: tagName
+      }))
+    };
+
+    if (!this.currentUser) return;
+
+    if (this.isEditMode && this.editingPostId) {
+      // 執行修改 API
+      this.postsService.putEditPost(this.editingPostId, dto).subscribe(() => {
+        this.resetAndLoad();
+      });
+    }
+
+
+
+  }
 
 
 
