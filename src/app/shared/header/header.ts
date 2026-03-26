@@ -2,11 +2,12 @@ import { NgClass } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from "@angular/router";
 import { AuthService } from '../../core/services/auth-service';
+import { FormsModule } from '@angular/forms';
 
 
 @Component({
   selector: 'app-header',
-  imports: [NgClass, RouterLink, RouterLinkActive],
+  imports: [NgClass, RouterLink, RouterLinkActive, FormsModule],
   templateUrl: './header.html',
   styleUrl: './header.css',
 })
@@ -14,12 +15,26 @@ export class Header implements OnInit {
 
   currentUser: any = null;
 
+  /**關鍵字搜尋 */
+  searchTerm: string = '';
+
   constructor(private authService: AuthService, private router: Router) { }
 
 
   ngOnInit(): void {
     this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
+    });
+  }
+
+  /**貼文關鍵字搜尋 */
+  onSearch() {
+    if (!this.searchTerm.trim()) return;
+    this.router.navigate(['/forum/posts'], {
+      queryParams: {
+        keyword: this.searchTerm,
+        sortBy: null
+      }
     });
   }
 

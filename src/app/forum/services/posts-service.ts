@@ -16,6 +16,23 @@ export class PostsService {
 
   constructor(private http: HttpClient) { }
 
+  //GET 關鍵字搜尋貼文
+  GetKeywordPostApi(kw: string, lastViewCount?: number, lastPostId?: number): Observable<PostList[]> {
+    let params = new HttpParams().set('keyword', kw);
+    //呼叫第二次以上會有參數帶進來，執行分頁邏輯
+    if (lastViewCount !== undefined && lastPostId !== undefined) {
+      params = params
+        .set('lastViewCount', lastViewCount.toString())
+        .set('lastId', lastPostId.toString());
+    }
+
+    const apiData$ = this.http.get<PostList[]>(`${environment.apiUrl}/Forum/Posts`, { params });
+    const minimumDelay$ = timer(1200);
+    return zip(apiData$, minimumDelay$).pipe(
+      map(([data, _]) => data)
+    );
+  }
+
   //GET 熱門貼文
   GetPopPostsApi(lastViewCount?: number, lastPostId?: number): Observable<PostList[]> {
     let params = new HttpParams().set('sortBy', 'popular');

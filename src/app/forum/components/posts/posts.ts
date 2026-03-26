@@ -12,6 +12,7 @@ import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../../core/services/auth-service';
 import { CurrentUser } from '../../interfaces/currentUser';
 import { environment } from './../../../../environments/environment';
+import { Observable } from 'rxjs';
 
 
 @Component({
@@ -28,8 +29,11 @@ export class Posts implements OnInit {
   /**目前使用者 */
   currentUser?: CurrentUser;
 
-  /**貼文篩選條件 */
+  /**貼文排序篩選條件 */
   queryPara?: 'popular' | 'new' | 'follow';
+
+  /**貼文關鍵字搜尋 */
+  currentKeyword: string = ''; // 存放從 URL 拿到的搜尋詞
 
   /**後端伺服器PORT */
   backendServer = `${environment.domain}`;
@@ -67,6 +71,7 @@ export class Posts implements OnInit {
   ngOnInit(): void {
     this.activatedRoute.queryParams.subscribe((params) => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      this.currentKeyword = params['keyword'] ?? '';
       this.queryPara = params['sortBy'] ?? 'popular';
       this.resetAndLoad();
     });
@@ -90,63 +95,102 @@ export class Posts implements OnInit {
     this.isLoading = true;
     const lastPost = this.postList[this.postList.length - 1];
 
-    if (this.queryPara === 'popular') {
-      // 如果是第一次(lastPost 為 undefined)，Service會處理成不帶參數
-      this.postsService.GetPopPostsApi(lastPost?.viewCount, lastPost?.postId)
-        .subscribe({
-          next: (newPosts) => {
-            if (newPosts.length === 0) {
-              this.isFinished = true;
-            } else {
-              console.log(newPosts);
-              this.postList = [...this.postList, ...newPosts]; // 將新資料併入舊陣列
-            }
-            this.isLoading = false;
-          },
-          error: (err) => {
-            console.error('載入失敗', err);
-            this.isLoading = false;
-          }
-        });
+    let apiCall$: Observable<PostList[]>;
+
+    // --- 第一步：決定資料來源 (Strategy Pattern) ---
+    if (this.currentKeyword) {
+      // 優先執行關鍵字搜尋
+      apiCall$ = this.postsService.GetKeywordPostApi(this.currentKeyword, lastPost?.viewCount, lastPost?.postId);
+    } else {
+      // 執行原本的排序邏輯
+      switch (this.queryPara) {
+        case 'new':
+          apiCall$ = this.postsService.GetNewPostsApi(lastPost?.createdAt, lastPost?.postId);
+          break;
+        case 'follow':
+          apiCall$ = this.postsService.GetFollowPostsApi(lastPost?.createdAt, lastPost?.postId);
+          break;
+        case 'popular':
+        default:
+          apiCall$ = this.postsService.GetPopPostsApi(lastPost?.viewCount, lastPost?.postId);
+          break;
+      }
     }
 
-    if (this.queryPara === 'new') {
-      this.postsService.GetNewPostsApi(lastPost?.createdAt, lastPost?.postId)
-        .subscribe({
-          next: (newPosts) => {
-            if (newPosts.length === 0) {
-              this.isFinished = true;
-            } else {
-              console.log(newPosts);
-              this.postList = [...this.postList, ...newPosts]; // 將新資料併入舊陣列
-            }
-            this.isLoading = false;
-          },
-          error: (err) => {
-            console.error('載入失敗', err);
-            this.isLoading = false;
-          }
-        });
-    }
+    // --- 第二步：統一處理後續邏輯 ---
+    apiCall$.subscribe({
+      next: (newPosts) => {
+        if (!newPosts || newPosts.length === 0) {
+          this.isFinished = true;
+        } else {
+          console.log('載入成功：', newPosts);
+          this.postList = [...this.postList, ...newPosts];
+        }
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('載入失敗', err);
+        this.isLoading = false;
+      }
+    });
 
-    if (this.queryPara === 'follow') {
-      this.postsService.GetFollowPostsApi(lastPost?.createdAt, lastPost?.postId)
-        .subscribe({
-          next: (newPosts) => {
-            if (newPosts.length === 0) {
-              this.isFinished = true;
-            } else {
-              console.log(newPosts);
-              this.postList = [...this.postList, ...newPosts]; // 將新資料併入舊陣列
-            }
-            this.isLoading = false;
-          },
-          error: (err) => {
-            console.error('載入失敗', err);
-            this.isLoading = false;
-          }
-        });
-    }
+    // if (this.queryPara === 'popular') {
+    //   // 如果是第一次(lastPost 為 undefined)，Service會處理成不帶參數
+    //   this.postsService.GetPopPostsApi(lastPost?.viewCount, lastPost?.postId)
+    //     .subscribe({
+    //       next: (newPosts) => {
+    //         if (newPosts.length === 0) {
+    //           this.isFinished = true;
+    //         } else {
+    //           console.log(newPosts);
+    //           this.postList = [...this.postList, ...newPosts]; // 將新資料併入舊陣列
+    //         }
+    //         this.isLoading = false;
+    //       },
+    //       error: (err) => {
+    //         console.error('載入失敗', err);
+    //         this.isLoading = false;
+    //       }
+    //     });
+    // }
+
+    // if (this.queryPara === 'new') {
+    //   this.postsService.GetNewPostsApi(lastPost?.createdAt, lastPost?.postId)
+    //     .subscribe({
+    //       next: (newPosts) => {
+    //         if (newPosts.length === 0) {
+    //           this.isFinished = true;
+    //         } else {
+    //           console.log(newPosts);
+    //           this.postList = [...this.postList, ...newPosts]; // 將新資料併入舊陣列
+    //         }
+    //         this.isLoading = false;
+    //       },
+    //       error: (err) => {
+    //         console.error('載入失敗', err);
+    //         this.isLoading = false;
+    //       }
+    //     });
+    // }
+
+    // if (this.queryPara === 'follow') {
+    //   this.postsService.GetFollowPostsApi(lastPost?.createdAt, lastPost?.postId)
+    //     .subscribe({
+    //       next: (newPosts) => {
+    //         if (newPosts.length === 0) {
+    //           this.isFinished = true;
+    //         } else {
+    //           console.log(newPosts);
+    //           this.postList = [...this.postList, ...newPosts]; // 將新資料併入舊陣列
+    //         }
+    //         this.isLoading = false;
+    //       },
+    //       error: (err) => {
+    //         console.error('載入失敗', err);
+    //         this.isLoading = false;
+    //       }
+    //     });
+    // }
   }
 
   //互動呼叫Api
