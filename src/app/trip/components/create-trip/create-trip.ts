@@ -5,6 +5,7 @@ import { TripService } from '../../services/trip';
 import { LocationSearchService } from '../../services/location-search';
 import { TripLocationSearch } from '../../interfaces/trip';
 import { NotificationService } from '../../../shared/notifyService/notification-service';
+import { forkJoin, of } from 'rxjs';
 
 interface LocationDraft {
   locationName: string;
@@ -286,21 +287,31 @@ export class CreateTrip implements OnInit, AfterViewInit {
     });
   }
 
+
   private createLocationsAndGears(tripId: number) {
     const locationRequests = this.locations.map((loc, i) =>
-      this.tripService.createLocation(tripId, { ...loc, sortOrder: i + 1 }).toPromise()
+      this.tripService.createLocation(tripId, { ...loc, sortOrder: i + 1 })
     );
     const gearRequests = this.gears.map(gear =>
-      this.tripService.createGearItem(tripId, gear).toPromise()
+      this.tripService.createGearItem(tripId, gear)
     );
-    Promise.all([...locationRequests, ...gearRequests]).then(() => {
-      this.notify.show('行程建立成功！', 'success');
-      this.router.navigate(['/trip/detail', tripId, 'location']);
-    }).catch(() => {
-      this.notify.show('行程已建立，但部分地點或裝備新增失敗', 'error');
-      this.router.navigate(['/trip/explore']);
-    }).finally(() => {
-      this.isSaving = false;
+
+    const all = [...locationRequests, ...gearRequests];
+
+    const source$ = all.length > 0 ? forkJoin(all) : of([]);
+
+    source$.subscribe({
+      next: () => {
+        this.notify.show('行程建立成功！', 'success');
+        this.router.navigate(['/trip/detail', tripId, 'location']);
+      },
+      error: () => {
+        this.notify.show('行程已建立，但部分地點或裝備新增失敗', 'error');
+        this.router.navigate(['/trip/explore']);
+      },
+      complete: () => {
+        this.isSaving = false;
+      }
     });
   }
 
@@ -310,9 +321,11 @@ export class CreateTrip implements OnInit, AfterViewInit {
 
   getTripTypeLabel(type: string): string {
     const map: Record<string, string> = {
-      surf: '🏄 衝浪', dive: '🤿 深潛', snorkel: '🤿 浮潛',
-      kayak: '🚣 獨木舟', sailing: '⛵ 帆船', sup: '🏄 立槳', other: '🌊 其他'
+      surf: '🏄 衝浪', dive: '⚓ 深潛', snorkel: '🤿 浮潛',
+      kayak: '🚣 獨木舟', sailing: '⛵ 帆船', sup: '🏄 SUP　立槳', other: '🌊 其他'
     };
     return map[type] ?? type;
   }
+
+
 }

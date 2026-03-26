@@ -68,6 +68,7 @@ export interface TripMember {
   email: string;
   role: string;
   joinedAt: string;
+  profilePicture: string | null;
 }
 
 // 地點

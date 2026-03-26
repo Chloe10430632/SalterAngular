@@ -55,13 +55,13 @@
     <p class="px-3 mb-1 text-xs font-bold text-base-content/30 uppercase tracking-wider">行程內容</p>
     }
 
-    <a routerLink="." fragment="info"
+    <a routerLink="/trip/detail" fragment="info"
       class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors hover:bg-base-200 text-base-content">
       <i class="bi bi-card-text text-base w-5 text-center shrink-0"></i>
       @if (!isCollapsed) { <span>行程詳情</span> }
     </a>
 
-    <a routerLink="." fragment="map"
+    <a routerLink="/trip/location" fragment="map"
       class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors hover:bg-base-200 text-base-content">
       <i class="bi bi-geo-alt text-base w-5 text-center shrink-0"></i>
       @if (!isCollapsed) { <span>地點地圖</span> }

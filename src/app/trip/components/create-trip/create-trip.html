@@ -1,10 +1,10 @@
 <div class="max-w-2xl mx-auto px-4 py-8">
 
   <ul class="steps steps-horizontal w-full mb-8 text-xs">
-    <li class="step" [class.step-primary]="currentStep >= 1">基本資訊</li>
-    <li class="step" [class.step-primary]="currentStep >= 2">地點設定</li>
-    <li class="step" [class.step-primary]="currentStep >= 3">裝備清單</li>
-    <li class="step" [class.step-primary]="currentStep >= 4">預覽發布</li>
+    <li class="step" [class.step-primary]="currentStep >= 1" [attr.data-content]="currentStep > 1 ? '✓' : '1'">基本資訊</li>
+    <li class="step" [class.step-primary]="currentStep >= 2" [attr.data-content]="currentStep > 2 ? '✓' : '2'">地點設定</li>
+    <li class="step" [class.step-primary]="currentStep >= 3" [attr.data-content]="currentStep > 3 ? '✓' : '3'">裝備清單</li>
+    <li class="step" [class.step-primary]="currentStep >= 4" [attr.data-content]="'4'">預覽發布</li>
   </ul>
 
   <div class="card bg-base-100 shadow-sm border border-base-300">
@@ -30,8 +30,10 @@
 
         <fieldset class="fieldset">
           <legend class="fieldset-legend font-semibold">行程簡介</legend>
-          <textarea class="textarea textarea-bordered w-full h-24 text-sm" placeholder="介紹行程亮點、費用說明、特別注意事項…"
-            formControlName="description"></textarea>
+          <textarea class="textarea textarea-bordered w-full h-24 text-sm" placeholder="請描述你的行程計畫或亮點...
+
+- 注意事項
+- 適合對象（初學者/進階）" formControlName="description"></textarea>
         </fieldset>
 
         <div class="grid grid-cols-2 gap-3">
@@ -105,11 +107,11 @@
               [class.select-error]="f['tripType'].touched && f['tripType'].invalid" formControlName="tripType">
               <option value="">請選擇</option>
               <option value="surf">🏄 衝浪</option>
-              <option value="dive">🤿 深潛</option>
+              <option value="dive">⚓ 深潛</option>
               <option value="snorkel">🤿 浮潛</option>
               <option value="kayak">🚣 獨木舟</option>
               <option value="sailing">⛵ 帆船</option>
-              <option value="sup">🏄 立槳</option>
+              <option value="sup">🏄 SUP 立槳</option>
               <option value="other">🌊 其他</option>
             </select>
             @if (f['tripType'].touched && f['tripType'].errors?.['required']) {
@@ -399,7 +401,9 @@
         登入後再來建立行程！
       </p>
     </div>
+
     <p class="text-xs text-base-content/30">{{ countdown }} 秒後自動跳轉至登入頁面</p>
+
   </div>
 </div>
 }
