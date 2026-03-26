@@ -33,13 +33,20 @@ export class HouseService {
     return this.http.get<CityGroupDTO[]>(`${this.apiUrl}/Home/city-groups`, { params });
   }
 
-  getSearchHouses(city: string, guests?: number, keyword?: string): Observable<HousePreviewDTO[]> {
+  getSearchHouses(
+    city: string,
+    guests?: number,
+    startDate?: string,
+    endDate?: string
+  ): Observable<HousePreviewDTO[]> {
     let params = new HttpParams();
-    if (city && city !== '全部') params = params.set('city', city);
-    if (keyword) params = params.set('keyword', keyword);
-    if (guests && guests > 0) params = params.set('guests', guests.toString());
+    if (city && city !== '全部') params = params.set('citie', city);
+    // if (keyword) params = params.set('keyword', keyword);
+    if (guests && guests > 0) params = params.set('PeopleCount', guests.toString());
+    if (startDate) params = params.set('StartDate', startDate);
+    if (endDate) params = params.set('EndDate', endDate);
     // 💡 對應到你後端 [HttpGet("search")] 的那個 Action
-    return this.http.get<HousePreviewDTO[]>(`${this.apiUrl}/Home/search`, { params });
+    return this.http.get<HousePreviewDTO[]>(`${this.apiUrl}/Home/select`, { params });
   }
 
 

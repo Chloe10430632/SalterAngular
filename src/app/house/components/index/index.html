@@ -43,7 +43,13 @@
     <div (click)="openCalendar($event)"
       class="flex-1 px-8 py-3 hover:bg-base-200 rounded-full transition-colors hidden sm:block cursor-pointer">
       <span class="block font-bold text-xs uppercase tracking-wider text-base-content mb-0.5">時間</span>
-      <span class="text-base font-medium text-gray-500">選擇日期</span>
+      <span class="text-base font-medium truncate"
+        [ngClass]="startDate && endDate ? 'text-primary font-bold' : 'text-gray-500'">
+        @if (startDate && endDate)
+        {
+        {{ startDate | date:'MM/dd' }} - {{ endDate | date:'MM/dd'}}
+        } @else {選擇日期}
+      </span>
     </div>
 
     <div class="h-8 w-[1px] bg-base-300"></div>
@@ -76,17 +82,19 @@
     <div class="flex flex-col md:flex-row gap-6">
       <div class="flex-1">
         <label class="label"><span class="label-text font-bold">入住</span></label>
-        <input type="date" class="input input-bordered w-full rounded-xl focus:border-primary" />
+        <input type="date" [(ngModel)]="startDate" [min]="today" (change)="onStartDateChange()"
+          class="input input-bordered w-full rounded-xl focus:border-primary" />
       </div>
       <div class="flex-1">
         <label class="label"><span class="label-text font-bold">退房</span></label>
-        <input type="date" class="input input-bordered w-full rounded-xl focus:border-primary" />
+        <input type="date" [(ngModel)]="endDate" [min]="startDate || today"
+          class="input input-bordered w-full rounded-xl focus:border-primary" />
       </div>
     </div>
 
     <div class="modal-action mt-8">
       <form method="dialog" class="w-full flex justify-between items-center">
-        <button class="btn btn-ghost text-gray-500 underline">清除日期</button>
+        <button (click)="clearDates()" class="btn btn-ghost text-gray-500 underline">清除日期</button>
         <button class="btn btn-primary px-10 rounded-full text-white">儲存</button>
       </form>
     </div>
@@ -152,7 +160,7 @@
         <h2 class="text-2xl font-bold text-base-content">{{ group.cityName }}</h2>
         <p class="text-sm text-gray-500">探索 {{ group.cityName }} 的精選住宿</p>
       </div>
-      <a [routerLink]="['/search']" [queryParams]="{ city: group.cityName }"
+      <a [routerLink]="['/searchHouse']" [queryParams]="{ city: group.cityName }"
         class="btn btn-ghost btn-sm text-primary flex items-center gap-1">
         查看更多 <i class="fa-solid fa-chevron-right text-xs"></i>
       </a>

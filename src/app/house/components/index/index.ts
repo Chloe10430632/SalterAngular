@@ -1,14 +1,15 @@
-import { CityGroupDTO, HouseListDTO } from './../../interface/ihouse';
+import { CityGroupDTO, } from './../../interface/ihouse';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { RouterLink } from "@angular/router";
 import { HouseService } from '../../service/index-service';
 import { DragScroll } from '../../directives/drag-scroll';
 import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-index',
-  imports: [CommonModule, DecimalPipe, RouterLink, DragScroll],
+  imports: [CommonModule, DecimalPipe, RouterLink, DragScroll, FormsModule],
   templateUrl: './index.html',
   styleUrl: './index.css',
 })
@@ -18,6 +19,10 @@ export class Index implements OnInit {
   houseGroups: CityGroupDTO[] = [];
   selectedCity: string = '全部';
   cities: string[] = ['全部'];
+  today: string = new Date().toISOString().split('T')[0];
+  startDate: string = '';
+  endDate: string = '';
+
 
   constructor(public houseService: HouseService, private router: Router) { }
 
@@ -28,7 +33,9 @@ export class Index implements OnInit {
       queryParams:
       {
         city: this.selectedCity,
-        guests: totalGuests
+        guests: totalGuests,
+        startDate: this.startDate,
+        endDate: this.endDate
       }
     });
   }
@@ -47,6 +54,9 @@ export class Index implements OnInit {
     });
 
     this.loadHouses();
+    //自動清空搜尋欄的欄位
+    this.houseService.adultCount = 0;
+    this.houseService.childCount = 0;
   }
 
 
@@ -106,8 +116,25 @@ export class Index implements OnInit {
     this.router.navigate(['/searchHouse'], {
       queryParams: {
         city: this.selectedCity,
-        guests: totalGuests
+        guests: totalGuests,
+        startDate: this.startDate,
+        endDate: this.endDate
       }
     });
+  }
+
+  onStartDateChange() {
+    {
+      // 如果選了入住日期後，退房日期比它早，就清空退房日期
+      if (this.endDate && this.endDate <= this.startDate) {
+        this.endDate = '';
+      }
+    }
+  }
+
+  // 清除日期
+  clearDates() {
+    this.startDate = '';
+    this.endDate = '';
   }
 }
