@@ -1,0 +1,48 @@
+<app-header></app-header>
+<div data-theme="bumblebee" class="min-h-screen bg-base-200 flex items-center justify-center p-4">
+  <div class="card w-full max-w-lg bg-base-100 shadow-xl overflow-hidden">
+
+    <div class="bg-primary p-8 flex justify-center">
+      <div class="bg-white rounded-full p-4 shadow-inner">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-primary" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor" stroke-width="3">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+        </svg>
+      </div>
+    </div>
+
+    <div class="card-body items-center text-center py-10">
+      <h2 class="card-title text-3xl font-bold text-base-content">交易成功！</h2>
+      <p class="text-base-content/70">您的訂單已處理完成，感謝您的購買。</p>
+
+      <div class="stats stats-vertical lg:stats-horizontal shadow bg-base-200 w-full my-6">
+        <div class="stat">
+          <div class="stat-title">交易金額</div>
+          <div class="stat-value text-secondary text-2xl">$ {{ transactionAmount }}</div>
+          <div class="stat-desc">TWD (含稅)</div>
+        </div>
+        <div class="stat">
+          <div class="stat-title">訂單編號</div>
+          <div class="stat-value text-sm">#{{ orderId }}</div>
+          <div class="stat-desc">2026-03-26</div>
+        </div>
+      </div>
+
+      <ul class="steps steps-horizontal w-full mb-6">
+        <li class="step step-primary">下單</li>
+        <li class="step step-primary">付款</li>
+        <li class="step step-primary">完成</li>
+      </ul>
+
+      <div class="card-actions justify-center w-full gap-4">
+        <button class="btn btn-primary flex-1" (click)="goToDashboard()">返回討論板</button>
+
+      </div>
+    </div>
+
+    <div class="bg-base-300 p-4 text-center text-xs text-base-content/50">
+      如有任何疑問，請聯繫我們的客服支援。
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>

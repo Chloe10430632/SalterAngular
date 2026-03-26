@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+  <button onclick="pay()">測試付款</button>
+  <div id="form-container"></div>
+  <script>
+    async function pay() {
+      const res = await fetch('https://localhost:7017/api/Transac/Transaction/GetOrderForm', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMDYxIiwianRpIjoiMGQ5OWY5Y2MtYjA4NS00MjMwLTk4ODUtMDM4YWQxNzc4MGEzIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZWlkZW50aWZpZXIiOiIxMDYxIiwiVXNlck5hbWUiOiJ0ZXN0IiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvZW1haWxhZGRyZXNzIjoibWVsb2R5ODAzQGdtYWlsLmNvbSIsIkF2YXRhciI6Ii9hZG1pbi9pbWdzLzIwMjYwMzI1MTAwMTEwXzIwMjYwMjIwMTUzNTI0X1RhbWFtYS5wbmciLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJOb3JtYWxVc2VyIiwiZXhwIjoxNzc0NjE3MzM4LCJpc3MiOiJTYWx0ZXJXZWJBcGkiLCJhdWQiOiJTYWx0ZXJBbmd1bGFyQ2xpZW50In0.Wzs7cH44jj8mlF-YSLLb8mS6CRDkM-ehDY9dz7m0nMs'
+        },
+        body: JSON.stringify({
+          transactionId: 5100066,
+          itemName: 'TTTT'
+        })
+      });
+
+      const html = await res.text();
+      console.log('後端回傳 HTML：', html);
+
+      // 1. 將 HTML 注入到容器中
+      const container = document.getElementById('form-container');
+      container.innerHTML = html;
+
+      // 2. 關鍵：手動執行注入的 Script 或直接觸發 Form Submit
+      // 因為透過 innerHTML 注入的 <script> 標籤不會自動執行
+      const form = container.querySelector('#ecpay-form');
+      if (form) {
+        console.log('表單已生成，準備跳轉至綠界...');
+        form.submit(); // 直接呼叫 submit() 方法
+      } else {
+        console.error('找不到 ecpay-form，請檢查後端回傳內容');
+      }
+    }
+  </script>
+</body>
+
+</html>

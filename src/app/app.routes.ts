@@ -111,10 +111,23 @@ export const routes: Routes = [
         path: 'coachintro', //看其他教練介紹
         loadComponent: () => import('./experience/components/coachintro/coachintro').then(m => m.Coachintro)
       },
-
-
     ]
   },
+  {
+    path: 'transaction',
+    loadComponent: () => import('./shared/layouts/with-navbar/with-navbar').then(m => m.WithNavbar),
+    children: [
+      {
+        path: 'buy',
+        loadComponent: () => import('./experience/components/coach-buycourse/coach-buycourse').then(m => m.CoachBuycourse),
+      },
+      {
+        path: 'finish',
+        loadComponent: () => import('./shared/paylist/paylist').then(m => m.Paylist)
+      },
+    ]
+  },
+
   //login路由
   {
     path: 'login',
