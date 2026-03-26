@@ -681,26 +681,32 @@ export class Login implements OnInit {
 
   currentIndex: number = 0;
 
-  public moveSlide(direction: number): void {
-    const container = document.getElementById('carousel_container') as HTMLElement | null;
+  private indices: { [key: string]: number } = {};
+
+  public moveSlide(direction: number, elementId: string): void {
+    const container = document.getElementById(elementId) as HTMLElement | null;
     if (!container) return;
 
-    // 取得所有輪播項目
+    // 如果這個 ID 還沒被記錄過，初始化為 0
+    if (this.indices[elementId] === undefined) {
+      this.indices[elementId] = 0;
+    }
+
     const items = container.querySelectorAll('.carousel-item');
     const totalItems = items.length;
+    if (totalItems === 0) return;
 
-    // 計算下一個索引（包含循環邏輯：最後一張點「下」會回第一張）
-    this.currentIndex = (this.currentIndex + direction + totalItems) % totalItems;
+    // 針對該 ID 計算下一個索引
+    this.indices[elementId] = (this.indices[elementId] + direction + totalItems) % totalItems;
 
-    // 計算捲動位置：索引 * 容器寬度
-    const scrollAmount = this.currentIndex * container.offsetWidth;
+    // 計算捲動位置
+    const scrollAmount = this.indices[elementId] * container.offsetWidth;
 
     container.scrollTo({
       left: scrollAmount,
       behavior: 'smooth'
     });
   }
-
 
 
 

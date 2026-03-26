@@ -103,13 +103,16 @@
 
   <!-- camera功能欄 -->
   <div class="fixed z-40 pointer-events-auto transform-gpu"
-    style="top: 62vmin; left: 68vmin; width: 45vmin; height: 45vmin; will-change: transform;">
-    <button (click)="openActiveModal('FORUM')"
+    style="top: 60vmin; left: 72vmin; width: 35vmin; height: 45vmin; will-change: transform;">
+
+    <button onclick="camera_modal.showModal()"
       class="relative w-full h-full p-0 border-none bg-transparent cursor-pointer group outline-none">
+
       <div class="relative w-full h-full transition-all duration-500 group-hover:-translate-y-4">
         <img src="user/camera.png"
           class="w-full h-full object-contain drop-shadow-2xl transition-transform duration-500 group-hover:scale-105">
       </div>
+
       <div style="width: 10vmin; height: 1vmin;"
         class="bg-black/10 rounded-[100%] blur-xl mx-auto transition-all duration-500 group-hover:scale-150 group-hover:opacity-40">
       </div>
@@ -120,7 +123,8 @@
   <!-- book功能欄 -->
   <div class="fixed z-40 pointer-events-auto transform-gpu"
     style="top: 73vmin; left: 95vmin; width: 35vmin; height: 35vmin; will-change: transform;">
-    <button (click)="openActiveModal('FORUM')"
+
+    <button onclick="book_modal.showModal()"
       class="relative w-full h-full p-0 border-none bg-transparent cursor-pointer group outline-none">
       <div class="relative w-full h-full transition-all duration-500 group-hover:-translate-y-4">
         <img src="user/book.png"
@@ -149,13 +153,55 @@
   <!-- 關於我們 -->
   <div class="fixed z-50 pointer-events-auto" style="bottom: 5vmin; right: 7vmin;">
     <button class="rounded-full px-[8vmin] py-[3vmin] font-black tracking-[0.25em] shadow-xl
-           border-[0.3vmin] border-black bg-[#F3B300] text-black
-
+           border-[0.3vmin] border-black text-black bg-[#F3B300]
            transition-all duration-500 ease-in-out
            hover:bg-white hover:-translate-y-1 active:scale-95" style="font-size: 2vmin;"
       onclick="carousel_modal.showModal()">
       關於我們
     </button>
+
+    <dialog id="carousel_modal" class="modal">
+      <div class="modal-box p-0 w-[800px] max-w-none h-[800px] overflow-hidden rounded-2xl relative bg-black">
+
+        <div id="carousel_container" class="carousel w-full h-full flex flex-nowrap overflow-hidden">
+          <div class="carousel-item w-full h-full flex-shrink-0">
+            <img src="user/talk.png" class="w-full h-full object-cover" />
+          </div>
+          <div class="carousel-item w-full h-full flex-shrink-0">
+            <img src="user/pain.png" class="w-full h-full object-cover" />
+          </div>
+          <div class="carousel-item w-full h-full flex-shrink-0">
+            <img src="user/go.png" class="w-full h-full object-cover" />
+          </div>
+          <div class="carousel-item w-full h-full flex-shrink-0">
+            <img src="user/play.png" class="w-full h-full object-cover" />
+          </div>
+          <div class="carousel-item w-full h-full flex-shrink-0">
+            <img src="user/house.png" class="w-full h-full object-cover" />
+          </div>
+          <div class="carousel-item w-full h-full flex-shrink-0">
+            <img src="user/post.png" class="w-full h-full object-cover" />
+          </div>
+        </div>
+
+        <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 justify-between pointer-events-none">
+          <button (click)="moveSlide(-1, 'carousel_container')"
+            class="btn btn-circle btn-black/30 text-white pointer-events-auto border-none">❮</button>
+          <button (click)="moveSlide(1, 'carousel_container')"
+            class="btn btn-circle btn-black/30 text-white pointer-events-auto border-none">❯</button>
+        </div>
+
+        <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+          <span class="badge badge-xs bg-white/50"></span>
+          <span class="badge badge-xs bg-white"></span>
+          <span class="badge badge-xs bg-white/50"></span>
+        </div>
+      </div>
+
+      <form method="dialog" class="modal-backdrop bg-black/80 backdrop-blur-sm">
+        <button>close</button>
+      </form>
+    </dialog>
   </div>
   <!-- 關於我們 -->
 
@@ -959,3 +1005,68 @@
 </div>
 </div>
 }
+<dialog id="book_modal" class="modal">
+  <div class="modal-box p-0 w-[800px] max-w-none h-[800px] overflow-hidden rounded-2xl relative bg-black">
+
+    <div id="book_carousel_container" class="carousel w-full h-full flex flex-nowrap overflow-hidden">
+      <div class="carousel-item w-full h-full flex-shrink-0">
+        <img src="user/note2.jpg" class="w-full h-full object-cover" />
+      </div>
+      <div class="carousel-item w-full h-full flex-shrink-0">
+        <img src="user/note3.jpg" class="w-full h-full object-cover" />
+      </div>
+      <div class="carousel-item w-full h-full flex-shrink-0">
+        <img src="user/note4.jpg" class="w-full h-full object-cover" />
+      </div>
+      <div class="carousel-item w-full h-full flex-shrink-0">
+        <img src="user/note1.jpg" class="w-full h-full object-cover" />
+      </div>
+    </div>
+
+    <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 justify-between pointer-events-none">
+      <button (click)="moveSlide(-1, 'book_carousel_container')"
+        class="btn btn-circle btn-black/30 text-white pointer-events-auto border-none">❮</button>
+      <button (click)="moveSlide(1, 'book_carousel_container')"
+        class="btn btn-circle btn-black/30 text-white pointer-events-auto border-none">❯</button>
+    </div>
+
+    <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+      <span class="badge badge-xs bg-white/50"></span>
+      <span class="badge badge-xs bg-white"></span>
+    </div>
+  </div>
+
+  <form method="dialog" class="modal-backdrop bg-black/80 backdrop-blur-sm">
+    <button>close</button>
+  </form>
+</dialog>
+
+<dialog id="camera_modal" class="modal">
+  <div class="modal-box p-0 w-[800px] max-w-none h-[800px] overflow-hidden rounded-2xl relative bg-black">
+
+    <div id="camera_carousel_container" class="carousel w-full h-full flex flex-nowrap overflow-hidden">
+      <div class="carousel-item w-full h-full flex-shrink-0">
+        <img src="user/woman.png" class="w-full h-full object-cover" />
+      </div>
+      <div class="carousel-item w-full h-full flex-shrink-0">
+        <img src="user/book.png" class="w-full h-full object-cover" />
+      </div>
+    </div>
+
+    <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 justify-between pointer-events-none">
+      <button (click)="moveSlide(-1, 'camera_carousel_container')"
+        class="btn btn-circle btn-black/30 text-white pointer-events-auto border-none">❮</button>
+      <button (click)="moveSlide(1, 'camera_carousel_container')"
+        class="btn btn-circle btn-black/30 text-white pointer-events-auto border-none">❯</button>
+    </div>
+
+    <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+      <span class="badge badge-xs bg-white/50"></span>
+      <span class="badge badge-xs bg-white"></span>
+    </div>
+  </div>
+
+  <form method="dialog" class="modal-backdrop bg-black/80 backdrop-blur-sm">
+    <button>close</button>
+  </form>
+</dialog>
