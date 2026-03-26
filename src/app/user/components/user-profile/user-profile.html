@@ -66,17 +66,17 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-y-10 gap-x-12 px-2">
 
       <div class="space-y-1">
-        <p class="text-[10px] font-black opacity-40 uppercase tracking-tighter text-primary">Display Name</p>
+        <p class="text-[20px] font-black  uppercase tracking-tighter text-primary">暱稱 / 姓名</p>
         <p class="text-xl font-bold text-base-content">{{ fullUserData?.userName || '未設定' }}</p>
       </div>
 
       <div class="space-y-1">
-        <p class="text-[10px] font-black opacity-40 uppercase tracking-tighter text-primary">Email Address</p>
+        <p class="text-[20px] font-black  uppercase tracking-tighter text-primary">電子信箱(帳號)</p>
         <p class="text-lg font-medium text-base-content/70 italic">{{ fullUserData?.email || 'N/A' }}</p>
       </div>
 
       <div class="space-y-1">
-        <p class="text-[10px] font-black opacity-40 uppercase tracking-tighter text-primary">Account Role</p>
+        <p class="text-[20px] font-black  uppercase tracking-tighter text-primary">會員等級</p>
         <div class="mt-1">
           <span class="badge badge-secondary badge-md font-black italic gap-1">
             <i class="bi bi-shield-lock"></i> {{ fullUserData?.roleName || '一般會員' }}
@@ -85,12 +85,12 @@
       </div>
 
       <div class="space-y-1">
-        <p class="text-[10px] font-black opacity-40 uppercase tracking-tighter text-primary">Phone Number</p>
+        <p class="text-[20px] font-black  uppercase tracking-tighter text-primary">電話號碼</p>
         <p class="text-lg font-medium">{{ fullUserData?.phone || '--' }}</p>
       </div>
 
       <div class="space-y-1">
-        <p class="text-[10px] font-black opacity-40 uppercase tracking-tighter text-primary">Gender / Birthday</p>
+        <p class="text-[20px] font-black uppercase tracking-tighter text-primary">性別/生日</p>
         <p class="text-lg font-medium text-base-content/80">
           {{ fullUserData?.gender || '未填' }} / {{ fullUserData?.birthday || '未填' }}
         </p>
@@ -109,15 +109,27 @@
         </div>
 
         <div class="form-control">
-          <label class="label"><span class="label-text font-bold opacity-50">帳號權限</span></label>
+          <label class="label"><span class="label-text font-bold opacity-50">會員等級</span></label>
           <input type="text" [value]="fullUserData?.roleName"
             class="input input-bordered bg-base-200 cursor-not-allowed text-base-content/50" readonly />
         </div>
 
         <div class="form-control">
-          <label class="label"><span class="label-text font-bold">暱稱 / 姓名</span></label>
+          <label class="label">
+            <span class="label-text font-bold">暱稱 / 姓名</span>
+          </label>
+
           <input type="text" formControlName="userName" class="input input-bordered focus:input-primary transition-all"
+            [class.input-error]="profileForm.get('userName')?.invalid && profileForm.get('userName')?.touched"
             placeholder="請輸入顯示名稱" />
+
+          @if (profileForm.get('userName')?.invalid && profileForm.get('userName')?.touched) {
+          <label class="label">
+            <span class="label-text-alt text-error font-bold flex items-center gap-1 mt-2">
+              <i class="bi bi-exclamation-circle"></i> 暱稱為必填項目
+            </span>
+          </label>
+          }
         </div>
 
         <div class="form-control">

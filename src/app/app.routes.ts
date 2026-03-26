@@ -220,7 +220,7 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        loadComponent: () => import('./shared/menu/menu').then(m => m.Menu),
+        loadComponent: () => import('./forum/components/index/index').then(m => m.Index),
         children: [
           {
             path: 'member',

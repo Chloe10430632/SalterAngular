@@ -1,17 +1,167 @@
 <div class="relative w-screen h-screen overflow-hidden bg-gradient-to-br from-cyan-100 to-white">
   <img src="user/login6.png" class="absolute inset-0 w-full h-[calc(100%+50px)] " style="top: -25px;" />
 
-  <div class="absolute top-20 left-50 z-20">
+  <!-- logo功能欄 -->
+  <div class="absolute z-50 pointer-events-auto" style="top: 8vmin; left: 15vmin;">
     <a routerLink="/" class="flex items-center hover:scale-105 transition-transform">
-      <img src="salter-logo.svg" alt="Salter Logo" class="w-64 drop-shadow-md">
+      <img src="salter-logo.svg" alt="Salter Logo" style="width: 35vmin; min-width: 150px;" class="drop-shadow-md">
     </a>
   </div>
+  <!-- logo功能欄 -->
 
+  <!-- house功能欄 -->
+  <div class="fixed z-50 pointer-events-auto"
+    style="top: 3vmin; left: 80vmin; width: 30vmin; height: 38vmin; transform: translateZ(0); will-change: transform;">
 
-  <!-- 功能欄 -->
+    <button routerLink="/house" class="relative w-full h-full p-0 border-none bg-transparent cursor-pointer group">
+
+      <div style="width: 30vmin; height: 30vmin;" class="relative mx-auto flex items-center justify-center bg-white/60 backdrop-blur-md rounded-full border-[0.3vmin] border-white/60 shadow-xl
+             transition-all duration-500 ease-in-out
+             group-hover:bg-white/80 group-hover:-translate-y-[2vmin]">
+
+        <img src="user/stay2.png" style="width: 95%; height: 95%; transform-origin: center center;" class="object-contain transition-transform duration-500 ease-in-out
+               group-hover:scale-110 group-hover:rotate-6">
+      </div>
+
+      <span style="font-size: 3.5vmin; margin-top: 1vmin;"
+        class="block w-full text-center font-black text-[#8B5A2B] tracking-widest drop-shadow-md transition-colors duration-300 group-hover:text-[#A17A5A]">
+        Stay
+      </span>
+    </button>
+  </div>
+  <!-- house功能欄 -->
+
+  <!-- coach功能欄 -->
+  <div class="fixed z-50 pointer-events-auto transform-gpu"
+    style="top: 16vmin; left: 110vmin; width: 25vmin; height: 32vmin; will-change: transform;">
+    <button routerLink="/experience" class="relative w-full h-full p-0 border-none bg-transparent cursor-pointer group">
+      <div style="width: 30vmin; height: 30vmin; border-width: 0.2vmin;"
+        class="relative mx-auto flex items-center justify-center bg-white/40 backdrop-blur-md rounded-full border-white/60 shadow-xl transition-all duration-500 group-hover:bg-white/70 group-hover:-translate-y-[1.5vmin]">
+        <img src="user/coach2.png"
+          style="width: 95%; height: 95%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"
+          class="object-contain transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6">
+      </div>
+      <span style="font-size: 2.8vmin; margin-top: 1vmin;"
+        class="block w-full text-center font-black text-[#8B5A2B] tracking-[0.15em] drop-shadow-md transition-all duration-300 group-hover:text-[#A17A5A] group-hover:scale-105">
+        Coach
+      </span>
+    </button>
+  </div>
+  <!-- coach功能欄 -->
+
+  <!-- trip功能欄 -->
+  <div class="fixed z-50 pointer-events-auto transform-gpu"
+    style="top: 25vmin; left: 141vmin; width: 25vmin; height: 32vmin; will-change: transform;">
+    <button routerLink="/trip" class="relative w-full h-full p-0 border-none bg-transparent cursor-pointer group">
+      <div style="width:30vmin; height: 30vmin; border-width: 0.2vmin;"
+        class="relative mx-auto flex items-center justify-center bg-white/40 backdrop-blur-md rounded-full border-white/60 shadow-xl transition-all duration-500 group-hover:bg-white/70 group-hover:-translate-y-[1.5vmin]">
+        <img src="user/trip2.png"
+          style="width: 95%; height: 95%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"
+          class="object-contain transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6">
+      </div>
+      <span style="font-size: 2.8vmin; margin-top: 1vmin;"
+        class="block w-full text-center font-black text-[#8B5A2B] tracking-[0.15em] drop-shadow-md transition-all duration-300 group-hover:text-[#A17A5A] group-hover:scale-105">
+        Trip
+      </span>
+    </button>
+  </div>
+  <!-- trip功能欄 -->
+
+  <!-- forum功能欄 -->
+  <div class="fixed z-50 pointer-events-auto transform-gpu"
+    style="top: 12vmin; left: 172vmin; width: 25vmin; height: 32vmin; will-change: transform;">
+    <button routerLink="/forum" class="relative w-full h-full p-0 border-none bg-transparent cursor-pointer group">
+      <div style="width: 30vmin; height: 30vmin; border-width: 0.2vmin;"
+        class="relative mx-auto flex items-center justify-center bg-white/40 backdrop-blur-md rounded-full border-white/60 shadow-xl transition-all duration-500 group-hover:bg-white/70 group-hover:-translate-y-[1.5vmin]">
+        <img src="user/forum2.png"
+          style="width: 95%; height: 95%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"
+          class="object-contain transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6">
+      </div>
+      <span style="font-size: 2.8vmin; margin-top: 1vmin;"
+        class="block w-full text-center font-black text-[#8B5A2B] tracking-[0.15em] drop-shadow-md transition-all duration-300 group-hover:text-[#A17A5A] group-hover:scale-105">
+        Forum
+      </span>
+    </button>
+  </div>
+  <!-- forum功能欄 -->
+
+  <!-- woman功能欄 -->
+  <div class="fixed z-40 pointer-events-auto transform-gpu"
+    style="top: 36vmin; left: 9vmin; width: 55vmin; height: 65vmin; will-change: transform;">
+    <button (click)="openActiveModal('FORUM')"
+      class="relative w-full h-full p-0 border-none bg-transparent cursor-pointer group outline-none">
+      <div class="relative w-full h-full transition-all duration-500 group-hover:-translate-y-4">
+        <img src="user/woman.png"
+          class="w-full h-full object-contain drop-shadow-2xl transition-transform duration-500 group-hover:scale-105">
+      </div>
+      <div style="width: 15vmin; height: 1vmin;"
+        class="bg-black/10 rounded-[100%] blur-xl mx-auto transition-all duration-500 group-hover:scale-150 group-hover:opacity-40">
+      </div>
+    </button>
+  </div>
+  <!-- woman功能欄 -->
+
+  <!-- camera功能欄 -->
+  <div class="fixed z-40 pointer-events-auto transform-gpu"
+    style="top: 62vmin; left: 68vmin; width: 45vmin; height: 45vmin; will-change: transform;">
+    <button (click)="openActiveModal('FORUM')"
+      class="relative w-full h-full p-0 border-none bg-transparent cursor-pointer group outline-none">
+      <div class="relative w-full h-full transition-all duration-500 group-hover:-translate-y-4">
+        <img src="user/camera.png"
+          class="w-full h-full object-contain drop-shadow-2xl transition-transform duration-500 group-hover:scale-105">
+      </div>
+      <div style="width: 10vmin; height: 1vmin;"
+        class="bg-black/10 rounded-[100%] blur-xl mx-auto transition-all duration-500 group-hover:scale-150 group-hover:opacity-40">
+      </div>
+    </button>
+  </div>
+  <!-- camera功能欄 -->
+
+  <!-- book功能欄 -->
+  <div class="fixed z-40 pointer-events-auto transform-gpu"
+    style="top: 73vmin; left: 95vmin; width: 35vmin; height: 35vmin; will-change: transform;">
+    <button (click)="openActiveModal('FORUM')"
+      class="relative w-full h-full p-0 border-none bg-transparent cursor-pointer group outline-none">
+      <div class="relative w-full h-full transition-all duration-500 group-hover:-translate-y-4">
+        <img src="user/book.png"
+          class="w-full h-full object-contain drop-shadow-2xl transition-transform duration-500 group-hover:scale-105">
+      </div>
+      <div style="width: 12vmin; height: 1vmin;"
+        class="bg-black/10 rounded-[100%] blur-xl mx-auto transition-all duration-500 group-hover:scale-150 group-hover:opacity-40">
+      </div>
+    </button>
+  </div>
+  <!-- book功能欄 -->
+
+  <!-- 登入功能欄 -->
+  <div class="fixed z-50 pointer-events-auto" style="bottom: 5vmin; right: 35vmin;">
+    <button (click)="openLoginModal()"
+      class="group relative px-[8vmin] py-[3vmin] bg-[#8B5A2B] rounded-full shadow-2xl hover:-translate-y-1 active:scale-95 transition-all duration-500 overflow-hidden border border-white/10">
+      <div
+        class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_2s_infinite]">
+      </div>
+      <span style="font-size: 2.2vmin;" class="relative z-10 text-white font-black tracking-[0.25em]">
+        登入
+      </span>
+    </button>
+  </div>
+  <!-- 登入功能欄 -->
+  <!-- 關於我們 -->
+  <div class="fixed z-50 pointer-events-auto" style="bottom: 5vmin; right: 7vmin;">
+    <button class="rounded-full px-[8vmin] py-[3vmin] font-black tracking-[0.25em] shadow-xl
+           border-[0.3vmin] border-black bg-[#F3B300] text-black
+
+           transition-all duration-500 ease-in-out
+           hover:bg-white hover:-translate-y-1 active:scale-95" style="font-size: 2vmin;"
+      onclick="carousel_modal.showModal()">
+      關於我們
+    </button>
+  </div>
+  <!-- 關於我們 -->
+
   <div class="absolute inset-0 z-10 pointer-events-none">
 
-    <div class="absolute top-[6%] left-[40%] pointer-events-auto">
+    <!-- <div class="absolute top-[6%] left-[40%] pointer-events-auto">
       <button routerLink="/house" class="group flex flex-col items-center gap-3 cursor-pointer">
         <div
           class="relative w-64 h-64 flex items-center justify-center bg-white/40 backdrop-blur-xl rounded-full border-2 border-white/60 shadow-xl group-hover:bg-white/70 group-hover:-translate-y-3 transition-all duration-500">
@@ -24,9 +174,9 @@
           Stay
         </span>
       </button>
-    </div>
+    </div> -->
 
-    <div class="absolute top-[18%] left-[54%] pointer-events-auto">
+    <!-- <div class="absolute top-[18%] left-[54%] pointer-events-auto">
       <button routerLink="/experience" class="group flex flex-col items-center gap-3 cursor-pointer">
         <div
           class="relative w-64 h-64 flex items-center justify-center bg-white/40 backdrop-blur-xl rounded-full border-2 border-white/60 shadow-xl group-hover:bg-white/70 group-hover:-translate-y-3 transition-all duration-500">
@@ -39,9 +189,9 @@
           Coach
         </span>
       </button>
-    </div>
+    </div> -->
 
-    <div class="absolute top-[28%] left-[68%] pointer-events-auto">
+    <!-- <div class="absolute top-[28%] left-[68%] pointer-events-auto">
       <button routerLink="/trip" class="group flex flex-col items-center gap-3 cursor-pointer">
         <div
           class="relative w-64 h-64 flex items-center justify-center bg-white/40 backdrop-blur-xl rounded-full border-2 border-white/60 shadow-xl group-hover:bg-white/70 group-hover:-translate-y-3 transition-all duration-500">
@@ -54,9 +204,9 @@
           Trip
         </span>
       </button>
-    </div>
+    </div> -->
 
-    <div class="absolute top-[15%] left-[82%] pointer-events-auto">
+    <!-- <div class="absolute top-[15%] left-[82%] pointer-events-auto">
       <button routerLink="/forum" class="group flex flex-col items-center gap-3 cursor-pointer">
         <div
           class="relative w-64 h-64 flex items-center justify-center bg-white/40 backdrop-blur-xl rounded-full border-2 border-white/60 shadow-xl group-hover:bg-white/70 group-hover:-translate-y-3 transition-all duration-500">
@@ -68,9 +218,10 @@
           Forum
         </span>
       </button>
-    </div>
+    </div> -->
 
-    <div class="absolute top-[40%] left-[5%] pointer-events-auto">
+    <!-- <div class="absolute top-[40%] left-[5%] pointer-events-auto">
+
       <button (click)="openActiveModal('FORUM')" class="group cursor-pointer outline-none">
 
         <div
@@ -85,8 +236,8 @@
         </div>
 
       </button>
-    </div>
-    <div class="absolute top-[50%] left-[38%] pointer-events-auto">
+    </div> -->
+    <!-- <div class="absolute top-[50%] left-[38%] pointer-events-auto">
       <button (click)="openActiveModal('FORUM')" class="group cursor-pointer outline-none">
 
         <div
@@ -101,8 +252,8 @@
         </div>
 
       </button>
-    </div>
-    <div class="absolute top-[78%] left-[48%] pointer-events-auto">
+    </div> -->
+    <!-- <div class="absolute top-[78%] left-[48%] pointer-events-auto">
       <button (click)="openActiveModal('FORUM')" class="group cursor-pointer outline-none">
 
         <div
@@ -117,11 +268,11 @@
         </div>
 
       </button>
-    </div>
+    </div> -->
   </div>
   <!-- 功能欄結尾 -->
   <!-- 開啟你的海邊之旅按鈕 -->
-  <div class="absolute bottom-10 right-80 z-20">
+  <!-- <div class="absolute bottom-10 right-80 z-20">
     <button (click)="openLoginModal()" class="group relative px-14 py-6 bg-[#8B5A2B] rounded-full shadow-[0_10px_40px_rgba(139,90,43,0.4)]
            hover:shadow-[0_20px_60px_rgba(139,90,43,0.6)] hover:-translate-y-1 active:scale-95
            transition-all duration-500 overflow-hidden border border-white/10">
@@ -140,10 +291,10 @@
       <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
     </button>
-  </div>
+  </div> -->
   <!-- 開啟你的海邊之旅按鈕結尾 -->
   <!-- 關於我們 -->
-  <div class="fixed bottom-10 right-10 z-20">
+  <!-- <div class="fixed bottom-10 right-10 z-20">
     <div class="fixed bottom-10 right-20 z-20">
       <button
         class="btn btn-lg border-none rounded-full px-14 h-20 text-xl font-black tracking-[0.25em] shadow-xl transition-all duration-300 hover:scale-105 active:scale-95"
@@ -192,7 +343,7 @@
         <button>close</button>
       </form>
     </dialog>
-  </div>
+  </div> -->
 
   <!-- 關於我們結束 -->
   <!-- 登入視窗是否開啟 -->
