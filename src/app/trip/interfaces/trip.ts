@@ -59,6 +59,7 @@ export interface TripDetail extends TripSummary {
   locations: TripLocation[];
   announcementCount: number;
   gearItemCount: number;
+  organizerProfilePicture: string | null;
 }
 
 // 成員

@@ -172,11 +172,13 @@
               [class.border-primary/20]="member.role === 'organizer'">
               <div class="avatar">
                 @if (member.profilePicture) {
-                <div class="w-10 rounded-full">
-                  <img [src]="member.profilePicture" [alt]="member.userName" />
+                <div class="w-10 h-10 rounded-full overflow-hidden shrink-0">
+                  <img [src]="getProfilePicture(member.profilePicture)" [alt]="member.userName"
+                    class="w-full h-full object-cover object-top" />
                 </div>
                 } @else {
-                <div class="w-10 rounded-full bg-primary text-primary-content font-bold text-sm avatar-placeholder">
+                <div
+                  class="w-10 h-10 rounded-full bg-primary text-primary-content font-bold text-sm avatar-placeholder flex items-center justify-center shrink-0">
                   <span>{{ getInitial(member.userName) }}</span>
                 </div>
                 }
@@ -245,8 +247,11 @@
           <!-- 主辦人 -->
           <div class="flex items-center gap-3 pb-3 border-b border-base-300">
             <div class="avatar">
-              <div class="w-10 rounded-full">
-                <img [src]="currentUserPicture" [alt]="currentUserName" />
+              <div class="avatar">
+                <div class="w-10 rounded-full overflow-hidden">
+                  <img [src]="getProfilePicture(trip.organizerProfilePicture)" [alt]="trip.organizerName"
+                    class="w-full h-full object-cover object-top" />
+                </div>
               </div>
             </div>
             <div>

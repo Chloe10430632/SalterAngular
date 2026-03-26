@@ -174,10 +174,10 @@ export const routes: Routes = [
           {
             path: 'detail/:id',
             children: [
-              {
-                path: '',
-                loadComponent: () => import('./trip/components/detail/detail').then(m => m.Detail), //行程詳情
-              },
+              // {
+              //   path: '',
+              //   loadComponent: () => import('./trip/components/detail/detail').then(m => m.Detail), //行程詳情
+              // },
               {
                 path: 'location',
                 loadComponent: () => import('./trip/components/location/location').then(m => m.Location), //地點頁面

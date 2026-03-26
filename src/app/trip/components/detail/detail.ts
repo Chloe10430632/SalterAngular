@@ -156,4 +156,10 @@ export class Detail implements OnInit {
     if (!this.trip) return 0;
     return this.trip.capacity - this.trip.memberCount;
   }
+
+  getProfilePicture(path: string | null): string {
+    if (!path) return '';
+    if (path.startsWith('http')) return path;
+    return `https://localhost:7017${path}`;
+  }
 }
