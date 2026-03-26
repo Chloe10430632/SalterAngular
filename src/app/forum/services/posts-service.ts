@@ -16,6 +16,38 @@ export class PostsService {
 
   constructor(private http: HttpClient) { }
 
+  //GET 使用者發佈的貼文
+  GetUserPostedPostApi(lastCreatedAt?: string, lastPostId?: number): Observable<PostList[]> {
+    let params = new HttpParams().set('sortBy', 'posted');
+    if (lastCreatedAt !== undefined && lastPostId !== undefined) {
+      params = params
+        .set('lastCreatedAt', lastCreatedAt.toString())
+        .set('lastId', lastPostId.toString());
+    }
+
+    const apiData$ = this.http.get<PostList[]>(`${environment.apiUrl}/Forum/Posts`, { params });
+    const minimumDelay$ = timer(1200);
+    return zip(apiData$, minimumDelay$).pipe(
+      map(([data, _]) => data)
+    );
+  }
+
+  //GET 使用者收藏的貼文
+  GetUserCollectPostApi(lastCreatedAt?: string, lastPostId?: number): Observable<PostList[]> {
+    let params = new HttpParams().set('sortBy', 'collect');
+    if (lastCreatedAt !== undefined && lastPostId !== undefined) {
+      params = params
+        .set('lastCreatedAt', lastCreatedAt.toString())
+        .set('lastId', lastPostId.toString());
+    }
+
+    const apiData$ = this.http.get<PostList[]>(`${environment.apiUrl}/Forum/Posts`, { params });
+    const minimumDelay$ = timer(1200);
+    return zip(apiData$, minimumDelay$).pipe(
+      map(([data, _]) => data)
+    );
+  }
+
   //GET 關鍵字搜尋貼文
   GetKeywordPostApi(kw: string, lastViewCount?: number, lastPostId?: number): Observable<PostList[]> {
     let params = new HttpParams().set('keyword', kw);
