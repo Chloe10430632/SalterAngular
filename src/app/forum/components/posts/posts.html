@@ -3,21 +3,22 @@
     <div class="join w-full">
       <input
         class="join-item btn btn-sm flex-1 btn-ghost border-b-2 border-transparent checked:border-primary checked:bg-transparent rounded-none font-bold"
-        type="radio" name="options" aria-label="熱門" [checked]="activeTab === 'popular'"
-        (change)="onTabChange('popular')" />
+        type="radio" name="options" aria-label="熱門" [checked]="queryPara === 'popular'" routerLink="/forum/posts"
+        [queryParams]="{ sortBy: 'popular' }" />
       <input
         class="join-item btn btn-sm flex-1 btn-ghost border-b-2 border-transparent checked:border-primary checked:bg-transparent rounded-none font-bold"
-        type="radio" name="options" aria-label="即時" [checked]="activeTab === 'new'" (change)="onTabChange('new')" />
+        type="radio" name="options" aria-label="即時" [checked]="queryPara === 'new'" routerLink="/forum/posts"
+        [queryParams]="{ sortBy: 'new' }" />
       <input
         class="join-item btn btn-sm flex-1 btn-ghost border-b-2 border-transparent checked:border-primary checked:bg-transparent rounded-none font-bold"
-        type="radio" name="options" aria-label="追蹤" [checked]="activeTab === 'follow'"
-        (change)="onTabChange('follow')" />
+        type="radio" name="options" aria-label="追蹤" [checked]="queryPara === 'follow'" routerLink="/forum/posts"
+        [queryParams]="{ sortBy: 'follow' }" />
     </div>
   </div>
 </div>
 <!-- 抽換內容: 貼文列表，觸發無限滾動的地方 -->
 <div class="bg-base-100 border border-base-300 rounded-xl overflow-hidden" infiniteScroll [infiniteScrollDistance]="3"
-  [infiniteScrollThrottle]="50" (scrolled)="onScroll()">
+  [infiniteScrollThrottle]="50" (scrolled)="loadMore()">
 
   <div class="card bg-base-100 rounded-xl overflow-hidden mb-4 hover:border-primary/30 transition-all duration-300">
     <div class="card-body p-4">

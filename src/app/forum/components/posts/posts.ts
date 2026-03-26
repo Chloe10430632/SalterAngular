@@ -5,7 +5,7 @@ import { Component, ElementRef, OnInit, signal, ViewChild } from '@angular/core'
 import { PostsService } from '../../services/posts-service';
 import { RelativeTimePipe } from '../../pipes/relative-time-pipe';
 import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { PostInteractionsService } from '../../services/post-interactions-service';
 import { PostInteractionsRequest } from '../../interfaces/postInteractionsRequest';
 import { ToastrService } from 'ngx-toastr';
@@ -28,8 +28,8 @@ export class Posts implements OnInit {
   /**目前使用者 */
   currentUser?: CurrentUser;
 
-  /**貼文篩選變數，預設為popular */
-  activeTab: 'popular' | 'new' | 'follow' = 'popular';
+  /**貼文篩選條件 */
+  queryPara?: 'popular' | 'new' | 'follow';
 
   /**後端伺服器PORT */
   backendServer = `${environment.domain}`;
@@ -56,56 +56,41 @@ export class Posts implements OnInit {
   // 暫存準備刪除的 ID
   private pendingDeletePostId?: number;
 
-
-
   constructor(
     private postsService: PostsService,
     private postInteractionsService: PostInteractionsService,
+    private activatedRoute: ActivatedRoute,
     private toastr: ToastrService,
     public authService: AuthService,
     private router: Router) { }
 
   ngOnInit(): void {
-    this.loadMore('popular');
+    this.activatedRoute.queryParams.subscribe((params) => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      this.queryPara = params['sortBy'] ?? 'popular';
+      this.resetAndLoad();
+    });
+
     this.authService.currentUser$.subscribe(data => {
       this.currentUser = data;
     });
   }
 
-  // 無限滾動被動載入資料
-  onScroll() {
-    if (this.activeTab === 'popular') {
-      this.loadMore('popular');
-    }
-
-    if (this.activeTab === 'new') {
-      this.loadMore('new');
-    }
-
-    if (this.activeTab === 'follow') {
-      this.loadMore('follow');
-    }
-  }
-
-  // 點擊切換 Tab 的時候觸發
-  onTabChange(tab: 'popular' | 'new' | 'follow') {
-    this.activeTab = tab;
-    // console.log('目前切換至：', this.activeTab);
-
+  /**切換貼文排序重置 */
+  private resetAndLoad() {
     this.postList = [];
     this.isFinished = false;
     this.isLoading = false;
-
-    this.loadMore(tab);
+    this.loadMore();
   }
 
-  //不同篩選條件執行分頁邏輯
-  loadMore(tab: 'popular' | 'new' | 'follow') {
+  /**不同篩選條件執行分頁邏輯 */
+  loadMore() {
     if (this.isLoading || this.isFinished) return;
     this.isLoading = true;
     const lastPost = this.postList[this.postList.length - 1];
 
-    if (this.activeTab === 'popular') {
+    if (this.queryPara === 'popular') {
       // 如果是第一次(lastPost 為 undefined)，Service會處理成不帶參數
       this.postsService.GetPopPostsApi(lastPost?.viewCount, lastPost?.postId)
         .subscribe({
@@ -125,7 +110,7 @@ export class Posts implements OnInit {
         });
     }
 
-    if (this.activeTab === 'new') {
+    if (this.queryPara === 'new') {
       this.postsService.GetNewPostsApi(lastPost?.createdAt, lastPost?.postId)
         .subscribe({
           next: (newPosts) => {
@@ -144,7 +129,7 @@ export class Posts implements OnInit {
         });
     }
 
-    if (this.activeTab === 'follow') {
+    if (this.queryPara === 'follow') {
       this.postsService.GetFollowPostsApi(lastPost?.createdAt, lastPost?.postId)
         .subscribe({
           next: (newPosts) => {
@@ -162,10 +147,7 @@ export class Posts implements OnInit {
           }
         });
     }
-
   }
-
-  /**刪除貼文 */
 
   //互動呼叫Api
   handleInteraction(post: PostList, type: string, reason?: string) {
@@ -298,8 +280,7 @@ export class Posts implements OnInit {
         this.toastr.info('您的貼文已刪除！');
 
         //重新渲染畫面
-        this.onTabChange(this.activeTab);
-        this.loadMore(this.activeTab);
+        this.resetAndLoad();
       }
     });
   }
