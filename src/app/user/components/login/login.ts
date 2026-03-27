@@ -179,15 +179,20 @@ export class Login implements OnInit {
         this.step = 2;
       },
       error: (err) => {
-        console.error(err);
-        alert('圖片處理失敗，請稍後再試');
+        // console.error(err);
+        // alert('圖片處理失敗，請稍後再試');
+        this.previewUrl = null;
+        this.selectedFile = null;
+        this.notification.show('圖片處理失敗，請稍後再試', 'error');
+
       }
     });
   }
 
   onRegister() {
     if (this.registerForm.value.password !== this.registerForm.value.confirmPassword) {
-      alert('兩次密碼輸入不一致');
+      // alert('兩次密碼輸入不一致');
+      this.notification.show('兩次密碼輸入不一致', 'error');
       return;
     }
 
@@ -229,7 +234,8 @@ export class Login implements OnInit {
         }
       });
     } else {
-      alert('請檢查欄位是否填寫正確');
+      // alert('請檢查欄位是否填寫正確');
+      this.notification.show('請檢查欄位是否填寫正確', 'error');
     }
 
   }
@@ -240,6 +246,7 @@ export class Login implements OnInit {
 
     if (this.registerForm.get('otp')?.invalid) {
       // alert('請輸入正確的 6 位數驗證碼');
+      this.notification.show('請輸入正確的 6 位數驗證碼', 'error');
       return;
     }
 
@@ -253,7 +260,7 @@ export class Login implements OnInit {
 
         this.isLoading = false;
         this.isSuccess = true;
-
+        this.notification.show('帳號註冊成功！歡迎加入 Salter', 'success');
         this.timerSubscription?.unsubscribe();
 
         setTimeout(() => {
@@ -269,7 +276,7 @@ export class Login implements OnInit {
         console.error('驗證失敗', err);
         // 顯示後端傳回來的錯誤訊息，例如「驗證碼過期」
         //alert(err.error?.message || '驗證失敗，請檢查驗證碼');
-
+        this.notification.show('驗證失敗，請檢查驗證碼', 'error');
         this.isLoading = false;
         this.isSuccess = false;
         this.registerForm.patchValue({ otp: '' });
@@ -315,7 +322,8 @@ export class Login implements OnInit {
     const emailValue = this.registerForm.get('email')?.value;
 
     if (!emailValue) {
-      alert('找不到 Email 資訊，請重新註冊');
+      // alert('找不到 Email 資訊，請重新註冊');
+      this.notification.show('找不到 Email 資訊，請重新註冊', 'error');
       this.step = 2;
       return;
     }
@@ -324,7 +332,8 @@ export class Login implements OnInit {
 
     this.userService.postResendOtp(resendData).subscribe({
       next: () => {
-        alert('新的驗證碼已寄送到您的信箱');
+        // alert('新的驗證碼已寄送到您的信箱');
+        this.notification.show('新的驗證碼已寄送到您的信箱', 'success');
         this.isResending = false;
         this.startTimer();
 
@@ -333,7 +342,8 @@ export class Login implements OnInit {
       error: (err) => {
         this.isResending = false;
         console.error('重發失敗', err);
-        alert(err.error?.message || '重發失敗，請稍後再試');
+        // alert(err.error?.message || '重發失敗，請稍後再試');
+        this.notification.show('重發失敗，請稍後再試', 'error');
       }
     })
 
@@ -362,7 +372,7 @@ export class Login implements OnInit {
         if ('token' in res) {
           // 狀況：登入成功
           this.authService.setCurrentUser(res.token);
-
+          this.notification.show('登入成功', 'success');
 
           this.isSuccess = true;
 
@@ -377,7 +387,7 @@ export class Login implements OnInit {
       error: (err) => {
         this.isLoading = false;
         const res = err.error as LoginResult;
-
+        const errMsg = err.error?.message || err.message || '登入失敗';
         // 💡 檢查是否為「需要驗證」的狀況 (403)
         if (res && 'status' in res && res.status === 'NeedVerification') {
           this.isRegistering = true;
@@ -401,6 +411,7 @@ export class Login implements OnInit {
         } else {
           // 一般錯誤 (400 或其他)
           // alert(res?.message || '登入失敗，請檢查網路連線');
+          this.notification.show(errMsg, 'error');
         }
       }
     });
@@ -540,7 +551,8 @@ export class Login implements OnInit {
 
   onSendForgotEmail() {
     if (this.forgotForm.controls.email.invalid) {
-      alert('請輸入正確的 Email');
+      // alert('請輸入正確的 Email');
+      this.notification.show('請輸入正確的 Email', 'error');
       return;
     }
 
@@ -558,19 +570,22 @@ export class Login implements OnInit {
       },
       error: (err) => {
         this.isLoading = false;
-        alert(err.error?.message || '發送失敗，請檢查 Email 是否正確');
+        // alert(err.error?.message || '發送失敗，請檢查 Email 是否正確');
+        this.notification.show('發送失敗，請檢查 Email 是否正確', 'error');
       }
     });
   }
 
   onResetPassword() {
     if (this.forgotForm.value.newPassword !== this.forgotForm.value.confirmPassword) {
-      alert('兩次密碼輸入不一致');
+      // alert('兩次密碼輸入不一致');
+      this.notification.show('兩次密碼輸入不一致', 'error');
       return;
     }
 
     if (this.forgotForm.invalid) {
-      alert('請填寫完整資訊');
+      // alert('請填寫完整資訊');
+      this.notification.show('請填寫完整資訊', 'error');
       return;
     }
 
@@ -585,6 +600,8 @@ export class Login implements OnInit {
       next: (res) => {
         this.isLoading = false;
         this.isSuccess = true;
+
+        this.notification.show('密碼修改成功！請使用新密碼登入', 'success');
 
         setTimeout(() => {
           // 回到登入表單狀態
@@ -601,7 +618,8 @@ export class Login implements OnInit {
       },
       error: (err) => {
         this.isLoading = false;
-        alert(err.error?.message || '驗證碼錯誤或已失效');
+        // alert(err.error?.message || '驗證碼錯誤或已失效');
+        this.notification.show('驗證碼錯誤或已失效', 'error');
       }
     });
   }
@@ -625,8 +643,8 @@ export class Login implements OnInit {
       error: (err) => {
         this.isLoading = false;
         // 這裡就是你說的錯誤處理：彈出後端回傳的錯誤訊息
-        alert(err.error?.message || '驗證碼錯誤，請重新輸入');
-
+        // alert(err.error?.message || '驗證碼錯誤，請重新輸入');
+        this.notification.show('驗證碼錯誤，請重新輸入', 'error');
         this.forgotForm.patchValue({ otp: '' });
       }
     });
@@ -638,7 +656,8 @@ export class Login implements OnInit {
 
     const email = this.forgotForm.get('email')?.value;
     if (!email) {
-      alert('找不到 Email 資訊，請返回第一步');
+      // alert('找不到 Email 資訊，請返回第一步');
+      this.notification.show('找不到 Email 資訊，請返回第一步', 'error');
       this.forgotStep = 1;
       return;
     }
@@ -646,40 +665,48 @@ export class Login implements OnInit {
     this.isResending = true;
     this.userService.forgotPassword({ email }).subscribe({
       next: () => {
-        alert('新的驗證碼已寄出');
+        // alert('新的驗證碼已寄出');
+        this.notification.show('新的驗證碼已寄出', 'success');
         this.isResending = false;
         this.startTimer(); // 重新開始倒數 180 秒
         this.forgotForm.patchValue({ otp: '' }); // 清空舊的 OTP
       },
       error: (err) => {
         this.isResending = false;
-        alert(err.error?.message || '重發失敗，請稍後再試');
+        // alert(err.error?.message || '重發失敗，請稍後再試');
+        this.notification.show('重發失敗，請稍後再試', 'error');
       }
     });
   }
 
   currentIndex: number = 0;
 
-  public moveSlide(direction: number): void {
-    const container = document.getElementById('carousel_container') as HTMLElement | null;
+  private indices: { [key: string]: number } = {};
+
+  public moveSlide(direction: number, elementId: string): void {
+    const container = document.getElementById(elementId) as HTMLElement | null;
     if (!container) return;
 
-    // 取得所有輪播項目
+    // 如果這個 ID 還沒被記錄過，初始化為 0
+    if (this.indices[elementId] === undefined) {
+      this.indices[elementId] = 0;
+    }
+
     const items = container.querySelectorAll('.carousel-item');
     const totalItems = items.length;
+    if (totalItems === 0) return;
 
-    // 計算下一個索引（包含循環邏輯：最後一張點「下」會回第一張）
-    this.currentIndex = (this.currentIndex + direction + totalItems) % totalItems;
+    // 針對該 ID 計算下一個索引
+    this.indices[elementId] = (this.indices[elementId] + direction + totalItems) % totalItems;
 
-    // 計算捲動位置：索引 * 容器寬度
-    const scrollAmount = this.currentIndex * container.offsetWidth;
+    // 計算捲動位置
+    const scrollAmount = this.indices[elementId] * container.offsetWidth;
 
     container.scrollTo({
       left: scrollAmount,
       behavior: 'smooth'
     });
   }
-
 
 
 

@@ -1,17 +1,213 @@
 <div class="relative w-screen h-screen overflow-hidden bg-gradient-to-br from-cyan-100 to-white">
   <img src="user/login6.png" class="absolute inset-0 w-full h-[calc(100%+50px)] " style="top: -25px;" />
 
-  <div class="absolute top-20 left-50 z-20">
+  <!-- logo功能欄 -->
+  <div class="absolute z-50 pointer-events-auto" style="top: 8vmin; left: 15vmin;">
     <a routerLink="/" class="flex items-center hover:scale-105 transition-transform">
-      <img src="salter-logo.svg" alt="Salter Logo" class="w-64 drop-shadow-md">
+      <img src="salter-logo.svg" alt="Salter Logo" style="width: 35vmin; min-width: 150px;" class="drop-shadow-md">
     </a>
   </div>
+  <!-- logo功能欄 -->
 
+  <!-- house功能欄 -->
+  <div class="fixed z-50 pointer-events-auto"
+    style="top: 3vmin; left: 80vmin; width: 30vmin; height: 38vmin; transform: translateZ(0); will-change: transform;">
 
-  <!-- 功能欄 -->
+    <button routerLink="/house" class="relative w-full h-full p-0 border-none bg-transparent cursor-pointer group">
+
+      <div style="width: 30vmin; height: 30vmin;" class="relative mx-auto flex items-center justify-center bg-white/60 backdrop-blur-md rounded-full border-[0.3vmin] border-white/60 shadow-xl
+             transition-all duration-500 ease-in-out
+             group-hover:bg-white/80 group-hover:-translate-y-[2vmin]">
+
+        <img src="user/stay2.png" style="width: 95%; height: 95%; transform-origin: center center;" class="object-contain transition-transform duration-500 ease-in-out
+               group-hover:scale-110 group-hover:rotate-6">
+      </div>
+
+      <span style="font-size: 3.5vmin; margin-top: 1vmin;"
+        class="block w-full text-center font-black text-[#8B5A2B] tracking-widest drop-shadow-md transition-colors duration-300 group-hover:text-[#A17A5A]">
+        Stay
+      </span>
+    </button>
+  </div>
+  <!-- house功能欄 -->
+
+  <!-- coach功能欄 -->
+  <div class="fixed z-50 pointer-events-auto transform-gpu"
+    style="top: 16vmin; left: 110vmin; width: 25vmin; height: 32vmin; will-change: transform;">
+    <button routerLink="/experience" class="relative w-full h-full p-0 border-none bg-transparent cursor-pointer group">
+      <div style="width: 30vmin; height: 30vmin; border-width: 0.2vmin;"
+        class="relative mx-auto flex items-center justify-center bg-white/40 backdrop-blur-md rounded-full border-white/60 shadow-xl transition-all duration-500 group-hover:bg-white/70 group-hover:-translate-y-[1.5vmin]">
+        <img src="user/coach2.png"
+          style="width: 95%; height: 95%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"
+          class="object-contain transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6">
+      </div>
+      <span style="font-size: 2.8vmin; margin-top: 1vmin;"
+        class="block w-full text-center font-black text-[#8B5A2B] tracking-[0.15em] drop-shadow-md transition-all duration-300 group-hover:text-[#A17A5A] group-hover:scale-105">
+        Coach
+      </span>
+    </button>
+  </div>
+  <!-- coach功能欄 -->
+
+  <!-- trip功能欄 -->
+  <div class="fixed z-50 pointer-events-auto transform-gpu"
+    style="top: 25vmin; left: 141vmin; width: 25vmin; height: 32vmin; will-change: transform;">
+    <button routerLink="/trip" class="relative w-full h-full p-0 border-none bg-transparent cursor-pointer group">
+      <div style="width:30vmin; height: 30vmin; border-width: 0.2vmin;"
+        class="relative mx-auto flex items-center justify-center bg-white/40 backdrop-blur-md rounded-full border-white/60 shadow-xl transition-all duration-500 group-hover:bg-white/70 group-hover:-translate-y-[1.5vmin]">
+        <img src="user/trip2.png"
+          style="width: 95%; height: 95%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"
+          class="object-contain transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6">
+      </div>
+      <span style="font-size: 2.8vmin; margin-top: 1vmin;"
+        class="block w-full text-center font-black text-[#8B5A2B] tracking-[0.15em] drop-shadow-md transition-all duration-300 group-hover:text-[#A17A5A] group-hover:scale-105">
+        Trip
+      </span>
+    </button>
+  </div>
+  <!-- trip功能欄 -->
+
+  <!-- forum功能欄 -->
+  <div class="fixed z-50 pointer-events-auto transform-gpu"
+    style="top: 12vmin; left: 172vmin; width: 25vmin; height: 32vmin; will-change: transform;">
+    <button routerLink="/forum" class="relative w-full h-full p-0 border-none bg-transparent cursor-pointer group">
+      <div style="width: 30vmin; height: 30vmin; border-width: 0.2vmin;"
+        class="relative mx-auto flex items-center justify-center bg-white/40 backdrop-blur-md rounded-full border-white/60 shadow-xl transition-all duration-500 group-hover:bg-white/70 group-hover:-translate-y-[1.5vmin]">
+        <img src="user/forum2.png"
+          style="width: 95%; height: 95%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"
+          class="object-contain transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6">
+      </div>
+      <span style="font-size: 2.8vmin; margin-top: 1vmin;"
+        class="block w-full text-center font-black text-[#8B5A2B] tracking-[0.15em] drop-shadow-md transition-all duration-300 group-hover:text-[#A17A5A] group-hover:scale-105">
+        Forum
+      </span>
+    </button>
+  </div>
+  <!-- forum功能欄 -->
+
+  <!-- woman功能欄 -->
+  <div class="fixed z-40 pointer-events-auto transform-gpu"
+    style="top: 36vmin; left: 9vmin; width: 55vmin; height: 65vmin; will-change: transform;">
+    <button (click)="openActiveModal('FORUM')"
+      class="relative w-full h-full p-0 border-none bg-transparent cursor-pointer group outline-none">
+      <div class="relative w-full h-full transition-all duration-500 group-hover:-translate-y-4">
+        <img src="user/woman.png"
+          class="w-full h-full object-contain drop-shadow-2xl transition-transform duration-500 group-hover:scale-105">
+      </div>
+      <div style="width: 15vmin; height: 1vmin;"
+        class="bg-black/10 rounded-[100%] blur-xl mx-auto transition-all duration-500 group-hover:scale-150 group-hover:opacity-40">
+      </div>
+    </button>
+  </div>
+  <!-- woman功能欄 -->
+
+  <!-- camera功能欄 -->
+  <div class="fixed z-40 pointer-events-auto transform-gpu"
+    style="top: 60vmin; left: 72vmin; width: 35vmin; height: 45vmin; will-change: transform;">
+
+    <button onclick="camera_modal.showModal()"
+      class="relative w-full h-full p-0 border-none bg-transparent cursor-pointer group outline-none">
+
+      <div class="relative w-full h-full transition-all duration-500 group-hover:-translate-y-4">
+        <img src="user/camera.png"
+          class="w-full h-full object-contain drop-shadow-2xl transition-transform duration-500 group-hover:scale-105">
+      </div>
+
+      <div style="width: 10vmin; height: 1vmin;"
+        class="bg-black/10 rounded-[100%] blur-xl mx-auto transition-all duration-500 group-hover:scale-150 group-hover:opacity-40">
+      </div>
+    </button>
+  </div>
+  <!-- camera功能欄 -->
+
+  <!-- book功能欄 -->
+  <div class="fixed z-40 pointer-events-auto transform-gpu"
+    style="top: 73vmin; left: 95vmin; width: 35vmin; height: 35vmin; will-change: transform;">
+
+    <button onclick="book_modal.showModal()"
+      class="relative w-full h-full p-0 border-none bg-transparent cursor-pointer group outline-none">
+      <div class="relative w-full h-full transition-all duration-500 group-hover:-translate-y-4">
+        <img src="user/book.png"
+          class="w-full h-full object-contain drop-shadow-2xl transition-transform duration-500 group-hover:scale-105">
+      </div>
+      <div style="width: 12vmin; height: 1vmin;"
+        class="bg-black/10 rounded-[100%] blur-xl mx-auto transition-all duration-500 group-hover:scale-150 group-hover:opacity-40">
+      </div>
+    </button>
+  </div>
+  <!-- book功能欄 -->
+
+  <!-- 登入功能欄 -->
+  <div class="fixed z-50 pointer-events-auto" style="bottom: 5vmin; right: 35vmin;">
+    <button (click)="openLoginModal()"
+      class="group relative px-[8vmin] py-[3vmin] bg-[#8B5A2B] rounded-full shadow-2xl hover:-translate-y-1 active:scale-95 transition-all duration-500 overflow-hidden border border-white/10">
+      <div
+        class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_2s_infinite]">
+      </div>
+      <span style="font-size: 2.2vmin;" class="relative z-10 text-white font-black tracking-[0.25em]">
+        登入
+      </span>
+    </button>
+  </div>
+  <!-- 登入功能欄 -->
+  <!-- 關於我們 -->
+  <div class="fixed z-50 pointer-events-auto" style="bottom: 5vmin; right: 7vmin;">
+    <button class="rounded-full px-[8vmin] py-[3vmin] font-black tracking-[0.25em] shadow-xl
+           border-[0.3vmin] border-black text-black bg-[#F3B300]
+           transition-all duration-500 ease-in-out
+           hover:bg-white hover:-translate-y-1 active:scale-95" style="font-size: 2vmin;"
+      onclick="carousel_modal.showModal()">
+      關於我們
+    </button>
+
+    <dialog id="carousel_modal" class="modal">
+      <div class="modal-box p-0 w-[800px] max-w-none h-[800px] overflow-hidden rounded-2xl relative bg-black">
+
+        <div id="carousel_container" class="carousel w-full h-full flex flex-nowrap overflow-hidden">
+          <div class="carousel-item w-full h-full flex-shrink-0">
+            <img src="user/talk.png" class="w-full h-full object-cover" />
+          </div>
+          <div class="carousel-item w-full h-full flex-shrink-0">
+            <img src="user/pain.png" class="w-full h-full object-cover" />
+          </div>
+          <div class="carousel-item w-full h-full flex-shrink-0">
+            <img src="user/go.png" class="w-full h-full object-cover" />
+          </div>
+          <div class="carousel-item w-full h-full flex-shrink-0">
+            <img src="user/play.png" class="w-full h-full object-cover" />
+          </div>
+          <div class="carousel-item w-full h-full flex-shrink-0">
+            <img src="user/house.png" class="w-full h-full object-cover" />
+          </div>
+          <div class="carousel-item w-full h-full flex-shrink-0">
+            <img src="user/post.png" class="w-full h-full object-cover" />
+          </div>
+        </div>
+
+        <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 justify-between pointer-events-none">
+          <button (click)="moveSlide(-1, 'carousel_container')"
+            class="btn btn-circle btn-black/30 text-white pointer-events-auto border-none">❮</button>
+          <button (click)="moveSlide(1, 'carousel_container')"
+            class="btn btn-circle btn-black/30 text-white pointer-events-auto border-none">❯</button>
+        </div>
+
+        <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+          <span class="badge badge-xs bg-white/50"></span>
+          <span class="badge badge-xs bg-white"></span>
+          <span class="badge badge-xs bg-white/50"></span>
+        </div>
+      </div>
+
+      <form method="dialog" class="modal-backdrop bg-black/80 backdrop-blur-sm">
+        <button>close</button>
+      </form>
+    </dialog>
+  </div>
+  <!-- 關於我們 -->
+
   <div class="absolute inset-0 z-10 pointer-events-none">
 
-    <div class="absolute top-[6%] left-[40%] pointer-events-auto">
+    <!-- <div class="absolute top-[6%] left-[40%] pointer-events-auto">
       <button routerLink="/house" class="group flex flex-col items-center gap-3 cursor-pointer">
         <div
           class="relative w-64 h-64 flex items-center justify-center bg-white/40 backdrop-blur-xl rounded-full border-2 border-white/60 shadow-xl group-hover:bg-white/70 group-hover:-translate-y-3 transition-all duration-500">
@@ -24,9 +220,9 @@
           Stay
         </span>
       </button>
-    </div>
+    </div> -->
 
-    <div class="absolute top-[18%] left-[54%] pointer-events-auto">
+    <!-- <div class="absolute top-[18%] left-[54%] pointer-events-auto">
       <button routerLink="/experience" class="group flex flex-col items-center gap-3 cursor-pointer">
         <div
           class="relative w-64 h-64 flex items-center justify-center bg-white/40 backdrop-blur-xl rounded-full border-2 border-white/60 shadow-xl group-hover:bg-white/70 group-hover:-translate-y-3 transition-all duration-500">
@@ -39,9 +235,9 @@
           Coach
         </span>
       </button>
-    </div>
+    </div> -->
 
-    <div class="absolute top-[28%] left-[68%] pointer-events-auto">
+    <!-- <div class="absolute top-[28%] left-[68%] pointer-events-auto">
       <button routerLink="/trip" class="group flex flex-col items-center gap-3 cursor-pointer">
         <div
           class="relative w-64 h-64 flex items-center justify-center bg-white/40 backdrop-blur-xl rounded-full border-2 border-white/60 shadow-xl group-hover:bg-white/70 group-hover:-translate-y-3 transition-all duration-500">
@@ -54,9 +250,9 @@
           Trip
         </span>
       </button>
-    </div>
+    </div> -->
 
-    <div class="absolute top-[15%] left-[82%] pointer-events-auto">
+    <!-- <div class="absolute top-[15%] left-[82%] pointer-events-auto">
       <button routerLink="/forum" class="group flex flex-col items-center gap-3 cursor-pointer">
         <div
           class="relative w-64 h-64 flex items-center justify-center bg-white/40 backdrop-blur-xl rounded-full border-2 border-white/60 shadow-xl group-hover:bg-white/70 group-hover:-translate-y-3 transition-all duration-500">
@@ -68,9 +264,10 @@
           Forum
         </span>
       </button>
-    </div>
+    </div> -->
 
-    <div class="absolute top-[40%] left-[5%] pointer-events-auto">
+    <!-- <div class="absolute top-[40%] left-[5%] pointer-events-auto">
+
       <button (click)="openActiveModal('FORUM')" class="group cursor-pointer outline-none">
 
         <div
@@ -85,8 +282,8 @@
         </div>
 
       </button>
-    </div>
-    <div class="absolute top-[50%] left-[38%] pointer-events-auto">
+    </div> -->
+    <!-- <div class="absolute top-[50%] left-[38%] pointer-events-auto">
       <button (click)="openActiveModal('FORUM')" class="group cursor-pointer outline-none">
 
         <div
@@ -101,8 +298,8 @@
         </div>
 
       </button>
-    </div>
-    <div class="absolute top-[78%] left-[48%] pointer-events-auto">
+    </div> -->
+    <!-- <div class="absolute top-[78%] left-[48%] pointer-events-auto">
       <button (click)="openActiveModal('FORUM')" class="group cursor-pointer outline-none">
 
         <div
@@ -117,11 +314,11 @@
         </div>
 
       </button>
-    </div>
+    </div> -->
   </div>
   <!-- 功能欄結尾 -->
   <!-- 開啟你的海邊之旅按鈕 -->
-  <div class="absolute bottom-10 right-80 z-20">
+  <!-- <div class="absolute bottom-10 right-80 z-20">
     <button (click)="openLoginModal()" class="group relative px-14 py-6 bg-[#8B5A2B] rounded-full shadow-[0_10px_40px_rgba(139,90,43,0.4)]
            hover:shadow-[0_20px_60px_rgba(139,90,43,0.6)] hover:-translate-y-1 active:scale-95
            transition-all duration-500 overflow-hidden border border-white/10">
@@ -134,16 +331,16 @@
 
       <span
         class="relative z-10 text-white font-black text-2xl tracking-[0.25em] drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]">
-        開啟你的海邊之旅
+        登入
       </span>
 
       <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
     </button>
-  </div>
+  </div> -->
   <!-- 開啟你的海邊之旅按鈕結尾 -->
   <!-- 關於我們 -->
-  <div class="fixed bottom-10 right-10 z-20">
+  <!-- <div class="fixed bottom-10 right-10 z-20">
     <div class="fixed bottom-10 right-20 z-20">
       <button
         class="btn btn-lg border-none rounded-full px-14 h-20 text-xl font-black tracking-[0.25em] shadow-xl transition-all duration-300 hover:scale-105 active:scale-95"
@@ -192,7 +389,7 @@
         <button>close</button>
       </form>
     </dialog>
-  </div>
+  </div> -->
 
   <!-- 關於我們結束 -->
   <!-- 登入視窗是否開啟 -->
@@ -213,10 +410,10 @@
         <img src="salter-logo.svg" alt="Salter Logo" class="w-40 mx-auto mb-6 drop-shadow-sm">
         <h2 class="text-4xl font-black text-[#8B5A2B]">
           @if (isForgotPassword) { 找回密碼 }
-          @else if (isRegistering) { Create Account }
-          @else { Welcome Back }
+          @else if (isRegistering) { 建立帳戶 }
+          @else { 歡迎回來 }
         </h2>
-        <p class="text-slate-400 font-bold mt-3 text-sm tracking-[0.2em] uppercase">
+        <p class="text-slate-400 font-bold mt-3 text-base tracking-[0.2em] uppercase">
           @if (isForgotPassword) { 請驗證您的電子信箱 }
           @else if (isRegistering) { 開啟新的冒險之旅 }
           @else { 準備好開啟新的海洋冒險了嗎？ }
@@ -241,8 +438,8 @@
             </div>
             }
             <span
-              class="text-[12px] font-black uppercase tracking-widest {{ forgotStep >= s ? 'text-[#8B5A2B]' : 'text-[#C1A88E]' }}">
-              {{ s === 1 ? 'Email' : s === 2 ? 'Verify' : 'Reset' }}
+              class="text-[14px] font-black uppercase tracking-widest {{ forgotStep >= s ? 'text-[#8B5A2B]' : 'text-[#C1A88E]' }}">
+              {{ s === 1 ? '輸入註冊信箱' : s === 2 ? 'OTP驗證' : '變更密碼' }}
             </span>
           </div>
           }
@@ -252,14 +449,13 @@
           @if (forgotStep === 1) {
           <div class="space-y-6 animate-in fade-in duration-300">
             <div class="space-y-2">
-              <label class="block text-sm font-black text-[#5D4037] ml-2 tracking-widest uppercase">Registered
-                Email</label>
+              <label class="block text-base font-black text-[#5D4037] ml-2 tracking-widest uppercase">請輸入註冊信箱</label>
 
               <input type="email" formControlName="email" class="w-full h-16 px-8 bg-white border-2 transition-all outline-none rounded-3xl font-bold
       {{ (forgotForm.get('email')?.touched && forgotForm.get('email')?.invalid)
          ? 'border-red-500 bg-red-50 shadow-[0_0_0_4px_rgba(239,68,68,0.1)]'
          : 'border-[#8B5A2B]/40 focus:border-[#8B5A2B] focus:shadow-[0_0_0_4px_rgba(139,90,43,0.1)]' }}"
-                placeholder="example@mail.com" />
+                placeholder="example@gmail.com" />
 
               @if (forgotForm.get('email')?.touched && forgotForm.get('email')?.invalid) {
               <div class="flex items-center gap-2 ml-2 mt-1 animate-in slide-in-from-left-2 duration-300">
@@ -297,10 +493,10 @@
           @if (forgotStep === 2) {
           <div class="flex flex-col items-center gap-8 animate-in zoom-in-95 duration-500">
             <div class="text-center space-y-2">
-              <p class="font-black text-slate-700 text-lg text-[25px]">Verification Code Sent!</p>
+              <p class="font-black text-slate-700 text-lg text-[25px]">驗證碼已發送！</p>
               <div class="flex flex-col items-center gap-1">
                 <p class="text-[20px] text-slate-400 font-black tracking-widest uppercase">
-                  Expires in: <span class="text-[#8B5A2B] font-mono text-base text-[23px]">{{ formatTime }}</span>
+                  到期時間: <span class="text-[#8B5A2B] font-mono text-base text-[23px]">{{ formatTime }}</span>
                 </p>
               </div>
             </div>
@@ -319,7 +515,7 @@
                 <span class="loading loading-spinner"></span>
                 <span>Verifying...</span>
                 } @else {
-                <span>Next: Reset Password</span>
+                <span>確認驗證碼</span>
                 }
               </button>
 
@@ -330,11 +526,11 @@
                 </button>
 
                 <button type="button" (click)="onResendForgotOtp()" [disabled]="!canResend || isResending"
-                  class="h-14 bg-white border-2 border-slate-100 text-black rounded-2xl font-black text-xs hover:bg-slate-50 transition-all disabled:opacity-50">
+                  class="h-14 bg-white border-2 border-slate-100 text-black rounded-2xl font-black text-base hover:bg-slate-50 transition-all disabled:opacity-50">
                   @if (isResending) {
                   <span class="loading loading-spinner loading-xs"></span>
                   } @else if (!canResend) {
-                  {{ formatTime }} 後重發
+                  {{ formatTime }} 後重可發
                   } @else {
                   重新發送驗證碼
                   }
@@ -347,12 +543,12 @@
           @if (forgotStep === 3) {
           <div class="space-y-6 animate-in slide-in-from-right-4 duration-500">
             <div class="space-y-2">
-              <label class="block text-sm font-black text-[#5D4037] ml-2 tracking-widest uppercase">New Password
+              <label class="block text-base font-black text-[#5D4037] ml-2 tracking-widest uppercase">新密碼
                 *</label>
               <div class="relative group">
                 <input [type]="isRegPasswordVisible ? 'text' : 'password'" formControlName="newPassword"
                   class="w-full h-16 px-8 bg-white border-2 transition-all outline-none rounded-3xl font-bold
-          {{ (forgotForm.get('newPassword')?.touched && forgotForm.get('newPassword')?.invalid) ? 'border-red-400 bg-red-50/30' : 'border-[#8B5A2B]/40 focus:border-[#8B5A2B]' }}" placeholder="••••••••" />
+          {{ (forgotForm.get('newPassword')?.touched && forgotForm.get('newPassword')?.invalid) ? 'border-red-400 bg-red-50/30' : 'border-[#8B5A2B]/40 focus:border-[#8B5A2B]' }}" />
 
                 <button type="button" (click)="toggleRegPassword()"
                   class="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#8B5A2B] transition-colors p-2">
@@ -378,13 +574,12 @@
             </div>
 
             <div class="space-y-2">
-              <label class="block text-sm font-black text-[#5D4037] ml-2 tracking-widest uppercase">Confirm Password
+              <label class="block text-base font-black text-[#5D4037] ml-2 tracking-widest uppercase">重新輸入密碼
                 *</label>
               <div class="relative group">
                 <input [type]="isRegConfirmVisible ? 'text' : 'password'" formControlName="confirmPassword"
                   class="w-full h-16 px-8 bg-white border-2 transition-all outline-none rounded-3xl font-bold
-          {{ (forgotForm.get('confirmPassword')?.touched && (forgotForm.get('confirmPassword')?.value !== forgotForm.get('newPassword')?.value)) ? 'border-red-400 bg-red-50/30' : 'border-[#8B5A2B]/40 focus:border-[#8B5A2B]' }}"
-                  placeholder="••••••••" />
+          {{ (forgotForm.get('confirmPassword')?.touched && (forgotForm.get('confirmPassword')?.value !== forgotForm.get('newPassword')?.value)) ? 'border-red-400 bg-red-50/30' : 'border-[#8B5A2B]/40 focus:border-[#8B5A2B]' }}" />
 
                 <button type="button" (click)="toggleRegConfirm()"
                   class="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#8B5A2B] transition-colors p-2">
@@ -459,9 +654,9 @@
               </div>
           </div>
           }
-          <span class="text-[12px] font-black uppercase tracking-widest transition-colors duration-500
+          <span class="text-[15px] font-black uppercase tracking-widest transition-colors duration-500
                    {{ step >= s ? 'text-[#8B5A2B]' : 'text-[#C1A88E]' }}">
-            {{ s === 1 ? 'Avatar' : s === 2 ? 'Details' : 'Verify' }}
+            {{ s === 1 ? '上傳大頭像' : s === 2 ? '填寫基本資料' : 'OTP驗證' }}
           </span>
         </div>
         }
@@ -485,10 +680,10 @@
               <input type="file" class="hidden" (change)="onFileSelected($event)" accept="image/*" />
             </label>
           </div>
-          <p class="text-slate-400 font-bold text-sm">挑選一張最帥的海邊頭像</p>
+          <p class="text-slate-400 font-bold text-base">挑選一張最帥的海邊頭像</p>
           <button type="button" (click)="nextStep()" [disabled]="!isPictureUploaded"
             class="px-14 py-4 bg-[#8B5A2B] text-white rounded-2xl font-black tracking-widest hover:shadow-xl transition-all disabled:opacity-50">
-            Next Step
+            下一步
           </button>
         </div>
         }
@@ -499,7 +694,7 @@
             <div class="grid grid-cols-2 gap-x-4 gap-y-4 py-2 animate-in fade-in duration-500"
               [formGroup]="registerForm">
               <div class="col-span-2 space-y-1">
-                <label class="text-[15px] font-black text-[#8B5A2B] ml-2 tracking-widest uppercase">Email *</label>
+                <label class="text-[15px] font-black text-[#8B5A2B] ml-2 tracking-widest uppercase">電子信箱 *</label>
                 <input type="email" formControlName="email" placeholder="hello@gmail.com"
                   class="w-full h-11 px-6 bg-white rounded-2xl border-2 transition-all outline-none font-bold
                   {{ (registerForm.get('email')?.touched && registerForm.get('email')?.invalid) ? 'border-red-400 bg-red-50/30' : 'border-[#8B5A2B]/40 focus:border-[#8B5A2B]' }}" />
@@ -508,10 +703,9 @@
                 }
               </div>
               <div class="space-y-1">
-                <label class="text-[15px] font-black text-[#8B5A2B] ml-2 tracking-widest uppercase">Password *</label>
+                <label class="text-[15px] font-black text-[#8B5A2B] ml-2 tracking-widest uppercase">密碼 *</label>
                 <div class="relative">
                   <input [type]="isRegPasswordVisible ? 'text' : 'password'" formControlName="password"
-                    placeholder="••••••••"
                     class="w-full h-11 px-6 pr-14 bg-white rounded-2xl border-2 transition-all outline-none font-bold
                       {{ (registerForm.get('password')?.touched && registerForm.get('password')?.invalid) ? 'border-red-400 bg-red-50/30' : 'border-[#8B5A2B]/40 focus:border-[#8B5A2B]' }}" />
                   <button type="button" (click)="toggleRegPassword()"
@@ -538,10 +732,9 @@
                 }
               </div>
               <div class="space-y-1">
-                <label class="text-[15px] font-black text-[#8B5A2B] ml-2 tracking-widest uppercase">Confirm *</label>
+                <label class="text-[15px] font-black text-[#8B5A2B] ml-2 tracking-widest uppercase">重新輸入密碼 *</label>
                 <div class="relative">
                   <input [type]="isRegConfirmVisible ? 'text' : 'password'" formControlName="confirmPassword"
-                    placeholder="••••••••"
                     class="w-full h-11 px-6 pr-14 bg-white rounded-2xl border-2 transition-all outline-none font-bold
                       {{ (registerForm.get('confirmPassword')?.touched && (registerForm.get('confirmPassword')?.value !== registerForm.get('password')?.value)) ? 'border-red-400 bg-red-50/30' : 'border-[#8B5A2B]/40 focus:border-[#8B5A2B]' }}" />
                   <button type="button" (click)="toggleRegConfirm()"
@@ -569,7 +762,7 @@
                 }
               </div>
               <div class="space-y-1">
-                <label class="text-[15px] font-black text-[#8B5A2B] ml-2 tracking-widest uppercase">Username *</label>
+                <label class="text-[15px] font-black text-[#8B5A2B] ml-2 tracking-widest uppercase">會員名稱 *</label>
                 <input type="text" formControlName="userName" placeholder="Your Name"
                   class="w-full h-11 px-6 bg-white rounded-2xl border-2 transition-all outline-none font-bold
                   {{ (registerForm.get('userName')?.touched && registerForm.get('userName')?.invalid) ? 'border-red-400 bg-red-50/30' : 'border-[#8B5A2B]/40 focus:border-[#8B5A2B]' }}" />
@@ -578,17 +771,17 @@
                 }
               </div>
               <div class="space-y-1">
-                <label class="text-[15px] font-black text-[#8B5A2B] ml-2 tracking-widest uppercase">Phone</label>
+                <label class="text-[15px] font-black text-[#8B5A2B] ml-2 tracking-widest uppercase">電話</label>
                 <input type="text" formControlName="phone" placeholder="0912..."
                   class="w-full h-11 px-6 bg-white rounded-2xl border-2 border-[#8B5A2B]/40 focus:border-[#8B5A2B] outline-none font-bold transition-all" />
               </div>
               <div class="space-y-1">
-                <label class="text-[15px] font-black text-[#8B5A2B] ml-2 tracking-widest uppercase">Birthday</label>
+                <label class="text-[15px] font-black text-[#8B5A2B] ml-2 tracking-widest uppercase">生日</label>
                 <input type="date" formControlName="birthday"
                   class="w-full h-11 px-6 bg-white rounded-2xl border-2 border-[#8B5A2B]/40 focus:border-[#8B5A2B] outline-none font-bold transition-all" />
               </div>
               <div class="space-y-1">
-                <label class="text-[15px] font-black text-[#8B5A2B] ml-2 tracking-widest uppercase">Gender</label>
+                <label class="text-[15px] font-black text-[#8B5A2B] ml-2 tracking-widest uppercase">性別</label>
                 <div class="relative custom-select-wrapper">
                   <select formControlName="gender"
                     class="select select-bordered w-full h-11 px-6 pr-10 bg-white rounded-2xl border-2 border-[#8B5A2B]/40 focus:border-[#8B5A2B] focus:outline-none font-bold transition-all appearance-none">
@@ -622,10 +815,10 @@
         @if (step === 3) {
         <div class="flex flex-col items-center gap-8 animate-in zoom-in-95 duration-500">
           <div class="text-center space-y-2">
-            <p class="font-black text-slate-700 text-lg text-[25px]">Verification Code Sent!</p>
+            <p class="font-black text-slate-700 text-lg text-[25px]">驗證碼已發送！!</p>
             <div class="flex flex-col items-center gap-1">
               <p class="text-[20px] text-slate-400 font-black tracking-widest uppercase">
-                Expires in: <span class="text-[#8B5A2B] font-mono text-base text-[23px]">{{ formatTime }}</span>
+                到期時間: <span class="text-[#8B5A2B] font-mono text-base text-[23px]">{{ formatTime }}</span>
               </p>
             </div>
           </div>
@@ -638,17 +831,17 @@
               class="w-full h-16 bg-[#8B5A2B] text-white rounded-2xl font-black text-lg tracking-[0.2em] shadow-lg hover:shadow-[#8B5A2B]/40 transition-all flex items-center justify-center gap-2 disabled:opacity-50">
               @if (isLoading) {
               <span class="loading loading-spinner loading-md"></span>
-              <span>Verifying...</span>
+              <span>正在驗證...</span>
               }
               @else if (isSuccess) {
               <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 animate-in zoom-in duration-300" fill="none"
                 viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
               </svg>
-              <span>Success!</span>
+              <span>成功!</span>
               }
               @else {
-              <span>Activate Account</span>
+              <span>確認驗證碼</span>
               }
             </button>
           </div>
@@ -656,12 +849,12 @@
             @if (canResend) {
             <button type="button" (click)="onResendOtp()"
               class="w-full h-16 bg-white text-black rounded-2xl font-black text-lg tracking-[0.2em] shadow-lg hover:shadow-[#8B5A2B]/40 transition-all flex items-center justify-center gap-2 disabled:opacity-50">
-              Resend Code
+              重新發送驗證碼
             </button>
             } @else {
             <button type="button" [disabled]="true"
               class="w-full h-16 bg-white text-black rounded-2xl font-black text-lg tracking-[0.2em] shadow-lg hover:shadow-[#8B5A2B]/40 transition-all flex items-center justify-center gap-2 disabled:opacity-50">
-              Retry in {{ formatTime }}
+              {{ formatTime }} 後可重發
             </button>
             }
           </div>
@@ -669,11 +862,11 @@
         }
       </form>
 
-      <div class="text-center mt-8">
-        <p class="text-slate-400 font-bold text-sm">
-          Already have an account?
+      <div class="text-center mt-3">
+        <p class="text-slate-400 font-bold text-base">
+          已經有帳號了?
           <button (click)="isRegistering = false; step = 1" class="text-[#8B5A2B] hover:underline font-black ml-1">
-            Login Now
+            回到登入
           </button>
         </p>
       </div>
@@ -682,16 +875,16 @@
     @else {
     <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="space-y-6">
       <div class="space-y-2">
-        <label class="block text-sm font-black text-[15px] text-[#5D4037] ml-2 tracking-widest">Email Address</label>
+        <label class="block text-sm font-black text-[17px] text-[#5D4037] ml-2 tracking-widest">電子信箱</label>
         <input type="email" formControlName="email" placeholder="hello@gmail.com"
           class="w-full h-16 px-8 bg-white border-2 border-[#8B5A2B]/40 focus:border-[#8B5A2B] outline-none rounded-3xl font-bold transition-all" />
         @if (f['email'].touched && f['email'].errors) {
         <div class="ml-4 flex flex-col gap-1 animate-in fade-in slide-in-from-left-2 duration-300">
           @if (f['email'].errors['required']) {
-          <p class="text-xs text-red-500 font-bold">Email 為必填欄位</p>
+          <p class="text-sm text-red-500 font-bold">Email 為必填欄位</p>
           }
           @if (f['email'].errors['email']) {
-          <p class="text-xs text-red-500 font-bold">請輸入正確的 Email 格式</p>
+          <p class="text-sm text-red-500 font-bold">請輸入正確的 Email 格式</p>
           }
         </div>
         }
@@ -699,12 +892,12 @@
 
       <div class="space-y-2">
         <div class="flex justify-between px-2">
-          <label class="text-sm font-black text-[15px] text-[#5D4037] tracking-widest">Password</label>
+          <label class="text-base font-black text-[17px] text-[#5D4037] tracking-widest">密碼</label>
           <button type="button" (click)="isForgotPassword = true"
-            class="text-xs font-bold text-[15px] text-[#8B5A2B] hover:underline">Forgot?</button>
+            class="text-sm font-bold text-[17px] text-[#8B5A2B] hover:underline">忘記密碼?</button>
         </div>
         <div class="relative group">
-          <input [type]="isLoginPasswordVisible ? 'text' : 'password'" formControlName="password" placeholder="••••••••"
+          <input [type]="isLoginPasswordVisible ? 'text' : 'password'" formControlName="password"
             class="w-full h-16 px-8 bg-white border-2 border-[#8B5A2B]/40 focus:border-[#8B5A2B] outline-none rounded-3xl font-bold transition-all" />
           <button type="button" (click)="toggleLoginPasswordVisibility()"
             class="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#8B5A2B] transition-colors p-2">
@@ -727,10 +920,10 @@
         @if (f['password'].touched && f['password'].errors) {
         <div class="ml-4 space-y-1">
           @if (f['password'].errors['required']) {
-          <p class="text-xs text-red-500 font-bold">密碼不能為空</p>
+          <p class="text-sm text-red-500 font-bold">密碼不能為空</p>
           }
           @if (f['password'].errors['minlength']) {
-          <p class="text-xs text-red-500 font-bold">密碼長度至少需要 6 位元</p>
+          <p class="text-sm text-red-500 font-bold">密碼長度至少需要 6 位元</p>
           }
         </div>
         }
@@ -744,23 +937,23 @@
           <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7" />
           </svg>
-          <span class="whitespace-nowrap">Success!</span>
+          <span class="whitespace-nowrap">成功!</span>
         </div>
         }
         @else if (isLoading) {
         <div class="flex items-center justify-center w-full h-full gap-3">
           <span class="animate-spin h-6 w-6 border-4 border-white border-t-transparent rounded-full"></span>
-          <span class="whitespace-nowrap">Verifying...</span>
+          <span class="whitespace-nowrap">正在驗證...</span>
         </div>
         }
         @else {
-        <span class="flex items-center justify-center w-full h-full">Login</span>
+        <span class="flex items-center justify-center w-full h-full">登入</span>
         }
       </button>
 
       <div class="relative flex items-center py-2">
         <div class="flex-grow border-t border-slate-200"></div>
-        <span class="flex-shrink mx-4 text-slate-400 text-xs font-black uppercase tracking-widest">Or</span>
+        <span class="flex-shrink mx-4 text-slate-400 text-base font-black uppercase tracking-widest">Or</span>
         <div class="flex-grow border-t border-slate-200"></div>
       </div>
 
@@ -775,13 +968,13 @@
           <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7" />
           </svg>
-          <span class="whitespace-nowrap uppercase tracking-widest text-slate-900">Success</span>
+          <span class="whitespace-nowrap uppercase tracking-widest text-slate-900">成功</span>
         </div>
         }
         @else if (isGoogleLoading) {
         <div class="flex items-center justify-center w-full h-full gap-3 text-slate-900">
           <span class="animate-spin h-6 w-6 border-4 border-slate-900 border-t-transparent rounded-full"></span>
-          <span class="whitespace-nowrap text-slate-900">Authenticating...</span>
+          <span class="whitespace-nowrap text-slate-900">正在驗證…</span>
         </div>
         }
         @else {
@@ -793,17 +986,17 @@
             <path fill="#fbbc02" d="m90 341a208 200 0 010-171l63 49q-12 37 0 73"></path>
             <path fill="#ea4335" d="m153 219c22-69 116-109 179-50l55-54c-78-75-230-72-297 55"></path>
           </svg>
-          <span class="text-[#5D4037]">Login with Google</span>
+          <span class="text-[#5D4037]">使用 Google 登入</span>
         </div>
         }
       </button>
     </form>
 
-    <div class="text-center mt-8">
-      <p class="text-slate-400 font-bold text-sm">
-        Don't have an account?
+    <div class="text-center mt-3">
+      <p class="text-slate-400 font-bold text-base">
+        還沒有帳號嗎?
         <button (click)="isRegistering = true; step = 1" class="text-[#8B5A2B] hover:underline font-black ml-1">
-          Create Account
+          立即註冊
         </button>
       </p>
     </div>
@@ -812,3 +1005,68 @@
 </div>
 </div>
 }
+<dialog id="book_modal" class="modal">
+  <div class="modal-box p-0 w-[800px] max-w-none h-[800px] overflow-hidden rounded-2xl relative bg-black">
+
+    <div id="book_carousel_container" class="carousel w-full h-full flex flex-nowrap overflow-hidden">
+      <div class="carousel-item w-full h-full flex-shrink-0">
+        <img src="user/note2.jpg" class="w-full h-full object-cover" />
+      </div>
+      <div class="carousel-item w-full h-full flex-shrink-0">
+        <img src="user/note3.jpg" class="w-full h-full object-cover" />
+      </div>
+      <div class="carousel-item w-full h-full flex-shrink-0">
+        <img src="user/note4.jpg" class="w-full h-full object-cover" />
+      </div>
+      <div class="carousel-item w-full h-full flex-shrink-0">
+        <img src="user/note1.jpg" class="w-full h-full object-cover" />
+      </div>
+    </div>
+
+    <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 justify-between pointer-events-none">
+      <button (click)="moveSlide(-1, 'book_carousel_container')"
+        class="btn btn-circle btn-black/30 text-white pointer-events-auto border-none">❮</button>
+      <button (click)="moveSlide(1, 'book_carousel_container')"
+        class="btn btn-circle btn-black/30 text-white pointer-events-auto border-none">❯</button>
+    </div>
+
+    <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+      <span class="badge badge-xs bg-white/50"></span>
+      <span class="badge badge-xs bg-white"></span>
+    </div>
+  </div>
+
+  <form method="dialog" class="modal-backdrop bg-black/80 backdrop-blur-sm">
+    <button>close</button>
+  </form>
+</dialog>
+
+<dialog id="camera_modal" class="modal">
+  <div class="modal-box p-0 w-[800px] max-w-none h-[800px] overflow-hidden rounded-2xl relative bg-black">
+
+    <div id="camera_carousel_container" class="carousel w-full h-full flex flex-nowrap overflow-hidden">
+      <div class="carousel-item w-full h-full flex-shrink-0">
+        <img src="user/woman.png" class="w-full h-full object-cover" />
+      </div>
+      <div class="carousel-item w-full h-full flex-shrink-0">
+        <img src="user/book.png" class="w-full h-full object-cover" />
+      </div>
+    </div>
+
+    <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 justify-between pointer-events-none">
+      <button (click)="moveSlide(-1, 'camera_carousel_container')"
+        class="btn btn-circle btn-black/30 text-white pointer-events-auto border-none">❮</button>
+      <button (click)="moveSlide(1, 'camera_carousel_container')"
+        class="btn btn-circle btn-black/30 text-white pointer-events-auto border-none">❯</button>
+    </div>
+
+    <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+      <span class="badge badge-xs bg-white/50"></span>
+      <span class="badge badge-xs bg-white"></span>
+    </div>
+  </div>
+
+  <form method="dialog" class="modal-backdrop bg-black/80 backdrop-blur-sm">
+    <button>close</button>
+  </form>
+</dialog>

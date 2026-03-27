@@ -213,6 +213,25 @@ export const routes: Routes = [
       loadComponent: () => import('./house/components/update-house/update-house').then(m => m.UpdateHouse),
     }]
   },
+  //會員中心路由
+  {
+    path: 'memberCenter',
+    loadComponent: () => import('./shared/layouts/member-center-layout/member-center-layout').then(m => m.MemberCenterLayout),
+    children: [
+      {
+        path: '',
+        loadComponent: () => import('./forum/components/index/index').then(m => m.Index),
+        children: [
+          {
+            path: 'member',
+            loadComponent: () => import('./user/components/user-profile/user-profile').then(m => m.UserProfile),
+
+          }
+        ]
+      }
+    ]
+  }
+  ,
   {
     path: '**', //萬用路由404
     loadComponent: () => import('./shared/layouts/with-navbar/with-navbar').then(m => m.WithNavbar),
