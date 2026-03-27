@@ -1,0 +1,57 @@
+<div data-theme="bumblebee"
+  class="card bg-base-100 shadow-2xl overflow-hidden border border-base-300 max-w-5xl mx-auto">
+  <div class="flex flex-col lg:flex-row">
+
+    <app-calender></app-calender>
+
+    <div class="flex-1 p-6 space-y-4 bg-base-100">
+      <div class="flex justify-between items-center border-b border-base-200 pb-4">
+        <div class="flex items-center gap-3">
+          <span class="text-3xl font-black text-primary/30">03/{{ selectedDate }}</span>
+          <h3 class="text-xl font-bold">當日精選課程</h3>
+        </div>
+        <span class="text-xs badge badge-ghost uppercase tracking-widest">Schedule</span>
+      </div>
+
+      <div class="space-y-3">
+        @for (course of dailyCourses; track course.id) {
+        <div class="collapse collapse-arrow bg-base-100 border border-base-200 shadow-sm"
+          [class.opacity-40]="course.spots === 0">
+
+          <input type="checkbox" [disabled]="course.spots === 0" />
+
+          <div class="collapse-title flex justify-between items-center pr-12 py-4">
+            <div class="flex flex-col">
+              <span class="text-xs font-bold text-secondary mb-1">{{ course.time }}</span>
+              <span class="font-bold text-lg tracking-tight">{{ course.title }}</span>
+            </div>
+
+            <div class="badge font-bold px-4 py-3" [class.badge-primary]="course.spots > 0"
+              [class.badge-ghost]="course.spots === 0">
+              {{ course.spots > 0 ? '剩餘 ' + course.spots + ' 名額' : '已客滿' }}
+            </div>
+          </div>
+
+          <div class="collapse-content px-6">
+            <div class="py-4 border-t border-dashed border-base-300">
+              <p class="text-base-content/70 text-sm leading-relaxed mb-4">
+                {{ course.content }}
+              </p>
+              <div class="flex justify-end">
+                <button class="btn btn-primary btn-sm" [disabled]="course.spots === 0">
+                  立即預約課程
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        } @empty {
+        <div class="py-20 text-center">
+          <p class="text-base-content/40 italic">本日目前沒有排定課程</p>
+        </div>
+        }
+      </div>
+    </div>
+
+  </div>
+</div>

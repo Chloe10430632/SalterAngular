@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AttendCourseCard } from "../../myComponents/attend-course-card/attend-course-card";
+import { AttendCourseCard } from "../../myComponents/card/attend-course-card/attend-course-card";
 
 @Component({
   selector: 'app-coach-attend',

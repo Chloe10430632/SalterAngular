@@ -77,39 +77,51 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        loadComponent: () => import('./experience/components/index/index').then(m => m.Index),
+        loadComponent: () => import('./experience/components/coach-index/index').then(m => m.Index),
       },
+      //===自己使用(教練定位)===//
       {
         path: 'coachisland', //教練功能畫面
         loadComponent: () => import('./experience/components/coach-island/coach-island').then(m => m.CoachIsland)
       },
       {
-        path: 'coachdetail', //自介(進入後再用編輯按鈕)
-        loadComponent: () => import('./experience/components/coach-detail/coach-detail').then(m => m.CoachDetail)
-      },
-      {
-        path: 'coachcreate', //空白自介
+        path: 'coachcreate', //空白自介(申請)
         loadComponent: () => import('./experience/components/coach-create/coach-create').then(m => m.CoachCreate)
       },
       {
-        path: 'coachcourse', //教練本人開的課
+        path: 'coachprofiledit', //自介編輯
+        loadComponent: () => import('./experience/components/coach-profiledit/coach-profiledit').then(m => m.CoachDetail)
+      },
+      {
+        path: 'coachprofile', //檢視自介
+        loadComponent: () => import('./experience/components/coach-profile/coach-profile').then(m => m.CoachProfile)
+      },
+      //===課程相關===//
+      {
+        path: 'coursetemp', //模板
+        loadComponent: () => import('./experience/components/coach-course-temp/coach-course-temp').then(m => m.CoachCourseTemp)
+      },
+      {
+        path: 'course', //上架中
         loadComponent: () => import('./experience/components/coach-course/coach-course').then(m => m.CoachCourse)
       },
       {
-        path: 'coachattend', //報名過的課
+        path: 'coachcoursemore', //課程月曆
+        loadComponent: () => import('./experience/components/coach-more-course-calendar/coach-more-course-calendar').then(m => m.CoachMoreCourseCalendar)
+      },
+      //===============//
+      //===使用者定位===//
+      {
+        path: 'coachintro', //看指定教練介紹
+        loadComponent: () => import('./experience/components/coach-intro/coach-intro').then(m => m.Coachintro)
+      },
+      {
+        path: 'myattend', //報名過的課
         loadComponent: () => import('./experience/components/coach-attend/coach-attend').then(m => m.CoachAttend)
       },
       {
-        path: 'coachfav', //收藏
-        loadComponent: () => import('./experience/components/coach-favorite/coach-favorite').then(m => m.CoachFavorite)
-      },
-      {
-        path: 'coachprofile', //本人自介
-        loadComponent: () => import('./experience/components/coach-profile/coach-profile').then(m => m.CoachProfile)
-      },
-      {
-        path: 'coachintro', //看其他教練介紹
-        loadComponent: () => import('./experience/components/coachintro/coachintro').then(m => m.Coachintro)
+        path: 'myfav', //收藏
+        loadComponent: () => import('./experience/components/mem-favorite/mem-favorite').then(m => m.CoachFavorite)
       },
     ]
   },
@@ -119,11 +131,11 @@ export const routes: Routes = [
     children: [
       {
         path: 'buy',
-        loadComponent: () => import('./experience/components/coach-buycourse/coach-buycourse').then(m => m.CoachBuycourse),
+        loadComponent: () => import('./experience/components/mem-buycourse/mem-buycourse').then(m => m.CoachBuycourse),
       },
       {
         path: 'finish',
-        loadComponent: () => import('./shared/paylist/paylist').then(m => m.Paylist)
+        loadComponent: () => import('./shared/Transac/paylist/paylist').then(m => m.Paylist)
       },
     ]
   },

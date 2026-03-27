@@ -1,0 +1,40 @@
+<div data-theme="bumblebee"
+  class="card bg-base-100 shadow-2xl overflow-hidden border border-base-300 max-w-6xl mx-auto">
+  <div class="flex flex-col lg:flex-row min-h-[500px]">
+
+    <div class="p-6 bg-base-200 lg:w-96 border-r border-base-300">
+      <div class="flex justify-between items-center mb-6">
+        <h4 class="font-bold text-xl text-primary">
+          {{ viewDate | date: 'yyyy年 M月' }}
+        </h4>
+        <div class="join border border-base-300">
+          <button (click)="changeMonth(-1)" class="btn btn-xs join-item btn-ghost">«</button>
+          <button (click)="changeMonth(1)" class="btn btn-xs join-item btn-ghost">»</button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-7 gap-1 text-center">
+        @for (w of weekDays; track w) {
+        <div class="text-[10px] font-black opacity-40 uppercase py-2">{{ w }}</div>
+        }
+
+        @for (day of days; track $index) {
+        @if (day.date !== 0) {
+        <button (click)="selectDate(day)" class="btn btn-sm p-0 h-12 w-full min-h-0 rounded-lg relative transition-all"
+          [class.btn-primary]="selectedDateStr === day.fullDate" [class.btn-ghost]="selectedDateStr !== day.fullDate">
+          {{ day.date }}
+
+          @if (courseData[day.fullDate]) {
+          <span class="absolute bottom-1 w-1 h-1 bg-secondary rounded-full"></span>
+          }
+        </button>
+        } @else {
+        <div class="h-12 w-full"></div> }
+        }
+      </div>
+    </div>
+
+
+
+  </div>
+</div>
