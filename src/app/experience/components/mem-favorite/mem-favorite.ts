@@ -2,10 +2,12 @@ import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { CoachCard } from '../../myComponents/card/coach-card/coach-card';
 import { FavCard } from "../../myComponents/card/fav-card/fav-card";
+import { Footer } from "../../../shared/footer/footer";
+import { LittleIsland } from "../../myComponents/little-island/little-island";
 
 @Component({
   selector: 'app-coach-favorite',
-  imports: [CoachCard, FavCard],
+  imports: [CoachCard, FavCard, Footer, LittleIsland],
   templateUrl: './mem-favorite.html',
   styleUrl: './mem-favorite.css',
 })
