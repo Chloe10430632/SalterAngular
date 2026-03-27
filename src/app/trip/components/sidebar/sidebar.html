@@ -55,25 +55,26 @@
     <p class="px-3 mb-1 text-xs font-bold text-base-content/30 uppercase tracking-wider">行程內容</p>
     }
 
-    <a routerLink="." fragment="info"
+    <a [routerLink]="['/trip/detail', tripId]" routerLinkActive="bg-primary/10 text-primary font-semibold"
+      [routerLinkActiveOptions]="{ exact: true }"
       class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors hover:bg-base-200 text-base-content">
       <i class="bi bi-card-text text-base w-5 text-center shrink-0"></i>
       @if (!isCollapsed) { <span>行程詳情</span> }
     </a>
 
-    <a routerLink="." fragment="map"
+    <a [routerLink]="['/trip/detail', tripId, 'location']" routerLinkActive="bg-primary/10 text-primary font-semibold"
       class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors hover:bg-base-200 text-base-content">
       <i class="bi bi-geo-alt text-base w-5 text-center shrink-0"></i>
       @if (!isCollapsed) { <span>地點地圖</span> }
     </a>
 
-    <a routerLink="." fragment="announcement"
+    <a href="#"
       class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors hover:bg-base-200 text-base-content">
       <i class="bi bi-megaphone text-base w-5 text-center shrink-0"></i>
       @if (!isCollapsed) { <span>行程公告</span> }
     </a>
 
-    <a routerLink="." fragment="gear"
+    <a href="#"
       class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors hover:bg-base-200 text-base-content">
       <i class="bi bi-backpack2 text-base w-5 text-center shrink-0"></i>
       @if (!isCollapsed) { <span>裝備清單</span> }
@@ -87,6 +88,5 @@
       </a>
     </div>
     }
-
   </nav>
 </aside>

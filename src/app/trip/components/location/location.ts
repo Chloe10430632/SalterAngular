@@ -18,7 +18,7 @@ import { NgClass } from '@angular/common';
 export class Location implements OnInit, AfterViewInit {
 
   private tripService = inject(TripService);
-  private locationSearchService = inject(LocationSearchService);
+  public locationSearchService = inject(LocationSearchService);
   private route = inject(ActivatedRoute);
   private searchSubject = new Subject<string>();
   tripId = 0;
@@ -29,6 +29,8 @@ export class Location implements OnInit, AfterViewInit {
   searchKeyword = '';
   showForm = false;
   isLocating = false;
+  hasPermission = true;
+
 
   mapCenter: google.maps.LatLngLiteral = { lat: 23.6978, lng: 120.9605 };
   mapZoom = 8;
@@ -96,6 +98,10 @@ export class Location implements OnInit, AfterViewInit {
           this.autocompleteResults = results;
           this.showDropdown = results.length > 0;
           this.isSearching = false;
+
+          if (results.length > 0) {
+            this.locationSearchService.prefetchDetails([results[0]]);
+          }
         },
         error: () => this.isSearching = false
       });
@@ -117,7 +123,10 @@ export class Location implements OnInit, AfterViewInit {
         }
         this.isLoading = false;
       },
-      error: () => this.isLoading = false
+      error: () => {
+        this.isLoading = false;
+        this.hasPermission = false;
+      }
     });
   }
 

@@ -31,11 +31,12 @@ export class Explore implements OnInit {
   categories = [
     { label: '全部', value: '' },
     { label: '🏄 衝浪', value: 'surf' },
-    { label: '🤿 深潛', value: 'dive' },
+    { label: '⚓ 深潛', value: 'dive' },
     { label: '🤿 浮潛', value: 'snorkel' },
     { label: '🚣 獨木舟', value: 'kayak' },
     { label: '⛵ 帆船', value: 'sailing' },
-    { label: '🏄 立槳', value: 'sup' },
+    { label: '🏄 SUP 立槳', value: 'sup' },
+    { label: '🌊 其他', value: 'other' },
   ];
 
   // 篩選
@@ -119,8 +120,9 @@ export class Explore implements OnInit {
   clearFilter() {
     this.filter = { startFrom: '', startTo: '' };
     this.selectedCapacity = '不限';
-    this.statuses.forEach(s => s.checked = s.value === 'active');
+    this.statuses.forEach(s => s.checked = false);
     this.selectedCategory = '';
+    this.searchKeyword = '';
     this.currentPage = 1;
     this.loadTrips();
   }
@@ -138,7 +140,7 @@ export class Explore implements OnInit {
   toggleFavorite(trip: TripSummary, event: Event) {
     event.stopPropagation();
     trip.isFavorite = !trip.isFavorite;
-    // TODO: 串接收藏 API
+    // TODO:  串接收藏 API
   }
 
   goToDetail(id: number) {
@@ -168,11 +170,12 @@ export class Explore implements OnInit {
   getTripTypeLabel(type: string): string {
     const map: Record<string, string> = {
       surf: '🏄 衝浪',
-      dive: '🤿 深潛',
+      dive: '⚓ 深潛',
       snorkel: '🤿 浮潛',
       kayak: '🚣 獨木舟',
       sailing: '⛵ 帆船',
-      sup: '🏄 立槳'
+      sup: '🏄 SUP 立槳',
+      other: '🌊 其他'
     };
     return map[type] ?? type;
   }

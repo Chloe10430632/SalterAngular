@@ -2,13 +2,14 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { TripQuery, ApiResponse, TripListResult, TripSummary, TripDetail, TripAnnouncement, TripGearItem, TripLocation, TripReminder, TripCity, TripDistrict, TripLocationSearch } from '../interfaces/trip';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TripService {
   private http = inject(HttpClient);
-  private baseUrl = 'https://localhost:7017/api/trip/Trip';
+  private baseUrl = `${environment.apiUrl}/trip/Trip`;
 
   //處理所有API呼叫
   // ── 行程 ──

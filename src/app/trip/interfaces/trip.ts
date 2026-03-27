@@ -59,6 +59,7 @@ export interface TripDetail extends TripSummary {
   locations: TripLocation[];
   announcementCount: number;
   gearItemCount: number;
+  organizerProfilePicture: string | null;
 }
 
 // 成員
@@ -68,6 +69,7 @@ export interface TripMember {
   email: string;
   role: string;
   joinedAt: string;
+  profilePicture: string | null;
 }
 
 // 地點

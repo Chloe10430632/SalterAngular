@@ -9,6 +9,7 @@ export class LocationSearchService {
 
   private autocompleteService!: google.maps.places.AutocompleteService;
   private placesService!: google.maps.places.PlacesService;
+  private detailsCache = new Map<string, TripLocationSearch>();
 
   init() {
     this.autocompleteService = new google.maps.places.AutocompleteService();
@@ -49,8 +50,24 @@ export class LocationSearchService {
     });
   }
 
+  //預先抓取地點的資訊 減少等待時間
+  prefetchDetails(results: TripLocationSearch[]) {
+    results.forEach(result => {
+      if (result.placeId && !this.detailsCache.has(result.placeId)) {
+        this.getDetails(result).subscribe();
+      }
+    });
+  }
+
   // 選擇地點後取得完整資訊
   getDetails(result: TripLocationSearch): Observable<TripLocationSearch> {
+    if (this.detailsCache.has(result.placeId!)) {
+      return new Observable(observer => {
+        observer.next(this.detailsCache.get(result.placeId!)!);
+        observer.complete();
+      });
+    }
+
     return new Observable(observer => {
       this.placesService.getDetails(
         {
@@ -68,13 +85,16 @@ export class LocationSearchService {
               c.types.includes('administrative_area_level_2') || c.types.includes('locality')
             );
 
-            observer.next({
+            const detail = {
               ...result,
               lat,
               lng,
               cityName: cityComp?.long_name ?? '',
               districtName: districtComp?.long_name ?? '',
-            });
+            };
+
+            this.detailsCache.set(result.placeId!, detail);
+            observer.next(detail);
           } else {
             observer.error('無法取得地點資訊');
           }

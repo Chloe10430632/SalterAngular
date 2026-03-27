@@ -168,11 +168,19 @@ export const routes: Routes = [
             loadComponent: () => import('./trip/components/explore/explore').then(m => m.Explore),
           },
           {
-            path: 'detail/:id',  // 行程詳情
+            path: 'create', // 建立行程
+            loadComponent: () => import('./trip/components/create-trip/create-trip').then(m => m.CreateTrip),
+          },
+          {
+            path: 'detail/:id',
             children: [
+              // {
+              //   path: '',
+              //   loadComponent: () => import('./trip/components/detail/detail').then(m => m.Detail), //行程詳情
+              // },
               {
-                path: 'location',  // 地點頁面
-                loadComponent: () => import('./trip/components/location/location').then(m => m.Location),
+                path: 'location',
+                loadComponent: () => import('./trip/components/location/location').then(m => m.Location), //地點頁面
               }
             ]
           }

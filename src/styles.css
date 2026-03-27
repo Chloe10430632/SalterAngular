@@ -2,6 +2,7 @@
 @import "tailwindcss";
 @import 'ngx-toastr/toastr';
 
+
 @plugin "daisyui" {
   themes: bumblebee, cupcake, emerald, corporate, retro, cyberpunk, valentine, wireframe, aqua, lofi, pastel, fantasy, luxury, dracula, night, coffee, lucid;
 }
