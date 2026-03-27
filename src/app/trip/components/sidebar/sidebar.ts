@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs';
+import { TripStateService } from '../../services/trip-state';
 
 @Component({
   selector: 'app-sidebar',
@@ -8,12 +9,15 @@ import { filter } from 'rxjs';
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.css'
 })
+
+
 export class Sidebar implements OnInit {
   isCollapsed = false;
   isInitialized = false;
   tripId: number | null = null;
 
-  constructor(private router: Router) { }
+  private tripState = inject(TripStateService);
+  private router = inject(Router);
 
   ngOnInit() {
     // 從 localStorage 讀取上次的狀態
@@ -40,6 +44,10 @@ export class Sidebar implements OnInit {
 
   get isLocationPage(): boolean {
     return this.router.url.includes('/trip/detail') && this.router.url.includes('/location');
+  }
+
+  get isTripMember(): boolean {
+    return this.tripState.isMember();
   }
 
   toggle() {

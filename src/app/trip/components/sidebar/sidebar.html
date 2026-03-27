@@ -68,25 +68,22 @@
       @if (!isCollapsed) { <span>地點地圖</span> }
     </a>
 
-    <a href="#"
-      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors hover:bg-base-200 text-base-content">
-      <i class="bi bi-megaphone text-base w-5 text-center shrink-0"></i>
-      @if (!isCollapsed) { <span>行程公告</span> }
-    </a>
-
-    <a href="#"
-      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors hover:bg-base-200 text-base-content">
-      <i class="bi bi-backpack2 text-base w-5 text-center shrink-0"></i>
-      @if (!isCollapsed) { <span>裝備清單</span> }
-    </a>
-
     <div class="border-t border-base-300 mt-4 pt-3">
+      @if (isTripMember) {
       <a routerLink="/trip/my-trips"
         class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors hover:bg-base-200 text-base-content/50">
         <i class="bi bi-arrow-left text-base w-5 text-center shrink-0"></i>
         @if (!isCollapsed) { <span>返回我的行程</span> }
       </a>
+      } @else {
+      <a routerLink="/trip/explore"
+        class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors hover:bg-base-200 text-base-content/50">
+        <i class="bi bi-arrow-left text-base w-5 text-center shrink-0"></i>
+        @if (!isCollapsed) { <span>返回探索行程</span> }
+      </a>
+      }
     </div>
     }
+
   </nav>
 </aside>
