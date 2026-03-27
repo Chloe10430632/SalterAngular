@@ -14,6 +14,8 @@ import { BoardInteractionsRequest } from '../../interfaces/boardInteractionsRequ
 import { CurrentUser } from '../../interfaces/currentUser';
 import { AuthService } from '../../../core/services/auth-service';
 import { BoardInteractionsService } from '../../services/board-interactions-service';
+import { environment } from './../../../../environments/environment';
+import { HandleInteractions } from '../../services/handle-interactions';
 
 @Component({
   selector: 'app-select-board-posts',
@@ -30,7 +32,7 @@ export class SelectBoardPosts implements OnInit {
   readonly domain = window.location.origin;
 
   /**後端伺服器PORT */
-  backendServer = "https://localhost:7017";
+  backendServer = `${environment.domain}`;
 
   /**看板詳細資料 */
   boardDetails?: BoardDetails;
@@ -59,8 +61,10 @@ export class SelectBoardPosts implements OnInit {
     private activatedRoute: ActivatedRoute,
     private toastr: ToastrService,
     private authService: AuthService,
+    private handleInteractionsService: HandleInteractions,
     private postInteractionsService: PostInteractionsService,
-    private boardInteractionsService: BoardInteractionsService,) { }
+    private boardInteractionsService: BoardInteractionsService,
+    private router: Router) { }
 
   ngOnInit(): void {
 
@@ -123,80 +127,48 @@ export class SelectBoardPosts implements OnInit {
 
   /**看板互動Api */
   handleBoardInteraction(board: BoardDetails, type: string) {
-    if (type === 'follow') {
-      board.isFollowed = !board.isFollowed;
-    }
-
-    const request: BoardInteractionsRequest = {
-      boardId: board.boardId,
-      type: type as 'follow' | 'view',
-    };
-
-    if (!this.currentUser) return;
-    this.boardInteractionsService.postBoardInteractionsApi(request).subscribe({
-      next: (data) => {
-        this.boardsService.GetBoardByIdApi(this.boardId!).subscribe(data => {
-          this.boardDetails = data;
+    switch (type) {
+      case 'view':
+        this.handleInteractionsService.interactWithBoard(board, 'view', this.currentUser)?.subscribe(data => {
+          this.boardsService.GetBoardByIdApi(this.boardId!).subscribe(data => {
+            this.boardDetails = data;
+          });
         });
-      },
-      error: (err) => {
-        console.error(`interaction failed`, err);
-      }
-    });
+        break;
+      case 'follow':
+        this.handleInteractionsService.interactWithBoard(board, 'follow', this.currentUser)?.subscribe(data => {
+          this.boardsService.GetBoardByIdApi(this.boardId!).subscribe(data => {
+            this.boardDetails = data;
+          });
+        });
+        break;
+    }
   }
 
   /**貼文互動Api */
   handlePostInteraction(post: PostList, type: string, reason?: string) {
-    if (type === 'like') {
-      post.isLiked = !post.isLiked;
-      if (post.isLiked) {
-        post.likeCount++;
-      } else {
-        post.likeCount--;
-      }
-
-    } else if (type === 'collect') {
-      post.isCollected = !post.isCollected;
-      if (post.isCollected) {
-        post.collectCount++;
-      } else {
-        post.collectCount--;
-      }
-    } else if (type === 'share') {
-      post.shareCount++;
-      this.copyPostToClipboard(post.postId);
-    }
-
-    const request: PostInteractionsRequest = {
-      postId: post.postId,
-      type: type as 'like' | 'collect' | 'share' | 'report' | 'view',
-      reportReason: type === 'report' ? reason : undefined,
-    };
-
-    this.postInteractionsService.postPostInteractionsApi(request).subscribe({
-      next: (data) => {
-        if (type === 'report') {
+    switch (type) {
+      case 'view':
+        this.handleInteractionsService.interactWithPost(post, 'view', undefined, this.currentUser)?.subscribe();
+        break;
+      case 'like':
+        this.handleInteractionsService.interactWithPost(post, 'like', undefined, this.currentUser)?.subscribe();
+        break;
+      case 'share':
+        this.handleInteractionsService.interactWithPost(post, 'share', undefined, this.currentUser)?.subscribe();
+        break;
+      case 'collect':
+        this.handleInteractionsService.interactWithPost(post, 'collect', undefined, this.currentUser)?.subscribe();
+        break;
+      case 'report':
+        this.handleInteractionsService.interactWithPost(post, 'report', reason, this.currentUser)?.subscribe(data => {
           this.toastr.info(
             '',
             '我們已收到您的檢舉，將會盡快處理。'
           );
-
-          console.log('檢舉內容:', { postId: post.postId, reason });
-        }
-      },
-
-
-      error: (err) => {
-        // 如果 API 失敗，要把 UI 狀態滾回 (視需求而定)
-        if (post.isLiked) {
-          post.likeCount--;
-        } else {
-          post.likeCount++;
-        }
-        console.error(`interaction failed`, err);
-      }
-    });
-
+        });
+        break;
+    }
   }
 
   /**複製看板網址 */
@@ -266,6 +238,12 @@ export class SelectBoardPosts implements OnInit {
     this.selectedFullImage.set(null);
   }
 
+  /**貼文導頁 */
+  navigateToPost(event: Event, postId: number) {
+    // 子元素的 stopPropagation 會阻止事件傳到這裡
+    // 只有點擊卡片空白處、文字處，才會觸發這個導頁
+    this.router.navigate(['/forum/posts', postId]);
+  }
 }
 
 

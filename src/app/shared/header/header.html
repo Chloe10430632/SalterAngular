@@ -84,7 +84,7 @@
       </a>
       <div class="flex-grow max-w-md ml-4">
         <div class="relative group">
-          <input type="text" placeholder="搜尋討論、行程或房源..."
+          <input [(ngModel)]="searchTerm" (keyup.enter)="onSearch()" type="text" placeholder="輸入貼文關鍵字後按Enter......"
             class="input input-bordered w-full text-base-content h-10 rounded-full bg-base-100/90 focus:bg-white transition-all pl-10" />
           <div class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
             <i class="fa-solid fa-magnifying-glass"></i>
@@ -137,9 +137,8 @@
             <div class="px-4 py-2 font-bold border-b border-base-200 mb-1 text-primary-content">
               {{ currentUser.name }}
             </div>
-            <li><a class="justify-between" routerLink="/memberCenter/member">個人檔案 <span
-                  class="badge badge-primary">New</span></a></li>
-            <li><a>我的收藏</a></li>
+            <li><a class="justify-between">個人檔案 <span class="badge badge-primary">New</span></a></li>
+            <li><a routerLink="/forum/member/wall" [queryParams]="{ sortBy: 'posted' }">我的貼文</a></li>
             <li><a>點數中心 (0 pts)</a></li>
             <li><a>設定</a></li>
             <!-- <li><button (click)="testAuth()" class="btn btn-outline btn-info btn-sm">

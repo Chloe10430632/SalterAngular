@@ -1,53 +1,42 @@
-<div class="sticky top-16 z-10 w-full bg-base-100/80 backdrop-blur-lg border border-base-300 rounded-xl mb-4 shadow-sm">
-  <div class="flex items-center justify-between p-4 sm:px-6">
-
-    <div class="flex items-center gap-4">
-      <div class="avatar">
-        <div class="w-14 h-14 rounded-2xl border border-base-200 shadow-sm">
-          <img [src]="boardDetails?.boardImgUrl" alt="board-icon" />
-        </div>
-      </div>
-
-      <div class="flex flex-col">
-        <div class="flex items-center gap-2">
-          <h1 class="text-xl font-black text-base-content">{{boardDetails?.boardTitle}}</h1>
-          <div class="badge badge-primary badge-sm font-bold opacity-90">HOT</div>
-        </div>
-
-        <div class="flex items-center gap-3 mt-0.5 text-[13px] text-base-content/80 font-medium">
-          <span class="flex items-center gap-1"><i class="fa-regular fa-eye"></i> {{boardDetails?.viewCount |
-            number}} 次瀏覽</span>
-          <span class="opacity-30">•</span>
-          <span class="flex items-center gap-1"><i class="fa-solid fa-users"></i>{{boardDetails?.followCount | number}}
-            個浪友追蹤</span>
-        </div>
-      </div>
+<div class="flex flex-col items-center py-8 bg-base-100 rounded-t-2xl border-x border-t border-base-200">
+  <div class="avatar mb-3">
+    <div class="w-20 h-20 rounded-full ring-2 ring-primary ring-offset-2 shadow-sm">
+      <img [src]="currentUser?.picture" alt="avatar" />
     </div>
+  </div>
+  <h2 class="text-xl font-bold text-base-content">{{currentUser?.name}}</h2>
+  <p class="text-base-content/40 text-xs tracking-tight">@{{currentUser?.name}}</p>
+</div>
 
-    <div class="flex items-center gap-2">
-      @if(boardDetails?.isFollowed){
-      <button (click)="handleBoardInteraction(boardDetails!,'follow')"
-        class="btn btn-soft btn-sm rounded-full px-4 ">追蹤中</button>
-      }@else {
-      <button (click)="handleBoardInteraction(boardDetails!,'follow')"
-        class="btn btn-primary btn-sm rounded-full px-6 shadow-sm hover:scale-105 active:scale-95 transition-all font-bold">
-        追蹤
-      </button>
-      }
+<div class="sticky top-0 z-30 w-full bg-base-100/95 backdrop-blur-md border-b border-base-200 shadow-sm">
+  <div class="flex w-full max-w-2xl mx-auto">
 
+    <label class="flex-1 cursor-pointer">
+      <input type="radio" name="profile_tabs" class="peer hidden" [checked]="currentSortBy === 'collect'"
+        [routerLink]="[]" [queryParams]="{ sortBy: 'collect' }" />
+      <div
+        class="flex items-center justify-center gap-2 py-4 border-b-2 border-transparent transition-all peer-checked:border-primary peer-checked:text-primary text-base-content/50">
+        <span class="font-bold text-sm">我的收藏</span>
 
-      <!-- 更多功能：使用最小的 ghost 圓形按鈕 -->
-      <button (click)="copyBoardToClipboard(boardDetails!.boardId)"
-        class="btn btn-ghost btn-sm btn-circle text-base-content/40 hover:bg-base-200">
-        <i class="fa-solid fa-share-nodes"></i>
-      </button>
-    </div>
+      </div>
+    </label>
+
+    <label class="flex-1 cursor-pointer">
+      <input type="radio" name="profile_tabs" class="peer hidden" [checked]="currentSortBy === 'posted'"
+        [routerLink]="[]" [queryParams]="{ sortBy: 'posted' }" />
+      <div
+        class="flex items-center justify-center gap-2 py-4 border-b-2 border-transparent transition-all peer-checked:border-primary peer-checked:text-primary text-base-content/50">
+        <span class="font-bold text-sm">我的文章</span>
+
+      </div>
+    </label>
 
   </div>
 </div>
 
+<!-- 抽換內容: 貼文列表，觸發無限滾動的地方 -->
 <div class="bg-base-100 border border-base-300 rounded-xl overflow-hidden" infiniteScroll [infiniteScrollDistance]="3"
-  [infiniteScrollThrottle]="50" (scrolled)="onScroll()">
+  [infiniteScrollThrottle]="50" (scrolled)="loadMore()">
 
   <div class="card bg-base-100 rounded-xl overflow-hidden mb-4 hover:border-primary/30 transition-all duration-300">
     <div class="card-body p-4">
@@ -56,8 +45,10 @@
       <div class="post">
         <div class="divide-y divide-gray-300">
           @if(postList.length == 0 && isFinished == false){
+          <!-- 模擬 2-3 篇貼文的加載狀態 -->
           @for (i of [1, 2]; track $index) {
           <div class="post-detail p-4 border-b border-base-200/50">
+            <!-- 1. 發文者資訊骨架 -->
             <div class="flex items-center gap-3">
               <div class="avatar">
                 <div class="w-10 h-10 rounded-full skeleton shrink-0"></div>
@@ -145,13 +136,28 @@
                     <ul tabindex="0"
                       class="dropdown-content menu p-2 shadow-2xl bg-base-100 rounded-2xl w-44 border border-base-200 z-50 mt-2">
 
+                      @if(currentUser?.name === post.userName){
+                      <li (click)="openEditModal(post.postId)">
+                        <a class="py-3 text-sm flex items-center gap-2 hover:bg-base-200">
+                          <i class="fa-regular fa-pen-to-square w-4"></i>
+                          編輯貼文
+                        </a>
+                      </li>
+
+                      <li (click)="openDeleteModal(post.postId)">
+                        <a class="py-3 text-sm text-error font-bold flex items-center gap-2 hover:bg-error/10">
+                          <i class="fa-regular fa-trash-can w-4"></i>
+                          刪除貼文
+                        </a>
+                      </li>
+                      }
 
 
 
-                      <li><a class="py-3 text-sm" (click)="handlePostInteraction(post,'collect')"><i
+                      <li><a class="py-3 text-sm" (click)="handleInteraction(post,'collect')"><i
                             class="fa-regular fa-bookmark"></i>
                           收藏貼文</a></li>
-                      <li><a class="py-3 text-sm" (click)="copyPostToClipboard(post.postId)"><i
+                      <li><a class="py-3 text-sm" (click)="copyToClipboard(post.postId)"><i
                             class="fa-regular fa-paper-plane"></i>
                           複製連結</a></li>
                       <div class="divider my-0 opacity-50"></div>
@@ -167,7 +173,7 @@
               </div>
             </div>
             <!-- 貼文內容 -->
-            <a class="cursor-pointer flex gap-3" (click)="navigateToPost($event, post.postId)">
+            <div class="cursor-pointer flex gap-3" (click)="navigateToPost($event, post.postId)">
 
               <div class="flex-1 pb-2 px-10">
                 @if(post.locationTitle){
@@ -224,7 +230,7 @@
 
                 <div class="flex items-center gap-6 mt-5 ml-2 text-base-content/60">
                   <!-- 愛心按鈕：點擊後變紅並跳動 -->
-                  <button (click)="handlePostInteraction(post, 'like'); $event.stopPropagation()"
+                  <button (click)="handleInteraction(post, 'like'); $event.stopPropagation()"
                     [class.text-error]="post.isLiked"
                     class="flex items-center gap-1.5 transition-all duration-300 active:scale-90 hover:text-error group">
                     <i [class]="post.isLiked ? 'fa-solid fa-heart animate-bounce-once' : 'fa-regular fa-heart'"
@@ -238,7 +244,7 @@
                     <span class="text-[11px] font-bold">{{post.commentCount | number}}</span>
                   </button>
                   <!-- 收藏按鈕：點擊後變黃 -->
-                  <button (click)="handlePostInteraction(post, 'collect'); $event.stopPropagation()"
+                  <button (click)="handleInteraction(post, 'collect');$event.stopPropagation()"
                     [class.text-warning]="post.isCollected"
                     class="flex items-center gap-1.5 transition-all duration-300 active:scale-90 hover:text-warning group">
                     <i [class]="post.isCollected ? 'fa-solid fa-bookmark' : 'fa-regular fa-bookmark'"
@@ -268,7 +274,7 @@
 
                           <!-- 複製按鈕 -->
                           <div class="tooltip tooltip-neutral" data-tip="點擊複製">
-                            <button (click)="handlePostInteraction(post,'share')"
+                            <button (click)="handleInteraction(post,'share')"
                               class="btn btn-square btn-primary btn-sm rounded-lg hover:scale-110 transition-transform">
                               <i class="fa-regular fa-copy text-sm"></i>
                             </button>
@@ -280,7 +286,7 @@
                   </div>
                 </div>
               </div>
-            </a>
+            </div>
           </div>
 
 
@@ -372,13 +378,188 @@
 
       <div class="flex flex-col items-center gap-2 py-10 opacity-70">
         <div class="divider px-20 text-xs font-bold tracking-widest text-base-content/50">END</div>
-        <p class="text-sm font-medium">這個看板目前沒有更多貼文啦~ 現在就去發文吧! 🌊</p>
+        <p class="text-sm font-medium">你已經滑到底囉，目前沒有更多貼文啦! 🌊</p>
       </div>
-
-
-
-
 
     </div>
   </div>
 </div>
+
+
+<!-- 編輯貼文的彈窗 -->
+<dialog id="edit_modal" class="modal modal-bottom sm:modal-middle">
+  <div [formGroup]="postForm"
+    class="modal-box p-0 overflow-hidden border-2 border-base-content/10 shadow-xl bg-base-100 flex flex-col max-h-[90vh]">
+
+    <div class="flex justify-between items-center p-4 border-b-2 border-dashed border-base-300 shrink-0">
+      <form method="dialog">
+        <button (click)="clearPost()" class="btn btn-sm btn-circle btn-warning shadow-sm"><i
+            class="fa-solid fa-xmark"></i></button>
+      </form>
+      <h3 class="font-bold text-md tracking-wider text-base-content">修改浪花</h3>
+      <div class="flex gap-2">
+        <div class="tooltip tooltip-left" data-tip="隱藏貼文">
+          <button onclick="draft_confirm.showModal()" class="btn btn-ghost btn-sm btn-square">
+            <i class="fa-solid fa-file-medical text-xl text-base-content/60"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-6 space-y-4 overflow-y-auto flex-1 custom-scrollbar">
+      <div class="flex items-center gap-3">
+        <div class="avatar">
+          <div class="w-10 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+            <img [src]="currentUser?.picture" alt="使用者頭貼" />
+          </div>
+        </div>
+        <div class="flex flex-col">
+          <div class="flex items-center gap-5">
+            <span class="font-black text-sm">{{currentUser?.name}}</span>
+            <div class="dropdown" (click)="getAllBoardList()">
+              @if (selectedBoard) {
+              <div tabindex="0" role="button"
+                class="badge badge-primary font-bold gap-2 px-3 py-3 cursor-pointer transition-colors">
+                {{selectedBoard.boardTitle}}
+                <i class="fa-solid fa-chevron-down text-[10px] opacity-50"></i>
+              </div>
+              }@else {
+              <div tabindex="0" role="button"
+                class="badge badge-primary font-bold gap-2 px-3 py-3 cursor-pointer transition-colors">
+                {{postDetailsData?.boardTitle}}
+                <i class="fa-solid fa-chevron-down text-[10px] opacity-50"></i>
+              </div>
+              }
+
+              <ul tabindex="0"
+                class="dropdown-content z-[110] menu p-2 shadow-xl bg-base-100 rounded-box w-40 border border-base-200">
+                @if(allBoardList.length === 0){
+                @for (i of [1, 2, 3]; track $index) {
+                <li class="p-2">
+                  <div class="skeleton h-4 w-full opacity-50"></div>
+                </li>
+                }
+                }
+                @for (board of allBoardList; track board.boardId) {
+                <li><a (click)="selectBoard(board)">{{board.boardTitle}}</a></li>
+                }
+
+
+
+
+
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+      @if(selectedLocation){
+      <div class="badge badge-soft badge-accent mt-2 tracking-wider">{{selectedLocation.name}}</div>
+      }@else if(postDetailsData?.locationTitle) {
+      <div class="badge badge-soft badge-accent mt-2 tracking-wider">{{postDetailsData?.locationTitle}}</div>
+      }
+
+      <textarea formControlName="content"
+        class="p-3 textarea textarea-ghost w-full focus:outline-none min-h-[80px] p-0 placeholder:text-base-content/30"
+        placeholder="今天發生了什麼有趣的事呢......"></textarea>
+
+      <div id="image_preview_container" class="flex flex-wrap gap-2 py-2">
+        @for (src of postDetailsData?.imageUrls; track $index) {
+        <div class="preview-item relative flex-shrink-0 w-30 h-30 group cursor-grab active:cursor-grabbing">
+          <img [src]="src" class="w-full h-full object-cover rounded-xl border-2 border-base-200 shadow-sm" />
+          <button (click)="openLightbox(src)"
+            class="btn btn-circle btn-xs btn-neutral absolute -top-1 -left-1 opacity-0 group-hover:opacity-100 transition-opacity shadow-md">
+            預覽
+          </button>
+        </div>
+        }
+      </div>
+
+      <div class="flex gap-4 text-base-content/40 border-t border-base-200 pt-4">
+
+
+        <div class="dropdown" (click)="getAllLocations()">
+          <div tabindex="0" role="button" class="hover:text-primary transition-colors cursor-pointer">
+            <i class="fa-solid fa-location-dot text-2xl"></i>
+          </div>
+          <ul tabindex="0"
+            class="dropdown-content z-[100] menu p-2 shadow-xl bg-base-100 rounded-box w-40 border border-base-200 text-base-content">
+            @if(allLocationList.length === 0){
+            @for (i of [1, 2, 3]; track $index) {
+            <li class="p-2">
+              <div class="skeleton h-4 w-full opacity-50"></div>
+            </li>
+            }
+            }
+            @for (location of allLocationList; track location.id) {
+            <li><a (click)="selectLocation(location)">{{location.name}}</a></li>
+            }
+          </ul>
+        </div>
+      </div>
+
+      <div class="space-y-2">
+        <p class="text-xs font-bold text-base-content/60">輸入HashTag標籤</p>
+        @for (tag of tags(); track $index) {
+        <span class="badge badge-info badge-outline font-bold gap-1 px-3 py-3 tracking-wider mr-3">
+          #{{ tag }}
+          <i class="fa-solid fa-xmark text-[10px] cursor-pointer ml-1" (click)="removeTag($index)"></i>
+        </span>
+        }
+        <div id="tag_area"
+          class="flex flex-wrap gap-2 p-2 pl-5 border-2 border-base-200 rounded-xl bg-base-50 focus-within:border-primary transition-all">
+          <div class="w-full">
+            <input type="text" tabindex="0" placeholder="輸入後按 Enter..."
+              class="bg-transparent border-none focus:outline-none text-sm w-full" (keydown.enter)="addTag($event)" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-4 bg-base-200/50 flex flex-col gap-3 shrink-0 border-t border-base-200">
+      @if(postForm.get('boardId')?.hasError('required')){
+      <p class="pl-3 text-error text-sm font-medium animate-pulse">請選擇看板分類</p>
+      }
+      @if(postForm.get('content')?.touched && postForm.get('content')?.hasError('required')){
+      <p class="pl-3 text-error text-sm font-medium animate-pulse">貼文內容不能為空!</p>
+      }
+      <div class="flex justify-end">
+        <button (click)="handleEditPostSubmit(true)" [disabled]="postForm.invalid"
+          class="btn btn-primary px-10 shadow-lg text-base rounded-xl">確認修改</button>
+      </div>
+    </div>
+  </div>
+
+  <form method="dialog" class="modal-backdrop">
+    <button (click)="clearPost()">close</button>
+  </form>
+</dialog>
+
+
+<!-- 刪除貼文的彈窗 -->
+<dialog #deleteModal class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box bg-base-100 border border-base-200 shadow-2xl">
+    <h3 class="font-black text-lg text-error flex items-center gap-2">
+      <i class="fa-solid fa-trash-can"></i> 確定要刪除貼文嗎？
+    </h3>
+    <p class="py-4 text-sm text-base-content/70">
+      執行刪除後，這條貼文的內容將會永久消失，無法復原喔 இдஇ !
+    </p>
+
+    <div class="modal-action">
+      <form method="dialog">
+        <button class="btn btn-ghost" (click)="closeDeleteModal()">再想想</button>
+        <button class="btn btn-error text-white ml-2" (click)="deletePost()">
+          確認刪除
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <form method="dialog" class="modal-backdrop">
+    <button (click)="closeDeleteModal()">close</button>
+  </form>
+</dialog>

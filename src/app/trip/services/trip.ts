@@ -185,7 +185,7 @@ export class TripService {
     let params = new HttpParams();
     if (keyword) params = params.set('keyword', keyword);
     return this.http.get<ApiResponse<TripLocationSearch[]>>(
-      `${this.baseUrl}/all-locations`, { params }  // 改這裡
+      `${this.baseUrl}/locations/all`, { params }  // 改這裡
     );
   }
 }

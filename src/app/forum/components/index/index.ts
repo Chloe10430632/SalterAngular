@@ -14,6 +14,8 @@ import { switchMap } from 'rxjs';
 import { CreatePostDto } from '../../interfaces/CreatePostDto';
 import { TagDto } from '../../interfaces/TagDto';
 import { HttpEventType } from '@angular/common/http';
+import { environment } from './../../../../environments/environment';
+import { TripService } from '../../../trip/services/trip';
 
 @Component({
   selector: 'app-index',
@@ -28,35 +30,7 @@ export class Index implements OnInit {
   allBoardList: BoardList[] = [];
 
   /**全部打卡地點選單列表 */
-  allLocationList: any[] = [
-    {
-      id: 315,
-      name: "淡水漁人碼頭",
-      addressText: "新北市淡水區觀海路",
-      cityName: "新北市",
-      districtName: "淡水區",
-      lat: 25.179200,
-      lng: 121.410300,
-    },
-    {
-      id: 316,
-      name: "龍洞灣海洋公園",
-      addressText: "新北市淡水區觀海路",
-      cityName: "新北市",
-      districtName: "淡水區",
-      lat: 25.179200,
-      lng: 121.410300,
-    },
-    {
-      id: 317,
-      name: "福隆雙溪河口",
-      addressText: "新北市淡水區觀海路",
-      cityName: "新北市",
-      districtName: "淡水區",
-      lat: 25.179200,
-      lng: 121.410300,
-    },
-  ];
+  allLocationList: any[] = [];
 
   /**Top5熱門看板列表 */
   boardListPop5: BoardList[] = [];
@@ -83,7 +57,7 @@ export class Index implements OnInit {
   selectedFiles = signal<File[]>([]);
 
   /**後端伺服器PORT */
-  backendServer = "https://localhost:7017";
+  backendServer = `${environment.domain}`;
 
   /**目前使用者 */
   currentUser?: CurrentUser;
@@ -110,6 +84,7 @@ export class Index implements OnInit {
     private toastr: ToastrService,
     public authService: AuthService,
     private postsService: PostsService,
+    private tripService: TripService,
     private formBuilder: FormBuilder,
     private router: Router) { }
 
@@ -139,6 +114,16 @@ export class Index implements OnInit {
       tags: this.formBuilder.array([])
     });
 
+  }
+
+  /**讀取所有地點資料 */
+  getAllLocations() {
+    if (this.allLocationList.length > 0) return;
+    this.tripService.getAllLocations().subscribe({
+      next: (res) => {
+        this.allLocationList = res.data;
+      }
+    });
   }
 
   /**發佈貼文 - File */
@@ -189,15 +174,18 @@ export class Index implements OnInit {
     };
 
     this.postsService.PostCreatePost(payload).subscribe({
-      next: () => {
+      next: (data) => {
         setTimeout(() => {
           this.isPublishing.set(false); // 延遲關閉，讓使用者看到完成的感覺
           this.clearPost();
         }, 3000);
         this.uploadProgress.set(100); // 強制滿格
-        this.toastr.info('發佈成功!')
+        this.toastr.info('貼文發佈成功!');
+        this.router.navigate(['/forum/member/wall'], {
+          queryParams: { sortBy: 'posted' }
+        });
       },
-      error: () => this.toastr.info('內容發佈失敗')
+      error: () => this.toastr.info('貼文發佈失敗')
     });
   }
 
@@ -210,6 +198,7 @@ export class Index implements OnInit {
 
   /**載入所有看板清單 */
   getAllBoardList() {
+    if (this.allBoardList.length > 0) return;
     this.boardsService.GetAllBoardsApi().subscribe(data => {
       this.allBoardList = data;
     });

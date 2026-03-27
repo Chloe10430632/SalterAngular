@@ -1,0 +1,373 @@
+<div class="bg-base-100 border border-base-300 rounded-xl overflow-hidden">
+
+  <div class="card bg-base-100 rounded-xl overflow-hidden mb-4 hover:border-primary/30 transition-all duration-300">
+    <div class="card-body p-4">
+
+
+
+
+      <div class="post-detail p-4">
+        <div class="flex items-center gap-3">
+          <div class="avatar">
+            <div class="w-10 h-10 rounded-full ring-1 ring-base-200 shadow-sm">
+              <img [src]="backendServer+postDetailsData?.avatarUrl" alt="avatar" />
+            </div>
+          </div>
+          <div class="flex-1 flex items-center justify-between">
+            <div class="flex items-center gap-1">
+              <span
+                class="font-bold text-[14px] hover:underline cursor-pointer text-base-content">{{postDetailsData?.userName}}</span>
+              <span class="ml-5 text-base-content/50">></span>
+              <a class="badge badge-primary ml-5 font-bold"
+                [routerLink]="'/forum/boards/'+postDetailsData?.boardId">{{postDetailsData?.boardTitle}}</a>
+              <span class="ml-5 text-base-content/50 ml-1 font-medium text-[13px]">作者</span>
+              <span class="text-base-content/50 text-[13px] font-medium ml-3">{{postDetailsData?.createdAt! |
+                relativeTime}}</span>
+            </div>
+            <div class="flex items-center gap-3 text-base-content/40">
+              <!-- 瀏覽量 -->
+              <span class="text-[12px]"><i class="fa-regular fa-eye mr-1"></i>{{postDetailsData?.viewCount |
+                number}}</span>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="flex gap-3">
+          <div class="flex-1 px-10">
+            @if(postDetailsData?.locationTitle){
+            <div class="badge badge-soft badge-accent mt-2">{{postDetailsData?.locationTitle}}</div>
+            }
+
+            <p class="text-[15px] leading-relaxed text-base-content mt-4">
+              {{postDetailsData?.fullContent}}
+            </p>
+
+            @if(postDetailsData?.imageUrls?.length! > 0){
+            <div class="grid grid-cols-3 gap-3 mt-6">
+
+              @for(imgUrl of postDetailsData?.imageUrls; track $index ){
+
+              <!-- 圖片容器 -->
+              <div (click)="openLightbox(imgUrl)"
+                class="cursor-pointer aspect-square rounded-2xl overflow-hidden border border-base-200 shadow-sm group/img">
+                <img [src]="imgUrl"
+                  class="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-700" />
+              </div>
+
+              }
+
+            </div>
+
+            }
+
+
+            @if(postDetailsData?.postTags?.length!>0){
+
+            <div class="flex items-center gap-3 my-3 text-base-content/60">
+
+              @for (tag of postDetailsData?.postTags; track $index) {
+              <div class="badge badge-soft badge-info font-bold">#{{tag}}</div>
+              }
+
+            </div>
+
+            }
+
+
+
+
+            <div class="flex items-center gap-6 mt-5 ml-2 text-base-content/60">
+              <!-- 愛心按鈕：點擊後變紅並跳動 -->
+              <button (click)="handleInteraction(postDetailsData!, 'like')"
+                [class.text-error]="postDetailsData?.isLiked"
+                class="cursor-pointer flex items-center gap-1.5 transition-all duration-300 active:scale-90 hover:text-error group">
+                <i [class]="postDetailsData?.isLiked ? 'fa-solid fa-heart animate-bounce-once' : 'fa-regular fa-heart'"
+                  class="text-xl transition-transform group-hover:scale-110"></i>
+                <span class="text-[11px] font-bold">{{ postDetailsData?.likeCount | number }}</span>
+              </button>
+              <!-- 留言按鈕：點擊後導頁到詳細貼文 -->
+              <a (click)="resetToPostReply()"
+                class="cursor-pointer flex items-center gap-1.5 hover:text-blue-500 transition-colors">
+                <i class="fa-regular fa-comment text-xl"></i>
+                <span class="text-[11px] font-bold">{{postDetailsData?.commentCount | number}}</span>
+              </a>
+              <!-- 收藏按鈕：點擊後變黃 -->
+              <button (click)="handleInteraction(postDetailsData!, 'collect')"
+                [class.text-warning]="postDetailsData?.isCollected"
+                class="cursor-pointer flex items-center gap-1.5 transition-all duration-300 active:scale-90 hover:text-warning group">
+                <i [class]="postDetailsData?.isCollected ? 'fa-solid fa-bookmark' : 'fa-regular fa-bookmark'"
+                  class="text-lg transition-transform group-hover:scale-110"></i>
+                <span class="text-[11px] font-bold">{{ postDetailsData?.collectCount | number }}</span>
+              </button>
+              <!-- 分享按鈕：改用 dropdown 實作彈出效果 -->
+              <div class="dropdown dropdown-right sm:dropdown-end">
+                <button tabindex="0" role="button"
+                  class="cursor-pointer flex items-center gap-1.5 hover:text-green-500 transition-colors active:scale-95">
+                  <i class="fa-regular fa-paper-plane text-lg"></i>
+                  <span class="text-[11px] font-bold">{{postDetailsData?.shareCount | number}}</span>
+                </button>
+
+                <!-- 彈出的分享介面 -->
+                <div tabindex="0"
+                  class="dropdown-content ml-5 z-[60] card card-compact w-70 p-2 shadow-2xl bg-base-100 border border-base-200">
+                  <div class="card-body">
+                    <h3 class="card-title text-sm text-base-content/70">~分享給你所有的朋友~</h3>
+
+                    <div class="flex items-center gap-2 mt-1">
+                      <!-- 連結顯示區 -->
+                      <div
+                        class="flex-1 bg-base-200 px-3 py-2 rounded-lg text-[12px] truncate font-mono text-base-content/60 border border-base-300">
+                        {{ domain }}/post/{{postDetailsData?.postId}}
+                      </div>
+
+                      <!-- 複製按鈕 -->
+                      <div class="tooltip tooltip-neutral" data-tip="點擊複製">
+                        <button (click)="handleInteraction(postDetailsData!,'share')"
+                          class="btn btn-square btn-primary btn-sm rounded-lg hover:scale-110 transition-transform">
+                          <i class="fa-regular fa-copy text-sm"></i>
+                        </button>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider mx-4 text-base-content/80">留言討論</div>
+      @if(postDetailsData?.comments?.length!>0){
+      @for (comment of postDetailsData?.comments; track comment.commentId) {
+
+      <div class="px-4 space-y-6">
+        <div class="flex gap-3">
+          <div class="avatar shrink-0">
+            <div class="w-9 h-9 rounded-full ring-1 ring-base-200">
+              <img [src]="backendServer+comment.avatarUrl" />
+            </div>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-[13px]">{{comment.userName}}</span>
+              <span class="text-[11px] text-base-content/40">{{comment.createdAt | relativeTime}}</span>
+
+
+              @if(this.currentUser?.id === comment.commentUserId){
+              <div class="flex items-center gap-2 ml-auto">
+                <button (click)="startEdit(comment)"
+                  class="btn btn-ghost btn-xs text-[13px] text-base-content/30 hover:text-info">
+                  <i class="fa-regular fa-pen-to-square mr-1"></i>
+                </button>
+
+                <button (click)="openDeleteModal(comment.commentId)"
+                  class="btn btn-ghost btn-xs text-[13px] text-base-content/30 hover:text-error">
+                  <i class="fa-regular fa-trash-can mr-1"></i>
+                </button>
+              </div>
+              }
+
+
+            </div>
+
+
+
+            @if (editingCommentId == comment.commentId) {
+            <div class="join w-full flex animate-in fade-in zoom-in-95 duration-200 my-3">
+              <input type="text" [(ngModel)]="editContent" name="edit-{{comment.commentId}}"
+                class="input input-bordered join-item flex-1 bg-base-100 text-sm focus:outline-none focus:border-primary border-r-0"
+                (keyup.enter)="editComment(comment)" (keyup.esc)="cancelEdit()" />
+              <button (click)="editComment(comment)"
+                class="btn btn-primary join-item px-4 text-sm font-bold shadow-none border-l-0">
+                儲存
+              </button>
+              <button (click)="cancelEdit()" class="btn btn-soft join-item px-4 text-sm font-bold">
+                取消
+              </button>
+            </div>
+            }@else {
+            <p class="text-[14px] mt-1 text-base-content/80">{{comment.content}}</p>
+            }
+
+
+
+
+
+
+            <a (click)="setReplyTarget(comment.commentId,comment.userName)"
+              class="cursor-pointer text-[11px] font-bold mt-2 text-base-content/40 hover:text-primary transition-colors">回覆</a>
+
+
+
+            @if(comment.replies.length>0){
+            @for (reply of comment.replies; track reply.commentId) {
+            <!-- 留言回覆 -->
+            <div class="mt-4 border-l-2 border-base-300 pl-4 space-y-4">
+              <div class="flex gap-3">
+                <div class="avatar shrink-0">
+                  <div class="w-7 h-7 rounded-full ring-1 ring-base-200">
+                    <img [src]="backendServer+reply.avatarUrl" />
+                  </div>
+                </div>
+                <div class="flex-1">
+                  <div class="flex items-center gap-2">
+                    <span class="font-bold text-[13px]">{{reply.userName}}</span>
+
+                    @if(postDetailsData?.userName === reply.userName){
+                    <span class="text-[12px] text-base-content/30 font-medium">作者</span>
+                    }
+
+                    @if(this.currentUser?.id === reply.commentUserId){
+                    <div class="flex items-center gap-2 ml-auto">
+                      <button (click)="startEdit(reply)"
+                        class="btn btn-ghost btn-xs text-[13px] text-base-content/30 hover:text-info">
+                        <i class="fa-regular fa-pen-to-square mr-1"></i>
+                      </button>
+
+                      <button (click)="openDeleteModal(reply.commentId)"
+                        class="btn btn-ghost btn-xs text-[13px] text-base-content/30 hover:text-error">
+                        <i class="fa-regular fa-trash-can mr-1"></i>
+                      </button>
+                    </div>
+                    }
+                  </div>
+
+
+
+                  @if (editingCommentId == reply.commentId) {
+                  <div class="join w-full flex animate-in fade-in zoom-in-95 duration-200 my-3">
+                    <input type="text" [(ngModel)]="editContent"
+                      class="input input-bordered join-item flex-1 bg-base-100 text-sm focus:outline-none focus:border-primary border-r-0"
+                      (keyup.enter)="editComment(reply)" (keyup.esc)="cancelEdit()" />
+                    <button (click)="editComment(reply)"
+                      class="btn btn-primary join-item px-4 text-sm font-bold shadow-none border-l-0">
+                      儲存
+                    </button>
+                    <button (click)="cancelEdit()" class="btn btn-soft join-item px-4 text-sm font-bold">
+                      取消
+                    </button>
+                  </div>
+                  }@else {
+                  <p class="text-[14px] mt-1 text-base-content/80">{{reply.content}}</p>
+                  }
+
+
+                </div>
+              </div>
+            </div>
+
+            }
+            }
+          </div>
+
+
+
+        </div>
+      </div>
+      <div class="divider mx-4"></div>
+      }
+      }
+
+
+
+
+
+      @if(currentUser){
+      <!-- 使用者留言 -->
+      <div class="px-4 py-6 border-base-300 scroll-mt-20" id="comment-section">
+        <div class="flex items-center gap-3">
+          <div class="avatar shrink-0">
+            <div class="w-10 h-10 rounded-full ring-1 ring-base-200 shadow-sm">
+              <img [src]="currentUser?.picture" alt="current-user" />
+            </div>
+          </div>
+
+          <div class="flex-1">
+            <div class="join w-full flex">
+              <input #commentInput type="text" [placeholder]="'回覆'+replyStatus?.targetName+'......'"
+                [(ngModel)]="commentContent"
+                class="input input-bordered join-item flex-1 bg-base-100 text-sm focus:outline-none focus:border-primary border-r-0" />
+              <button (click)="submitComment()"
+                class="btn btn-primary join-item px-6 text-sm font-bold shadow-none border-l-0">
+                送出
+              </button>
+            </div>
+
+
+          </div>
+        </div>
+      </div>
+      }
+
+
+
+
+
+
+
+    </div>
+  </div>
+
+
+
+
+</div>
+
+<!-- 圖片放大燈箱(Modal) -->
+<dialog id="lightbox_modal" class="modal bg-black/40 backdrop-blur-lg transition-all duration-200"
+  (close)="closeLightbox()">
+  <div
+    class="modal-box max-w-5xl bg-transparent shadow-none p-0 overflow-visible flex flex-col items-center justify-center">
+
+    <form method="dialog">
+      <button class="btn btn-circle btn-ghost text-white absolute -top-12 right-0 hover:bg-white/20">
+        <i class="fa-solid fa-xmark text-2xl"></i>
+      </button>
+    </form>
+
+    @if (selectedFullImage()) {
+    <div class="relative group">
+      <img [src]="selectedFullImage()"
+        class="max-h-[85vh] max-w-full rounded-lg shadow-2xl animate-in zoom-in-95 duration-100 object-contain"
+        alt="放大預覽" />
+
+      <div class="absolute -bottom-10 left-0 w-full text-center">
+        <span class="text-white/60 text-xs tracking-widest uppercase font-bold">
+          <i class="fa-solid fa-camera-retro mr-2"></i> Salter
+        </span>
+      </div>
+    </div>
+    }
+  </div>
+
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
+
+<!-- 刪除留言的彈窗 -->
+<dialog #deleteModal class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box bg-base-100 border border-base-200 shadow-2xl">
+    <h3 class="font-black text-lg text-error flex items-center gap-2">
+      <i class="fa-solid fa-trash-can"></i> 確定要刪除留言嗎？
+    </h3>
+    <p class="py-4 text-sm text-base-content/70">
+      執行刪除後，這則留言的內容將會永久消失，無法復原喔 இдஇ !
+    </p>
+
+    <div class="modal-action">
+      <form method="dialog">
+        <button class="btn btn-ghost" (click)="closeDeleteModal()">再想想</button>
+        <button class="btn btn-error text-white ml-2" (click)="deleteComment()">
+          確認刪除
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <form method="dialog" class="modal-backdrop">
+    <button (click)="closeDeleteModal()">close</button>
+  </form>
+</dialog>

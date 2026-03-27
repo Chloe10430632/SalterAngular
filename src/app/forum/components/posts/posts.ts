@@ -1,16 +1,19 @@
 
 import { PostList } from './../../interfaces/postList';
 import { DecimalPipe } from '@angular/common';
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, ElementRef, OnInit, signal, ViewChild } from '@angular/core';
 import { PostsService } from '../../services/posts-service';
 import { RelativeTimePipe } from '../../pipes/relative-time-pipe';
 import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { PostInteractionsService } from '../../services/post-interactions-service';
 import { PostInteractionsRequest } from '../../interfaces/postInteractionsRequest';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../../core/services/auth-service';
 import { CurrentUser } from '../../interfaces/currentUser';
+import { environment } from './../../../../environments/environment';
+import { Observable } from 'rxjs';
+import { HandleInteractions } from '../../services/handle-interactions';
 
 
 @Component({
@@ -27,11 +30,14 @@ export class Posts implements OnInit {
   /**目前使用者 */
   currentUser?: CurrentUser;
 
-  /**貼文篩選變數，預設為popular */
-  activeTab: 'popular' | 'new' | 'follow' = 'popular';
+  /**貼文排序篩選條件 */
+  queryPara?: 'popular' | 'new' | 'follow';
+
+  /**貼文關鍵字搜尋 */
+  currentKeyword: string = ''; // 存放從 URL 拿到的搜尋詞
 
   /**後端伺服器PORT */
-  backendServer = "https://localhost:7017";
+  backendServer = `${environment.domain}`;
 
   /**裝Api打回來的貼文資料 */
   postList: PostList[] = [];
@@ -48,159 +54,113 @@ export class Posts implements OnInit {
   /**儲存目前要放大顯示的圖片網址 */
   selectedFullImage = signal<string | null>(null);
 
+  //-------刪除貼文-----------
+  // 取得刪除的 Modal 元素
+  @ViewChild('deleteModal') deleteModal!: ElementRef<HTMLDialogElement>;
+
+  // 暫存準備刪除的 ID
+  private pendingDeletePostId?: number;
 
   constructor(
     private postsService: PostsService,
+    private handleInteractionsService: HandleInteractions,
     private postInteractionsService: PostInteractionsService,
+    private activatedRoute: ActivatedRoute,
     private toastr: ToastrService,
-    public authService: AuthService) { }
+    public authService: AuthService,
+    private router: Router) { }
 
   ngOnInit(): void {
-    this.loadMore('popular');
+    this.activatedRoute.queryParams.subscribe((params) => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      this.currentKeyword = params['keyword'] ?? '';
+      this.queryPara = params['sortBy'] ?? 'popular';
+      this.resetAndLoad();
+    });
+
     this.authService.currentUser$.subscribe(data => {
       this.currentUser = data;
     });
   }
 
-  // 無限滾動被動載入資料
-  onScroll() {
-    if (this.activeTab === 'popular') {
-      this.loadMore('popular');
-    }
-
-    if (this.activeTab === 'new') {
-      this.loadMore('new');
-    }
-
-    if (this.activeTab === 'follow') {
-      this.loadMore('follow');
-    }
-  }
-
-  // 點擊切換 Tab 的時候觸發
-  onTabChange(tab: 'popular' | 'new' | 'follow') {
-    this.activeTab = tab;
-    // console.log('目前切換至：', this.activeTab);
-
+  /**切換貼文排序重置 */
+  private resetAndLoad() {
     this.postList = [];
     this.isFinished = false;
     this.isLoading = false;
-
-    this.loadMore(tab);
+    this.loadMore();
   }
 
-  //不同篩選條件執行分頁邏輯
-  loadMore(tab: 'popular' | 'new' | 'follow') {
+  /**不同篩選條件執行分頁邏輯 */
+  loadMore() {
     if (this.isLoading || this.isFinished) return;
     this.isLoading = true;
     const lastPost = this.postList[this.postList.length - 1];
 
-    if (this.activeTab === 'popular') {
-      // 如果是第一次(lastPost 為 undefined)，Service會處理成不帶參數
-      this.postsService.GetPopPostsApi(lastPost?.viewCount, lastPost?.postId)
-        .subscribe({
-          next: (newPosts) => {
-            if (newPosts.length === 0) {
-              this.isFinished = true;
-            } else {
-              console.log(newPosts);
-              this.postList = [...this.postList, ...newPosts]; // 將新資料併入舊陣列
-            }
-            this.isLoading = false;
-          },
-          error: (err) => {
-            console.error('載入失敗', err);
-            this.isLoading = false;
-          }
-        });
+    let apiCall$: Observable<PostList[]>;
+
+    // --- 第一步：決定資料來源 (Strategy Pattern) ---
+    if (this.currentKeyword) {
+      // 優先執行關鍵字搜尋
+      apiCall$ = this.postsService.GetKeywordPostApi(this.currentKeyword, lastPost?.viewCount, lastPost?.postId);
+    } else {
+      // 執行原本的排序邏輯
+      switch (this.queryPara) {
+        case 'new':
+          apiCall$ = this.postsService.GetNewPostsApi(lastPost?.createdAt, lastPost?.postId);
+          break;
+        case 'follow':
+          apiCall$ = this.postsService.GetFollowPostsApi(lastPost?.createdAt, lastPost?.postId);
+          break;
+        case 'popular':
+        default:
+          apiCall$ = this.postsService.GetPopPostsApi(lastPost?.viewCount, lastPost?.postId);
+          break;
+      }
     }
 
-    if (this.activeTab === 'new') {
-      this.postsService.GetNewPostsApi(lastPost?.createdAt, lastPost?.postId)
-        .subscribe({
-          next: (newPosts) => {
-            if (newPosts.length === 0) {
-              this.isFinished = true;
-            } else {
-              console.log(newPosts);
-              this.postList = [...this.postList, ...newPosts]; // 將新資料併入舊陣列
-            }
-            this.isLoading = false;
-          },
-          error: (err) => {
-            console.error('載入失敗', err);
-            this.isLoading = false;
-          }
-        });
-    }
-
-    if (this.activeTab === 'follow') {
-      this.postsService.GetFollowPostsApi(lastPost?.createdAt, lastPost?.postId)
-        .subscribe({
-          next: (newPosts) => {
-            if (newPosts.length === 0) {
-              this.isFinished = true;
-            } else {
-              console.log(newPosts);
-              this.postList = [...this.postList, ...newPosts]; // 將新資料併入舊陣列
-            }
-            this.isLoading = false;
-          },
-          error: (err) => {
-            console.error('載入失敗', err);
-            this.isLoading = false;
-          }
-        });
-    }
-
+    // --- 第二步：統一處理後續邏輯 ---
+    apiCall$.subscribe({
+      next: (newPosts) => {
+        if (!newPosts || newPosts.length === 0) {
+          this.isFinished = true;
+        } else {
+          console.log('載入成功：', newPosts);
+          this.postList = [...this.postList, ...newPosts];
+        }
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('載入失敗', err);
+        this.isLoading = false;
+      }
+    });
   }
 
-  //互動呼叫Api
+  /**互動呼叫Api*/
   handleInteraction(post: PostList, type: string, reason?: string) {
-    if (type === 'like') {
-      post.isLiked = !post.isLiked;
-      if (post.isLiked) {
-        post.likeCount++;
-      } else {
-        post.likeCount--;
-      }
-
-    } else if (type === 'collect') {
-      post.isCollected = !post.isCollected;
-      if (post.isCollected) {
-        post.collectCount++;
-      } else {
-        post.collectCount--;
-      }
-    } else if (type === 'share') {
-      post.shareCount++;
-      this.copyToClipboard(post.postId);
-    }
-
-    const request: PostInteractionsRequest = {
-      postId: post.postId,
-      type: type as 'like' | 'collect' | 'share' | 'report' | 'view',
-      reportReason: type === 'report' ? reason : undefined,
-    };
-
-    if (!this.currentUser) return;
-
-    this.postInteractionsService.postPostInteractionsApi(request).subscribe({
-      next: (data) => {
-        if (type === 'report') {
+    switch (type) {
+      case 'view':
+        this.handleInteractionsService.interactWithPost(post, 'view', undefined, this.currentUser)?.subscribe();
+        break;
+      case 'like':
+        this.handleInteractionsService.interactWithPost(post, 'like', undefined, this.currentUser)?.subscribe();
+        break;
+      case 'share':
+        this.handleInteractionsService.interactWithPost(post, 'share', undefined, this.currentUser)?.subscribe();
+        break;
+      case 'collect':
+        this.handleInteractionsService.interactWithPost(post, 'collect', undefined, this.currentUser)?.subscribe();
+        break;
+      case 'report':
+        this.handleInteractionsService.interactWithPost(post, 'report', reason, this.currentUser)?.subscribe(data => {
           this.toastr.info(
             '',
             '我們已收到您的檢舉，將會盡快處理。'
           );
-        }
-      },
-
-
-      error: (err) => {
-        console.error(`interaction failed`, err);
-      }
-    });
-
+        });
+        break;
+    }
   }
 
   //複製貼文網址
@@ -254,6 +214,41 @@ export class Posts implements OnInit {
   /**放大圖片 - 關閉燈箱 */
   closeLightbox() {
     this.selectedFullImage.set(null);
+  }
+
+  /**貼文導頁 */
+  navigateToPost(event: Event, postId: number) {
+    // 子元素的 stopPropagation 會阻止事件傳到這裡
+    // 只有點擊卡片空白處、文字處，才會觸發這個導頁
+    this.router.navigate(['/forum/posts', postId]);
+  }
+
+
+
+
+  /**打開刪除貼文彈窗 */
+  openDeleteModal(postId: number) {
+    this.pendingDeletePostId = postId;
+    this.deleteModal.nativeElement.showModal();
+  }
+
+  /**關閉刪除貼文彈窗 */
+  closeDeleteModal() {
+    this.deleteModal.nativeElement.close();
+    this.pendingDeletePostId = undefined;
+  }
+
+  /**送出刪除貼文 */
+  deletePost() {
+    if (!this.pendingDeletePostId) return;
+    this.postsService.delDeletePost(this.pendingDeletePostId).subscribe({
+      next: (res) => {
+        this.toastr.info('您的貼文已刪除！');
+
+        //重新渲染畫面
+        this.resetAndLoad();
+      }
+    });
   }
 
 }

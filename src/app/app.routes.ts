@@ -48,6 +48,16 @@ export const routes: Routes = [
         ]
       },
       {
+        path: 'posts/:id',
+        loadComponent: () => import('./forum/components/index/index').then(m => m.Index),
+        children: [
+          {
+            path: '',
+            loadComponent: () => import('./forum/components/post-details/post-details').then(m => m.PostDetails),
+          }
+        ]
+      },
+      {
         path: 'boards',
         loadComponent: () => import('./forum/components/index/index').then(m => m.Index),
         children: [
@@ -64,6 +74,15 @@ export const routes: Routes = [
           {
             path: '',
             loadComponent: () => import('./forum/components/select-board-posts/select-board-posts').then(m => m.SelectBoardPosts)
+          }
+        ]
+      }, {
+        path: 'member',
+        loadComponent: () => import('./forum/components/index/index').then(m => m.Index),
+        children: [
+          {
+            path: 'wall',
+            loadComponent: () => import('./forum/components/personal-wall/personal-wall').then(m => m.PersonalWall),
           }
         ]
       }

@@ -1,3 +1,4 @@
+import { environment } from './../../../environments/environment';
 import { HttpClient, HttpEvent, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { PostList } from '../interfaces/postList';
@@ -5,6 +6,8 @@ import { Observable } from 'rxjs/internal/Observable';
 import { timer } from 'rxjs/internal/observable/timer';
 import { map, zip } from 'rxjs';
 import { CreatePostDto } from '../interfaces/CreatePostDto';
+import { PostDetailsData } from '../interfaces/PostDetailsData';
+
 
 @Injectable({
   providedIn: 'root',
@@ -12,6 +15,55 @@ import { CreatePostDto } from '../interfaces/CreatePostDto';
 export class PostsService {
 
   constructor(private http: HttpClient) { }
+
+  //GET 使用者發佈的貼文
+  GetUserPostedPostApi(lastCreatedAt?: string, lastPostId?: number): Observable<PostList[]> {
+    let params = new HttpParams().set('sortBy', 'posted');
+    if (lastCreatedAt !== undefined && lastPostId !== undefined) {
+      params = params
+        .set('lastCreatedAt', lastCreatedAt.toString())
+        .set('lastId', lastPostId.toString());
+    }
+
+    const apiData$ = this.http.get<PostList[]>(`${environment.apiUrl}/Forum/Posts`, { params });
+    const minimumDelay$ = timer(1200);
+    return zip(apiData$, minimumDelay$).pipe(
+      map(([data, _]) => data)
+    );
+  }
+
+  //GET 使用者收藏的貼文
+  GetUserCollectPostApi(lastCreatedAt?: string, lastPostId?: number): Observable<PostList[]> {
+    let params = new HttpParams().set('sortBy', 'collect');
+    if (lastCreatedAt !== undefined && lastPostId !== undefined) {
+      params = params
+        .set('lastCreatedAt', lastCreatedAt.toString())
+        .set('lastId', lastPostId.toString());
+    }
+
+    const apiData$ = this.http.get<PostList[]>(`${environment.apiUrl}/Forum/Posts`, { params });
+    const minimumDelay$ = timer(1200);
+    return zip(apiData$, minimumDelay$).pipe(
+      map(([data, _]) => data)
+    );
+  }
+
+  //GET 關鍵字搜尋貼文
+  GetKeywordPostApi(kw: string, lastViewCount?: number, lastPostId?: number): Observable<PostList[]> {
+    let params = new HttpParams().set('keyword', kw);
+    //呼叫第二次以上會有參數帶進來，執行分頁邏輯
+    if (lastViewCount !== undefined && lastPostId !== undefined) {
+      params = params
+        .set('lastViewCount', lastViewCount.toString())
+        .set('lastId', lastPostId.toString());
+    }
+
+    const apiData$ = this.http.get<PostList[]>(`${environment.apiUrl}/Forum/Posts`, { params });
+    const minimumDelay$ = timer(1200);
+    return zip(apiData$, minimumDelay$).pipe(
+      map(([data, _]) => data)
+    );
+  }
 
   //GET 熱門貼文
   GetPopPostsApi(lastViewCount?: number, lastPostId?: number): Observable<PostList[]> {
@@ -24,7 +76,7 @@ export class PostsService {
         .set('lastId', lastPostId.toString());
     }
 
-    const apiData$ = this.http.get<PostList[]>('https://localhost:7017/api/Forum/Posts', { params });
+    const apiData$ = this.http.get<PostList[]>(`${environment.apiUrl}/Forum/Posts`, { params });
     const minimumDelay$ = timer(1200);
     return zip(apiData$, minimumDelay$).pipe(
       map(([data, _]) => data)
@@ -41,7 +93,7 @@ export class PostsService {
         .set('lastId', lastPostId.toString());
     }
 
-    const apiData$ = this.http.get<PostList[]>('https://localhost:7017/api/Forum/Posts', { params });
+    const apiData$ = this.http.get<PostList[]>(`${environment.apiUrl}/Forum/Posts`, { params });
     const minimumDelay$ = timer(1200);
     return zip(apiData$, minimumDelay$).pipe(
       map(([data, _]) => data)
@@ -57,7 +109,7 @@ export class PostsService {
         .set('lastId', lastPostId.toString());
     }
 
-    const apiData$ = this.http.get<PostList[]>('https://localhost:7017/api/Forum/Posts', { params });
+    const apiData$ = this.http.get<PostList[]>(`${environment.apiUrl}/Forum/Posts`, { params });
     const minimumDelay$ = timer(1200);
     return zip(apiData$, minimumDelay$).pipe(
       map(([data, _]) => data)
@@ -74,7 +126,7 @@ export class PostsService {
         .set('lastId', lastPostId.toString());
     }
 
-    const apiData$ = this.http.get<PostList[]>('https://localhost:7017/api/Forum/Posts', { params });
+    const apiData$ = this.http.get<PostList[]>(`${environment.apiUrl}/Forum/Posts`, { params });
     const minimumDelay$ = timer(1000);
     return zip(apiData$, minimumDelay$).pipe(
       map(([data, _]) => data)
@@ -82,18 +134,35 @@ export class PostsService {
 
   }
 
+  //GET 貼文詳細內容
+  GetPostDetailsApi(postId: number) {
+    return this.http.get<PostDetailsData>(`${environment.apiUrl}/Forum/Posts/${postId}`);
+  }
+
   //POST 發佈貼文圖片 IFormFile
   PostUploadImages(files: File[]): Observable<HttpEvent<string[]>> {
     const formData = new FormData();
     files.forEach(file => formData.append('files', file));
-    return this.http.post<string[]>('https://localhost:7017/api/Forum/Posts/Images', formData, {
+    return this.http.post<string[]>(`${environment.apiUrl}/Forum/Posts/Images`, formData, {
       reportProgress: true, // 關鍵：開啟進度回報
       observe: 'events'     // 關鍵：觀察所有事件（而不只是最後的結果）
     });
   }
   //POST 發佈貼文內容 Json
   PostCreatePost(payload: CreatePostDto): Observable<any> {
-    return this.http.post('https://localhost:7017/api/Forum/Posts', payload);
+    return this.http.post(`${environment.apiUrl}/Forum/Posts`, payload);
+  }
+
+  //PUT 修改貼文
+  putEditPost(postId: number, dto: CreatePostDto) {
+    return this.http.put(`${environment.apiUrl}/Forum/Posts/${postId}`, dto);
+  }
+
+
+
+  //DELETE 刪除貼文
+  delDeletePost(postId: number) {
+    return this.http.delete(`${environment.apiUrl}/Forum/Posts/${postId}`);
   }
 
 
