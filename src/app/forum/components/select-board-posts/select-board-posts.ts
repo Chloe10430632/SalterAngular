@@ -16,10 +16,11 @@ import { AuthService } from '../../../core/services/auth-service';
 import { BoardInteractionsService } from '../../services/board-interactions-service';
 import { environment } from './../../../../environments/environment';
 import { HandleInteractions } from '../../services/handle-interactions';
+import { AvatarPipe } from "../../../shared/pipes/avatar-pipe";
 
 @Component({
   selector: 'app-select-board-posts',
-  imports: [DecimalPipe, RelativeTimePipe, InfiniteScrollDirective, RouterLink],
+  imports: [DecimalPipe, RelativeTimePipe, InfiniteScrollDirective, RouterLink, AvatarPipe],
   templateUrl: './select-board-posts.html',
   styleUrl: './select-board-posts.css',
 })

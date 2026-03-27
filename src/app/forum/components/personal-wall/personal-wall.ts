@@ -18,10 +18,11 @@ import { BoardsService } from '../../services/boards-service';
 import { TripService } from '../../../trip/services/trip';
 import { CreatePostDto } from '../../interfaces/CreatePostDto';
 import { PostDetailsData } from '../../interfaces/PostDetailsData';
+import { AvatarPipe } from "../../../shared/pipes/avatar-pipe";
 
 @Component({
   selector: 'app-personal-wall',
-  imports: [DecimalPipe, RelativeTimePipe, InfiniteScrollDirective, RouterLink, ReactiveFormsModule],
+  imports: [DecimalPipe, RelativeTimePipe, InfiniteScrollDirective, RouterLink, ReactiveFormsModule, AvatarPipe],
   templateUrl: './personal-wall.html',
   styleUrl: './personal-wall.css',
 })

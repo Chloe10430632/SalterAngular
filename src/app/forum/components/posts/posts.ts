@@ -14,11 +14,12 @@ import { CurrentUser } from '../../interfaces/currentUser';
 import { environment } from './../../../../environments/environment';
 import { Observable } from 'rxjs';
 import { HandleInteractions } from '../../services/handle-interactions';
+import { AvatarPipe } from "../../../shared/pipes/avatar-pipe";
 
 
 @Component({
   selector: 'app-posts',
-  imports: [DecimalPipe, RelativeTimePipe, InfiniteScrollDirective, RouterLink],
+  imports: [DecimalPipe, RelativeTimePipe, InfiniteScrollDirective, RouterLink, AvatarPipe],
   templateUrl: './posts.html',
   styleUrl: './posts.css',
 })
@@ -37,7 +38,7 @@ export class Posts implements OnInit {
   currentKeyword: string = ''; // 存放從 URL 拿到的搜尋詞
 
   /**後端伺服器PORT */
-  backendServer = `${environment.domain}`;
+  // backendServer = `${environment.domain}`;
 
   /**裝Api打回來的貼文資料 */
   postList: PostList[] = [];

@@ -14,10 +14,11 @@ import { ToastrService } from 'ngx-toastr';
 import { CreateCommentDto } from '../../interfaces/CreateCommentDto';
 import { CommentsService } from '../../services/comments-service';
 import { FormsModule, NgModel } from '@angular/forms';
+import { AvatarPipe } from "../../../shared/pipes/avatar-pipe";
 
 @Component({
   selector: 'app-post-details',
-  imports: [RouterLink, RelativeTimePipe, DecimalPipe, FormsModule],
+  imports: [RouterLink, RelativeTimePipe, DecimalPipe, FormsModule, AvatarPipe],
   templateUrl: './post-details.html',
   styleUrl: './post-details.css',
 })
