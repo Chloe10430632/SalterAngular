@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { environment } from '../../../../environments/environment.development';
 
 @Component({
   selector: 'app-update-house',
@@ -10,6 +11,10 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrl: './update-house.css',
 })
 export class UpdateHouse implements OnInit {
+
+  private readonly apiUrl = environment.apiUrl;
+
+
   // 1. 定義表單結構
   houseForm: any = {
     roomTypeId: 0,
@@ -38,7 +43,7 @@ export class UpdateHouse implements OnInit {
   ngOnInit() {
 
     // 先抓所有設施
-    this.http.get<any[]>('https://localhost:7017/api/Home/amenities').subscribe(res => {
+    this.http.get<any[]>(`${this.apiUrl}/Home/amenities`).subscribe(res => {
       this.amenityList = res;
     });
 
@@ -93,7 +98,7 @@ export class UpdateHouse implements OnInit {
         next: (res) => {
           this.isLoading = false;
           alert('房源資料補齊成功！');
-          this.router.navigate(['/']); // 成功後導回列表
+          this.router.navigate(['/house']); // 成功後導回列表
         },
         error: (err) => {
           this.isLoading = false;
@@ -114,5 +119,45 @@ export class UpdateHouse implements OnInit {
       // 取消勾選：把 ID 從陣列移除
       this.houseForm.amenityIds = this.houseForm.amenityIds.filter((i: number) => i !== id);
     }
+  }
+
+
+  onFileSelected(event: any) {
+    const files: FileList = event.target.files;
+    if (files.length === 0) return;
+
+    this.isLoading = true; // 開啟讀取條，因為上傳雲端需要時間
+
+    // 1. 準備 FormData
+    const formData = new FormData();
+    for (let i = 0; i < files.length; i++) {
+      formData.append('files', files[i]); // 'files' 要對應你後端 UploadController 的參數名
+    }
+
+    // 2. 呼叫你剛寫好的 Upload API
+    this.http.post<any>('https://localhost:7017/api/Upload/images', formData).subscribe({
+      next: (res) => {
+        // 假設後端回傳格式是 { urls: ["http...", "http..."] }
+        const newUrls = res.urls.join('\n');
+
+        // 3. 把新網址加到現有的 rawImageUrls 後面
+        if (this.rawImageUrls.trim() === '') {
+          this.rawImageUrls = newUrls;
+        } else {
+          this.rawImageUrls += '\n' + newUrls;
+        }
+
+        this.isLoading = false;
+        alert(`成功上傳 ${res.urls.length} 張圖片！`);
+      },
+      error: (err) => {
+        this.isLoading = false;
+        console.error('上傳失敗', err);
+        alert('圖片上傳失敗，請檢查 API 設定');
+      }
+    });
+
+    // 清空 input，讓使用者可以重複選同一個檔案
+    event.target.value = '';
   }
 }

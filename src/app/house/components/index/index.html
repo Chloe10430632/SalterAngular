@@ -10,7 +10,6 @@
 </button>
 <!-- 搜尋列 -->
 <div class="flex justify-center py-10 px-4 w-full sticky top-0 z-30 bg-base-200/50 backdrop-blur-md">
-
   <div
     class="flex items-center w-full max-w-4xl border border-base-300 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-full bg-white p-2 group">
 
@@ -18,27 +17,39 @@
       <div tabindex="0" role="button"
         class="px-8 py-3 hover:bg-base-200 rounded-full transition-colors cursor-pointer w-full text-left">
         <span class="block font-bold text-xs uppercase tracking-wider text-base-content mb-0.5">地點</span>
-        <span class="text-base font-medium text-gray-500 block">搜尋目的地</span>
+        <span class="text-base font-medium block" [ngClass]="selectedCity !== '全部' ? 'text-primary' : 'text-gray-500'">
+          {{ selectedCity === '全部' ? '搜尋目的地' : selectedCity }}
+        </span>
       </div>
 
       <div tabindex="0"
         class="dropdown-content z-[2] menu p-6 shadow-2xl bg-base-100 rounded-[2.5rem] w-80 mt-4 border border-base-200">
         <h3 class="text-xs font-bold mb-4 ml-4 text-gray-400">目的地建議</h3>
-        <div class="space-y-2">
-          <div class="flex items-center gap-4 p-4 hover:bg-base-200 rounded-2xl cursor-pointer">
-            <div class="bg-base-200 p-3 rounded-xl text-primary"><i class="bi bi-geo-alt-fill"></i></div>
-            <div class="font-bold text-sm">附近</div>
+        <div class="space-y-2 max-h-60 overflow-y-auto scrollbar-hide">
+          @for (city of cities; track city) {
+          <div (click)="selectCity(city)"
+            class="flex items-center gap-4 p-4 hover:bg-base-200 rounded-2xl cursor-pointer transition-colors">
+            <div class="bg-base-200 p-3 rounded-xl text-primary">
+              <i class="bi" [ngClass]="city === '全部' ? 'bi-grid-fill' : 'bi-geo-alt-fill'"></i>
+            </div>
+            <div class="font-bold text-sm text-base-content">{{ city }}</div>
           </div>
+          }
         </div>
       </div>
     </div>
-
     <div class="h-8 w-[1px] bg-base-300"></div>
 
     <div (click)="openCalendar($event)"
       class="flex-1 px-8 py-3 hover:bg-base-200 rounded-full transition-colors hidden sm:block cursor-pointer">
       <span class="block font-bold text-xs uppercase tracking-wider text-base-content mb-0.5">時間</span>
-      <span class="text-base font-medium text-gray-500">選擇日期</span>
+      <span class="text-base font-medium truncate"
+        [ngClass]="startDate && endDate ? 'text-primary font-bold' : 'text-gray-500'">
+        @if (startDate && endDate)
+        {
+        {{ startDate | date:'MM/dd' }} - {{ endDate | date:'MM/dd'}}
+        } @else {選擇日期}
+      </span>
     </div>
 
     <div class="h-8 w-[1px] bg-base-300"></div>
@@ -47,9 +58,14 @@
       class="flex-[1.2] pl-8 pr-3 py-2 flex items-center justify-between hover:bg-base-200 rounded-full transition-colors cursor-pointer">
       <div class="min-w-0 text-left">
         <span class="block font-bold text-xs uppercase tracking-wider text-base-content mb-0.5">客人</span>
-        <span class="text-gray-500 text-base font-medium truncate">新增人數</span>
+        <span class="text-base font-medium truncate"
+          [ngClass]="(houseService.adultCount + houseService.childCount) > 0 ? 'text-primary' : 'text-gray-500'">
+          {{ (houseService.adultCount + houseService.childCount) > 0 ? (houseService.adultCount +
+          houseService.childCount) + ' 位' : '新增人數' }}
+        </span>
       </div>
-      <button
+
+      <button (click)="searchHouses($event)"
         class="btn btn-primary btn-circle btn-lg ml-4 border-none shadow-md group-hover:scale-105 transition-transform">
         <i class="bi bi-search text-white text-xl"></i>
       </button>
@@ -57,6 +73,7 @@
 
   </div>
 </div>
+
 <!-- 日曆的彈跳視窗 -->
 <dialog id="calendar_modal" class="modal modal-bottom sm:modal-middle">
   <div class="modal-box bg-white max-w-2xl rounded-[2rem] p-10">
@@ -65,17 +82,19 @@
     <div class="flex flex-col md:flex-row gap-6">
       <div class="flex-1">
         <label class="label"><span class="label-text font-bold">入住</span></label>
-        <input type="date" class="input input-bordered w-full rounded-xl focus:border-primary" />
+        <input type="date" [(ngModel)]="startDate" [min]="today" (change)="onStartDateChange()"
+          class="input input-bordered w-full rounded-xl focus:border-primary" />
       </div>
       <div class="flex-1">
         <label class="label"><span class="label-text font-bold">退房</span></label>
-        <input type="date" class="input input-bordered w-full rounded-xl focus:border-primary" />
+        <input type="date" [(ngModel)]="endDate" [min]="startDate || today"
+          class="input input-bordered w-full rounded-xl focus:border-primary" />
       </div>
     </div>
 
     <div class="modal-action mt-8">
       <form method="dialog" class="w-full flex justify-between items-center">
-        <button class="btn btn-ghost text-gray-500 underline">清除日期</button>
+        <button (click)="clearDates()" class="btn btn-ghost text-gray-500 underline">清除日期</button>
         <button class="btn btn-primary px-10 rounded-full text-white">儲存</button>
       </form>
     </div>
@@ -97,9 +116,9 @@
         <div class="text-sm text-gray-400">13 歲以上</div>
       </div>
       <div class="flex items-center gap-4">
-        <button (click)="changeAdult(-1)" class="btn btn-circle btn-outline btn-sm">-</button>
-        <span class="font-bold text-lg">{{adultCount}}</span>
-        <button (click)="changeAdult(1)" class="btn btn-circle btn-outline btn-sm">+</button>
+        <button (click)="houseService.changeAdult(-1)" class="btn btn-circle btn-outline btn-sm">-</button>
+        <span class="font-bold text-lg">{{houseService.adultCount}}</span>
+        <button (click)="houseService.changeAdult(1)" class="btn btn-circle btn-outline btn-sm">+</button>
       </div>
     </div>
 
@@ -109,9 +128,9 @@
         <div class="text-sm text-gray-400">2-12 歲</div>
       </div>
       <div class="flex items-center gap-4">
-        <button (click)="changeChild(-1)" class="btn btn-circle btn-outline btn-sm">-</button>
-        <span class="font-bold text-lg">{{childCount}}</span>
-        <button (click)="changeChild(1)" class="btn btn-circle btn-outline btn-sm">+</button>
+        <button (click)="houseService.changeChild(-1)" class="btn btn-circle btn-outline btn-sm">-</button>
+        <span class="font-bold text-lg">{{houseService.childCount}}</span>
+        <button (click)="houseService.changeChild(1)" class="btn btn-circle btn-outline btn-sm">+</button>
       </div>
     </div>
 
@@ -131,42 +150,59 @@
 </div>
 
 <!-- 房屋卡片區 -->
-<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+<div class="container mx-auto px-4 py-8">
 
-  @for (house of houses; track house.roomTypeId) {
-  <div class="group relative cursor-pointer">
+  @for (group of cityGroups; track group.cityName) {
+  <div class="mb-12">
 
-    <div class="relative aspect-square overflow-hidden rounded-2xl shadow-sm">
-
-      <div [routerLink]="['/houseDetail', house.roomTypeId]" class="w-full h-full">
-        <img [src]="house.allImages?.length ? getCloudinaryThumb(house.allImages[0]) : '預設圖'"
-          class="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110" alt="房源照片" />
+    <div class="flex justify-between items-end mb-4 px-2">
+      <div>
+        <h2 class="text-2xl font-bold text-base-content">{{ group.cityName }}</h2>
+        <p class="text-sm text-gray-500">探索 {{ group.cityName }} 的精選住宿</p>
       </div>
-
-      <button (click)="$event.stopPropagation()" [routerLink]="['/updateHouse', house.roomTypeId]"
-        class="absolute top-3 right-3 z-30 p-2 bg-white/90 hover:bg-white rounded-full shadow-md transition-all opacity-0 group-hover:opacity-100 text-secondary border border-base-200">
-        <i class="fa-solid fa-pen-to-square text-lg"></i>
-      </button>
-
+      <a [routerLink]="['/searchHouse']" [queryParams]="{ city: group.cityName }"
+        class="btn btn-ghost btn-sm text-primary flex items-center gap-1">
+        查看更多 <i class="fa-solid fa-chevron-right text-xs"></i>
+      </a>
     </div>
 
-    <div class="mt-3" [routerLink]="['/houseDetail', house.roomTypeId]">
-      <div class="flex justify-between items-start">
-        <h3 class="font-bold text-base-content">{{ house.citie }} · {{ house.district }}</h3>
-        ...
+    <div class="flex flex-nowrap overflow-x-auto gap-4 scrollbar-hide py-4" appDragScroll>
+
+      @for (house of group.houses; track house.houseId) {
+      <div class="flex-none w-[280px] lg:w-[320px]">
+
+        <div class="group relative cursor-pointer w-full">
+          <div class="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-sm border border-base-200">
+            <div [routerLink]="['/houseDetail', house.houseId]" class="w-full h-full">
+              <img [src]="house.imageUrl ? formatImg(house.imageUrl) : 'assets/default-house.jpg'" draggable="false"
+                class="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110" alt="房源照片" />
+            </div>
+
+            <button (click)="$event.stopPropagation()" [routerLink]="['/updateHouse', house.houseId]"
+              class="absolute top-3 right-3 z-30 p-2 bg-white/90 hover:bg-white rounded-full shadow-md transition-all opacity-0 group-hover:opacity-100 text-secondary border border-base-200">
+              <i class="fa-solid fa-pen-to-square text-base"></i>
+            </button>
+          </div>
+
+          <div class="mt-3" [routerLink]="['/houseDetail', house.houseId]">
+            <div class="flex justify-between items-start">
+              <h3 class="font-bold text-base-content">{{ group.cityName }} · {{ house.district }}</h3>
+            </div>
+            <p class="text-gray-500 text-sm truncate">{{ house.title }}</p>
+            <p class="mt-1 font-semibold text-base-content">
+              ${{ house.price | number }} <span class="font-normal text-xs text-gray-400">/ 晚</span>
+            </p>
+          </div>
+        </div>
       </div>
-      <p class="text-gray-500 text-sm truncate">{{ house.name }}</p>
-      <p class="mt-1 font-semibold text-base-content">
-        ${{ house.pricePerNight | number }} <span class="font-normal">晚</span>
-      </p>
+      }
     </div>
   </div>
-  }
-  @empty {
-  <div class="col-span-full py-20 text-center">
-    <p class="text-gray-400">目前沒有找到符合條件的房源...</p>
+  } @empty {
+  <div class="py-20 text-center">
+    <span class="loading loading-dots loading-lg text-primary"></span>
+    <p class="text-gray-400 mt-4">正在為您準備各城市的房源...</p>
   </div>
   }
-
 
 </div>

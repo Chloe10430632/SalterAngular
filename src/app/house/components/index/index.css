@@ -1,0 +1,36 @@
+/* 1. 針對有拖拉屬性的容器進行強制規範 */
+[appDragScroll] {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  /* 強制不換行，這是滑動的命脈 */
+  scroll-snap-type: none !important;
+  /* 關閉自動對齊，否則拖拉會被彈回來 */
+  scroll-behavior: auto !important;
+  /* 拖拉時不要 smooth，不然會覺得卡卡的 */
+  -webkit-overflow-scrolling: touch;
+  cursor: grab;
+  user-select: none;
+  /* 防止拖拉時選到文字 */
+}
+
+[appDragScroll]:active {
+  cursor: grabbing;
+}
+
+/* 2. 解決圖片過大：確保圖片受限於容器 */
+[appDragScroll] img {
+  max-width: 100%;
+  pointer-events: none;
+  /* 讓滑動事件直接穿透給底層容器 */
+  -webkit-user-drag: none;
+}
+
+/* 3. 隱藏捲軸 */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

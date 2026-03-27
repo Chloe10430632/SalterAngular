@@ -7,3 +7,18 @@ export interface HouseListDTO {
   allImages: string[];
   viewCount: number;
 }
+export interface HousePreviewDTO {
+  houseId: number;
+  title: string;        // 顯示名稱
+  price: number;
+  citie: string;
+  district: string;
+  imageUrl: string;     // 首頁只需要一張封面圖
+  guests: number;
+}
+
+// 城市分組用的 DTO
+export interface CityGroupDTO {
+  cityName: string;
+  houses: HousePreviewDTO[]; // 這裡面裝的是上面的預覽小卡片
+}

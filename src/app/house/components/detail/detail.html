@@ -94,14 +94,16 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
           @for (rv of selectedProperty?.reviews; track $index) {
           <div class="space-y-4">
-            <div class="flex items-center gap-4">
-              <div class="avatar placeholder">
-                <div class="bg-neutral text-neutral-content rounded-full w-12">
-                  <span class="text-xl">G</span>
+            <div class="flex items-center gap-3">
+              <div class="avatar">
+                <div class="w-10 rounded-full border border-base-300">
+                  <img [src]="rv.picture || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Guest'" />
                 </div>
               </div>
+
               <div>
-                <div class="font-bold">房客 Guest</div>
+                <div class="font-bold text-sm">{{ rv.name || '訪客' }}</div>
+
                 <div class="text-xs opacity-50">{{ rv.createdTime | date:'yyyy年MM月dd日' }}</div>
               </div>
             </div>
@@ -116,8 +118,65 @@
           <p class="text-gray-400">目前尚無評價，成為第一個入住的人吧！</p>
           }
         </div>
+
       </div>
+
+      <div class="divider"></div>
+      <!-- 新增留言區 -->
+      @if (isLoggedIn) {
+      <div class="bg-base-200/30 p-8 rounded-[2rem] mt-10 border border-base-300">
+        <h4 class="text-xl font-bold mb-6 flex items-center gap-3">
+          <div class="bg-primary/10 p-2 rounded-lg text-primary">
+            <i class="bi bi-pencil-square"></i>
+          </div>
+          留下您的住宿心得
+        </h4>
+      </div>
+      <div class="space-y-6">
+        <div>
+          <span class="text-sm font-bold opacity-60 block mb-3">總體評分</span>
+          <div class="rating rating-lg gap-1">
+            <input type="radio" name="r2" class="mask mask-star-2 bg-warning" (click)="rating(1)" />
+            <input type="radio" name="r2" class="mask mask-star-2 bg-warning" (click)="rating(2)" />
+            <input type="radio" name="r2" class="mask mask-star-2 bg-warning" (click)="rating(3)" />
+            <input type="radio" name="r2" class="mask mask-star-2 bg-warning" (click)="rating(4)" checked />
+            <input type="radio" name="r2" class="mask mask-star-2 bg-warning" (click)="rating(5)" />
+          </div>
+        </div>
+
+        <div class="form-control">
+          <textarea [(ngModel)]="newComment.comment"
+            class="textarea textarea-bordered h-32 rounded-2xl text-base focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+            placeholder="覺得這裡環境如何？服務好嗎？寫下您的真實感受..."></textarea>
+        </div>
+
+        <div class="flex justify-end">
+          <button (click)="submitComment()" [disabled]="!newComment.comment.trim() || isSubmitting"
+            class="btn btn-primary btn-lg rounded-full px-12 text-white shadow-xl shadow-primary/20 hover:scale-105 transition-transform">
+            @if (isSubmitting) {
+            <span class="loading loading-spinner"></span>
+            } @else {
+            發表評價
+            }
+          </button>
+
+        </div>
+      </div>
+      } @else {
+      <div class="card bg-base-200 border-2 border-dashed border-base-300 mt-10">
+        <div class="card-body items-center text-center py-12">
+          <div class="bg-base-300 p-4 rounded-full mb-4">
+            <i class="bi bi-person-lock text-3xl opacity-50"></i>
+          </div>
+          <h3 class="card-title text-gray-500">登入後即可分享體驗</h3>
+          <p class="text-sm text-gray-400 mb-6">我們重視每位房客的真實感受</p>
+          <button routerLink="/login" class="btn btn-outline btn-primary rounded-full px-10">立即登入</button>
+        </div>
+      </div>
+      }
     </div>
+
+
     <!-- 右側顯示價格商品區 -->
     <div class="relative">
       <div class="card bg-white shadow-2xl border border-base-200 p-8 sticky top-28 rounded-3xl">
