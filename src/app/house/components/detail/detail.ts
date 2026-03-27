@@ -1,3 +1,4 @@
+import { CurrentUser } from './../../../forum/interfaces/currentUser';
 import { AuthService } from './../../../core/services/auth-service';
 import { authInterceptor } from './../../../interceptor/auth-interceptor';
 import { HouseService } from './../../service/index-service';
@@ -23,8 +24,9 @@ export class Detail implements OnInit {
   isLoggedIn = true;
   isLoading = false;
   currentSlideIndex = 0;
+  CurrentUserData: CurrentUser | null = null;
   newComment = {
-    rating: 0,
+    rating: 4,
     comment: '',
     roomTypeId: 0,
   };
@@ -38,14 +40,16 @@ export class Detail implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    console.log('元件初始化了！')
+
     this.authService.currentUser$.subscribe(user => {
       if (user) {
         this.isLoggedIn = true;
         this.userId = user.id; // 這裡就是 MemberId！
+        this.CurrentUserData = user;
       } else {
         this.isLoggedIn = false;
         this.userId = null;
+        this.CurrentUserData = null;
       }
     });
 
@@ -57,6 +61,7 @@ export class Detail implements OnInit {
 
   submitComment() {
     console.log('點擊了按鈕！目前的 userId 是:', this.userId);
+
     if (!this.userId) {
       alert('請先登入');
       return;
@@ -82,7 +87,9 @@ export class Detail implements OnInit {
         const newReview = {
           rating: this.newComment.rating,
           comment: this.newComment.comment,
-          createdTime: new Date()
+          createdTime: new Date(),
+          name: this.CurrentUserData?.name || '匿名使用者',// 顯示當前使用者名稱，或預設為匿名
+          picture: this.CurrentUserData?.picture
         };
         this.selectedProperty.reviews = [newReview, ...(this.selectedProperty.reviews || [])];
 

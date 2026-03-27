@@ -94,14 +94,16 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
           @for (rv of selectedProperty?.reviews; track $index) {
           <div class="space-y-4">
-            <div class="flex items-center gap-4">
-              <div class="avatar placeholder">
-                <div class="bg-neutral text-neutral-content rounded-full w-12">
-                  <span class="text-xl">G</span>
+            <div class="flex items-center gap-3">
+              <div class="avatar">
+                <div class="w-10 rounded-full border border-base-300">
+                  <img [src]="rv.picture || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Guest'" />
                 </div>
               </div>
+
               <div>
-                <div class="font-bold">房客 Guest</div>
+                <div class="font-bold text-sm">{{ rv.name || '訪客' }}</div>
+
                 <div class="text-xs opacity-50">{{ rv.createdTime | date:'yyyy年MM月dd日' }}</div>
               </div>
             </div>
