@@ -1,31 +1,14 @@
-<div class="flex flex-col items-center w-full min-h-[80vh] bg-base-100 p-6 md:p-12" data-theme="bumblebee">
+<div>
 
-  <div class="tabs tabs-boxed bg-transparent mb-4 gap-2">
-    <a class="tab tab-lg hover:tab-active transition-all">我的資料</a>
+</div>
+<div class="flex flex-col items-center w-full min-h-screen bg-base-100" data-theme="bumblebee">
 
-    <div class="dropdown dropdown-hover">
-      <div tabindex="0" role="button" class="tab tab-lg flex items-center gap-1">
-        課程
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 opacity-50" fill="none" viewBox="0 0 24 24"
-          stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-        </svg>
-      </div>
-      <ul tabindex="0"
-        class="dropdown-content menu bg-base-100 rounded-box z-[1] w-48 p-2 shadow-xl border border-base-200">
-        <li><a class="active:bg-primary">本島主開的課</a></li>
-        <li><a class="active:bg-primary">別人家踏踏-我參加過的課</a></li>
-      </ul>
-    </div>
-
-    <a class="tab tab-lg hover:tab-active transition-all text-primary font-bold">收藏</a>
-    <a class="tab tab-lg hover:tab-active transition-all">營運</a>
+  <div class="justify-between mt-8">
+    <app-toptab></app-toptab>
   </div>
 
-
-  <div data-theme="bumblebee" class="min-h-screen bg-base-100 py-1 px-4">
-    <div class="max-w-3xl mx-auto card bg-base-100 shadow-2xl border border-base-300 relative">
-
+  <div class="w-full max-w-4xl mx-auto">
+    <div class="card bg-base-100 shadow-2xl border border-base-300 mt-5 mb-12">
       <div class="card-body p-8 md:p-12">
 
         <div class="flex justify-between items-center mb-10 border-b-2 border-base-200 pb-6">
@@ -33,65 +16,48 @@
             <h2 class="text-3xl font-black text-base-content tracking-tight">教練個人檔案</h2>
             <p class="text-[10px] text-base-content/40 mt-1 uppercase tracking-[0.2em]">Coach Profile Preview</p>
           </div>
-          <button
-            class="btn btn-primary btn-outline btn-sm md:btn-md rounded-full px-6 hover:scale-105 transition-all shadow-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-              stroke="currentColor" class="w-4 h-4 mr-1">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
-            </svg>
+          <button class="btn btn-primary btn-outline btn-sm md:btn-md rounded-full px-6 hover:scale-105 transition-all">
             編輯資料
           </button>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
-
           <div class="flex flex-col items-center text-center">
             <div class="avatar mb-4">
               <div class="w-32 rounded-full ring ring-primary ring-offset-base-100 ring-offset-4 shadow-xl">
                 <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" alt="Avatar" />
               </div>
             </div>
+            <h1 class="text-2xl font-black text-base-content">{{ coachName }}</h1>
 
-            <div class="space-y-1 mb-4">
-              <h1 class="text-2xl font-black text-base-content">Daisy 大師</h1>
-              <p class="text-base-content/60 font-bold text-sm">台北市 · 大安區</p>
-            </div>
-
-            <div class="flex flex-wrap justify-center gap-2 mb-6">
-              <span class="badge badge-primary font-bold py-3 px-4">健身教練</span>
-              <span class="badge badge-primary font-bold py-3 px-4">營養諮詢</span>
+            <div class="flex flex-wrap justify-center gap-2 mt-4">
+              @for (tag of coachTags; track tag) {
+              <span class="badge badge-primary font-bold py-3 px-4">{{ tag }}</span>
+              }
             </div>
           </div>
 
           <div class="md:col-span-2">
             <div class="divider divider-start font-black text-primary text-lg opacity-80 mt-0">關於我</div>
-
-            <div class="px-6 mt-4">
+            <div class="px-2 mt-4">
               <p class="text-base-content/80 leading-loose text-lg text-justify">
-                擁有超過 10 年的專業教學經驗，專精於前端開發與 UI/UX 設計。致力於協助學生從零開始建構高品質的 Web
-                應用程式。我深信每位學員都有無限的潛力，只需透過系統化的引導，持之以恆的練習，就能達成心中的理想目標。
+                {{ bioDescription }}
               </p>
             </div>
           </div>
         </div>
 
-        <div class="w-full border-t-2 border-base-200 mt-6 mb-4"></div>
-
-        <div class="flex justify-end pr-2">
-          <div class="inline-flex items-center gap-2 text-base-content/40">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
-              stroke="currentColor" class="w-5 h-5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <span class="text-base font-bold uppercase tracking-tight">
-              最後更新：2026/03/20 — 17:43
+        <div class="w-full border-t-2 border-base-200 mt-8 pt-4 flex justify-end">
+          <div class="flex items-center gap-2 text-base-content/40">
+            <span class="text-xs font-bold uppercase tracking-tight">
+              最後更新：{{ lastUpdated | date:'yyyy/MM/dd — HH:mm' }}
             </span>
           </div>
         </div>
-
       </div>
     </div>
   </div>
-
 </div>
+
+<app-little-island></app-little-island>
+<app-footer></app-footer>

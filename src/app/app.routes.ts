@@ -105,7 +105,7 @@ export const routes: Routes = [
       },
       {
         path: 'coachcreate', //空白自介(申請)
-        loadComponent: () => import('./experience/components/coach-create/coach-create').then(m => m.CoachCreate)
+        loadComponent: () => import('./experience/myComponents/backdrop/coach-create/coach-create').then(m => m.CoachCreate)
       },
       {
         path: 'coachprofiledit', //自介編輯
@@ -136,11 +136,15 @@ export const routes: Routes = [
       },
       {
         path: 'myattend', //報名過的課
-        loadComponent: () => import('./experience/components/coach-attend/coach-attend').then(m => m.CoachAttend)
+        loadComponent: () => import('./experience/components/mem-attend/mem-attend').then(m => m.MemAttend)
       },
       {
         path: 'myfav', //收藏
         loadComponent: () => import('./experience/components/mem-favorite/mem-favorite').then(m => m.CoachFavorite)
+      },
+      {
+        path: 'myreview', //新增評論
+        loadComponent: () => import('./experience/myComponents/backdrop/reviewcreate/reviewcreate').then(m => m.Reviewcreate)
       },
     ]
   },

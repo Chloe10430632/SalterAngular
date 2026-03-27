@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Footer } from "../../../shared/footer/footer";
-import { SCoachPersonalInformation } from '../../Service/Scoach-personal-information';
+import { Footer } from "../../../../shared/footer/footer";
+import { SCoachPersonalInformation } from '../../../Service/Scoach-personal-information';
 
 @Component({
   selector: 'app-coach-create',

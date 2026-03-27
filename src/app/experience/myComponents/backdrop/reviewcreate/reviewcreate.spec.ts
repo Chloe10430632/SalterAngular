@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ContainerPersonalFnc } from './container-personal-fnc';
+import { Reviewcreate } from './reviewcreate';
 
-describe('ContainerPersonalFnc', () => {
-  let component: ContainerPersonalFnc;
-  let fixture: ComponentFixture<ContainerPersonalFnc>;
+describe('Reviewcreate', () => {
+  let component: Reviewcreate;
+  let fixture: ComponentFixture<Reviewcreate>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ContainerPersonalFnc]
+      imports: [Reviewcreate]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ContainerPersonalFnc);
+    fixture = TestBed.createComponent(Reviewcreate);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
