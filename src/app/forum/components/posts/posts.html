@@ -155,7 +155,8 @@
               </div>
             </div>
             <!-- 貼文內容 -->
-            <div class="cursor-pointer flex gap-3" (click)="navigateToPost($event, post.postId)">
+            <div class="cursor-pointer flex gap-3"
+              (click)="navigateToPost($event, post.postId);handleInteraction(post,'view')">
 
               <div class="flex-1 pb-2 px-10">
                 @if(post.locationTitle){

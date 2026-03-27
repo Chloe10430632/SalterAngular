@@ -13,6 +13,7 @@ import { AuthService } from '../../../core/services/auth-service';
 import { CurrentUser } from '../../interfaces/currentUser';
 import { environment } from './../../../../environments/environment';
 import { Observable } from 'rxjs';
+import { HandleInteractions } from '../../services/handle-interactions';
 
 
 @Component({
@@ -62,6 +63,7 @@ export class Posts implements OnInit {
 
   constructor(
     private postsService: PostsService,
+    private handleInteractionsService: HandleInteractions,
     private postInteractionsService: PostInteractionsService,
     private activatedRoute: ActivatedRoute,
     private toastr: ToastrService,
@@ -133,112 +135,32 @@ export class Posts implements OnInit {
         this.isLoading = false;
       }
     });
-
-    // if (this.queryPara === 'popular') {
-    //   // 如果是第一次(lastPost 為 undefined)，Service會處理成不帶參數
-    //   this.postsService.GetPopPostsApi(lastPost?.viewCount, lastPost?.postId)
-    //     .subscribe({
-    //       next: (newPosts) => {
-    //         if (newPosts.length === 0) {
-    //           this.isFinished = true;
-    //         } else {
-    //           console.log(newPosts);
-    //           this.postList = [...this.postList, ...newPosts]; // 將新資料併入舊陣列
-    //         }
-    //         this.isLoading = false;
-    //       },
-    //       error: (err) => {
-    //         console.error('載入失敗', err);
-    //         this.isLoading = false;
-    //       }
-    //     });
-    // }
-
-    // if (this.queryPara === 'new') {
-    //   this.postsService.GetNewPostsApi(lastPost?.createdAt, lastPost?.postId)
-    //     .subscribe({
-    //       next: (newPosts) => {
-    //         if (newPosts.length === 0) {
-    //           this.isFinished = true;
-    //         } else {
-    //           console.log(newPosts);
-    //           this.postList = [...this.postList, ...newPosts]; // 將新資料併入舊陣列
-    //         }
-    //         this.isLoading = false;
-    //       },
-    //       error: (err) => {
-    //         console.error('載入失敗', err);
-    //         this.isLoading = false;
-    //       }
-    //     });
-    // }
-
-    // if (this.queryPara === 'follow') {
-    //   this.postsService.GetFollowPostsApi(lastPost?.createdAt, lastPost?.postId)
-    //     .subscribe({
-    //       next: (newPosts) => {
-    //         if (newPosts.length === 0) {
-    //           this.isFinished = true;
-    //         } else {
-    //           console.log(newPosts);
-    //           this.postList = [...this.postList, ...newPosts]; // 將新資料併入舊陣列
-    //         }
-    //         this.isLoading = false;
-    //       },
-    //       error: (err) => {
-    //         console.error('載入失敗', err);
-    //         this.isLoading = false;
-    //       }
-    //     });
-    // }
   }
 
-  //互動呼叫Api
+  /**互動呼叫Api*/
   handleInteraction(post: PostList, type: string, reason?: string) {
-    if (type === 'like') {
-      post.isLiked = !post.isLiked;
-      if (post.isLiked) {
-        post.likeCount++;
-      } else {
-        post.likeCount--;
-      }
-
-    } else if (type === 'collect') {
-      post.isCollected = !post.isCollected;
-      if (post.isCollected) {
-        post.collectCount++;
-      } else {
-        post.collectCount--;
-      }
-    } else if (type === 'share') {
-      post.shareCount++;
-      this.copyToClipboard(post.postId);
-    }
-
-    const request: PostInteractionsRequest = {
-      postId: post.postId,
-      type: type as 'like' | 'collect' | 'share' | 'report' | 'view',
-      reportReason: type === 'report' ? reason : undefined,
-    };
-
-    if (!this.currentUser) return;
-
-    this.postInteractionsService.postPostInteractionsApi(request).subscribe({
-      next: (data) => {
-        if (type === 'report') {
+    switch (type) {
+      case 'view':
+        this.handleInteractionsService.interactWithPost(post, 'view', undefined, this.currentUser)?.subscribe();
+        break;
+      case 'like':
+        this.handleInteractionsService.interactWithPost(post, 'like', undefined, this.currentUser)?.subscribe();
+        break;
+      case 'share':
+        this.handleInteractionsService.interactWithPost(post, 'share', undefined, this.currentUser)?.subscribe();
+        break;
+      case 'collect':
+        this.handleInteractionsService.interactWithPost(post, 'collect', undefined, this.currentUser)?.subscribe();
+        break;
+      case 'report':
+        this.handleInteractionsService.interactWithPost(post, 'report', reason, this.currentUser)?.subscribe(data => {
           this.toastr.info(
             '',
             '我們已收到您的檢舉，將會盡快處理。'
           );
-        }
-      },
-
-
-      error: (err) => {
-        console.error(`interaction failed`, err);
-      }
-    });
-
+        });
+        break;
+    }
   }
 
   //複製貼文網址

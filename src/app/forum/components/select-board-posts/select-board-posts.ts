@@ -61,7 +61,7 @@ export class SelectBoardPosts implements OnInit {
     private activatedRoute: ActivatedRoute,
     private toastr: ToastrService,
     private authService: AuthService,
-    public hadleService: HandleInteractions,
+    private handleInteractionsService: HandleInteractions,
     private postInteractionsService: PostInteractionsService,
     private boardInteractionsService: BoardInteractionsService,
     private router: Router) { }
@@ -127,80 +127,48 @@ export class SelectBoardPosts implements OnInit {
 
   /**看板互動Api */
   handleBoardInteraction(board: BoardDetails, type: string) {
-    if (type === 'follow') {
-      board.isFollowed = !board.isFollowed;
-    }
-
-    const request: BoardInteractionsRequest = {
-      boardId: board.boardId,
-      type: type as 'follow' | 'view',
-    };
-
-    if (!this.currentUser) return;
-    this.boardInteractionsService.postBoardInteractionsApi(request).subscribe({
-      next: (data) => {
-        this.boardsService.GetBoardByIdApi(this.boardId!).subscribe(data => {
-          this.boardDetails = data;
+    switch (type) {
+      case 'view':
+        this.handleInteractionsService.interactWithBoard(board, 'view', this.currentUser)?.subscribe(data => {
+          this.boardsService.GetBoardByIdApi(this.boardId!).subscribe(data => {
+            this.boardDetails = data;
+          });
         });
-      },
-      error: (err) => {
-        console.error(`interaction failed`, err);
-      }
-    });
+        break;
+      case 'follow':
+        this.handleInteractionsService.interactWithBoard(board, 'follow', this.currentUser)?.subscribe(data => {
+          this.boardsService.GetBoardByIdApi(this.boardId!).subscribe(data => {
+            this.boardDetails = data;
+          });
+        });
+        break;
+    }
   }
 
   /**貼文互動Api */
   handlePostInteraction(post: PostList, type: string, reason?: string) {
-    if (type === 'like') {
-      post.isLiked = !post.isLiked;
-      if (post.isLiked) {
-        post.likeCount++;
-      } else {
-        post.likeCount--;
-      }
-
-    } else if (type === 'collect') {
-      post.isCollected = !post.isCollected;
-      if (post.isCollected) {
-        post.collectCount++;
-      } else {
-        post.collectCount--;
-      }
-    } else if (type === 'share') {
-      post.shareCount++;
-      this.copyPostToClipboard(post.postId);
-    }
-
-    const request: PostInteractionsRequest = {
-      postId: post.postId,
-      type: type as 'like' | 'collect' | 'share' | 'report' | 'view',
-      reportReason: type === 'report' ? reason : undefined,
-    };
-
-    this.postInteractionsService.postPostInteractionsApi(request).subscribe({
-      next: (data) => {
-        if (type === 'report') {
+    switch (type) {
+      case 'view':
+        this.handleInteractionsService.interactWithPost(post, 'view', undefined, this.currentUser)?.subscribe();
+        break;
+      case 'like':
+        this.handleInteractionsService.interactWithPost(post, 'like', undefined, this.currentUser)?.subscribe();
+        break;
+      case 'share':
+        this.handleInteractionsService.interactWithPost(post, 'share', undefined, this.currentUser)?.subscribe();
+        break;
+      case 'collect':
+        this.handleInteractionsService.interactWithPost(post, 'collect', undefined, this.currentUser)?.subscribe();
+        break;
+      case 'report':
+        this.handleInteractionsService.interactWithPost(post, 'report', reason, this.currentUser)?.subscribe(data => {
           this.toastr.info(
             '',
             '我們已收到您的檢舉，將會盡快處理。'
           );
-
-          console.log('檢舉內容:', { postId: post.postId, reason });
-        }
-      },
-
-
-      error: (err) => {
-        // 如果 API 失敗，要把 UI 狀態滾回 (視需求而定)
-        if (post.isLiked) {
-          post.likeCount--;
-        } else {
-          post.likeCount++;
-        }
-        console.error(`interaction failed`, err);
-      }
-    });
-
+        });
+        break;
+    }
   }
 
   /**複製看板網址 */

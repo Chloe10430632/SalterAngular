@@ -33,13 +33,7 @@ export class HandleInteractions {
     };
 
     if (!currentUser) return;
-    this.boardInteractionsService.postBoardInteractionsApi(request).subscribe({
-      next: (data) => {
-      },
-      error: (err) => {
-        console.error(`interaction failed`, err);
-      }
-    });
+    return this.boardInteractionsService.postBoardInteractionsApi(request);
   }
 
   /**貼文互動 */
@@ -72,22 +66,7 @@ export class HandleInteractions {
 
     if (!currentUser) return;
 
-    this.postInteractionsService.postPostInteractionsApi(request).subscribe({
-      next: (data) => {
-        if (type === 'report') {
-          this.toastr.info(
-            '',
-            '我們已收到您的檢舉，將會盡快處理。'
-          );
-
-        }
-      },
-
-
-      error: (err) => {
-
-      }
-    });
+    return this.postInteractionsService.postPostInteractionsApi(request);
   }
 
   /**複製貼文網址 */
