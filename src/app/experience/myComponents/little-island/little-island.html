@@ -1,0 +1,58 @@
+<div class="fixed bottom-16 right-16 group flex items-center justify-center">
+
+  <div
+    class="absolute transition-all duration-500 ease-out opacity-0 group-hover:opacity-100 group-hover:-translate-y-28">
+    <div class="tooltip" data-tip="教練">
+      <button (click)="island()" class="btn btn-circle w-16 h-16 btn-info shadow-xl">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" />
+          <path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" />
+          <path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div
+    class="absolute transition-all duration-500 ease-out opacity-0 group-hover:opacity-100 group-hover:-translate-x-20 group-hover:-translate-y-20">
+    <div class="tooltip" data-tip="收藏">
+      <button (click)="favorite()" class="btn btn-circle w-16 h-16 btn-secondary shadow-xl">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10" />
+          <path
+            d="M11.051 7.616a1 1 0 0 1 1.909.024l.737 1.452a1 1 0 0 0 .737.535l1.634.256a1 1 0 0 1 .588 1.806l-1.172 1.168a1 1 0 0 0-.282.866l.259 1.613a1 1 0 0 1-1.541 1.134l-1.465-.75a1 1 0 0 0-.912 0l-1.465.75a1 1 0 0 1-1.539-1.133l.258-1.613a1 1 0 0 0-.282-.867l-1.156-1.152a1 1 0 0 1 .572-1.822l1.633-.256a1 1 0 0 0 .737-.535z" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div
+    class="absolute transition-all duration-500 ease-out opacity-0 group-hover:opacity-100 group-hover:-translate-x-28">
+    <div class="tooltip" data-tip="
+    學習歷程">
+      <button (click)="attend()" class="btn btn-circle w-16 h-16 btn-accent shadow-xl">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m12 8 6-3-6-3v10" />
+          <path d="m8 11.99-5.5 3.14a1 1 0 0 0 0 1.74l8.5 4.86a2 2 0 0 0 2 0l8.5-4.86a1 1 0 0 0 0-1.74L16 12" />
+          <path d="m6.49 12.85 11.02 6.3" />
+          <path d="M17.51 12.85 6.5 19.15" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <button
+    class="btn btn-circle w-20 h-20 btn-primary shadow-2xl relative z-10 transition-transform duration-300 group-hover:scale-110 active:scale-95">
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M13 8c0-2.76-2.46-5-5.5-5S2 5.24 2 8h2l1-1 1 1h4" />
+      <path d="M13 7.14A5.82 5.82 0 0 1 16.5 6c3.04 0 5.5 2.24 5.5 5h-3l-1-1-1 1h-3" />
+      <path d="M5.89 9.71c-2.15 2.15-2.3 5.47-.35 7.43l4.24-4.25.7-.7.71-.71 2.12-2.12c-1.95-1.96-5.27-1.8-7.42.35" />
+      <path d="M11 15.5c.5 2.5-.17 4.5-1 6.5h4c2-5.5-.5-12-1-14" />
+    </svg>
+  </button>
+
+</div>
