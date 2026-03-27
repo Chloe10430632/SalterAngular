@@ -278,10 +278,18 @@
           @if (trip.members.length > 0) {
           <div class="avatar-group -space-x-2">
             @for (member of trip.members.slice(0, 5); track member.userId) {
-            <div class="avatar avatar-placeholder">
-              <div class="w-8 rounded-full bg-primary text-primary-content text-xs font-bold">
+            <div class="avatar">
+              @if (member.profilePicture) {
+              <div class="w-8 rounded-full overflow-hidden">
+                <img [src]="getProfilePicture(member.profilePicture)" [alt]="member.userName"
+                  class="w-full h-full object-cover object-top" />
+              </div>
+              } @else {
+              <div
+                class="w-8 rounded-full bg-primary text-primary-content text-xs font-bold avatar-placeholder flex items-center justify-center">
                 <span>{{ getInitial(member.userName) }}</span>
               </div>
+              }
             </div>
             }
             @if (trip.members.length > 5) {
