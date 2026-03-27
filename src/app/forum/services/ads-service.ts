@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AdData } from '../interfaces/AdData';
+import { AdData } from '../interfaces/adData';
 import { map, timer, zip } from 'rxjs';
 
 @Injectable({
