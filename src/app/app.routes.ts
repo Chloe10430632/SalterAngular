@@ -108,8 +108,8 @@ export const routes: Routes = [
         loadComponent: () => import('./experience/myComponents/backdrop/coach-create/coach-create').then(m => m.CoachCreate)
       },
       {
-        path: 'coachprofiledit', //自介編輯
-        loadComponent: () => import('./experience/components/coach-profiledit/coach-profiledit').then(m => m.CoachDetail)
+        path: 'coachpfe', //自介編輯
+        loadComponent: () => import('./experience/components/coach-pfedit/coach-pfedit').then(m => m.CoachPFEdit)
       },
       {
         path: 'coachprofile', //檢視自介

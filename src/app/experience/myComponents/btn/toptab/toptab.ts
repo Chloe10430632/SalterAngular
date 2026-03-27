@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
   styleUrl: './toptab.css',
 })
 export class Toptab {
-private router = inject(Router)
+  private router = inject(Router)
 
 
   template() {
@@ -21,6 +21,6 @@ private router = inject(Router)
     this.router.navigate(['/experience/coachprofile']);
   }
   profiledit() {
-    this.router.navigate(['/experience/coachprofiledit']);
+    this.router.navigate(['/experience/coachpfe']);
   }
 }

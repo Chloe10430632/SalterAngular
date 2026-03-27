@@ -1,5 +1,10 @@
-<div data-theme="bumblebee" class="min-h-screen  py-10 px-4">
+<div data-theme="bumblebee" class="min-h-screen py-10 px-4 bg-white">
+  <div class=" px-80 my-1">
+    <app-toptab></app-toptab>
+  </div>
+
   <div class="max-w-3xl mx-auto card bg-base-100 shadow-2xl border border-base-300">
+
     <div class="card-body p-8 md:p-12">
 
       <div class="mb-10 text-center">
@@ -7,7 +12,8 @@
         <div class="divider w-24 mx-auto divider-primary"></div>
       </div>
 
-      <form class="space-y-8">
+      <form class="space-y-8" (submit)="$event.preventDefault(); onSave()">
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-end">
           <div class="form-control">
             <label class="label pb-2">
@@ -27,7 +33,7 @@
                     alt="Avatar Preview" />
                 </div>
               </div>
-              <input type="file" class="file-input file-input-bordered file-input-primary flex-1" />
+              <input type="file" class="file-input file-input-bordered file-input-primary flex-1 w-full" />
             </div>
           </div>
         </div>
@@ -69,8 +75,8 @@
         <div class="divider pt-4"></div>
 
         <div class="card-actions justify-end gap-4">
-          <button type="button" class="btn btn-ghost px-8">取消編輯</button>
-          <button type="submit" class="btn btn-primary px-12 shadow-lg text-white">確認儲存</button>
+          <button (click)="island()" type="button" class="btn btn-ghost px-8">取消編輯</button>
+          <button type="submit" class="btn btn-primary px-12 shadow-lg">確認儲存</button>
         </div>
       </form>
     </div>

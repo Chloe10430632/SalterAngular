@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CoachDetail } from './coach-profiledit';
+import { Coachpfedit } from './coachpfedit';
 
-describe('CoachDetail', () => {
-  let component: CoachDetail;
-  let fixture: ComponentFixture<CoachDetail>;
+describe('Coachpfedit', () => {
+  let component: Coachpfedit;
+  let fixture: ComponentFixture<Coachpfedit>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CoachDetail]
+      imports: [Coachpfedit]
     })
-      .compileComponents();
+    .compileComponents();
 
-    fixture = TestBed.createComponent(CoachDetail);
+    fixture = TestBed.createComponent(Coachpfedit);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
