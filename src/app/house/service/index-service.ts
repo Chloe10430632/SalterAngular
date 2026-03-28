@@ -33,6 +33,10 @@ export class HouseService {
     return this.http.get<CityGroupDTO[]>(`${this.apiUrl}/Home/city-groups`, { params });
   }
 
+  getHouseDetail(id: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/Home/${id}`);
+  }
+
   getSearchHouses(
     city: string,
     guests?: number,
@@ -49,6 +53,11 @@ export class HouseService {
     return this.http.get<HousePreviewDTO[]>(`${this.apiUrl}/Home/select`, { params });
   }
 
+  // 新增預約
+  createBooking(dto: any): Observable<any> {
+    const url = `${this.apiUrl}/Home/createBookingId`;
+    return this.http.post<any>(url, dto);
+  }
 
   getCloudinaryThumb(url: string): string {
     if (!url || !url.includes('cloudinary')) return url;
@@ -72,4 +81,6 @@ export class HouseService {
     this.childCount += delta;
     if (this.childCount < 0) this.childCount = 0;
   }
+
+
 }
