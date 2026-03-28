@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
   styleUrl: './fav-card.css',
 })
 export class FavCard {
-    isFavorite = false;
+  isFavorite = false;
   reviewCount = 128;
   private route = inject(Router)
 

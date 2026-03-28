@@ -22,6 +22,13 @@ export class CoachCard {
     createdAt?: Date | null;
   };
    private route = inject(Router)
+  isFavorite = false;
+
+   toggleFavorite() {
+    this.isFavorite = !this.isFavorite;
+    // 這裡可以加入 API 呼叫邏輯
+  }
+
   intro(){
     this.route.navigate(['/experience/coachintro'])
   }

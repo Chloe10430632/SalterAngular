@@ -1,3 +1,4 @@
+ <aside class="lg:col-span-1">
       <div class="card bg-base-100 shadow-xl sticky top-8">
         <figure class="px-10 pt-10">
           <div class="avatar">
@@ -8,7 +9,22 @@
         </figure>
 
         <div class="card-body items-center text-center p-6">
-          <h2 class="card-title text-2xl font-bold">Daisy 老師</h2>
+          <div class="flex items-center justify-center gap-2">
+            <h2 class="card-title text-xl font-bold text-base-content">Daisy 老師</h2>
+
+            <label class="swap swap-rotate hover:scale-110 transition-transform cursor-pointer">
+              <input type="checkbox" (change)="toggleFavorite()" [checked]="isFavorite" />
+              <svg xmlns="http://www.w3.org/2000/svg" class="swap-on fill-error w-7 h-7" viewBox="0 0 24 24">
+                <path
+                  d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+              </svg>
+              <svg xmlns="http://www.w3.org/2000/svg" class="swap-off fill-base-content/30 w-7 h-7" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+            </label>
+          </div>
 
           <div class="flex items-center gap-2 mt-2">
             <div class="flex items-center text-warning font-bold">
@@ -24,7 +40,11 @@
             </div>
           </div>
 
-          <div class="divider">關於教練</div>
+          <p class="mt-4 text-sm text-base-content/70">
+            專注於幫助學生找回自信與健康的身體。擁有 10 年教學經驗，擅長客製化課程設計。
+          </p>
+
+          <div class="divider">專業細節</div>
           <div class="w-full text-left space-y-2">
             <div class="flex items-center gap-2">
               <span class="font-bold">專業：</span> 瑜珈、重訓、飲食規劃
@@ -32,13 +52,6 @@
             <div class="flex items-center gap-2">
               <span class="font-bold">地區：</span> 台北市 / 遠端教學
             </div>
-            <div class="card-actions w-full mt-6">
-        <button (click)="intro()" class="btn btn-primary btn-sm w-full gap-2 shadow-md hover:scale-105 transition-all">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-          </svg>
-          查看教練詳細資訊
-        </button>
           </div>
 
           <!-- <div class="card-actions mt-6 w-full">
@@ -46,3 +59,4 @@
           </div> -->
         </div>
       </div>
+    </aside>

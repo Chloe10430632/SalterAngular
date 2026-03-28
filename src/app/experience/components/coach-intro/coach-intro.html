@@ -1,6 +1,7 @@
 <div data-theme="bumblebee" class="min-h-screen bg-base-200 p-4 lg:p-8">
   <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
 
+    <!-- 教練卡 -->
     <aside class="lg:col-span-1">
       <div class="card bg-base-100 shadow-xl sticky top-8">
         <figure class="px-10 pt-10">
@@ -63,7 +64,8 @@
         </div>
       </div>
     </aside>
-
+    <!-- 教練卡結束 -->
+<!-- 開課中 -->
     <main class="lg:col-span-2 space-y-8">
 
       <section>
@@ -79,14 +81,15 @@
             </svg>
           </button>
         </div>
-
+        <app-coach-course-card></app-coach-course-card>
         <div class="grid gap-4">
           <div *ngFor="let course of courses"
             class="card card-side bg-base-100 shadow-sm hover:shadow-md transition-shadow border border-base-300">
           </div>
         </div>
       </section>
-
+      <!-- 開課結束 -->
+<!-- 學員評論 -->
       <section>
         <div class="flex justify-between items-center mb-6">
           <h3 class="text-2xl font-bold flex items-center gap-2">
@@ -100,7 +103,7 @@
             </svg>
           </button>
         </div>
-
+<app-memreview-card></app-memreview-card>
         <div class="space-y-4">
           <div *ngFor="let review of reviews" class="bg-base-100 p-6 rounded-2xl shadow-sm border border-base-200">
           </div>
