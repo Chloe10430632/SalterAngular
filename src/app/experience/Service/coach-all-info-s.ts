@@ -14,10 +14,10 @@ export class CoachAllInfoS {
   constructor(private client: HttpClient) { }
 
   getCoachInfo(coachId: number): Observable<APIResponse<CoachAllInfoI>> {
-    return this.client.get<APIResponse<CoachAllInfoI>>(`${environment.apiUrl}/api/Exp/Exp/Info${coachId}`);
+    return this.client.get<APIResponse<CoachAllInfoI>>(`${environment.apiUrl}/Exp/Exp/Info/${coachId}`);
   }
 
   changeFav(data: FavI): Observable<FavI> {
-    return this.client.post<FavI>(`${environment.apiUrl}/api/Exp/Exp/Favorites`, data)
+    return this.client.post<FavI>(`${environment.apiUrl}/Exp/Exp/Favorites`, data)
   }
 }

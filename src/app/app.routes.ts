@@ -131,7 +131,7 @@ export const routes: Routes = [
       //===============//
       //===使用者定位===//
       {
-        path: 'coachintro/:id', //看指定教練介紹
+        path: 'coachinfo/:id', //看指定教練介紹
         loadComponent: () => import('./experience/components/coach-intro/coach-intro').then(m => m.Coachintro)
       },
       {

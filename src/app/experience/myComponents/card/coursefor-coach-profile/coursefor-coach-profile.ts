@@ -39,7 +39,7 @@ export class CourseforCoachProfile implements OnInit {
     });
   }
   //--方法-------------------------------------------------//
- /**是哪個教練的介紹 */
+  /**是哪個教練的介紹 */
   loadCoach(coachId: number) {
     this.coachInfoS.getCoachInfo(coachId).subscribe(
       result => {
