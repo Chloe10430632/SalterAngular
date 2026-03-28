@@ -12,7 +12,22 @@
         </figure>
 
         <div class="card-body items-center text-center p-6">
-          <h2 class="card-title text-2xl font-bold">Daisy 老師</h2>
+          <div class="flex items-center justify-center gap-2">
+            <h2 class="card-title text-xl font-bold text-base-content">Daisy 老師</h2>
+
+            <label class="swap swap-rotate hover:scale-110 transition-transform cursor-pointer">
+              <input type="checkbox" (change)="toggleFavorite()" [checked]="isFavorite" />
+              <svg xmlns="http://www.w3.org/2000/svg" class="swap-on fill-error w-7 h-7" viewBox="0 0 24 24">
+                <path
+                  d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+              </svg>
+              <svg xmlns="http://www.w3.org/2000/svg" class="swap-off fill-base-content/30 w-7 h-7" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+            </label>
+          </div>
 
           <div class="flex items-center gap-2 mt-2">
             <div class="flex items-center text-warning font-bold">

@@ -8,6 +8,11 @@ import { RouterLink } from '@angular/router';
   styleUrl: './coach-intro.css',
 })
 export class Coachintro {
+  isFavorite = false;
+   toggleFavorite() {
+    this.isFavorite = !this.isFavorite;
+    // 這裡可以加入 API 呼叫邏輯
+  }
   // 模擬數據
   reviews = [
     { userId: 'User_Alex99', stars: 5, comment: '老師教學非常細心，動作講解的很清楚！' },
