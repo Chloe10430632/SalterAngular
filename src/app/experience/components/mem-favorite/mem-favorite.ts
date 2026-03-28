@@ -5,10 +5,11 @@ import { Footer } from "../../../shared/footer/footer";
 import { LittleIsland } from "../../myComponents/little-island/little-island";
 import { Withavatar } from "../../myComponents/container/withavatar/withavatar";
 import { Noavatar } from "../../myComponents/container/noavatar/noavatar";
+import { CoachCard } from "../../myComponents/card/coach-card/coach-card";
 
 @Component({
   selector: 'app-coach-favorite',
-  imports: [FavCard, Footer, LittleIsland, Withavatar, Noavatar],
+  imports: [FavCard, Footer, LittleIsland, Withavatar, Noavatar, CoachCard],
   templateUrl: './mem-favorite.html',
   styleUrl: './mem-favorite.css',
 })
