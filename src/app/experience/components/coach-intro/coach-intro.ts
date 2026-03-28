@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { AttendCourseCard } from "../../myComponents/card/coach-course-card/coach-course-card";
 import { MemreviewCard } from "../../myComponents/card/memreview-card/memreview-card";
+import { CourseforCoachProfile } from "../../myComponents/card/coursefor-coach-profile/coursefor-coach-profile";
 
 @Component({
   selector: 'app-coachintro',
-  imports: [RouterLink, AttendCourseCard, MemreviewCard],
+  imports: [RouterLink,  MemreviewCard, CourseforCoachProfile],
   templateUrl: './coach-intro.html',
   styleUrl: './coach-intro.css',
 })

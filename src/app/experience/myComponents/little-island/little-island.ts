@@ -19,5 +19,8 @@ export class LittleIsland {
   attend() {
     this.router.navigate(['experience/myattend'])
   }
+  coachIndex() {
+    this.router.navigate(['experience/'])
+  }
 
 }

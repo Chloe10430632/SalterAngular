@@ -108,7 +108,7 @@ export const routes: Routes = [
         loadComponent: () => import('./experience/myComponents/backdrop/coach-create/coach-create').then(m => m.CoachCreate)
       },
       {
-        path: 'coachpfe', //自介編輯
+        path: 'coachpfe/:id', //自介編輯
         loadComponent: () => import('./experience/components/coach-pfedit/coach-pfedit').then(m => m.CoachPFEdit)
       },
       {
@@ -117,11 +117,11 @@ export const routes: Routes = [
       },
       //===課程相關===//
       {
-        path: 'coursetemp', //模板
+        path: 'coursetemp/:id', //模板
         loadComponent: () => import('./experience/components/coach-course-temp/coach-course-temp').then(m => m.CoachCourseTemp)
       },
       {
-        path: 'course', //上架中
+        path: 'course/:id', //上架中
         loadComponent: () => import('./experience/components/coach-course/coach-course').then(m => m.CoachCourse)
       },
       {
@@ -131,7 +131,7 @@ export const routes: Routes = [
       //===============//
       //===使用者定位===//
       {
-        path: 'coachintro', //看指定教練介紹
+        path: 'coachintro/:id', //看指定教練介紹
         loadComponent: () => import('./experience/components/coach-intro/coach-intro').then(m => m.Coachintro)
       },
       {
@@ -139,8 +139,8 @@ export const routes: Routes = [
         loadComponent: () => import('./experience/components/mem-attend/mem-attend').then(m => m.MemAttend)
       },
       {
-        path: 'myfav', //收藏
-        loadComponent: () => import('./experience/components/mem-favorite/mem-favorite').then(m => m.CoachFavorite)
+        path: 'myfav/:id', //收藏
+        loadComponent: () => import('./experience/components/mem-favorite/mem-favorite').then(m => m.MemFavorite)
       },
       {
         path: 'myreview', //新增評論
