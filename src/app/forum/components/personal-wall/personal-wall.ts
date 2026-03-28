@@ -31,9 +31,6 @@ export class PersonalWall implements OnInit {
   /**當前環境網址根目錄 */
   readonly domain = window.location.origin;
 
-  /**後端伺服器PORT */
-  backendServer = `${environment.domain}`;
-
   /**目前使用者 */
   currentUser?: CurrentUser;
 
