@@ -5,6 +5,18 @@ import { TripService } from '../../services/trip';
 import { TripSummary } from '../../interfaces/trip';
 import { AuthService } from '../../../core/services/auth-service';
 
+interface CalendarEvent {
+  trip: TripSummary;
+  startCol: number;
+  span: number;
+  row: number;
+}
+
+interface CalendarWeek {
+  days: { date: Date; isCurrentMonth: boolean }[];
+  events: CalendarEvent[];
+}
+
 @Component({
   selector: 'app-my-trips',
   imports: [DatePipe, NgClass, RouterLink],
@@ -23,14 +35,12 @@ export class MyTrips implements OnInit {
   isLoading = true;
   viewMode: 'list' | 'calendar' = 'list';
   roleFilter: 'all' | 'organizer' | 'member' = 'all';
-
   showLoginRequired = false;
   countdown = 6;
 
-  // 日曆
   currentYear = new Date().getFullYear();
-  currentMonth = new Date().getMonth(); // 0-11
-  calendarDays: { date: Date; trips: TripSummary[] }[] = [];
+  currentMonth = new Date().getMonth();
+  calendarWeeks: CalendarWeek[] = [];
 
   ngOnInit() {
     const token = localStorage.getItem('token');
@@ -43,15 +53,12 @@ export class MyTrips implements OnInit {
           if (el) el.textContent = `${this.countdown} 秒後自動跳轉至登入頁面`;
           if (this.countdown === 0) {
             clearInterval(timer);
-            this.ngZone.run(() => {
-              this.router.navigate(['/login']);
-            });
+            this.ngZone.run(() => this.router.navigate(['/login']));
           }
         }, 1000);
       });
       return;
     }
-
     this.authService.currentUser$.subscribe(user => {
       if (user) this.loadTrips();
     });
@@ -82,7 +89,6 @@ export class MyTrips implements OnInit {
     if (mode === 'calendar') this.buildCalendar();
   }
 
-  // ── 日曆 ──
   get currentMonthLabel(): string {
     return new Date(this.currentYear, this.currentMonth).toLocaleDateString('zh-TW', {
       year: 'numeric', month: 'long'
@@ -90,62 +96,89 @@ export class MyTrips implements OnInit {
   }
 
   prevMonth() {
-    if (this.currentMonth === 0) {
-      this.currentMonth = 11;
-      this.currentYear--;
-    } else {
-      this.currentMonth--;
-    }
+    if (this.currentMonth === 0) { this.currentMonth = 11; this.currentYear--; }
+    else this.currentMonth--;
     this.buildCalendar();
   }
 
   nextMonth() {
-    if (this.currentMonth === 11) {
-      this.currentMonth = 0;
-      this.currentYear++;
-    } else {
-      this.currentMonth++;
-    }
+    if (this.currentMonth === 11) { this.currentMonth = 0; this.currentYear++; }
+    else this.currentMonth++;
     this.buildCalendar();
   }
 
   buildCalendar() {
     const firstDay = new Date(this.currentYear, this.currentMonth, 1);
     const lastDay = new Date(this.currentYear, this.currentMonth + 1, 0);
-    const days: { date: Date; trips: TripSummary[] }[] = [];
 
-    // 補前面空格
+    const allDays: { date: Date; isCurrentMonth: boolean }[] = [];
     for (let i = 0; i < firstDay.getDay(); i++) {
       const d = new Date(firstDay);
       d.setDate(d.getDate() - (firstDay.getDay() - i));
-      days.push({ date: d, trips: [] });
+      allDays.push({ date: d, isCurrentMonth: false });
     }
-
-    // 當月日期
     for (let d = 1; d <= lastDay.getDate(); d++) {
-      const date = new Date(this.currentYear, this.currentMonth, d);
-      const tripsOnDay = this.trips.filter(t => {
-        const start = new Date(t.startAt);
-        const end = t.endAt ? new Date(t.endAt) : start;
-        return date >= new Date(start.getFullYear(), start.getMonth(), start.getDate()) &&
-          date <= new Date(end.getFullYear(), end.getMonth(), end.getDate());
-      });
-      days.push({ date, trips: tripsOnDay });
+      allDays.push({ date: new Date(this.currentYear, this.currentMonth, d), isCurrentMonth: true });
     }
-
-    // 補後面空格到 42 格
-    while (days.length < 42) {
-      const last = days[days.length - 1].date;
+    while (allDays.length < 42) {
+      const last = allDays[allDays.length - 1].date;
       const next = new Date(last);
       next.setDate(next.getDate() + 1);
-      days.push({ date: next, trips: [] });
+      allDays.push({ date: next, isCurrentMonth: false });
     }
 
-    this.calendarDays = days;
+    const weeks: CalendarWeek[] = [];
+    for (let w = 0; w < 6; w++) {
+      weeks.push({ days: allDays.slice(w * 7, w * 7 + 7), events: [] });
+    }
+
+    this.trips.forEach(trip => {
+      const tripStart = new Date(trip.startAt);
+      const tripEnd = trip.endAt ? new Date(trip.endAt) : new Date(trip.startAt);
+      const s = new Date(tripStart.getFullYear(), tripStart.getMonth(), tripStart.getDate());
+      const e = new Date(tripEnd.getFullYear(), tripEnd.getMonth(), tripEnd.getDate());
+
+      weeks.forEach(week => {
+        const weekStart = week.days[0].date;
+        const weekEnd = week.days[6].date;
+        if (e < weekStart || s > weekEnd) return;
+
+        const startCol = Math.max(0, this.diffDays(weekStart, s));
+        const endCol = Math.min(6, this.diffDays(weekStart, e));
+        const span = endCol - startCol + 1;
+
+        let row = 0;
+        while (week.events.some(ev =>
+          ev.row === row &&
+          !(ev.startCol + ev.span - 1 < startCol || ev.startCol > endCol)
+        )) { row++; }
+
+        week.events.push({ trip, startCol, span, row });
+      });
+    });
+
+    this.calendarWeeks = weeks;
   }
 
-  isCurrentMonth(date: Date): boolean {
-    return date.getMonth() === this.currentMonth && date.getFullYear() === this.currentYear;
+  diffDays(from: Date, to: Date): number {
+    return Math.round((to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24));
+  }
+
+  getEventStyle(event: CalendarEvent): string {
+    const left = (event.startCol / 7) * 100;
+    const width = (event.span / 7) * 100;
+    const top = 28 + event.row * 22;
+    return `left: calc(${left}% + 2px); width: calc(${width}% - 4px); top: ${top}px;`;
+  }
+
+  getEventColor(status: string): string {
+    const map: Record<string, string> = {
+      active: 'bg-primary text-primary-content',
+      locked: 'bg-warning text-warning-content',
+      completed: 'bg-neutral text-neutral-content',
+      cancelled: 'bg-error text-error-content'
+    };
+    return map[status] ?? 'bg-primary text-primary-content';
   }
 
   isToday(date: Date): boolean {

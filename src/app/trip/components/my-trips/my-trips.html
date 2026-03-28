@@ -98,6 +98,8 @@
   @if (viewMode === 'calendar') {
   <div class="card bg-base-100 shadow-sm border border-base-300">
     <div class="card-body p-5">
+
+      <!-- 月份導航 -->
       <div class="flex items-center justify-between mb-4">
         <button class="btn btn-ghost btn-sm btn-circle" (click)="prevMonth()">
           <i class="bi bi-chevron-left"></i>
@@ -107,36 +109,43 @@
           <i class="bi bi-chevron-right"></i>
         </button>
       </div>
+
+      <!-- 星期標題 -->
       <div class="grid grid-cols-7 mb-1">
         @for (day of ['日','一','二','三','四','五','六']; track day) {
         <div class="text-center text-xs font-bold text-base-content/40 py-1">{{ day }}</div>
         }
       </div>
-      <div class="grid grid-cols-7 gap-1">
-        @for (cell of calendarDays; track $index) {
-        <div class="min-h-16 p-1 rounded-lg text-xs" [class.bg-base-200]="!isCurrentMonth(cell.date)"
-          [class.opacity-40]="!isCurrentMonth(cell.date)">
-          <div class="flex items-center justify-center w-6 h-6 rounded-full mb-1 mx-auto"
-            [class.bg-primary]="isToday(cell.date)" [class.text-primary-content]="isToday(cell.date)"
-            [class.font-bold]="isToday(cell.date)">
-            {{ cell.date.getDate() }}
-          </div>
-          @for (trip of cell.trips.slice(0, 2); track trip.id) {
-          <div class="rounded px-1 py-0.5 mb-0.5 truncate cursor-pointer text-primary-content text-[10px] font-medium"
-            [class.bg-primary]="trip.status === 'active'" [class.bg-warning]="trip.status === 'locked'"
-            [class.bg-base-300]="trip.status === 'completed'" [routerLink]="['/trip/detail', trip.id]"
-            (click)="$event.stopPropagation()">
-            {{ trip.title }}
-          </div>
-          }
-          @if (cell.trips.length > 2) {
-          <div class="text-base-content/40 text-[10px] text-center">
-            +{{ cell.trips.length - 2 }}
+
+      <!-- 每週 -->
+      @for (week of calendarWeeks; track $index) {
+      <div class="relative" style="min-height: 80px; margin-bottom: 4px;">
+
+        <!-- 日期格子背景 -->
+        <div class="grid grid-cols-7 h-full">
+          @for (cell of week.days; track $index) {
+          <div class="border-t border-base-200 pt-1" [class.opacity-30]="!cell.isCurrentMonth">
+            <div class="flex items-center justify-center w-6 h-6 rounded-full text-xs mx-auto"
+              [class.bg-primary]="isToday(cell.date)" [class.text-primary-content]="isToday(cell.date)"
+              [class.font-bold]="isToday(cell.date)">
+              {{ cell.date.getDate() }}
+            </div>
           </div>
           }
         </div>
+
+        <!-- 行程長條（絕對定位） -->
+        @for (event of week.events; track event.trip.id) {
+        <div class="absolute h-5 rounded-full flex items-center px-2 cursor-pointer text-[10px] font-medium truncate"
+          [class]="getEventColor(event.trip.status)" [style]="getEventStyle(event)"
+          [routerLink]="['/trip/detail', event.trip.id]" (click)="$event.stopPropagation()" [title]="event.trip.title">
+          {{ event.trip.title }}
+        </div>
         }
+
       </div>
+      }
+
     </div>
   </div>
   }
