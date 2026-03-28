@@ -20,4 +20,8 @@ export class CoachAllInfoS {
   changeFav(data: FavI): Observable<FavI> {
     return this.client.post<FavI>(`${environment.apiUrl}/Exp/Exp/Favorites`, data)
   }
+  HeartIds(): Observable<any> {
+    return this.client.get<any>(`${environment.apiUrl}/Exp/Exp/FavHeart`);
+  }
+
 }

@@ -9,7 +9,7 @@ import { map, Observable, timer, zip } from 'rxjs';
   providedIn: 'root',
 })
 export class UiS {
-  // 用 Signal 管理全域狀態
+  // 用 Signal 管理Exp區域狀態
   showLoginModal = signal(false);
   countdown = signal(6);
   toastMessage = signal<string | null>(null);
@@ -43,7 +43,7 @@ export class UiS {
     this.toastMessage.set(msg);
     setTimeout(() => this.toastMessage.set(null), 3500); // 3.5秒後自動消失
   }
- 
+
 };
 
 
