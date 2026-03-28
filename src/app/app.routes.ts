@@ -216,6 +216,10 @@ export const routes: Routes = [
             loadComponent: () => import('./trip/components/create-trip/create-trip').then(m => m.CreateTrip),
           },
           {
+            path: 'my-trips', //我的行程
+            loadComponent: () => import('./trip/components/my-trips/my-trips').then(m => m.MyTrips)
+          },
+          {
             path: 'detail/:id',
             children: [
               {

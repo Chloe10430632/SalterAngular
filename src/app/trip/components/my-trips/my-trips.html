@@ -1,0 +1,171 @@
+<div class="max-w-5xl mx-auto px-4 py-6">
+
+  <!-- 標題列 -->
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold">我的行程</h1>
+      <p class="text-sm text-base-content/50 mt-0.5">管理你參與和主辦的所有行程</p>
+    </div>
+    <a routerLink="/trip/create" class="btn btn-primary gap-1">
+      <i class="bi bi-plus-lg"></i> 建立揪團
+    </a>
+  </div>
+
+  <!-- 篩選 + 切換顯示 -->
+  <div class="flex items-center justify-between mb-5">
+    <div class="flex gap-2">
+      <button class="btn btn-sm" [class.btn-primary]="roleFilter === 'all'" [class.btn-ghost]="roleFilter !== 'all'"
+        (click)="setRoleFilter('all')">
+        全部
+      </button>
+      <button class="btn btn-sm" [class.btn-primary]="roleFilter === 'organizer'"
+        [class.btn-ghost]="roleFilter !== 'organizer'" (click)="setRoleFilter('organizer')">
+        <i class="bi bi-star mr-1"></i> 我主辦的
+      </button>
+      <button class="btn btn-sm" [class.btn-primary]="roleFilter === 'member'"
+        [class.btn-ghost]="roleFilter !== 'member'" (click)="setRoleFilter('member')">
+        <i class="bi bi-people mr-1"></i> 我參加的
+      </button>
+    </div>
+    <div class="join">
+      <button class="join-item btn btn-sm" [class.btn-primary]="viewMode === 'list'"
+        [class.btn-ghost]="viewMode !== 'list'" (click)="setViewMode('list')">
+        <i class="bi bi-list-ul"></i>
+      </button>
+      <button class="join-item btn btn-sm" [class.btn-primary]="viewMode === 'calendar'"
+        [class.btn-ghost]="viewMode !== 'calendar'" (click)="setViewMode('calendar')">
+        <i class="bi bi-calendar3"></i>
+      </button>
+    </div>
+  </div>
+
+  @if (isLoading) {
+  <div class="flex items-center justify-center py-32">
+    <span class="loading loading-spinner loading-lg text-primary"></span>
+  </div>
+  }
+
+  @if (!isLoading) {
+
+  <!-- ── 清單模式 ── -->
+  @if (viewMode === 'list') {
+  @if (trips.length === 0) {
+  <div class="flex flex-col items-center justify-center py-24 gap-3 text-base-content/30">
+    <i class="bi bi-calendar-x text-5xl"></i>
+    <p class="text-base">還沒有任何行程</p>
+    <a routerLink="/trip/create" class="btn btn-primary btn-sm mt-2">建立第一個揪團</a>
+  </div>
+  }
+  <div class="flex flex-col gap-3">
+    @for (trip of trips; track trip.id) {
+    <div class="card bg-base-100 shadow-sm border border-base-300 hover:shadow-md transition-shadow cursor-pointer"
+      [routerLink]="['/trip/detail', trip.id]">
+      <div class="card-body p-0 flex-row">
+        <div class="w-32 h-24 shrink-0 rounded-l-2xl overflow-hidden">
+          <img [src]="trip.coverImageUrl || 'trip/default-trip-cover.jpg'" class="w-full h-full object-cover"
+            alt="封面" />
+        </div>
+        <div class="flex-1 p-4 min-w-0">
+          <div class="flex items-start justify-between gap-2">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="badge badge-sm" [ngClass]="getStatusClass(trip.status)">
+                  {{ getStatusLabel(trip.status) }}
+                </span>
+                <span class="text-xs text-base-content/40">{{ getTripTypeLabel(trip.tripType) }}</span>
+              </div>
+              <p class="font-bold text-sm truncate">{{ trip.title }}</p>
+              <p class="text-xs text-base-content/50 mt-1">
+                <i class="bi bi-calendar3 mr-1"></i>
+                {{ trip.startAt | date:'yyyy/MM/dd' }}
+                @if (trip.endAt) { – {{ trip.endAt | date:'MM/dd' }} }
+              </p>
+            </div>
+            <div class="text-right shrink-0">
+              <p class="text-xs text-base-content/50">
+                <i class="bi bi-people mr-1"></i>{{ trip.memberCount }}/{{ trip.capacity }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+  }
+
+  <!-- ── 日曆模式 ── -->
+  @if (viewMode === 'calendar') {
+  <div class="card bg-base-100 shadow-sm border border-base-300">
+    <div class="card-body p-5">
+      <div class="flex items-center justify-between mb-4">
+        <button class="btn btn-ghost btn-sm btn-circle" (click)="prevMonth()">
+          <i class="bi bi-chevron-left"></i>
+        </button>
+        <h2 class="font-bold text-base">{{ currentMonthLabel }}</h2>
+        <button class="btn btn-ghost btn-sm btn-circle" (click)="nextMonth()">
+          <i class="bi bi-chevron-right"></i>
+        </button>
+      </div>
+      <div class="grid grid-cols-7 mb-1">
+        @for (day of ['日','一','二','三','四','五','六']; track day) {
+        <div class="text-center text-xs font-bold text-base-content/40 py-1">{{ day }}</div>
+        }
+      </div>
+      <div class="grid grid-cols-7 gap-1">
+        @for (cell of calendarDays; track $index) {
+        <div class="min-h-16 p-1 rounded-lg text-xs" [class.bg-base-200]="!isCurrentMonth(cell.date)"
+          [class.opacity-40]="!isCurrentMonth(cell.date)">
+          <div class="flex items-center justify-center w-6 h-6 rounded-full mb-1 mx-auto"
+            [class.bg-primary]="isToday(cell.date)" [class.text-primary-content]="isToday(cell.date)"
+            [class.font-bold]="isToday(cell.date)">
+            {{ cell.date.getDate() }}
+          </div>
+          @for (trip of cell.trips.slice(0, 2); track trip.id) {
+          <div class="rounded px-1 py-0.5 mb-0.5 truncate cursor-pointer text-primary-content text-[10px] font-medium"
+            [class.bg-primary]="trip.status === 'active'" [class.bg-warning]="trip.status === 'locked'"
+            [class.bg-base-300]="trip.status === 'completed'" [routerLink]="['/trip/detail', trip.id]"
+            (click)="$event.stopPropagation()">
+            {{ trip.title }}
+          </div>
+          }
+          @if (cell.trips.length > 2) {
+          <div class="text-base-content/40 text-[10px] text-center">
+            +{{ cell.trips.length - 2 }}
+          </div>
+          }
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+  }
+
+  }
+
+</div>
+
+<!-- 未登入提示 Modal -->
+@if (showLoginRequired) {
+<div class="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm">
+  <div
+    class="bg-base-100 rounded-3xl shadow-2xl p-10 max-w-md w-full mx-4 flex flex-col items-center gap-6 text-center animate-in zoom-in-95 duration-300">
+    <div class="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
+      <i class="bi bi-lock text-4xl text-primary"></i>
+    </div>
+    <div>
+      <h2 class="text-2xl font-black mb-2">需要先登入</h2>
+      <p class="text-base-content/60 text-sm leading-relaxed">
+        查看我的行程需要登入帳號。<br />
+        請先至登入頁面右下角
+        <span class="inline-block px-4 py-1.5 rounded-full text-white font-black text-xs tracking-widest mx-1"
+          style="background-color: #8B5A2B">
+          登入
+        </span><br />
+        登入後再來查看行程！
+      </p>
+    </div>
+    <p id="countdown-text" class="text-xs text-base-content/30">{{ countdown }} 秒後自動跳轉至登入頁面</p>
+  </div>
+</div>
+}
