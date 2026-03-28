@@ -1,6 +1,6 @@
 import { Component, computed, OnDestroy, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CourseInfo } from '../../../Interfaces/course.model';
+import { CourseInfoI } from '../../../Interfaces/course.model';
 import { CourseForOneS } from '../../../Service/course-for-one';
 
 //========!!這是 子Component!!================//
@@ -12,7 +12,7 @@ import { CourseForOneS } from '../../../Service/course-for-one';
   styleUrl: './coursefor-coach.css',
 })
 export class CourseforCoach implements OnInit, OnDestroy {
-  course = signal<CourseInfo | null>(null);
+  course = signal<CourseInfoI | null>(null);
   /**輪播 */
   activeSlide = signal(0);
   timer: any;
@@ -27,7 +27,7 @@ export class CourseforCoach implements OnInit, OnDestroy {
 
   //------------------------------------------------------//
   ngOnInit(): void {
-    this.courseOneS.getCourseInfo(1).subscribe({
+    this.courseOneS.getSessionInfo(1).subscribe({
       next: (result) => {
         if (result.isSuccess) {
           this.course.set(result.data); //set更新signal

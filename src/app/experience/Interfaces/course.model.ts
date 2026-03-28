@@ -4,7 +4,7 @@ export interface APIResponse<T> {
   data: T;
 }
 
-export interface CourseInfo {
+export interface CourseInfoI {
   coachId: number,
   selectedDates: string[];
   timeSlot: string;

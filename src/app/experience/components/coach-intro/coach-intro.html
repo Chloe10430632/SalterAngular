@@ -1,38 +1,23 @@
 <div data-theme="bumblebee" class="min-h-screen bg-base-200 p-4 lg:p-8">
   <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- 左邊教練卡 -->
     <aside class="lg:col-span-1">
       <app-coursefor-coach-profile></app-coursefor-coach-profile>
     </aside>
-    <!-- 開課中 -->
-    <!-- <main class="lg:col-span-2 space-y-8">
 
-      <section>
-        <div class="flex justify-between items-center mb-6">
-          <h3 class="text-2xl font-bold flex items-center gap-2">
-            <span class="w-2 h-8 bg-secondary rounded-full"></span> 開課中的課程
-          </h3>
-          <button class="btn btn-ghost btn-sm gap-2 text-secondary">
-            看更多課程
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        </div>
-
-        <div class="grid gap-4">
-          <div *ngFor="let course of courses"
-            class="card card-side bg-base-100 shadow-sm hover:shadow-md transition-shadow border border-base-300">
-          </div>
-        </div>
+    <main class="lg:col-span-2 space-y-8">
+      <!-- 開課中 -->
+      <section data-theme="bumblebee" class="p-4">
+        <app-coach-course-expend-content></app-coach-course-expend-content>
       </section>
-      <!-- 開課結束 -->
-      <!-- 學員評論 -->
-      <!-- <section>
-        <div class="flex justify-between items-center mb-6">
-          <h3 class="text-2xl font-bold flex items-center gap-2">
-            <span class="w-2 h-8 bg-accent rounded-full"></span> 學員好評
-          </h3>
+    </main>
+
+
+
+
+    <!-- 開課結束 -->
+    <!-- 學員評論 -->
+    <!--
           <button class="btn btn-ghost btn-sm gap-2 text-secondary">
             我要評論
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
@@ -50,4 +35,4 @@
 
     </main>
   </div> -->
-</div>
+  </div>

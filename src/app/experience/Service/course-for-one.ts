@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
-import { APIResponse, CourseInfo } from '../Interfaces/course.model';
+import { APIResponse, CourseInfoI } from '../Interfaces/course.model';
 
 @Injectable({
   providedIn: 'root',
@@ -13,8 +13,9 @@ export class CourseForOneS {
   constructor(private client: HttpClient) { }
 
   // 取得特定課程資訊
-  getCourseInfo(sessionId: number): Observable<APIResponse<CourseInfo>> {
+  getSessionInfo(sessionId: number): Observable<APIResponse<CourseInfoI>> {
     // 這裡使用反引號 `` 來組合字串，方便帶入變數
-    return this.client.get<APIResponse<CourseInfo>>(`${environment.apiUrl}/api/Exp/Exp/CourseInfo${sessionId}`);
+    return this.client.get<APIResponse<CourseInfoI>>(`${environment.apiUrl}/api/Exp/Exp/CourseInfo${sessionId}`);
   }
+
 }

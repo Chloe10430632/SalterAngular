@@ -2,7 +2,7 @@ import { UiS } from './../../../Service/UiS';
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit, signal } from '@angular/core';
 import { CoachAllInfoS } from '../../../Service/coach-all-info-s';
-import { CoachAllInfoI as CoachAllInfoM } from '../../../Interfaces/coachallinfo';
+import { CoachAllInfoI as CoachAllInfoI } from '../../../Interfaces/coachallinfo';
 import { ActivatedRoute } from '@angular/router';
 import { FavI } from '../../../Interfaces/myfav';
 import { AvatarPipe } from '../../../../shared/pipes/avatar-pipe';
@@ -17,7 +17,7 @@ import { AvatarPipe } from '../../../../shared/pipes/avatar-pipe';
   styleUrl: './coursefor-coach-profile.css',
 })
 export class CourseforCoachProfile implements OnInit {
-  coach = signal<CoachAllInfoM | null>(null);
+  coach = signal<CoachAllInfoI | null>(null);
   coaches: any[] = [];
   isFav = false;
   myFavId: number[] = [];
