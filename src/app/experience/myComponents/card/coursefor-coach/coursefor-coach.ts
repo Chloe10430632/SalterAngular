@@ -27,7 +27,7 @@ export class CourseforCoach implements OnInit, OnDestroy {
 
   //------------------------------------------------------//
   ngOnInit(): void {
-    this.courseOneS.getNameInfo(1).subscribe({
+    this.courseOneS.getLatestCourseByCoach(1).subscribe({
       next: (result) => {
         if (result.isSuccess) {
           this.course.set(result.data); //set更新signal

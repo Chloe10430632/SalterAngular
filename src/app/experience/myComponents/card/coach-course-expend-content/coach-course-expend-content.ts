@@ -21,7 +21,7 @@ export class CoachCourseExpendContent implements OnInit {
   }
   //====方法=================================//
   loadData(sessionId: number) {
-    this.courseS.getNameInfo(sessionId).subscribe({
+    this.courseS.getCourseInfo(sessionId).subscribe({
       next: (result) => {
         this.courses.set(result.data ? [result.data] : []); // 把資料放進 courses，這裡假設 API 回傳的 data 是單一 SessionInfoI，如果是陣列就直接 set(result.data)
       },
