@@ -32,7 +32,7 @@ export class HouseService {
     }
     return this.http.get<CityGroupDTO[]>(`${this.apiUrl}/Home/city-groups`, { params });
   }
-
+  // 取得房源詳細資訊
   getHouseDetail(id: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/Home/${id}`);
   }
@@ -59,15 +59,29 @@ export class HouseService {
     return this.http.post<any>(url, dto);
   }
 
+  // 取消預約
+  cancelBooking(bookingId: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/Home/cancelBooking/${bookingId}`, {});
+  }
+
+  // 取得會員的預約訂單
+  getMemberBookings(): Observable<any[]> {
+    const url = `${this.apiUrl}/Home/getMemberBookings`;
+    return this.http.get<any[]>(url);
+  }
+
+  // 取得雲端圖片的縮圖 URL
   getCloudinaryThumb(url: string): string {
     if (!url || !url.includes('cloudinary')) return url;
     return url.replace('/upload/', '/upload/c_fill,w_600,h_600,g_auto/');
   }
+
   // 取得所有房源清單
   getHouses(): Observable<HouseListDTO[]> {
     return this.http.get<HouseListDTO[]>(`${this.apiUrl}/Home`);
   }
 
+  // 取得分城市的房源清單
   getCityGroups(): Observable<CityGroupDTO[]> {
     return this.http.get<CityGroupDTO[]>(`${this.apiUrl}/Home/city-groups`);
   }

@@ -1,0 +1,72 @@
+<div class="p-6 max-w-6xl mx-auto">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold text-base-content flex items-center gap-2">
+      <i class="bi bi-card-list text-primary"></i> 我的預約訂單
+    </h1>
+  </div>
+
+  @if (isLoading) {
+  <div class="flex justify-center my-20">
+    <span class="loading loading-dots loading-lg text-primary"></span>
+  </div>
+  } @else {
+
+  <div class="overflow-x-auto bg-base-100 rounded-xl shadow-md border border-base-200">
+    <table class="table table-zebra w-full">
+      <thead class="bg-base-200 text-base-content">
+        <tr>
+          <th>訂單編號</th>
+          <th>房型名稱</th>
+          <th>入住 / 退房</th>
+          <th>總金額</th>
+          <th>狀態</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of bookings; track item.bookingId) {
+        <tr class="hover">
+          <td class="font-mono text-sm">#{{ item.bookingId }}</td>
+          <td>
+            <div class="font-bold">{{ item.roomTypeName }}</div>
+          </td>
+          <td>
+            <div class="text-xs">入：{{ item.checkInDate | date:'yyyy-MM-dd' }}</div>
+            <div class="text-xs">出：{{ item.checkOutDate | date:'yyyy-MM-dd' }}</div>
+          </td>
+          <td class="font-bold text-primary">
+            ${{ item.totalPrice | number }}
+          </td>
+          <td>
+            <span class="badge badge-sm font-semibold p-3" [ngClass]="getStatusClass(item.status)">
+              {{ getStatusText(item.status) }}
+            </span>
+          </td>
+          <td>
+            <button class="btn btn-ghost btn-xs text-info">
+              <i class="bi bi-eye"></i> 詳情
+            </button>
+            @if (item.status === '0') {
+            <button class="btn btn-ghost btn-xs text-error" [disabled]="cancelLoadingId === item.bookingId"
+              (click)="onCancelBooking(item.bookingId)">
+              <i class="bi bi-x-circle"></i> 取消
+            </button>
+            }
+          </td>
+        </tr>
+        } @empty {
+        <tr>
+          <td colspan="6" class="text-center py-20 text-gray-400">
+            <i class="bi bi-inbox text-4xl block mb-2"></i>
+            目前沒有任何預約紀錄
+            <div class="mt-4">
+              <a routerLink="/house" class="btn btn-primary btn-sm">去逛逛房間</a>
+            </div>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  }
+</div>

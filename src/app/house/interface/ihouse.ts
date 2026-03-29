@@ -22,3 +22,13 @@ export interface CityGroupDTO {
   cityName: string;
   houses: HousePreviewDTO[]; // 這裡面裝的是上面的預覽小卡片
 }
+
+export interface BookingListViewModel {
+  bookingId: number;
+  roomTypeName: string;
+  checkInDate: string;
+  checkOutDate: string;
+  totalPrice: number;
+  status: string;
+  createdTime: string;
+}
