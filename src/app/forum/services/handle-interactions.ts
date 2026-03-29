@@ -11,8 +11,9 @@ import { PostInteractionsRequest } from '../interfaces/postInteractionsRequest';
 @Injectable({
   providedIn: 'root',
 })
+
 export class HandleInteractions {
-  /**當前環境網址根目錄 */
+
   readonly domain = window.location.origin;
 
   constructor(
@@ -71,11 +72,8 @@ export class HandleInteractions {
 
   /**複製貼文網址 */
   copyPostToClipboard(postId: number) {
-    // 建立完整的 URL (根據你的環境調整)
     const fullUrl = `${this.domain}/post/${postId}`;
-
     navigator.clipboard.writeText(fullUrl).then(() => {
-
       this.toastr.info('', '成功複製到剪貼簿！', {
         toastClass: 'ngx-toastr shadow-xl rounded-2xl border-none',
       });
@@ -88,4 +86,5 @@ export class HandleInteractions {
       });
     });
   }
+
 }

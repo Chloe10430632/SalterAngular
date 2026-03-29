@@ -14,6 +14,7 @@ import { BoardInteractionsService } from '../../services/board-interactions-serv
   styleUrl: './boards.css',
 })
 export class Boards implements OnInit {
+
   /**全部看板列表 */
   boardList: BoardList[] = [];
 
@@ -22,7 +23,6 @@ export class Boards implements OnInit {
 
   /**目前使用者 */
   currentUser?: CurrentUser;
-
 
   constructor(
     private boardsService: BoardsService,
@@ -56,13 +56,7 @@ export class Boards implements OnInit {
         this.currentUser = data;
       });
 
-
     });
-
-
-
-
-
   }
 
   handleInteraction(board: BoardList, type: string) {
@@ -84,15 +78,6 @@ export class Boards implements OnInit {
         console.error(`interaction failed`, err);
       }
     });
-
-
-
   }
-
-
-
-
-
-
 
 }

@@ -1,11 +1,8 @@
 <div class="col-span-12 md:col-span-6 space-y-4">
   <div class="bg-base-100 border border-base-300 rounded-xl overflow-hidden lg:min-h-screen">
 
-
     <div class="card bg-base-100 rounded-xl overflow-hidden mb-4 transition-all duration-300">
       <div class="card-body p-4">
-        <!-- 抽換區:看板列表結構 -->
-
 
         <div class="boards">
           <div class="p-4 border-b border-base-200 bg-base-200/20 flex justify-between items-center">
@@ -20,8 +17,6 @@
             @if (this.queryPara === 'follow'){
             <h3 class="font-black text-md tracking-wider opacity-70">追蹤推薦看板</h3>
             }
-
-
           </div>
 
           <div class="divide-y divide-gray-300">
@@ -66,30 +61,15 @@
               <button (click)="handleInteraction(board,'follow')"
                 class="btn btn-neutral btn-outline btn-sm rounded-full px-5 hover:!text-white">追蹤</button>
               }
-
             </a>
-
             }
-
             }
-
-
-
-
-
-
 
           </div>
         </div>
 
-
-
-
-
       </div>
     </div>
-
-
 
   </div>
 </div>

@@ -10,9 +10,6 @@ import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../../core/services/auth-service';
 import { PostsService } from '../../services/posts-service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { switchMap } from 'rxjs';
-import { CreatePostDto } from '../../interfaces/CreatePostDto';
-import { TagDto } from '../../interfaces/TagDto';
 import { HttpEventType } from '@angular/common/http';
 import { environment } from './../../../../environments/environment';
 import { TripService } from '../../../trip/services/trip';
@@ -101,12 +98,10 @@ export class Index implements OnInit {
       this.adDetails = data;
     });
 
-    //抓currentUser
     this.authService.currentUser$.subscribe(data => {
       this.currentUser = data;
     });
 
-    //貼文資料結構
     this.postForm = this.formBuilder.group({
       boardId: [, Validators.required],
       content: ['', Validators.required],
@@ -132,7 +127,7 @@ export class Index implements OnInit {
 
     // 1. 立即關閉 Modal 並啟動進度條
     const modal = document.getElementById('post_modal') as HTMLDialogElement;
-    if (modal) modal.close(); // 呼叫你原本關閉 dialog 的 method
+    if (modal) modal.close();
     this.isPublishing.set(true);
     this.uploadProgress.set(0);
 
@@ -363,7 +358,6 @@ export class Index implements OnInit {
   closeLightbox() {
     this.selectedFullImage.set(null);
   }
-
 
 }
 

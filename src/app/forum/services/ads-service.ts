@@ -11,7 +11,7 @@ export class AdsService {
 
   constructor(private http: HttpClient) { }
 
-  //GET 廣告
+  /**GET 廣告 */
   GetAdsApi() {
     const apiData$ = this.http.get<AdData>(`${environment.apiUrl}/Forum/Ads`);
     const minimumDelay$ = timer(700);
@@ -19,7 +19,5 @@ export class AdsService {
       map(([data, _]) => data)
     );
   }
-
-
 
 }

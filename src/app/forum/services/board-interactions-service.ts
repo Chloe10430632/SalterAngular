@@ -10,7 +10,9 @@ export class BoardInteractionsService {
 
   constructor(private http: HttpClient) { }
 
+  /**看板互動Api */
   postBoardInteractionsApi(request: BoardInteractionsRequest) {
     return this.http.post(`${environment.apiUrl}/Forum/BoardInteractions`, request);
   }
+
 }

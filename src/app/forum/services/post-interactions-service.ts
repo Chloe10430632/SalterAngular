@@ -6,12 +6,14 @@ import { PostInteractionsRequest } from '../interfaces/postInteractionsRequest';
 @Injectable({
   providedIn: 'root',
 })
+
 export class PostInteractionsService {
 
   constructor(private http: HttpClient) { }
 
-  //POST 貼文互動
+  /**POST 貼文互動 */
   postPostInteractionsApi(request: PostInteractionsRequest) {
     return this.http.post(`${environment.apiUrl}/Forum/PostInteractions`, request);
   }
+
 }

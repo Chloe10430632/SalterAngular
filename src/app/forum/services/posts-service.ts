@@ -8,17 +8,18 @@ import { map, zip } from 'rxjs';
 import { CreatePostDto } from '../interfaces/CreatePostDto';
 import { PostDetailsData } from '../interfaces/PostDetailsData';
 
-
 @Injectable({
   providedIn: 'root',
 })
+
 export class PostsService {
 
   constructor(private http: HttpClient) { }
 
-  //GET 使用者發佈的貼文
+  /**GET 使用者發佈的貼文 */
   GetUserPostedPostApi(lastCreatedAt?: string, lastPostId?: number): Observable<PostList[]> {
     let params = new HttpParams().set('sortBy', 'posted');
+
     if (lastCreatedAt !== undefined && lastPostId !== undefined) {
       params = params
         .set('lastCreatedAt', lastCreatedAt.toString())
@@ -32,7 +33,7 @@ export class PostsService {
     );
   }
 
-  //GET 使用者收藏的貼文
+  /**GET 使用者收藏的貼文 */
   GetUserCollectPostApi(lastCreatedAt?: string, lastPostId?: number): Observable<PostList[]> {
     let params = new HttpParams().set('sortBy', 'collect');
     if (lastCreatedAt !== undefined && lastPostId !== undefined) {
@@ -48,10 +49,10 @@ export class PostsService {
     );
   }
 
-  //GET 關鍵字搜尋貼文
+  /**GET 關鍵字搜尋貼文 */
   GetKeywordPostApi(kw: string, lastViewCount?: number, lastPostId?: number): Observable<PostList[]> {
     let params = new HttpParams().set('keyword', kw);
-    //呼叫第二次以上會有參數帶進來，執行分頁邏輯
+
     if (lastViewCount !== undefined && lastPostId !== undefined) {
       params = params
         .set('lastViewCount', lastViewCount.toString())
@@ -65,11 +66,10 @@ export class PostsService {
     );
   }
 
-  //GET 熱門貼文
+  /**GET 熱門貼文 */
   GetPopPostsApi(lastViewCount?: number, lastPostId?: number): Observable<PostList[]> {
     let params = new HttpParams().set('sortBy', 'popular');
 
-    //呼叫第二次以上會有參數帶進來，執行分頁邏輯
     if (lastViewCount !== undefined && lastPostId !== undefined) {
       params = params
         .set('lastViewCount', lastViewCount.toString())
@@ -83,7 +83,7 @@ export class PostsService {
     );
   }
 
-  //GET 即時貼文
+  /**GET 即時貼文 */
   GetNewPostsApi(lastCreatedAt?: string, lastPostId?: number): Observable<PostList[]> {
     let params = new HttpParams().set('sortBy', 'new');
 
@@ -100,9 +100,10 @@ export class PostsService {
     );
   }
 
-  //GET 追蹤貼文
+  /**GET 追蹤貼文 */
   GetFollowPostsApi(lastCreatedAt?: string, lastPostId?: number): Observable<PostList[]> {
     let params = new HttpParams().set('sortBy', 'follow');
+
     if (lastCreatedAt !== undefined && lastPostId !== undefined) {
       params = params
         .set('lastCreatedAt', lastCreatedAt.toString())
@@ -116,7 +117,7 @@ export class PostsService {
     );
   }
 
-  //GET 看板貼文
+  /**GET 看板貼文 */
   GetBoardPostsApi(boardId: number, lastViewCount?: number, lastPostId?: number): Observable<PostList[]> {
     let params = new HttpParams().set('boardId', boardId.toString());
 
@@ -134,12 +135,12 @@ export class PostsService {
 
   }
 
-  //GET 貼文詳細內容
+  /**GET 貼文詳細內容 */
   GetPostDetailsApi(postId: number) {
     return this.http.get<PostDetailsData>(`${environment.apiUrl}/Forum/Posts/${postId}`);
   }
 
-  //POST 發佈貼文圖片 IFormFile
+  /**POST 發佈貼文圖片 IFormFile */
   PostUploadImages(files: File[]): Observable<HttpEvent<string[]>> {
     const formData = new FormData();
     files.forEach(file => formData.append('files', file));
@@ -148,22 +149,20 @@ export class PostsService {
       observe: 'events'     // 關鍵：觀察所有事件（而不只是最後的結果）
     });
   }
-  //POST 發佈貼文內容 Json
+
+  /**POST 發佈貼文內容 Json */
   PostCreatePost(payload: CreatePostDto): Observable<any> {
     return this.http.post(`${environment.apiUrl}/Forum/Posts`, payload);
   }
 
-  //PUT 修改貼文
+  /**PUT 修改貼文 */
   putEditPost(postId: number, dto: CreatePostDto) {
     return this.http.put(`${environment.apiUrl}/Forum/Posts/${postId}`, dto);
   }
 
-
-
-  //DELETE 刪除貼文
+  /**DELETE 刪除貼文 */
   delDeletePost(postId: number) {
     return this.http.delete(`${environment.apiUrl}/Forum/Posts/${postId}`);
   }
-
 
 }

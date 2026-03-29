@@ -1,20 +1,17 @@
-
 import { Component, ElementRef, OnInit, signal, ViewChild } from '@angular/core';
 import { PostComment, PostDetailsData } from '../../interfaces/PostDetailsData';
 import { PostsService } from '../../services/posts-service';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { environment } from './../../../../environments/environment';
 import { RelativeTimePipe } from "../../pipes/relative-time-pipe";
 import { DecimalPipe, ViewportScroller } from '@angular/common';
-import { PostInteractionsRequest } from '../../interfaces/postInteractionsRequest';
 import { CurrentUser } from '../../interfaces/currentUser';
 import { AuthService } from '../../../core/services/auth-service';
-import { PostInteractionsService } from '../../services/post-interactions-service';
 import { ToastrService } from 'ngx-toastr';
 import { CreateCommentDto } from '../../interfaces/CreateCommentDto';
 import { CommentsService } from '../../services/comments-service';
-import { FormsModule, NgModel } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { AvatarPipe } from "../../../shared/pipes/avatar-pipe";
+import { HandleInteractions } from '../../services/handle-interactions';
 
 @Component({
   selector: 'app-post-details',
@@ -23,6 +20,7 @@ import { AvatarPipe } from "../../../shared/pipes/avatar-pipe";
   styleUrl: './post-details.css',
 })
 export class PostDetails implements OnInit {
+
   /**當前環境網址根目錄 */
   readonly domain = window.location.origin;
 
@@ -31,9 +29,6 @@ export class PostDetails implements OnInit {
 
   /**貼文詳細資料 */
   postDetailsData?: PostDetailsData;
-
-  /**後端伺服器PORT */
-  backendServer = `${environment.domain}`;
 
   /**目前選中的貼文 */
   postId?: number;
@@ -47,7 +42,6 @@ export class PostDetails implements OnInit {
   /**繫結留言內容 */
   commentContent = '';
 
-
   /**儲存目前要放大顯示的圖片網址 */
   selectedFullImage = signal<string | null>(null);
 
@@ -55,32 +49,33 @@ export class PostDetails implements OnInit {
   @ViewChild('commentInput') commentInput!: ElementRef<HTMLInputElement>;
 
 
-  //--------編輯留言----------
-  // 儲存目前編輯中的留言 ID，null 代表沒有任何留言在編輯
+  //-------------留言編輯-------------
+
+  /**儲存目前編輯中的留言 ID，null 代表沒有任何留言在編輯 */
   editingCommentId: number | null = null;
 
-  // 暫存編輯中的文字內容
+  /**暫存編輯中的文字內容 */
   editContent: string = '';
 
-  //-------刪除留言-----------
-  // 取得刪除的 Modal 元素
+  //-------------留言刪除-------------
+
+  /**取得刪除的 Modal 元素 */
   @ViewChild('deleteModal') deleteModal!: ElementRef<HTMLDialogElement>;
 
-  // 暫存準備刪除的 ID
+  /**暫存準備刪除的留言ID */
   private pendingDeleteCommentId?: number;
 
   constructor(
     private postsService: PostsService,
     private activatedRoute: ActivatedRoute,
     public authService: AuthService,
-    private postInteractionsService: PostInteractionsService,
+    private handleInteractionsService: HandleInteractions,
     private toastr: ToastrService,
     private scroller: ViewportScroller,
     private commentsService: CommentsService
   ) { }
 
   ngOnInit(): void {
-
     this.activatedRoute.paramMap.subscribe(params => {
       const id = params.get('id');
       if (id) {
@@ -95,64 +90,39 @@ export class PostDetails implements OnInit {
     this.authService.currentUser$.subscribe(data => {
       this.currentUser = data;
     });
-
   }
 
   /**互動呼叫Api */
   handleInteraction(post: PostDetailsData, type: string, reason?: string) {
-    if (type === 'like') {
-      post.isLiked = !post.isLiked;
-      if (post.isLiked) {
-        post.likeCount++;
-      } else {
-        post.likeCount--;
-      }
-
-    } else if (type === 'collect') {
-      post.isCollected = !post.isCollected;
-      if (post.isCollected) {
-        post.collectCount++;
-      } else {
-        post.collectCount--;
-      }
-    } else if (type === 'share') {
-      post.shareCount++;
-      this.copyToClipboard(post.postId);
-    }
-
-    const request: PostInteractionsRequest = {
-      postId: post.postId,
-      type: type as 'like' | 'collect' | 'share' | 'report' | 'view',
-      reportReason: type === 'report' ? reason : undefined,
-    };
-
-    if (!this.currentUser) return;
-
-    this.postInteractionsService.postPostInteractionsApi(request).subscribe({
-      next: (data) => {
-        if (type === 'report') {
+    switch (type) {
+      case 'view':
+        this.handleInteractionsService.interactWithPost(post, 'view', undefined, this.currentUser)?.subscribe();
+        break;
+      case 'like':
+        this.handleInteractionsService.interactWithPost(post, 'like', undefined, this.currentUser)?.subscribe();
+        break;
+      case 'share':
+        this.handleInteractionsService.interactWithPost(post, 'share', undefined, this.currentUser)?.subscribe();
+        break;
+      case 'collect':
+        this.handleInteractionsService.interactWithPost(post, 'collect', undefined, this.currentUser)?.subscribe();
+        break;
+      case 'report':
+        this.handleInteractionsService.interactWithPost(post, 'report', reason, this.currentUser)?.subscribe(data => {
           this.toastr.info(
             '',
             '我們已收到您的檢舉，將會盡快處理。'
           );
-        }
-      },
-
-
-      error: (err) => {
-        console.error(`interaction failed`, err);
-      }
-    });
-
+        });
+        break;
+    }
   }
 
   /**複製貼文網址 */
   copyToClipboard(postId: number) {
-    // 建立完整的 URL (根據你的環境調整)
+
     const fullUrl = `${this.domain}/post/${postId}`;
-
     navigator.clipboard.writeText(fullUrl).then(() => {
-
       this.toastr.info('', '成功複製到剪貼簿！', {
         toastClass: 'ngx-toastr shadow-xl rounded-2xl border-none',
       });
@@ -178,9 +148,7 @@ export class PostDetails implements OnInit {
     this.selectedFullImage.set(null);
   }
 
-
-
-  //-------------留言處理-------------
+  //-------------留言新增-------------
 
   /**留言icon滑到input錨點 */
   focusInput() {
@@ -188,19 +156,13 @@ export class PostDetails implements OnInit {
     this.commentInput.nativeElement.focus();
   }
 
-  /**
-   * 場景 A：點擊「留言 Icon」或「底部 Input 框」
-   * 動作：重設為回覆貼文 (Parent 為 null)
-   */
+  /**場景 A：點擊「留言 Icon」或「底部 Input 框」*/
   resetToPostReply() {
     this.replyStatus = { parentId: null, targetName: this.postDetailsData?.userName };
     this.focusInput();
   }
 
-  /**
-   * 場景 B：點擊某則留言下的「回覆」按鈕
-   * 動作：設定 Parent ID 並帶入對方名字
-   */
+  /**場景 B：點擊某則留言下的「回覆」按鈕*/
   setReplyTarget(commentId: number, userName: string) {
     this.replyStatus = { parentId: commentId, targetName: userName };
     this.focusInput();
@@ -233,14 +195,12 @@ export class PostDetails implements OnInit {
     });
   }
 
-
-
-
+  //-------------留言編輯-------------
 
   /** 進入編輯模式*/
   startEdit(comment: PostComment) {
     this.editingCommentId = comment.commentId;
-    this.editContent = comment.content; // 把原始內容填入暫存變數
+    this.editContent = comment.content;
   }
 
   /**取消編輯*/
@@ -262,13 +222,11 @@ export class PostDetails implements OnInit {
 
     this.commentsService.putEditComment(comment.commentId, dto).subscribe({
       next: (res) => {
-        console.log(res);
         this.cancelEdit();
         this.commentContent = '';
         this.replyStatus.parentId = null;
         this.toastr.info('留言修改成功！');
 
-        //重新渲染畫面
         this.postsService.GetPostDetailsApi(this.postId!).subscribe(data => {
           this.postDetailsData = data;
           this.replyStatus.targetName = data.userName;
@@ -277,9 +235,7 @@ export class PostDetails implements OnInit {
     });
   }
 
-
-
-
+  //-------------留言刪除-------------
 
   /**打開刪除留言彈窗 */
   openDeleteModal(commentId: number) {
@@ -300,7 +256,6 @@ export class PostDetails implements OnInit {
       next: (res) => {
         this.toastr.info('您的留言已刪除！');
 
-        //重新渲染畫面
         this.postsService.GetPostDetailsApi(this.postId!).subscribe(data => {
           this.postDetailsData = data;
           this.replyStatus.targetName = data.userName;
@@ -308,6 +263,5 @@ export class PostDetails implements OnInit {
       }
     });
   }
-
 
 }

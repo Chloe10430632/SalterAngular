@@ -15,9 +15,9 @@
             <details>
               <summary class="font-bold">討論板</summary>
               <ul>
-                <li><a>全部看板</a></li>
-                <li><a>熱門看板</a></li>
-                <li><a>最新看板</a></li>
+                <li><a routerLink="/forum/posts">全部貼文</a></li>
+                <li><a routerLink="/forum/boards">全部看板</a></li>
+                <li><a routerLink="/forum/member/wall" [queryParams]="{ sortBy: 'posted' }">我的貼文</a></li>
               </ul>
             </details>
           </li>

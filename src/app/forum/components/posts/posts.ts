@@ -6,16 +6,12 @@ import { PostsService } from '../../services/posts-service';
 import { RelativeTimePipe } from '../../pipes/relative-time-pipe';
 import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { PostInteractionsService } from '../../services/post-interactions-service';
-import { PostInteractionsRequest } from '../../interfaces/postInteractionsRequest';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../../core/services/auth-service';
 import { CurrentUser } from '../../interfaces/currentUser';
-import { environment } from './../../../../environments/environment';
 import { Observable } from 'rxjs';
 import { HandleInteractions } from '../../services/handle-interactions';
 import { AvatarPipe } from "../../../shared/pipes/avatar-pipe";
-
 
 @Component({
   selector: 'app-posts',
@@ -23,6 +19,7 @@ import { AvatarPipe } from "../../../shared/pipes/avatar-pipe";
   templateUrl: './posts.html',
   styleUrl: './posts.css',
 })
+
 export class Posts implements OnInit {
 
   /**當前環境網址根目錄 */
@@ -35,10 +32,7 @@ export class Posts implements OnInit {
   queryPara?: 'popular' | 'new' | 'follow';
 
   /**貼文關鍵字搜尋 */
-  currentKeyword: string = ''; // 存放從 URL 拿到的搜尋詞
-
-  /**後端伺服器PORT */
-  // backendServer = `${environment.domain}`;
+  currentKeyword: string = '';
 
   /**裝Api打回來的貼文資料 */
   postList: PostList[] = [];
@@ -56,16 +50,16 @@ export class Posts implements OnInit {
   selectedFullImage = signal<string | null>(null);
 
   //-------刪除貼文-----------
-  // 取得刪除的 Modal 元素
+
+  /**取得刪除的 Modal 元素 */
   @ViewChild('deleteModal') deleteModal!: ElementRef<HTMLDialogElement>;
 
-  // 暫存準備刪除的 ID
+  /**暫存準備刪除的貼文ID */
   private pendingDeletePostId?: number;
 
   constructor(
     private postsService: PostsService,
     private handleInteractionsService: HandleInteractions,
-    private postInteractionsService: PostInteractionsService,
     private activatedRoute: ActivatedRoute,
     private toastr: ToastrService,
     public authService: AuthService,
@@ -102,10 +96,8 @@ export class Posts implements OnInit {
 
     // --- 第一步：決定資料來源 (Strategy Pattern) ---
     if (this.currentKeyword) {
-      // 優先執行關鍵字搜尋
       apiCall$ = this.postsService.GetKeywordPostApi(this.currentKeyword, lastPost?.viewCount, lastPost?.postId);
     } else {
-      // 執行原本的排序邏輯
       switch (this.queryPara) {
         case 'new':
           apiCall$ = this.postsService.GetNewPostsApi(lastPost?.createdAt, lastPost?.postId);
@@ -164,13 +156,10 @@ export class Posts implements OnInit {
     }
   }
 
-  //複製貼文網址
+  /**複製貼文網址 */
   copyToClipboard(postId: number) {
-    // 建立完整的 URL (根據你的環境調整)
     const fullUrl = `${this.domain}/post/${postId}`;
-
     navigator.clipboard.writeText(fullUrl).then(() => {
-
       this.toastr.info('', '成功複製到剪貼簿！', {
         toastClass: 'ngx-toastr shadow-xl rounded-2xl border-none',
       });
@@ -184,7 +173,9 @@ export class Posts implements OnInit {
     });
   }
 
-  // 打開檢舉彈窗
+  //-----------貼文檢舉相關-----------
+
+  /**打開檢舉彈窗 */
   openReportModal(post: PostList) {
     this.selectedPostForReport = post;
     console.log(this.selectedPostForReport);
@@ -194,7 +185,7 @@ export class Posts implements OnInit {
     }
   }
 
-  // 確認送出檢舉
+  /**確認送出檢舉 */
   confirmReport(post: any, reason: string, detail: string) {
     if (reason === '請選擇原因') {
       this.toastr.warning('請先選擇檢舉原因', '提示');
@@ -204,6 +195,8 @@ export class Posts implements OnInit {
     reason = `${reason}:${detail}`;
     this.handleInteraction(post, 'report', reason);
   }
+
+  //-----------圖片預覽相關-----------
 
   /**放大圖片 - 開啟燈箱 */
   openLightbox(url: string) {
@@ -219,13 +212,11 @@ export class Posts implements OnInit {
 
   /**貼文導頁 */
   navigateToPost(event: Event, postId: number) {
-    // 子元素的 stopPropagation 會阻止事件傳到這裡
-    // 只有點擊卡片空白處、文字處，才會觸發這個導頁
     this.router.navigate(['/forum/posts', postId]);
   }
 
 
-
+  //-----------貼文刪除相關-----------
 
   /**打開刪除貼文彈窗 */
   openDeleteModal(postId: number) {
@@ -245,8 +236,6 @@ export class Posts implements OnInit {
     this.postsService.delDeletePost(this.pendingDeletePostId).subscribe({
       next: (res) => {
         this.toastr.info('您的貼文已刪除！');
-
-        //重新渲染畫面
         this.resetAndLoad();
       }
     });

@@ -1,6 +1,5 @@
 <div class="grid grid-cols-12 gap-6">
-
-  <div class="col-span-12 md:col-span-3 lg:h-screen lg:sticky top-20 z-10">
+  <div class="col-span-12 lg:col-span-3 lg:h-screen lg:sticky top-20 z-10">
     <div class="card bg-base-100 shadow-sm border border-base-300 flex flex-col h-[calc(100vh-120px)] overflow-hidden">
 
       <div class="p-2 flex-none">
@@ -38,10 +37,7 @@
 
 
       @if(boardListPop5.length === 0 || boardListFollow5.length === 0) {
-      <!-- Skeleton 載入狀態：當 Api 還沒打回來時顯示 -->
       <div class="flex-1 overflow-y-auto p-2 scrollbar">
-
-        <!-- 骨架：熱門即時看板 -->
         <ul class="menu menu-md w-full">
           <li class="menu-title text-sm text-primary-content font-black
                                 bg-primary rounded-lg mx-2 px-4 py-1.5 mb-3
@@ -49,11 +45,10 @@
             大家都在瀏覽
           </li>
 
-          <!-- 產生 3-5 個重複的骨架項目 -->
           <li class="flex flex-row items-center gap-4 px-6 py-2">
-            <div class="skeleton mask mask-squircle w-8 h-8 shrink-0"></div> <!-- 模擬圖片 -->
-            <div class="skeleton h-4 w-24"></div> <!-- 模擬看板標題 -->
-            <div class="skeleton h-3 w-16 ml-auto opacity-60"></div> <!-- 模擬數據 -->
+            <div class="skeleton mask mask-squircle w-8 h-8 shrink-0"></div>
+            <div class="skeleton h-4 w-24"></div>
+            <div class="skeleton h-3 w-16 ml-auto opacity-60"></div>
           </li>
 
           <li class="flex flex-row items-center gap-4 px-6 py-2">
@@ -69,7 +64,6 @@
           </li>
         </ul>
 
-        <!-- 骨架：追蹤推薦看板 -->
         <ul class="menu menu-md w-full mt-4 border-t border-base-200 pt-4">
           <li class="menu-title text-sm text-primary-content font-black
                                 bg-primary rounded-lg mx-2 px-4 py-1.5 mb-3
@@ -86,7 +80,6 @@
       </div>
       }@else {
       <div class="flex-1 overflow-y-auto p-2 scrollbar">
-        <!-- 熱門即時看板 -->
         <ul class="menu menu-md w-full">
 
           <li class="menu-title text-sm text-primary-content font-black
@@ -110,7 +103,6 @@
 
         </ul>
 
-        <!-- 追蹤推薦看板 -->
         <ul class="menu menu-md w-full mt-4">
           <li class="menu-title text-sm text-primary-content font-black
                                 bg-primary rounded-lg mx-2 px-4 py-1.5 mb-3
@@ -129,20 +121,15 @@
             </a>
           </li>
           }
-
-
         </ul>
 
       </div>
       }
 
-
-
-
     </div>
   </div>
 
-  <div class="col-span-12 md:col-span-6 space-y-4">
+  <div class="col-span-12 lg:col-span-6 space-y-4">
     <router-outlet></router-outlet>
     <!-- 全域發佈進度條 (僅在發佈中顯示) -->
     @if (isPublishing()) {
@@ -182,24 +169,20 @@
   </div>
 
 
-  <div class="col-span-12 md:col-span-3 h-screen sticky top-20 z-10">
+  <div class="col-span-12 lg:col-span-3 h-screen sticky top-20 z-10">
     <div class="sticky bottom-6 z-30">
       @if (!adDetails) {
       <div class="card bg-base-100 shadow-sm border border-base-300 overflow-hidden">
-        <!-- 頂部標題列 Skeleton -->
         <div class="p-3 bg-base-200 flex justify-between items-center">
           <div class="flex items-center gap-2">
-            <div class="skeleton h-4 w-4 rounded-md"></div> <!-- 模擬 Icon -->
-            <div class="skeleton h-4 w-12 rounded"></div> <!-- 模擬「贊助」文字 -->
+            <div class="skeleton h-4 w-4 rounded-md"></div>
+            <div class="skeleton h-4 w-12 rounded"></div>
           </div>
-          <div class="skeleton h-4 w-4 rounded-full"></div> <!-- 模擬問號 Icon -->
+          <div class="skeleton h-4 w-4 rounded-full"></div>
         </div>
 
-        <!-- 主體圖片區域 Skeleton -->
         <div class="m-4 border-2 border-base-300 rounded-lg overflow-hidden">
-          <!-- 這裡使用 animate-pulse 增加閃爍動態 -->
           <div class="skeleton h-[400px] w-full flex items-center justify-center bg-base-200 animate-pulse">
-            <!-- 模擬中間的品牌 Logo 或圖示 -->
             <div class="w-24 h-24 rounded-2xl bg-base-300/50 border border-base-300/30 shadow-inner"></div>
           </div>
         </div>
@@ -239,6 +222,7 @@
           <i class="fa-solid fa-plus text-2xl text-primary-content group-hover:rotate-90 transition-transform"></i>
         </button>
       </div>
+
       <!-- 發布貼文Modal視窗 -->
       <dialog id="post_modal" class="modal modal-bottom sm:modal-middle">
         <div [formGroup]="postForm"
@@ -395,6 +379,7 @@
           <button (click)="clearPost()">close</button>
         </form>
       </dialog>
+
       <!-- 儲存草稿視窗 -->
       <dialog id="draft_confirm" class="modal z-[120]">
         <div class="modal-box max-w-xs text-center border-2 border-base-content/10">
@@ -443,13 +428,6 @@
           <button>close</button>
         </form>
       </dialog>
-
-
-
-
-
-
-
 
       <footer class="pt-4">
         <div class="flex flex-wrap gap-x-3 gap-y-2 text-sm text-gray-600 px-2 justify-end font-medium">

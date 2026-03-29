@@ -8,13 +8,8 @@ import { PostsService } from '../../services/posts-service';
 import { BoardsService } from '../../services/boards-service';
 import { BoardDetails } from '../../interfaces/boardDetails';
 import { ToastrService } from 'ngx-toastr';
-import { PostInteractionsRequest } from '../../interfaces/postInteractionsRequest';
-import { PostInteractionsService } from '../../services/post-interactions-service';
-import { BoardInteractionsRequest } from '../../interfaces/boardInteractionsRequest';
 import { CurrentUser } from '../../interfaces/currentUser';
 import { AuthService } from '../../../core/services/auth-service';
-import { BoardInteractionsService } from '../../services/board-interactions-service';
-import { environment } from './../../../../environments/environment';
 import { HandleInteractions } from '../../services/handle-interactions';
 import { AvatarPipe } from "../../../shared/pipes/avatar-pipe";
 
@@ -26,14 +21,11 @@ import { AvatarPipe } from "../../../shared/pipes/avatar-pipe";
 })
 export class SelectBoardPosts implements OnInit {
 
-  /**目前使用者 */
-  currentUser?: CurrentUser;
-
   /**當前環境網址根目錄 */
   readonly domain = window.location.origin;
 
-  /**後端伺服器PORT */
-  backendServer = `${environment.domain}`;
+  /**目前使用者 */
+  currentUser?: CurrentUser;
 
   /**看板詳細資料 */
   boardDetails?: BoardDetails;
@@ -50,10 +42,10 @@ export class SelectBoardPosts implements OnInit {
   /**目前選中的看板ID */
   boardId: number | null = null;
 
-  /**用來記錄現在是哪篇貼文要被檢舉*/
+  /**被檢舉貼文 */
   selectedPostForReport?: PostList;
 
-  /**儲存目前要放大顯示的圖片網址 */
+  /**選中的全圖 */
   selectedFullImage = signal<string | null>(null);
 
   constructor(
@@ -63,16 +55,13 @@ export class SelectBoardPosts implements OnInit {
     private toastr: ToastrService,
     private authService: AuthService,
     private handleInteractionsService: HandleInteractions,
-    private postInteractionsService: PostInteractionsService,
-    private boardInteractionsService: BoardInteractionsService,
     private router: Router) { }
 
   ngOnInit(): void {
-
     this.activatedRoute.paramMap.subscribe(params => {
       const id = params.get('id');
       if (id) {
-        this.boardId = +id; // 使用 + 號快速轉成 number
+        this.boardId = +id;
         this.boardsService.GetBoardByIdApi(this.boardId).subscribe(data => {
           this.boardDetails = data;
         });
@@ -84,8 +73,6 @@ export class SelectBoardPosts implements OnInit {
     this.authService.currentUser$.subscribe(data => {
       this.currentUser = data;
     });
-
-
   }
 
   /**清空舊貼文資料 */
@@ -188,7 +175,6 @@ export class SelectBoardPosts implements OnInit {
 
   /**複製貼文網址 */
   copyPostToClipboard(postId: number) {
-    // 建立完整的 URL (根據你的環境調整)
     const fullUrl = `${this.domain}/post/${postId}`;
 
     navigator.clipboard.writeText(fullUrl).then(() => {
@@ -206,6 +192,8 @@ export class SelectBoardPosts implements OnInit {
     });
   }
 
+  //-----------貼文檢舉相關-----------
+
   /**檢舉彈窗 */
   openReportModal(post: PostList) {
     this.selectedPostForReport = post;
@@ -222,10 +210,11 @@ export class SelectBoardPosts implements OnInit {
       this.toastr.warning('請先選擇檢舉原因', '提示');
       return;
     }
-
     reason = `${reason}:${detail}`;
     this.handlePostInteraction(post, 'report', reason);
   }
+
+  //-----------圖片預覽相關-----------
 
   /**放大圖片 - 開啟燈箱 */
   openLightbox(url: string) {
@@ -241,10 +230,9 @@ export class SelectBoardPosts implements OnInit {
 
   /**貼文導頁 */
   navigateToPost(event: Event, postId: number) {
-    // 子元素的 stopPropagation 會阻止事件傳到這裡
-    // 只有點擊卡片空白處、文字處，才會觸發這個導頁
     this.router.navigate(['/forum/posts', postId]);
   }
+
 }
 
 

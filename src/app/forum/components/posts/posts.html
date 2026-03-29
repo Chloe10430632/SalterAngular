@@ -98,15 +98,15 @@
                   <img [src]="post.avatarUrl | avatar" alt="avatar" />
                 </div>
               </div>
-              <div class="flex-1 flex items-center justify-between">
-                <div class="flex items-center gap-1">
+              <div class="flex-1 flex items-baseline lg:items-center justify-between">
+                <div class="flex flex-wrap items-center gap-1">
                   <span
                     class="font-bold text-[14px] hover:underline cursor-pointer text-base-content">{{post.userName}}</span>
-                  <span class="ml-5">></span>
+                  <span class="ml-2 lg:ml-5">></span>
                   <a [routerLink]="'/forum/boards/'+post.boardId">
                     <div class="badge badge-primary ml-5 font-bold">{{post.boardTitle}}</div>
                   </a>
-                  <span class="text-base-content/50 text-[13px] font-medium ml-3">{{post.createdAt |
+                  <span class="text-base-content/50 text-[13px] font-medium ml-1 lg:ml-3">{{post.createdAt |
                     relativeTime}}</span>
                 </div>
 
@@ -117,24 +117,6 @@
                     </button>
                     <ul tabindex="0"
                       class="dropdown-content menu p-2 shadow-2xl bg-base-100 rounded-2xl w-44 border border-base-200 z-50 mt-2">
-
-                      <!-- @if(currentUser?.name === post.userName){
-                      <li>
-                        <a class="py-3 text-sm flex items-center gap-2 hover:bg-base-200">
-                          <i class="fa-regular fa-pen-to-square w-4"></i>
-                          編輯貼文
-                        </a>
-                      </li>
-
-                      <li (click)="openDeleteModal(post.postId)">
-                        <a class="py-3 text-sm text-error font-bold flex items-center gap-2 hover:bg-error/10">
-                          <i class="fa-regular fa-trash-can w-4"></i>
-                          刪除貼文
-                        </a>
-                      </li>
-                      } -->
-
-
 
                       <li><a class="py-3 text-sm" (click)="handleInteraction(post,'collect')"><i
                             class="fa-regular fa-bookmark"></i>
@@ -168,10 +150,6 @@
                   <span class="ml-5 text-base-content/50 text-sm">........(點擊查看完整內容)</span>
                   }
                 </p>
-
-
-
-
 
                 @if(post.imageUrls.length>0){
                 <div class="grid grid-cols-3 gap-3 mt-6">

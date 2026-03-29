@@ -2,9 +2,7 @@ import { Component, ElementRef, OnInit, signal, ViewChild } from '@angular/core'
 import { CurrentUser } from '../../interfaces/currentUser';
 import { AuthService } from '../../../core/services/auth-service';
 import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
-import { environment } from './../../../../environments/environment';
 import { PostList } from '../../interfaces/postList';
-import { Observable } from 'rxjs';
 import { DecimalPipe } from '@angular/common';
 import { RelativeTimePipe } from '../../pipes/relative-time-pipe';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -102,14 +100,13 @@ export class PersonalWall implements OnInit {
   ngOnInit(): void {
     this.activatedRoute.queryParams.subscribe(params => {
       this.currentSortBy = params['sortBy'] || 'posted';
-      this.resetAndLoad(); // 切換 Tab 時重置並抓取
+      this.resetAndLoad();
     });
 
     this.authService.currentUser$.subscribe(data => {
       this.currentUser = data;
     });
 
-    //貼文資料結構
     this.postForm = this.formBuilder.group({
       boardId: [, Validators.required],
       content: ['', Validators.required],
@@ -155,7 +152,7 @@ export class PersonalWall implements OnInit {
     this.loadMore();
   }
 
-  //互動呼叫Api
+  /**互動呼叫Api */
   handleInteraction(post: PostList, type: string, reason?: string) {
     if (type === 'like') {
       post.isLiked = !post.isLiked;
@@ -203,7 +200,7 @@ export class PersonalWall implements OnInit {
 
   }
 
-  //複製貼文網址
+  /**複製貼文網址 */
   copyToClipboard(postId: number) {
     // 建立完整的 URL (根據你的環境調整)
     const fullUrl = `${this.domain}/post/${postId}`;
@@ -223,7 +220,7 @@ export class PersonalWall implements OnInit {
     });
   }
 
-  // 打開檢舉彈窗
+  /**打開檢舉彈窗 */
   openReportModal(post: PostList) {
     this.selectedPostForReport = post;
     console.log(this.selectedPostForReport);
@@ -233,7 +230,7 @@ export class PersonalWall implements OnInit {
     }
   }
 
-  // 確認送出檢舉
+  /**確認送出檢舉 */
   confirmReport(post: any, reason: string, detail: string) {
     if (reason === '請選擇原因') {
       this.toastr.warning('請先選擇檢舉原因', '提示');
@@ -262,9 +259,6 @@ export class PersonalWall implements OnInit {
     // 只有點擊卡片空白處、文字處，才會觸發這個導頁
     this.router.navigate(['/forum/posts', postId]);
   }
-
-
-
 
   /**打開編輯貼文彈窗 */
   openEditModal(postId: number) {
@@ -315,6 +309,7 @@ export class PersonalWall implements OnInit {
       this.allBoardList = data;
     });
   }
+
   /**選定發文看板 */
   selectBoard(board: BoardList) {
     this.selectedBoard = board;
@@ -361,7 +356,7 @@ export class PersonalWall implements OnInit {
     this.tags.update(prev => prev.filter((_, i) => i !== index));
   }
 
-  // 送出按鈕邏輯
+  /**送出編輯按鈕邏輯 */
   handleEditPostSubmit(isPosted: boolean) {
     if (this.postForm.invalid) return;
 
@@ -391,11 +386,6 @@ export class PersonalWall implements OnInit {
 
   }
 
-
-
-
-
-
   /**打開刪除貼文彈窗 */
   openDeleteModal(postId: number) {
     this.pendingDeletePostId = postId;
@@ -420,6 +410,5 @@ export class PersonalWall implements OnInit {
       }
     });
   }
-
 
 }

@@ -13,6 +13,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class Header implements OnInit {
 
+  /**目前登入的使用者 */
   currentUser: any = null;
 
   /**關鍵字搜尋 */
@@ -38,14 +39,13 @@ export class Header implements OnInit {
     });
   }
 
-
+  /**登出 */
   onLogout() {
     this.authService.logout();
     this.router.navigate(['/login'])
   }
 
-
-  //測試攔截器
+  /**測試攔截器 */
   testAuth() {
     this.authService.getProfile().subscribe({
       next: (res) => {
@@ -58,7 +58,6 @@ export class Header implements OnInit {
       }
     });
   }
-
 
 }
 

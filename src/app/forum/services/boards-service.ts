@@ -9,32 +9,27 @@ import { BoardDetails } from '../interfaces/boardDetails';
 @Injectable({
   providedIn: 'root',
 })
+
 export class BoardsService {
 
   constructor(private http: HttpClient) { }
 
-  //GET 全部看板
+  /**GET 全部看板 */
   GetAllBoardsApi() {
-    const apiData$ = this.http.get<BoardList[]>(`${environment.apiUrl}/Forum/Boards`); // 真正的 Api
-    const minimumDelay$ = timer(1200); // 1.2 秒的沙漏
+    const apiData$ = this.http.get<BoardList[]>(`${environment.apiUrl}/Forum/Boards`);
+    const minimumDelay$ = timer(1200);
 
-    // zip 會等待兩者都完成。
-    // 如果 Api 50ms 就回來，它會等滿 1.5 秒。
-    // 如果 Api 跑了 3 秒，它會等 3 秒（以慢的為主）。
     return zip(apiData$, minimumDelay$).pipe(
-      map(([data, _]) => data) // 丟掉 timer 的值，只回傳 Api 資料
+      map(([data, _]) => data)
     );
-
-
-
-    // return this.http.get<BoardList[]>('${environment.apiUrl}/Forum/Boards');
   }
 
-  //GET 熱門看板
+  /**GET 熱門看板 */
   GetPopBoardsApi() {
     return this.http.get<BoardList[]>(`${environment.apiUrl}/Forum/Boards?sortBy=popular`);
   }
 
+  /**GET 熱門看板前五名 */
   GetTop5PopBoardsApi() {
     const apiData$ = this.http.get<BoardList[]>(`${environment.apiUrl}/Forum/Boards?sortBy=popular&takeSize=5`);
     const minimumDelay$ = timer(1000);
@@ -43,19 +38,19 @@ export class BoardsService {
     );
   }
 
-  //GET 追蹤推薦看板
+  /**GET 追蹤推薦看板 */
   GetFollowBoardsApi() {
     return this.http.get<BoardList[]>(`${environment.apiUrl}/Forum/Boards?sortBy=follow`);
   }
 
+  /**GET 追蹤推薦看板前五名 */
   GetTop5FollowBoardsApi() {
     return this.http.get<BoardList[]>(`${environment.apiUrl}/Forum/Boards?sortBy=follow&takeSize=5`);
   }
 
-  //GET 單一看板
+  /**GET 單一看板 */
   GetBoardByIdApi(boardId: number) {
     return this.http.get<BoardDetails>(`${environment.apiUrl}/Forum/Boards/${boardId}`);
   }
-
 
 }
