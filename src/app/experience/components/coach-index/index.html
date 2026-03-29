@@ -1,6 +1,5 @@
 <div data-theme="bumblebee" class="min-h-screen bg-base-100">
 
-  <!-- 背景圖區 -->
   <div class="hero min-h-[300px]"
     style="background-image: url(https://res.cloudinary.com/dnqawxc59/image/upload/v1774451358/background_vn7rxo.png);">
     <div class="hero-overlay bg-opacity-40"></div>
@@ -8,10 +7,9 @@
       <div class="max-w-2xl">
         <h1 class="mb-5 text-5xl font-bold leading-tight drop-shadow-lg">
           尋找專業教練 <br />
-
         </h1>
         <p class="mb-8 text-lg font-bold opacity-90">探索全台最頂尖的水域運動教練，開啟你的海洋冒險。</p>
-        <!-- 搜尋 -->
+
         <div class="form-control w-full max-w-md mx-auto">
           <div class="relative">
             <input type="text" placeholder="輸入運動項目或教練姓名..."
@@ -24,37 +22,60 @@
               </svg>
               搜尋
             </button>
-
           </div>
         </div>
       </div>
     </div>
   </div>
-  <!-- 教練卡區 -->
+
   <div class="container mx-auto px-4 py-10">
     <div class="flex flex-col w-full items-center">
-      <div role="tablist" class="tabs tabs-lifted tabs-lg w-full max-w-4xl">
-        <!-- 排序分頁 -->
-        <input type="radio" name="coach_tabs" role="tab" class="tab font-bold" aria-label="熱門推薦" checked />
+
+      <div role="tablist" class="tabs tabs-lifted tabs-lg w-full max-w-6xl">
+
+        <input type="radio" name="coach_tabs" role="tab" class="tab font-bold text-lg" aria-label="🔥 熱門推薦" checked />
         <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-10">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="p-4 border-2 border-dashed border-base-300 rounded-xl text-center">正在載入熱門教練...</div>
-            <div class="p-4 border-2 border-dashed border-base-300 rounded-xl text-center">正在載入熱門教練...</div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-20 pt-16">
+            @for (item of coaches; track item.coachId) {
+            <app-fav-card [item]="item" (removeMe)="handleRemove($event)"></app-fav-card>
+            } @empty {
+            <div class="col-span-full flex flex-col items-center py-10 text-base-content/50">
+              <span class="loading loading-spinner loading-lg text-primary"></span>
+              <p class="mt-4 font-bold">教練正在趕路中，請稍候...</p>
+            </div>
+            }
           </div>
-          <!-- 卡片區foreach -->
+
+          @if (coaches.length > 0) {
+          <div class="flex justify-center mt-20">
+            <button (click)="LoadMore()"
+              class="btn btn-primary btn-outline btn-wide shadow-md hover:scale-105 transition-all">
+              看更多熱門教練
+            </button>
+          </div>
+          }
         </div>
 
-        <input type="radio" name="coach_tabs" role="tab" class="tab font-bold" aria-label="最新入駐" />
+        <input type="radio" name="coach_tabs" role="tab" class="tab font-bold text-lg" aria-label="✨ 最新入駐" />
         <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-10">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="p-4 border-2 border-dashed border-base-300 rounded-xl text-center">正在載入最新教練...</div>
-            <div class="p-4 border-2 border-dashed border-base-300 rounded-xl text-center">正在載入最新教練...</div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-20 pt-16">
+            @for (item of latestC; track item.coachId) {
+            <app-fav-card [item]="item" (removeMe)="handleRemove($event)"></app-fav-card>
+            } @empty {
+            <div class="col-span-full text-center py-10 text-base-content/50">
+              目前還沒有新教練入駐喔！
+            </div>
+            }
           </div>
         </div>
 
       </div>
     </div>
   </div>
+
   <app-little-island></app-little-island>
   <app-footer></app-footer>
+
 </div>

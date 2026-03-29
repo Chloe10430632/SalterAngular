@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output, signal } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, output, Output, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { AvatarPipe } from '../../../../shared/pipes/avatar-pipe';
 import { CoachAllInfoI } from '../../../Interfaces/coachallinfo';
@@ -8,7 +8,6 @@ import { UiS } from '../../../Service/UiS';
 import { FavI } from '../../../Interfaces/myfav';
 import { CourseForOneS } from '../../../Service/course-for-one';
 import { SessionDisplayS } from '../../../Service/session-display';
-import { get } from 'sortablejs';
 
 //========!!這是 子Component!!================//
 //========!!放在首頁和收藏!!================//
@@ -20,12 +19,13 @@ import { get } from 'sortablejs';
   styleUrl: './fav-card.css',
 })
 export class FavCard implements OnInit {
-  coach = signal<CoachAllInfoI | null>(null);
-  coaches: any[] = [];
+  // --- 核心改動：改用 input signal 接收整個物件 ---
+  // 這樣首頁傳進來的 item 就會直接變成我們需要的資料
+  coachItem = input.required<CoachAllInfoI>({ alias: 'item' });
   isFav = false;
   myFavId: number[] = [];
-  reviewDatas: any[] = [];
   latestCourseName: string = '載入中...';
+
   //------------------------------------------------------//
   constructor(
     private router: Router,
@@ -36,16 +36,15 @@ export class FavCard implements OnInit {
   ) { }
   @Input() coachId: number = 1000010; // 讓外部決定要抓哪一個 ID，預設值先給1000010
   @Input() item: any;
-  @Output() removeMe = new EventEmitter<number>(); // 送出 CoachId
+  @Output() removeMe = new EventEmitter<number>(); //通知父組件（例如收藏頁面要移除這張卡片）
   //------------------------------------------------------//
   ngOnInit(): void {
     /**最新課程 */
     this.findLatestCourse();
-
     /**收藏inDB */
     this.loadHeart(); // 頁面一打開就去抓收藏清單，看看這個教練有沒有在裡面
   }
-  //--方法-------------------------------------------------//
+  //----------------方法-----------------------------------//
   /**愛心亮不亮 */
   loadHeart() {
     this.coachInfoS.HeartIds().subscribe({
@@ -69,38 +68,21 @@ export class FavCard implements OnInit {
   }
   /**收藏 */
   toggleFav(coachId: number) {
-    const favData: FavI = {
-      coachId: coachId,
-      isSuccess: false,
-      message: ''
-    };
+    const id = this.coachItem().coachId;
+    const favData: FavI = { coachId: id, isSuccess: false, message: '' };
 
-    // 直接呼叫同一隻 API
     this.coachInfoS.changeFav(favData).subscribe({
       next: (res) => {
-        // 假設後端執行成功（不論是新增還是刪除成功）
         if (res.isSuccess) {
-
-          // 檢查：如果原本陣列裡「沒有」這個 ID，代表剛才是執行「新增」
-          if (!this.myFavId.includes(coachId)) {
-            this.myFavId = [...this.myFavId, coachId]; // 加進去，愛心變紅
+          if (!this.myFavId.includes(id)) {
+            this.myFavId = [...this.myFavId, id];
             this.uiS.showToast("收藏教練一人！");
-            console.log(this.myFavId);
+          } else {
+            this.myFavId = this.myFavId.filter(fid => fid !== id);
+            this.removeMe.emit(id); // 通知父組件
+            this.uiS.showToast("教練出走了QAQ");
           }
-          // 檢查：如果原本陣列裡「有」這個 ID，代表剛才是執行「取消」
-          else {
-            this.myFavId = this.myFavId.filter(id => id !== coachId); // 踢掉，愛心變灰
-
-            this.removeMe.emit(this.item.coachId); // 送出事件告訴父元件，這個 ID 被取消收藏了
-            this.uiS.showToast("教練出走了QAQ"); // 顯示取消收藏的提示訊息
-          }
-
-        } else {
-          console.error("後端處理失敗:", res.message);
         }
-      },
-      error: (err) => {
-        console.error("網路或伺服器錯誤", err);
       }
     });
   }
@@ -140,10 +122,11 @@ export class FavCard implements OnInit {
       }
     });
   }
-
   //========================================//
-  intro(coachId: number) {
-    this.router.navigate([`/experience/coachintro/${coachId}`])
+  intro() {
+    // 這裡直接從 input 拿 ID，不用外面傳進來
+    const id = this.coachItem().coachId;
+    this.router.navigate([`/experience/coachintro/${id}`]);
   }
 
 }
