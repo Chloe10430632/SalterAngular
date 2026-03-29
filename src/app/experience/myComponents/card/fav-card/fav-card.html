@@ -1,60 +1,77 @@
 <div data-theme="bumblebee" class="p-8 flex justify-center bg-base-200">
-
+  @if (coach(); as c) {
   <div class="card w-72 bg-base-100 shadow-xl border border-base-300 relative mt-16">
 
     <div class="absolute -top-16 left-1/2 -translate-x-1/2">
       <div class="avatar">
         <div class="w-32 h-32 rounded-full border-4 border-base-100 shadow-lg ring ring-primary ring-offset-2">
-          <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" alt="教練頭像" />
+          <img [src]="c.avatarUrl | avatar" alt="教練頭像" />
         </div>
       </div>
     </div>
 
     <div class="card-body items-center text-center pt-20 pb-3">
-
+      <!-- 教練名稱 -->
       <div class="flex items-center justify-center gap-2">
-        <h2 class="card-title text-xl font-bold text-base-content">Daisy 老師</h2>
+        <h2 class="card-title text-xl font-bold text-base-content">{{ c.coachName }}</h2>
 
         <label class="swap swap-rotate hover:scale-110 transition-transform cursor-pointer">
-          <input type="checkbox" (change)="toggleFavorite()" [checked]="isFavorite" />
+          <input type="checkbox" (change)="toggleFav(coachId)" [checked]="isFav" />
           <svg xmlns="http://www.w3.org/2000/svg" class="swap-on fill-error w-7 h-7" viewBox="0 0 24 24">
-            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            <path
+              d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
           </svg>
-          <svg xmlns="http://www.w3.org/2000/svg" class="swap-off fill-base-content/30 w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+          <svg xmlns="http://www.w3.org/2000/svg" class="swap-off fill-base-content/30 w-7 h-7" fill="none"
+            viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
           </svg>
         </label>
       </div>
 
       <div class="flex flex-col items-center gap-2 mt-2 w-full">
-        <span class="badge badge-ghost badge-md py-3 px-4 w-fit">📍 台北市大安區</span>
-        <span class="badge bg-neutral text-neutral-content border-none py-3 px-4 w-fit font-bold">💪 體態雕塑 / 核心強化</span>
+        @for(d of c.district; track $index) {
+        <span class="badge badge-ghost badge-md py-3 px-4 w-fit">📍 {{ d }}</span>}
+        @for(s of c.specialities; track $index) {
+        <span class="badge bg-neutral text-neutral-content border-none py-3 px-4 w-fit font-bold">{{ s }}</span>}
       </div>
 
       <div class="mt-4 flex flex-col items-center gap-1">
         <div class="flex items-center gap-1">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-orange-400 fill-current" viewBox="0 0 24 24">
-            <path d="M12 .587l3.668 7.431 8.2 1.192-5.934 5.787 1.4 8.168L12 18.896l-7.334 3.869 1.4-8.168L.132 9.21l8.2-1.192z"/>
+            <path
+              d="M12 .587l3.668 7.431 8.2 1.192-5.934 5.787 1.4 8.168L12 18.896l-7.334 3.869 1.4-8.168L.132 9.21l8.2-1.192z" />
           </svg>
-          <span class="text-sm font-bold">5.0</span>
-          <a (click)="onReviewClick()" class="link link-hover text-xs font-medium text-base-content/50 cursor-pointer ml-1">
-            ({{ reviewCount }} 則評論)
+          <!-- 評論 -->
+          <span class="text-sm font-bold">{{c.avgRating}}</span>
+          <a (click)="onReviewClick(coachId)"
+            class="link link-hover text-xs font-medium text-base-content/50 cursor-pointer ml-1">
+            ( | {{ c.reviewCount }} 則評論)
           </a>
         </div>
       </div>
 
-      <div class="alert alert-sm bg-base-200 border-none mt-4 py-2 justify-center">
-        <span class="text-xs font-bold text-secondary">最近開課：晨間伸展營</span>
+      <div class="stats shadow bg-primary text-primary-content" data-theme="bumblebee">
+        <div class="stat">
+          <div class="stat-title text-black">!NEW! 最新開課</div>
+          <div class="stat-value text-2xl">{{ latestCourseName }}</div>
+          @if(latestCourseName === '搜尋中...') {
+          <span class="loading loading-dots loading-sm"></span>
+          }
+        </div>
       </div>
 
       <div class="card-actions w-full mt-6">
-        <button (click)="intro()" class="btn btn-primary btn-sm w-full gap-2 shadow-md hover:scale-105 transition-all">
+        <button (click)="intro(coachId)"
+          class="btn btn-primary btn-sm w-full gap-2 shadow-md hover:scale-105 transition-all">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
           </svg>
           查看教練詳細資訊
         </button>
       </div>
     </div>
   </div>
-</div>
+
+  }

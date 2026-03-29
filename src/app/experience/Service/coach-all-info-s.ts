@@ -4,6 +4,7 @@ import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
 import { APIResponse, CoachAllInfoI } from '../Interfaces/coachallinfo';
 import { FavI } from '../Interfaces/myfav';
+import { ReviewI } from '../Interfaces/reviewI';
 
 //===========!!Service!!================//
 
@@ -22,6 +23,10 @@ export class CoachAllInfoS {
   }
   HeartIds(): Observable<any> {
     return this.client.get<any>(`${environment.apiUrl}/Exp/Exp/FavHeart`);
+  }
+
+  goToReview(coachId: number): Observable<APIResponse<ReviewI>> {
+    return this.client.get<APIResponse<ReviewI>>(`${environment.apiUrl}/Exp/Exp/ContentDetails/${coachId}`);
   }
 
 }

@@ -4,10 +4,11 @@ import { FavCard } from "../../myComponents/card/fav-card/fav-card";
 import { Footer } from "../../../shared/footer/footer";
 import { LittleIsland } from "../../myComponents/little-island/little-island";
 import { Noavatar } from "../../myComponents/container/noavatar/noavatar";
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-coach-favorite',
-  imports: [FavCard, Footer, LittleIsland,  Noavatar,],
+  imports: [FavCard, Footer, LittleIsland, Noavatar,],
   templateUrl: './mem-favorite.html',
   styleUrl: './mem-favorite.css',
 })
@@ -29,26 +30,33 @@ export class MemFavorite {
     this.isLoading = true; // 開始轉圈圈/秀骨架
 
     //把 URL 改成動態的，把 currentPage 傳給後端
-    this.client.get<any[]>(`https://localhost:7017/api/Exp/Exp/myFavList{id}?page=${this.currentPage}&pageSize=6`).subscribe({
-      next: (data) => {
+    this.client.get<any>(`${environment.apiUrl}/Exp/Exp/myFavList?page=${this.currentPage}&pageSize=6`).subscribe({
+      next: (result) => {
         setTimeout(() => {
-          if (data.length < 6) {
-            this.isEnd = true;
+          const newData = result.data;
+
+          if (!newData || newData.length < 6) {
+            this.isEnd = true; // 抓回來的比 6 筆少，代表沒貨了
           }
-          //用 ... 把新拿到的 6 個教練，「接」在舊的教練後面
-          this.fav = [...this.fav, ...data]; //資料先抓到容器裡
-          this.currentPage++;
-          //console.log('API 拿到的資料：', data);
-          //關閉遮蓋效果
+
+          if (newData && newData.length > 0) {
+            this.fav = [...this.fav, ...newData]; // 把新教練接在後面
+            this.currentPage++; // 下次要抓下一頁
+          }
+
           this.isLoading = false;
         }, 1500);
-      }, //延遲1.5秒
+      },
       error: (err) => {
-        console.error('API 壞掉啦：', err);
+        console.error('API 壞掉啦', err);
         this.isLoading = false;
       }
     });
   }
   //#endregion
 
+  handleRemove(coachId: number) {
+    // 用 filter 濾掉被點擊的那位教練
+    this.fav = this.fav.filter(c => c.coachId !== coachId);
+  }
 }

@@ -121,7 +121,7 @@ export const routes: Routes = [
         loadComponent: () => import('./experience/components/coach-course-temp/coach-course-temp').then(m => m.CoachCourseTemp)
       },
       {
-        path: 'course/:id', //上架中
+        path: 'course', //上架中
         loadComponent: () => import('./experience/components/coach-course/coach-course').then(m => m.CoachCourse)
       },
       {
@@ -139,12 +139,16 @@ export const routes: Routes = [
         loadComponent: () => import('./experience/components/mem-attend/mem-attend').then(m => m.MemAttend)
       },
       {
-        path: 'myfav/:id', //收藏
+        path: 'myfav', //收藏
         loadComponent: () => import('./experience/components/mem-favorite/mem-favorite').then(m => m.MemFavorite)
       },
       {
         path: 'myreview', //新增評論
         loadComponent: () => import('./experience/myComponents/backdrop/reviewcreate/reviewcreate').then(m => m.Reviewcreate)
+      },
+      {
+        path: 't', //新增評論
+        loadComponent: () => import('./experience/TEST/tindex/tindex').then(m => m.Tindex)
       },
     ]
   },

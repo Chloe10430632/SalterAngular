@@ -9,6 +9,7 @@ import { AvatarPipe } from '../../../../shared/pipes/avatar-pipe';
 
 
 //========!!這是 子Component!!================//
+//========!!放在教練介紹頁!!================//
 
 @Component({
   selector: 'app-coursefor-coach-profile',

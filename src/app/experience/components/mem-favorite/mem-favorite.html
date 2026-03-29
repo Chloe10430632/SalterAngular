@@ -1,8 +1,32 @@
 <app-noavatar>
-  <app-fav-card></app-fav-card>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 
+    @for (coach of fav; track coach.id) {
+    <app-fav-card [item]="coach"></app-fav-card>
+    } @empty {
+    <div class="col-span-full flex flex-col justify-center items-center py-10">
+      <span class="text-xl">目前還沒有收藏的教練喔！</span>
+      <button class="btn btn-primary mt-4">去逛逛</button>
+    </div>
+    }
+
+    <div class="col-span-full flex flex-col items-center my-10 gap-4">
+      @if (!isEnd && !isLoading) {
+      <button (click)="getMyFav()" class="btn btn-outline btn-primary px-10">
+        看更多教練
+      </button>
+      } @else if (isEnd && fav.length > 0) {
+      <div class="badge badge-ghost p-4">—— 沒有更多教練了，請繼續收集! ——</div>
+      }
+    </div>
+  </div>
 </app-noavatar>
 
+@if (isLoading) {
+<div class="flex justify-center p-5">
+  <span class="loading loading-dots loading-lg text-primary"></span>
+</div>
+}
 
 <app-little-island></app-little-island>
 <app-footer></app-footer>
