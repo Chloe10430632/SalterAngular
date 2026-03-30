@@ -1,150 +1,129 @@
+import { CoachAllInfoS } from './../../Service/coach-all-info-s';
 //#region import
-import { Component, Injectable, OnInit } from '@angular/core';
-import { CoachCard } from '../../myComponents/card/coach-card/coach-card';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { Component, Injectable, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Footer } from '../../../shared/footer/footer';
-import { CommonModule, NgClass } from '@angular/common';
-import { Search } from '../../myComponents/search/search';
-import { BtnCoachSwitch } from '../../myComponents/btn/btn-coach-switch/btn-coach-switch';
-import { forkJoin, of, throwError } from 'rxjs'; // of 用來處理空值
-import { inject } from '@angular/core/primitives/di';
-import { BtnRankPop } from "../../myComponents/btn/btn-rank-pop/btn-rank-pop";
-import { BtnRankNew } from "../../myComponents/btn/btn-rank-new/btn-rank-new";
-import { rankItem } from '../../Service/SRank';
-import { AuthService } from '../../../core/services/auth-service';
+import { CommonModule } from '@angular/common';
 import { LittleIsland } from "../../myComponents/little-island/little-island";
+import { Rank } from '../../Service/rank';
+import { CoachAllInfoI } from '../../Interfaces/coachallinfo';
+import { FavCard } from '../../myComponents/card/fav-card/fav-card';
+import { UiS } from '../../Service/UiS';
+import { CourseForOneS } from '../../Service/course-for-one';
+
 
 //#endregion
 
 
+//============!!父Component!!================//
+
+
 @Component({
   selector: 'app-index',
-  imports: [LittleIsland, BtnRankPop, CommonModule, BtnCoachSwitch, Search, CoachCard, NgClass, Footer, FormsModule, BtnRankNew, LittleIsland],
+  standalone: true,
+  imports: [LittleIsland, CommonModule, FormsModule, LittleIsland, Footer, FavCard],
   templateUrl: './index.html',
   styleUrl: './index.css',
 })
 export class Index implements OnInit {
-  currentUser: any = null;
-  //#region 網頁載入時拿教練卡片資料
-  //準備一個空籃子放 API 回傳的教練陣列
-  coaches: any[] = [];
-  isLoading = false;
-  isEnd = false;
+  coaches: CoachAllInfoI[] = []; // 存教練清單的陣列
+  latestC: CoachAllInfoI[] = [];
   currentPage = 1;
-  //注入HttpClient
-  constructor(private client: HttpClient, private authService: AuthService) { }
+  allCourseMap: { [key: number]: string } = {}; // 用來存 { 教練ID: 課程名稱 }
+  myFavIds = signal<number[]>([]);
+  PAGE_SIZE = 6; // 根據你的後端每頁筆數設定
+  hasMorePages = true; // ← 新增這個旗標
 
+  //=======================================//
+  constructor(private rank: Rank,
+    private courseNameS: CourseForOneS,
+    private coachAllInfoS: CoachAllInfoS,
+    private uiS: UiS,
+  ) { }
+  //=======================================//
   ngOnInit(): void {
-    this.authService.currentUser$.subscribe(user => {
-      this.currentUser = user;
-    })
-    this.getPopRank();
-
+    this.loadCoach();
+    this.loadlatestC();
+    this.loadHeart(); // 頁面一打開就去抓收藏清單，看看有哪些教練在裡面
   }
-  getPopRank() {
-    if (this.isLoading || this.isEnd) return; // 防止重複點擊
-    this.isLoading = true; // 開始轉圈圈/秀骨架
-
-    //把 URL 改成動態的，把 currentPage 傳給後端
-    this.client.get<any[]>(`https://localhost:7017/api/Exp/Exp/PopRank?page=${this.currentPage}&pageSize=6`).subscribe({
-      next: (data) => {
-        setTimeout(() => {
-          if (data.length < 6) {
-            this.isEnd = true;
-          }
-          //用 ... 把新拿到的 6 個教練，「接」在舊的教練後面
-          this.coaches = [...this.coaches, ...data]; //資料先抓到容器裡
-          this.currentPage++;
-          //console.log('API 拿到的資料：', data);
-          //關閉遮蓋效果
-          this.isLoading = false;
-        }, 1000);
-      }, //延遲1.5秒
-      error: (err) => {
-        console.error('API 壞掉啦：', err);
-        this.isLoading = false;
-      }
-    });
-  }
-  //#endregion
-
-  //#region ???search--用forkin
-
-  indexSearch(text: string): void {
-    console.log('父元件：準備丟出球，內容是：', text); // 加這行測試
-    const s_trim = text.trim();
-    if (!s_trim)
-      return (alert("關鍵字掉海裡了..."));
-
-    if (this.isLoading || this.isEnd) return; // 防止重複點擊
-    this.isLoading = true; // 開始轉圈圈/秀骨架
+  //=======================================//
 
 
-    //自動幫你處理中文和空格編碼
-    const params = new HttpParams().set('key', s_trim);
-    // 3. 同時呼叫 3 個 API
-    forkJoin({
-      dist: this.client.get<any[]>(`https://localhost:7017/api/Exp/Exp/DistSearch`, { params }),
-      spe: this.client.get<any[]>(`https://localhost:7017/api/Exp/Exp/SpeSearch`, { params }),
-      name: this.client.get<any[]>(`https://localhost:7017/api/Exp/Exp/NameSearch`, { params })
-    }).subscribe({
-      next: (res) => {
-        // 4. 把三份結果合併在一起
-        // 這裡是用「聯集」，只要任何一個 API 有撈到都顯示
-        const combine = [...res.dist, ...res.spe, ...res.name];
+  loadCoach() {
+    this.rank.getPopRank(this.currentPage).subscribe({
+      next: (res: any) => {
+        const newData: CoachAllInfoI[] = Array.isArray(res?.data) ? res.data
+          : Array.isArray(res) ? res
+            : [];  // ← 後端沒資料時給空陣列，不會爆
 
-        this.coaches = this.removeDuplicates(combine);
-        console.log("關鍵字整理後:", this.coaches);
+        this.coaches = [...this.coaches, ...newData];
+
+        // 沒拿到新資料就隱藏按鈕
+        if (newData.length === 0) this.hasMorePages = false;
+
+        this.prepareCourseData();
       },
       error: (err) => {
-        console.error('API 壞掉啦', err);
-        this.isLoading = false;
-        return (alert("關鍵字掉海裡了..."));
+        console.error(err);
+        this.hasMorePages = false; // 連線錯誤也隱藏按鈕
       }
     });
   }
-  removeDuplicates(data: any[]) {
-    return data.filter((item, index, self) =>
-      index === self.findIndex((t) => t.id === item.id));
+
+  loadlatestC() {
+    this.rank.getNewRank(1).subscribe({
+      next: (res: any) => {
+        if (res?.data && Array.isArray(res.data)) {
+          this.latestC = res.data;
+        } else if (Array.isArray(res)) {
+          this.latestC = res;
+        }
+
+        // ← 最新教練資料進來後，補跑一次課程整理
+        this.prepareCourseData();
+      },
+      error: (err) => console.error('loadlatestC API 連線失敗', err)
+    });
   }
 
-  //#endregion
-
-  //#region 排序
-  refreshData() {
-    this.coaches = []; // 先把舊資料清空，畫面就會變回初始狀態
-    this.currentPage = 1; // 頁碼回到第一頁
-    this.isEnd = false; // 重置結束狀態
-
-    this.getPopRank();// 重新呼叫你寫好的 API 抓取函式
+  LoadMore() {
+    this.currentPage++;
+    this.loadCoach();
   }
-  handleRankUpdate() {
-    this.refreshData();
+  loadHeart() {
+    this.coachAllInfoS.HeartIds().subscribe(res => {
+      this.myFavIds.set(res.data); // 抓一次，存起來
+    });
+  }
+  prepareCourseData() {
+    const allList = [...this.coaches, ...this.latestC];
+    if (allList.length === 0) return;
+
+    allList.forEach(coach => {
+      this.courseNameS.getLatestCourseByCoach(coach.coachId).subscribe({
+        next: (res) => {
+          // 有課程 → 顯示標題；後端說沒課 → 顯示提示文字
+          this.allCourseMap[coach.coachId] = res.isSuccess
+            ? (res.data?.title || '新課程準備中...')
+            : '暫無開課計畫';
+        },
+        error: () => {
+          // 這裡只剩真正的網路錯誤才會進來
+          this.allCourseMap[coach.coachId] = '暫無開課計畫';
+        }
+      });
+    });
   }
 
-  //#region 最新
-  displayRanks: rankItem[] = [];
-  //接收子組件傳來的 $event (即 data)
-  handleNewRank(data: rankItem[]) {
-    //打開遮罩
-    this.isLoading = true;
-    setTimeout(() => {
-      this.displayRanks = data; // 更新畫面資料
-      this.coaches = data;
-      // 重新校正分頁狀態（假設重新搜尋後回到第一頁）
-      this.currentPage = 1;
-      this.isEnd = data.length < 6;
-
-      // 3. 最後一步：大功告成，關閉遮罩！
-      this.isLoading = false;
-
-    }, 1000);
+  // 處理子組件傳來的 removeMe 事件
+  handleRemove(coachId: number) {
+    this.uiS.toastMessage.set('已從收藏中移除');
+    console.log(`教練 ${coachId} 被取消收藏了（在首頁通常不執行刪除畫面動作）`);
+    // 如果你在首頁也想即時連動某些狀態，可以在這寫
   }
-  //#endregion
-  //#endregion
-
 }
+
+
 //#endregion
 
 

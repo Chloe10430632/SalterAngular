@@ -105,19 +105,19 @@ export const routes: Routes = [
       },
       {
         path: 'coachcreate', //空白自介(申請)
-        loadComponent: () => import('./experience/components/coach-create/coach-create').then(m => m.CoachCreate)
+        loadComponent: () => import('./experience/myComponents/backdrop/coach-create/coach-create').then(m => m.CoachCreate)
       },
       {
-        path: 'coachprofiledit', //自介編輯
-        loadComponent: () => import('./experience/components/coach-profiledit/coach-profiledit').then(m => m.CoachDetail)
+        path: 'coachpfe/:id', //自介編輯
+        loadComponent: () => import('./experience/components/coach-pfedit/coach-pfedit').then(m => m.CoachPFEdit)
       },
       {
-        path: 'coachprofile', //檢視自介
+        path: 'coachprofile/:id', //檢視自介
         loadComponent: () => import('./experience/components/coach-profile/coach-profile').then(m => m.CoachProfile)
       },
       //===課程相關===//
       {
-        path: 'coursetemp', //模板
+        path: 'coursetemp/:id', //模板
         loadComponent: () => import('./experience/components/coach-course-temp/coach-course-temp').then(m => m.CoachCourseTemp)
       },
       {
@@ -131,16 +131,24 @@ export const routes: Routes = [
       //===============//
       //===使用者定位===//
       {
-        path: 'coachintro', //看指定教練介紹
+        path: 'coachinfo/:id', //看指定教練介紹
         loadComponent: () => import('./experience/components/coach-intro/coach-intro').then(m => m.Coachintro)
       },
       {
         path: 'myattend', //報名過的課
-        loadComponent: () => import('./experience/components/coach-attend/coach-attend').then(m => m.CoachAttend)
+        loadComponent: () => import('./experience/components/mem-attend/mem-attend').then(m => m.MemAttend)
       },
       {
         path: 'myfav', //收藏
-        loadComponent: () => import('./experience/components/mem-favorite/mem-favorite').then(m => m.CoachFavorite)
+        loadComponent: () => import('./experience/components/mem-favorite/mem-favorite').then(m => m.MemFavorite)
+      },
+      {
+        path: 'myreview', //新增評論
+        loadComponent: () => import('./experience/myComponents/backdrop/reviewcreate/reviewcreate').then(m => m.Reviewcreate)
+      },
+      {
+        path: 't', //
+        loadComponent: () => import('./experience/TEST/tindex/tindex').then(m => m.Tindex)
       },
     ]
   },

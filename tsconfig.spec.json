@@ -10,6 +10,8 @@
   },
   "include": [
     "src/**/*.d.ts",
-    "src/**/*.spec.ts"
+    "src/**/*.spec.ts",
+    "src/app/experience/myComponents/card/coachporfile-cm/coachporfile.spec-cm.ts",
+    "src/app/experience/myComponents/card/Ccoachpfedit/Ccoachpfedit.spec.ts"
   ]
 }

@@ -1,0 +1,26 @@
+<div data-theme="bumblebee" class="min-h-screen">
+  <router-outlet></router-outlet>
+
+  @if (ui.showLoginModal()) {
+  <div class="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm">
+    <div
+      class="bg-base-100 rounded-3xl p-10 max-w-md w-full mx-4 flex flex-col items-center gap-6 text-center shadow-2xl">
+      <div class="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
+        <i class="bi bi-lock text-4xl text-primary"></i>
+      </div>
+      <h2 class="text-2xl font-black">需要先登入</h2>
+      <p class="text-base-content/60">{{ ui.countdown() }} 秒後跳轉至登入頁...</p>
+    </div>
+  </div>
+  }
+
+  @if (ui.toastMessage(); as msg) {
+  <div class="toast toast-end toast-top z-[300]">
+    <div class="alert alert-success shadow-lg">
+      <span class="text-white"> {{ msg }}</span>
+    </div>
+  </div>
+  }
+</div>
+
+

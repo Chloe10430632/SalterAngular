@@ -1,82 +1,23 @@
 <div data-theme="bumblebee" class="min-h-screen bg-base-200 p-4 lg:p-8">
   <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
-
+    <!-- 左邊教練卡 -->
     <aside class="lg:col-span-1">
-      <div class="card bg-base-100 shadow-xl sticky top-8">
-        <figure class="px-10 pt-10">
-          <div class="avatar">
-            <div class="w-32 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-              <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" alt="教練頭像" />
-            </div>
-          </div>
-        </figure>
-
-        <div class="card-body items-center text-center p-6">
-          <h2 class="card-title text-2xl font-bold">Daisy 老師</h2>
-
-          <div class="flex items-center gap-2 mt-2">
-            <div class="flex items-center text-warning font-bold">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 fill-current" viewBox="0 0 20 20">
-                <path
-                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-              </svg>
-              <span class="ml-1 text-lg">{{ averageRating }}</span>
-            </div>
-            <div class="divider divider-horizontal mx-0"></div>
-            <div class="text-base-content/60 text-sm">
-              <span class="font-semibold text-base-content">{{ totalReviews }}</span> 則評論
-            </div>
-          </div>
-
-          <p class="mt-4 text-sm text-base-content/70">
-            專注於幫助學生找回自信與健康的身體。擁有 10 年教學經驗，擅長客製化課程設計。
-          </p>
-
-          <div class="divider">專業細節</div>
-          <div class="w-full text-left space-y-2">
-            <div class="flex items-center gap-2">
-              <span class="font-bold">專業：</span> 瑜珈、重訓、飲食規劃
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="font-bold">地區：</span> 台北市 / 遠端教學
-            </div>
-          </div>
-
-          <!-- <div class="card-actions mt-6 w-full">
-            <button class="btn btn-primary btn-block">聯繫我</button>
-          </div> -->
-        </div>
-      </div>
+      <app-coursefor-coach-profile></app-coursefor-coach-profile>
     </aside>
 
     <main class="lg:col-span-2 space-y-8">
-
-      <section>
-        <div class="flex justify-between items-center mb-6">
-          <h3 class="text-2xl font-bold flex items-center gap-2">
-            <span class="w-2 h-8 bg-secondary rounded-full"></span> 開課中的課程
-          </h3>
-          <button class="btn btn-ghost btn-sm gap-2 text-secondary">
-            看更多課程
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        </div>
-
-        <div class="grid gap-4">
-          <div *ngFor="let course of courses"
-            class="card card-side bg-base-100 shadow-sm hover:shadow-md transition-shadow border border-base-300">
-          </div>
-        </div>
+      <!-- 開課中 -->
+      <section data-theme="bumblebee" class="p-4">
+        <app-coach-course-expend-content></app-coach-course-expend-content>
       </section>
+    </main>
 
-      <section>
-        <div class="flex justify-between items-center mb-6">
-          <h3 class="text-2xl font-bold flex items-center gap-2">
-            <span class="w-2 h-8 bg-accent rounded-full"></span> 學員好評
-          </h3>
+
+
+
+    <!-- 開課結束 -->
+    <!-- 學員評論 -->
+    <!--
           <button class="btn btn-ghost btn-sm gap-2 text-secondary">
             我要評論
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
@@ -85,7 +26,7 @@
             </svg>
           </button>
         </div>
-
+        <app-memreview-card></app-memreview-card>
         <div class="space-y-4">
           <div *ngFor="let review of reviews" class="bg-base-100 p-6 rounded-2xl shadow-sm border border-base-200">
           </div>
@@ -93,5 +34,5 @@
       </section>
 
     </main>
+  </div> -->
   </div>
-</div>

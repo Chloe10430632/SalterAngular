@@ -1,0 +1,24 @@
+:host {
+  display: block;
+}
+
+.card {
+  height: 520px; /* 強制固定高度 */
+  display: flex;
+  flex-direction: column;
+}
+
+.card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* 讓內容撐開，按鈕推到底部 */
+}
+
+/* 防止文字太長爆出去 */
+.stat-value {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
