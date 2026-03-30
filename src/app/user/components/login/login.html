@@ -88,7 +88,10 @@
   <!-- woman功能欄 -->
   <div class="fixed z-40 pointer-events-auto transform-gpu"
     style="top: 36vmin; left: 9vmin; width: 55vmin; height: 65vmin; will-change: transform;">
-    <button (click)="openActiveModal('FORUM')"
+
+
+
+    <button (click)="toggleChat()"
       class="relative w-full h-full p-0 border-none bg-transparent cursor-pointer group outline-none">
       <div class="relative w-full h-full transition-all duration-500 group-hover:-translate-y-4">
         <img src="user/woman.png"
@@ -1070,3 +1073,50 @@
     <button>close</button>
   </form>
 </dialog>
+
+
+@if (isChatOpen) {
+<div cdkDrag
+  class="fixed z-[10000] bg-white/95 backdrop-blur-sm rounded-[5vmin] shadow-2xl border border-gray-100 flex flex-col overflow-hidden animate-in fade-in zoom-in duration-300"
+  [style.width]="'45vmin'" [style.height]="'60vmin'" style="top: 15vmin; left: 61vmin;">
+
+  <div cdkDragHandle
+    class="bg-warning px-6 py-4 text-white flex justify-between items-center cursor-move active:cursor-grabbing">
+    <span class="font-bold text-lg">海邊小助手 -- 小沙</span>
+    <button (click)="toggleChat()" class="hover:rotate-90 transition-transform text-xl">✕</button>
+  </div>
+
+  <div #chatContainer class="flex-1 overflow-y-auto p-4 bg-gray-50/50 flex flex-col gap-3">
+    @if (chatHistory.length === 0) {
+    <p class="text-center text-gray-400 text-s mt-10 italic">您好，有什麼我可以幫忙的嗎？</p>
+    }
+
+    @for (item of chatHistory; track $index) {
+    <div class="chat" [class.chat-start]="item.role === 'bot'" [class.chat-end]="item.role === 'user'">
+      <div class="chat-bubble text-sm shadow-sm" [class.chat-bubble-warning]="item.role === 'user'"
+        [class.chat-bubble-neutral]="item.role === 'bot'">
+        {{ item.content }}
+      </div>
+    </div>
+    }
+
+    @if (isLoading2) {
+    <div class="chat chat-start">
+      <div class="chat-bubble chat-bubble-neutral opacity-70 flex items-center gap-2">
+        <span class="text-xs italic">小沙正在趕路中</span>
+        <span class="loading loading-dots loading-xs"></span>
+      </div>
+    </div>
+    }
+  </div>
+
+  <div class="px-5 py-4 border-t border-gray-100 bg-white flex gap-2">
+    <input #msgInput (keyup.enter)="send(msgInput.value); msgInput.value=''" type="text"
+      class="input input-bordered input-md flex-1 focus:outline-none focus:border-warning" placeholder="請輸入...">
+    <button (click)="send(msgInput.value); msgInput.value=''" [disabled]="isLoading"
+      class="btn btn-warning btn-md px-6 text-white shadow-sm">
+      發送
+    </button>
+  </div>
+</div>
+}

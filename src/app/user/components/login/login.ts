@@ -1,4 +1,4 @@
-import { Component, NgZone, OnInit, OnDestroy } from '@angular/core';
+import { Component, NgZone, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../../Services/user-service';
@@ -15,6 +15,8 @@ import { takeWhile } from 'rxjs/operators'
 import { IResetPassword } from '../../interfaces/IResetPassword';
 import { IForgotPassword } from '../../interfaces/IForgotPassword';
 import { NotificationService } from '../../../shared/notifyService/notification-service';
+import { ChatService } from '../../Services/chat-service';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 
 
@@ -25,18 +27,21 @@ declare var google: any; //declare是用來定義外部全域變數的
 
 @Component({
   selector: 'app-login',
-  imports: [RouterLink, ReactiveFormsModule, CommonModule],
+  imports: [RouterLink, ReactiveFormsModule, CommonModule, DragDropModule],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
 export class Login implements OnInit {
+
+  @ViewChild('chatContainer') private chatContainer!: ElementRef;
 
   constructor(
     private authService: AuthService,
     private userService: UserService,
     private router: Router,
     private ngZone: NgZone,
-    private notification: NotificationService
+    private notification: NotificationService,
+    private chatService: ChatService
   ) { }
 
 
@@ -708,6 +713,60 @@ export class Login implements OnInit {
     });
   }
 
+  //聊天機器人
+
+  isChatOpen = false; // 控制視窗開關
+
+  isLoading2 = false;
+
+  reply: string = '';
+
+  chatHistory: { role: 'user' | 'bot', content: string }[] = [];
+
+  toggleChat() {
+    this.isChatOpen = !this.isChatOpen;
+  }
+
+  private scrollToBottom(): void {
+    try {
+      // 在 DOM 更新後執行捲動
+      setTimeout(() => {
+        this.chatContainer.nativeElement.scrollTop = this.chatContainer.nativeElement.scrollHeight;
+      }, 100);
+    } catch (err) { }
+  }
+
+  send(message: string) {
+    if (!message.trim() || this.isLoading) return;
+
+    this.chatHistory.push({ role: 'user', content: message });
+
+    this.reply = '正在思考中...'; // 先給使用者心理回饋
+    this.isLoading2 = true;
+
+    const promptForApi = `請使用【繁體中文】回答：${message}`;
+
+    this.chatService.sendMessage(promptForApi).subscribe({
+      next: (res) => {
+        console.log('收到後端回覆：', res);
+        this.chatHistory.push({ role: 'bot', content: res.reply });
+        this.isLoading2 = false;
+        this.scrollToBottom();
+      },
+      error: (err) => {
+        this.notification.show("小助手暫時無法回應", 'error');
+
+        this.isLoading2 = false;
+        this.chatHistory.push({
+          role: 'bot',
+          content: '🌊 哎呀！海風太強，小沙不小心被吹走了... 請再試著呼喚我一次！'
+        });
+
+        this.scrollToBottom();
+
+      }
+    });
+  }
 
 
 
