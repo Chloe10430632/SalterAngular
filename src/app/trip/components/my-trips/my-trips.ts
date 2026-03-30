@@ -42,6 +42,9 @@ export class MyTrips implements OnInit {
   currentMonth = new Date().getMonth();
   calendarWeeks: CalendarWeek[] = [];
 
+
+  readonly MAX_VISIBLE_EVENTS = 2;
+
   ngOnInit() {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -163,6 +166,27 @@ export class MyTrips implements OnInit {
   diffDays(from: Date, to: Date): number {
     return Math.round((to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24));
   }
+
+  // 摺疊邏輯
+  getVisibleEvents(week: CalendarWeek): CalendarEvent[] {
+    return week.events.filter(e => e.row < this.MAX_VISIBLE_EVENTS);
+  }
+
+  /** 計算某天被隱藏的行程數量 */
+  getHiddenCount(week: CalendarWeek, colIndex: number): number {
+    return week.events.filter(e =>
+      e.row >= this.MAX_VISIBLE_EVENTS &&
+      e.startCol <= colIndex &&
+      e.startCol + e.span - 1 >= colIndex
+    ).length;
+  }
+
+  getMoreStyle(colIndex: number): string {
+    const left = (colIndex / 7) * 100;
+    const top = 28 + this.MAX_VISIBLE_EVENTS * 22;
+    return `position: absolute; left: calc(${left}% + 4px); top: ${top}px;`;
+  }
+
 
   getEventStyle(event: CalendarEvent): string {
     const left = (event.startCol / 7) * 100;

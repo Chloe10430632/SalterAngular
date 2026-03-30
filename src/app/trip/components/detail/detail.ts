@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, AfterViewInit, inject, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DatePipe, NgClass } from '@angular/common';
@@ -13,9 +13,10 @@ import { TripStateService } from '../../services/trip-state';
   selector: 'app-detail',
   imports: [FormsModule, DatePipe, NgClass, RouterLink, AvatarPipe],
   templateUrl: './detail.html',
-  styleUrl: './detail.css'
+  styleUrl: './detail.css',
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class Detail implements OnInit {
+export class Detail implements OnInit, AfterViewInit {
 
   private route = inject(ActivatedRoute);
   private router = inject(Router);
@@ -40,6 +41,15 @@ export class Detail implements OnInit {
   isLeaving = false;
   showExitModal = false;
 
+  showEditModal = false;
+  showDeleteModal = false;
+  isUpdating = false;
+  isDeleting = false;
+
+  isDragging = false;
+  isUploading = false;
+  coverPreview = '';
+
   gearItems: TripGearItem[] = [];
   showGearForm = false;
   editingGearId: number | null = null;
@@ -49,6 +59,10 @@ export class Detail implements OnInit {
   showAnnouncementForm = false;
   editingAnnouncementId: number | null = null;
   announcementFormData = { title: '', content: '' };
+
+  showStartPicker = false;
+  showEndPicker = false;
+  today = new Date().toISOString().split('T')[0];
 
   get myCheckedCount(): number {
     return this.gearItems.filter(g => g.isCheckedByMe).length;
@@ -77,7 +91,9 @@ export class Detail implements OnInit {
       this.loadTrip();
     });
   }
-
+  ngAfterViewInit() {
+    import('cally');
+  }
   loadTrip() {
     this.isLoading = true;
     this.tripService.getTripById(this.tripId).subscribe({
@@ -235,6 +251,7 @@ export class Detail implements OnInit {
       }
     });
   }
+
   loadAnnouncements() {
     this.tripService.getAnnouncements(this.tripId).subscribe({
       next: (res) => {
@@ -286,4 +303,134 @@ export class Detail implements OnInit {
     });
   }
 
+
+  editForm = {
+    title: '',
+    description: '',
+    tripType: '',
+    startAt: '',
+    endAt: '',
+    capacity: 2,
+    coverImageUrl: '',
+    coverImagePublicId: ''
+  };
+
+  openEditModal() {
+    if (!this.trip) return;
+    this.showStartPicker = false;
+    this.showEndPicker = false;
+    this.editForm = {
+      title: this.trip.title,
+      description: this.trip.description ?? '',
+      tripType: this.trip.tripType,
+      startAt: new Date(this.trip.startAt).toISOString().split('T')[0],
+      endAt: this.trip.endAt ? new Date(this.trip.endAt).toISOString().split('T')[0] : '',
+      capacity: this.trip.capacity,
+      coverImageUrl: this.trip.coverImageUrl ?? '',
+      coverImagePublicId: ''
+    };
+    this.coverPreview = this.trip.coverImageUrl ?? '';
+    this.showEditModal = true;
+  }
+
+  saveEdit() {
+    this.isUpdating = true;
+    this.tripService.updateTrip(this.tripId, {
+      ...this.editForm,
+      endAt: this.editForm.endAt || null,
+      coverImageUrl: this.editForm.coverImageUrl || null,
+      coverImagePublicId: this.editForm.coverImagePublicId || null
+    }).subscribe({
+      next: () => {
+        this.notify.show('行程更新成功！', 'success');
+        this.showEditModal = false;
+        this.loadTrip();
+        this.isUpdating = false;
+      },
+      error: () => this.isUpdating = false
+    });
+  }
+
+
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+    this.isDragging = true;
+  }
+
+  onDragLeave(event: DragEvent) {
+    this.isDragging = false;
+  }
+
+  onDrop(event: DragEvent) {
+    event.preventDefault();
+    this.isDragging = false;
+    const file = event.dataTransfer?.files[0];
+    if (file && file.type.startsWith('image/')) this.uploadCover(file);
+  }
+
+  onCoverSelected(event: Event) {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    this.uploadCover(file);
+  }
+
+  async uploadCover(file: File) {
+    this.isUploading = true;
+
+    // 本地預覽（不等上傳完成就先顯示）
+    const reader = new FileReader();
+    reader.onload = () => this.coverPreview = reader.result as string;
+    reader.readAsDataURL(file);
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', 'salter-trip');
+    try {
+      const res = await fetch('https://api.cloudinary.com/v1_1/dn5drigh2/image/upload', {
+        method: 'POST',
+        body: formData
+      });
+      const data = await res.json();
+      this.editForm.coverImageUrl = data.secure_url;
+      this.editForm.coverImagePublicId = data.public_id;
+    } catch {
+      this.notify.show('圖片上傳失敗', 'error');
+      this.coverPreview = this.editForm.coverImageUrl; // 還原預覽
+    } finally {
+      this.isUploading = false;
+    }
+  }
+
+  removeCover() {
+    this.editForm.coverImageUrl = '';
+    this.editForm.coverImagePublicId = '';
+    this.coverPreview = '';
+  }
+
+  onStartDateChange(event: Event) {
+    const value = (event as CustomEvent).detail ?? (event.target as any).value ?? '';
+    this.editForm.startAt = value;
+    this.showStartPicker = false;
+    if (this.editForm.endAt && this.editForm.endAt < value) {
+      this.editForm.endAt = '';
+    }
+  }
+
+  onEndDateChange(event: Event) {
+    const value = (event as CustomEvent).detail ?? (event.target as any).value ?? '';
+    this.editForm.endAt = value;
+    this.showEndPicker = false;
+  }
+
+
+  confirmDelete() {
+    this.isDeleting = true;
+    this.tripService.deleteTrip(this.tripId).subscribe({
+      next: () => {
+        this.notify.show('行程已刪除', 'success');
+        this.router.navigate(['/trip/explore']);
+      },
+      error: () => this.isDeleting = false
+    });
+  }
 }

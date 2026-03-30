@@ -134,13 +134,24 @@
           }
         </div>
 
-        <!-- 行程長條（絕對定位） -->
-        @for (event of week.events; track event.trip.id) {
+        <!-- 行程長條 -->
+        @for (event of getVisibleEvents(week); track event.trip.id) {
         <div class="absolute h-5 rounded-full flex items-center px-2 cursor-pointer text-[10px] font-medium truncate"
           [class]="getEventColor(event.trip.status)" [style]="getEventStyle(event)"
           [routerLink]="['/trip/detail', event.trip.id]" (click)="$event.stopPropagation()" [title]="event.trip.title">
           {{ event.trip.title }}
         </div>
+        }
+
+        <!-- 每天的 +N 更多 -->
+        @for (cell of week.days; track $index) {
+        @let hidden = getHiddenCount(week, $index);
+        @if (hidden > 0) {
+        <div class="absolute text-[10px] text-base-content/50 font-medium cursor-pointer hover:text-primary"
+          [style]="getMoreStyle($index)" (click)="setViewMode('list')">
+          +{{ hidden }} 更多
+        </div>
+        }
         }
 
       </div>
