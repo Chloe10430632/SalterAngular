@@ -4,7 +4,7 @@ import { Component, OnInit, signal, ViewEncapsulation } from '@angular/core';
 import { Router, RouterOutlet, RouterLinkWithHref, RouterLinkActive } from '@angular/router';
 import { BoardList } from '../../interfaces/boardList';
 import { BoardsService } from '../../services/boards-service';
-import { AdData } from '../../interfaces/adData';
+import { AdData } from '../../interfaces/AdData';
 import Sortable from 'sortablejs';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../../core/services/auth-service';
@@ -13,6 +13,9 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { HttpEventType } from '@angular/common/http';
 import { environment } from './../../../../environments/environment';
 import { TripService } from '../../../trip/services/trip';
+import { SensitiveWordsService } from '../../services/sensitive-words-service';
+import { debounceTime, distinctUntilChanged, filter, switchMap, tap } from 'rxjs';
+import { PostsAgentService } from '../../services/posts-agent-service';
 
 @Component({
   selector: 'app-index',
@@ -74,6 +77,22 @@ export class Index implements OnInit {
   /**儲存目前要放大顯示的圖片網址 */
   selectedFullImage = signal<string | null>(null);
 
+  //--------檢查使用者輸入的文字是否違規--------
+  /**敏感詞 */
+  badWords: string[] = [];
+
+  /**審核中 */
+  isChecking = false;
+
+  //--------請LLM的AIAgent幫忙優化文案--------
+  /**對話ID */
+  conversationId?: string;
+
+  /**使用者原本的貼文內容 */
+
+  /**Agent生成的貼文內容 */
+  postAgentContent?: string;
+
   /**建構子注入 */
   constructor(
     private boardsService: BoardsService,
@@ -83,7 +102,9 @@ export class Index implements OnInit {
     private postsService: PostsService,
     private tripService: TripService,
     private formBuilder: FormBuilder,
-    private router: Router) { }
+    private router: Router,
+    private checkWordsService: SensitiveWordsService,
+    private postAgentService: PostsAgentService) { }
 
   ngOnInit(): void {
     this.boardsService.GetTop5PopBoardsApi().subscribe(data => {
@@ -108,6 +129,22 @@ export class Index implements OnInit {
       locationId: [null],
       tags: this.formBuilder.array([])
     });
+
+
+    this.postForm.get('content')!.valueChanges.pipe(
+      debounceTime(500),
+      distinctUntilChanged(),
+      filter(val => val !== null && val !== undefined),
+      tap(() => {
+        this.isChecking = true;
+        this.badWords = [];
+      }),
+      switchMap(val => this.checkWordsService.postCheckWordsApi(val))
+    ).subscribe(res => {
+      this.isChecking = false;
+      this.badWords = res.violatedWords;
+    });
+
 
   }
 
@@ -332,6 +369,7 @@ export class Index implements OnInit {
     this.tags.set([]);
     this.previews.set([]);
     this.selectedFiles.set([]);
+    this.badWords = [];
 
     // 3. 重置 HTML 原生元素 (重要！)
     // 找到 Modal 裡的 textarea 並清空文字
@@ -357,6 +395,11 @@ export class Index implements OnInit {
   /**放大圖片 - 關閉燈箱 */
   closeLightbox() {
     this.selectedFullImage.set(null);
+  }
+
+  //--------AI文案優化--------
+  optimizeWithAI() {
+
   }
 
 }
