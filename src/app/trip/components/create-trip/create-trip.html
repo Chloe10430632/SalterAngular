@@ -65,15 +65,18 @@
           </fieldset>
 
           <fieldset class="fieldset relative">
-            <legend class="fieldset-legend font-semibold">結束日期</legend>
+            <legend class="fieldset-legend font-semibold">結束日期 <span class="text-error">*</span></legend>
             <input type="text" class="input input-bordered w-full cursor-pointer"
               [class.input-error]="f['endAt'].touched && f['endAt'].invalid" [value]="f['endAt'].value || '選擇結束日期'"
               readonly (click)="showEndPicker = !showEndPicker; showStartPicker = false" />
+            @if (f['endAt'].touched && f['endAt'].errors?.['required']) {
+            <p class="text-error text-xs mt-1">請選擇結束日期</p>
+            }
             @if (f['endAt'].touched && f['endAt'].errors?.['endBeforeStart']) {
             <p class="text-error text-xs mt-1">結束日期不能早於出發日期</p>
             }
             @if (showEndPicker) {
-            <div class="absolute top-full left-0 z-50 mt-1">
+            <div class="absolute top-full left-0 z-50 mt-1 animate-in fade-in zoom-in-95 duration-200">
               <calendar-date class="cally bg-base-100 border border-base-300 shadow-lg rounded-box"
                 [value]="f['endAt'].value" [min]="f['startAt'].value || today" (change)="onEndDateChange($event)">
                 <svg aria-label="Previous" class="fill-current size-4" slot="previous"
@@ -396,7 +399,7 @@
         請先至登入頁面右下角
         <span class="inline-block px-4 py-1.5 rounded-full text-white font-black text-xs tracking-widest mx-1"
           style="background-color: #8B5A2B">
-          開啟你的海邊之旅
+          登入
         </span><br />
         登入後再來建立行程！
       </p>

@@ -224,12 +224,16 @@ export const routes: Routes = [
             loadComponent: () => import('./trip/components/create-trip/create-trip').then(m => m.CreateTrip),
           },
           {
+            path: 'my-trips', //我的行程
+            loadComponent: () => import('./trip/components/my-trips/my-trips').then(m => m.MyTrips)
+          },
+          {
             path: 'detail/:id',
             children: [
-              // {
-              //   path: '',
-              //   loadComponent: () => import('./trip/components/detail/detail').then(m => m.Detail), //行程詳情
-              // },
+              {
+                path: '',
+                loadComponent: () => import('./trip/components/detail/detail').then(m => m.Detail), //行程詳情
+              },
               {
                 path: 'location',
                 loadComponent: () => import('./trip/components/location/location').then(m => m.Location), //地點頁面

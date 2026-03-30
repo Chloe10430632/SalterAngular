@@ -63,6 +63,12 @@ export class TripService {
     return this.http.delete<ApiResponse<string>>(`${this.baseUrl}/${id}`);
   }
 
+  //我的行程
+  getMyTrips(role?: string): Observable<ApiResponse<TripSummary[]>> {
+    const params = role ? `?role=${role}` : '';
+    return this.http.get<ApiResponse<TripSummary[]>>(`${this.baseUrl}/my-trips${params}`);
+  }
+
   // ── 成員 ──
 
   joinTrip(id: number): Observable<ApiResponse<string>> {

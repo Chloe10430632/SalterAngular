@@ -55,7 +55,7 @@ export class CreateTrip implements OnInit, AfterViewInit {
     description: [''],
     tripType: ['', Validators.required],
     startAt: ['', Validators.required],
-    endAt: [''],
+    endAt: ['', Validators.required],
     capacity: [2, [Validators.required, Validators.min(2), Validators.max(50)]],
     coverImageUrl: [''],
     coverImagePublicId: ['']
