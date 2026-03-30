@@ -1,5 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { MyCoachInfoS } from '../../../Service/my-coach-info';
+import { Component, Input} from '@angular/core';
 import { CoachAllInfoI } from '../../../Interfaces/coachallinfo';
 import { CommonModule } from '@angular/common';
 
@@ -13,11 +12,9 @@ import { CommonModule } from '@angular/common';
   styleUrl: './coach-pf.css',
 })
 export class CoachPf {
-  coachData?: CoachAllInfoI; // 準備一個位子放教練資料
-  isLoading = true;
+
 
   //------------------------------------------------------//
-  constructor(private mycoachInhoS: MyCoachInfoS) { }
   @Input() data?: CoachAllInfoI;
   //------------------------------------------------------//
 

@@ -8,6 +8,8 @@ import { MyCoachInfoS } from '../../Service/my-coach-info';
 import { APIResponse, CoachAllInfoI } from '../../Interfaces/coachallinfo';
 import { ActivatedRoute, Router } from '@angular/router';
 
+//========!!這是 父Component!!================//
+//========!!檢視自己的資訊!!================//
 
 
 @Component({
@@ -24,36 +26,27 @@ export class CoachProfile {
     private route: ActivatedRoute,
     private router: Router
   ) { }
-  @Input() data?: CoachAllInfoI;
+
   //------------------------------------------------------//
   ngOnInit(): void {
-    // 1. 取得網址上的 ID
-    const id = Number(this.route.snapshot.paramMap.get('id'));
+    // 1. 只從網址拿 ID
+    const idFromRoute = this.route.snapshot.paramMap.get('id');
 
-    // 2. 只有在 ID 存在時才去抓資料 (避免發送無意義的請求)
-    if (id) {
-      this.isLoading = true; // 開始載入
+    // 2. 印出來檢查，看看程式「此時此刻」認定的 ID 是多少
+    console.log('🔴 偵測到網址 ID 為:', idFromRoute);
 
-      this.mycoachInhoS.getMyInfo(id).subscribe({
-        // 成功拿回來的處理邏輯
+    if (idFromRoute) {
+      const targetId = Number(idFromRoute);
+
+      // 3. 確保這裡傳給 Service 的是真的 targetId
+      this.mycoachInhoS.getMyInfo(targetId).subscribe({
         next: (res) => {
-          if (res.isSuccess) {
-            this.coachData = res.data; // 菜煮好放到托盤上
-          }
-        },
-        // 發生錯誤（例如網路斷了、伺服器爆炸）的處理
-        error: (err) => {
-          console.error('抓取失敗：', err);
-          // 你也可以在這裡加一個 alert("系統忙碌中")
-        },
-        // 不管成功或失敗，最後都會執行的動作
-        complete: () => {
-          this.isLoading = false; // 關閉載入動畫
+          this.coachData = res.data;
+          // 這裡也印一下，看看後端回傳的資料裡面，id 是不是 1001024
+          console.log('🟢 API 回傳資料:', res.data);
         }
       });
-    } else {
-      this.isLoading = false;
-      console.warn('網址裡沒有教練 ID 喔！');
     }
+    //----------------------------------------//
   }
 }
