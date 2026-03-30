@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from '../../../../environments/environment.development';
+import { NotificationService } from '../../../shared/notifyService/notification-service';
 
 @Component({
   selector: 'app-update-house',
@@ -37,7 +38,8 @@ export class UpdateHouse implements OnInit {
   constructor(
     private http: HttpClient,
     private route: ActivatedRoute, // 用來抓 URL 裡的 ID
-    private router: Router
+    private router: Router,
+    private notification: NotificationService
   ) { }
 
   ngOnInit() {
@@ -76,7 +78,7 @@ export class UpdateHouse implements OnInit {
           this.rawImageUrls = data.allImages.join('\n');
         }
       },
-      error: (err) => alert('抓不到資料，請檢查 ID 是否正確')
+      error: (err) => this.notification.show('抓不到資料，請檢查 ID 是否正確', 'error')
     });
   }
 
@@ -97,13 +99,13 @@ export class UpdateHouse implements OnInit {
       .subscribe({
         next: (res) => {
           this.isLoading = false;
-          alert('房源資料補齊成功！');
+          this.notification.show('房源資料補齊成功！', 'success');
           this.router.navigate(['/house']); // 成功後導回列表
         },
         error: (err) => {
           this.isLoading = false;
           console.error(err);
-          alert('更新失敗：' + (err.error?.message || '伺服器錯誤'));
+          this.notification.show('更新失敗：' + (err.error?.message || '伺服器錯誤'), 'error');
         }
       });
   }
@@ -148,12 +150,12 @@ export class UpdateHouse implements OnInit {
         }
 
         this.isLoading = false;
-        alert(`成功上傳 ${res.urls.length} 張圖片！`);
+        this.notification.show(`成功上傳 ${res.urls.length} 張圖片！`, 'success');
       },
       error: (err) => {
         this.isLoading = false;
         console.error('上傳失敗', err);
-        alert('圖片上傳失敗，請檢查 API 設定');
+        this.notification.show('圖片上傳失敗，請檢查 API 設定', 'error');
       }
     });
 

@@ -1,0 +1,66 @@
+<div class="overflow-x-auto bg-base-100 rounded-2xl shadow-lg border border-base-200">
+  <table class="table table-zebra w-full border-collapse">
+    <thead class="bg-base-200 text-base-content">
+      <tr class="text-sm">
+        <th class="rounded-tl-2xl py-4">訂單編號</th>
+        <th>房型名稱</th>
+        <th>入住 / 退房</th>
+        <th>總金額</th>
+        <th class="rounded-tr-2xl">狀態與操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of bookings; track item.bookingId) {
+      <tr class="hover transition-colors">
+        <td class="font-mono text-[10px] text-gray-400">#{{ item.bookingId }}</td>
+
+        <td class="font-bold text-base-content">{{ item.roomTypeName }}</td>
+
+        <td class="py-4">
+          <div class="flex flex-col gap-1 min-w-[120px]">
+            <div class="text-xs text-gray-500 flex items-center gap-2">
+              <span class="bg-base-300 px-1.5 rounded text-[10px] font-extrabold scale-90">入</span>
+              {{ item.checkInDate | date:'yyyy-MM-dd' }}
+            </div>
+            <div class="text-xs text-gray-500 flex items-center gap-2">
+              <span class="bg-base-300 px-1.5 rounded text-[10px] font-extrabold scale-90">出</span>
+              {{ item.checkOutDate | date:'yyyy-MM-dd' }}
+            </div>
+          </div>
+        </td>
+
+        <td class="font-bold text-primary text-lg">
+          ${{ item.totalPrice | number }}
+        </td>
+
+        <td>
+          <div class="flex items-center justify-between gap-4">
+            <span class="badge badge-md font-semibold py-3 px-4 shadow-sm whitespace-nowrap"
+              [ngClass]="getStatusClass(item.status)">
+              {{ getStatusText(item.status) }}
+            </span>
+
+            @if (item.status === '0' || item.status === '1') {
+            <button class="btn btn-ghost btn-sm text-error hover:bg-error/10 tooltip tooltip-left" data-tip="取消預約"
+              [disabled]="cancelLoadingId === item.bookingId" (click)="onCancelBooking(item.bookingId)">
+              @if(cancelLoadingId === item.bookingId){
+              <span class="loading loading-spinner loading-xs"></span>
+              } @else {
+              <i class="bi bi-x-circle text-lg"></i>
+              }
+            </button>
+            }
+          </div>
+        </td>
+      </tr>
+      } @empty {
+      <tr>
+        <td colspan="5" class="text-center py-20 text-gray-400">
+          <i class="bi bi-inbox text-5xl block mb-4 opacity-20"></i>
+          <p class="text-lg">目前沒有任何預約紀錄</p>
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>

@@ -243,7 +243,7 @@ export const routes: Routes = [
   //House路由
   {
     path: 'house',
-    loadComponent: () => import('./shared/layouts/with-navbar/with-navbar').then(m => m.WithNavbar),
+    loadComponent: () => import('./shared/layouts/member-center-layout/member-center-layout').then(m => m.MemberCenterLayout),
     children: [{
       path: '',
       loadComponent: () => import('./house/components/index/index').then(m => m.Index),
@@ -251,7 +251,7 @@ export const routes: Routes = [
   },
   {
     path: 'houseDetail/:id',
-    loadComponent: () => import('./shared/layouts/with-navbar/with-navbar').then(m => m.WithNavbar),
+    loadComponent: () => import('./shared/layouts/member-center-layout/member-center-layout').then(m => m.MemberCenterLayout),
     children: [{
       path: '',
       loadComponent: () => import('./house/components/detail/detail').then(m => m.Detail),
@@ -259,7 +259,7 @@ export const routes: Routes = [
   },
   {
     path: 'createHouse',
-    loadComponent: () => import('./shared/layouts/with-navbar/with-navbar').then(m => m.WithNavbar),
+    loadComponent: () => import('./shared/layouts/member-center-layout/member-center-layout').then(m => m.MemberCenterLayout),
     children: [{
       path: '',
       loadComponent: () => import('./house/components/create-house/create-house').then(m => m.CreateHouse),
@@ -267,12 +267,17 @@ export const routes: Routes = [
   },
   {
     path: 'updateHouse/:id',
-    loadComponent: () => import('./shared/layouts/with-navbar/with-navbar').then(m => m.WithNavbar),
+    loadComponent: () => import('./shared/layouts/member-center-layout/member-center-layout').then(m => m.MemberCenterLayout),
     children: [{
       path: '',
       loadComponent: () => import('./house/components/update-house/update-house').then(m => m.UpdateHouse),
     }]
   },
+  // {
+  //   path: '',
+  //   loadComponent: () => import('./forum/components/index/index').then(m => m.Index),
+
+  // },
   //會員中心路由
   {
     path: 'memberCenter',
@@ -285,7 +290,10 @@ export const routes: Routes = [
           {
             path: 'member',
             loadComponent: () => import('./user/components/user-profile/user-profile').then(m => m.UserProfile),
-
+          },
+          {
+            path: 'bookingList',
+            loadComponent: () => import('./house/components/booking-list/booking-list').then(m => m.BookingList),
           }
         ]
       }

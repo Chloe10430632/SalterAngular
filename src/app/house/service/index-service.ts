@@ -32,6 +32,10 @@ export class HouseService {
     }
     return this.http.get<CityGroupDTO[]>(`${this.apiUrl}/Home/city-groups`, { params });
   }
+  // 取得房源詳細資訊
+  getHouseDetail(id: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/Home/${id}`);
+  }
 
   getSearchHouses(
     city: string,
@@ -40,25 +44,43 @@ export class HouseService {
     endDate?: string
   ): Observable<HousePreviewDTO[]> {
     let params = new HttpParams();
-    if (city && city !== '全部') params = params.set('citie', city);
+    if (city && city !== '全部') params = params.set('city', city);
     // if (keyword) params = params.set('keyword', keyword);
-    if (guests && guests > 0) params = params.set('PeopleCount', guests.toString());
-    if (startDate) params = params.set('StartDate', startDate);
-    if (endDate) params = params.set('EndDate', endDate);
-    // 💡 對應到你後端 [HttpGet("search")] 的那個 Action
+    if (guests && guests > 0) params = params.set('guests', guests.toString());
+    if (startDate) params = params.set('startDate', startDate);
+    if (endDate) params = params.set('endDate', endDate);
     return this.http.get<HousePreviewDTO[]>(`${this.apiUrl}/Home/select`, { params });
   }
 
+  // 新增預約
+  createBooking(dto: any): Observable<any> {
+    const url = `${this.apiUrl}/Home/createBookingId`;
+    return this.http.post<any>(url, dto);
+  }
 
+  // 取消預約
+  cancelBooking(bookingId: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/Home/cancelBooking/${bookingId}`, {});
+  }
+
+  // 取得會員的預約訂單
+  getMemberBookings(): Observable<any[]> {
+    const url = `${this.apiUrl}/Home/getMemberBookings`;
+    return this.http.get<any[]>(url);
+  }
+
+  // 取得雲端圖片的縮圖 URL
   getCloudinaryThumb(url: string): string {
     if (!url || !url.includes('cloudinary')) return url;
     return url.replace('/upload/', '/upload/c_fill,w_600,h_600,g_auto/');
   }
+
   // 取得所有房源清單
   getHouses(): Observable<HouseListDTO[]> {
     return this.http.get<HouseListDTO[]>(`${this.apiUrl}/Home`);
   }
 
+  // 取得分城市的房源清單
   getCityGroups(): Observable<CityGroupDTO[]> {
     return this.http.get<CityGroupDTO[]>(`${this.apiUrl}/Home/city-groups`);
   }
@@ -72,4 +94,6 @@ export class HouseService {
     this.childCount += delta;
     if (this.childCount < 0) this.childCount = 0;
   }
+
+
 }

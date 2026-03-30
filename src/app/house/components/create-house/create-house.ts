@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { NotificationService } from '../../../shared/notifyService/notification-service';
 
 @Component({
   selector: 'app-create-house',
@@ -33,7 +34,7 @@ export class CreateHouse implements OnInit {
 
   rawImageUrls: string = ''; //存放textarea 貼進來的網址長字串
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private notification: NotificationService) { }
 
   ngOnInit(): void {
     this.http.get<any[]>('https://localhost:7017/api/Home/amenities').subscribe(data => {
@@ -57,10 +58,10 @@ export class CreateHouse implements OnInit {
     this.http.post('https://localhost:7017/api/Home/create-full-house', this.houseForm)
       .subscribe({
         next: (res) => {
-          alert('房源新增成功！');
+          this.notification.show('房源新增成功！', 'success');
           // 這裡可以導向列表頁
         },
-        error: (err) => alert('新增失敗：' + err.error.message)
+        error: (err) => this.notification.show('新增失敗：' + err.error.message, 'error')
       });
   }
 
@@ -90,12 +91,12 @@ export class CreateHouse implements OnInit {
         }
 
         this.isLoading = false;
-        alert(`成功上傳 ${res.urls.length} 張圖片！`);
+        this.notification.show(`成功上傳 ${res.urls.length} 張圖片！`, 'success');
       },
       error: (err) => {
         this.isLoading = false;
         console.error('上傳失敗', err);
-        alert('圖片上傳失敗，請檢查 API 設定');
+        this.notification.show('圖片上傳失敗，請檢查 API 設定', 'error');
       }
     });
 

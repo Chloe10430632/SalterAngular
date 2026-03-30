@@ -97,7 +97,7 @@
             <div class="flex items-center gap-3">
               <div class="avatar">
                 <div class="w-10 rounded-full border border-base-300">
-                  <img [src]="rv.picture || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Guest'" />
+                  <img [src]="rv.picture | avatar" />
                 </div>
               </div>
 
@@ -186,22 +186,100 @@
         </div>
 
         <div class="grid grid-cols-1 border border-base-300 rounded-xl overflow-hidden mb-6">
-          <div class="p-3 border-b border-base-300 hover:bg-base-100 cursor-pointer">
-            <div class="text-[10px] font-black uppercase">入住 - 退房</div>
-            <div class="text-sm">2023/12/25 - 2023/12/28</div>
+          <div class="p-3 border-b border-base-300 hover:bg-base-100 transition-colors">
+            <div class="text-[10px] font-black uppercase text-gray-500">入住 - 退房</div>
+            <div class="flex items-center gap-1 mt-1">
+              <input type="date" [(ngModel)]="bookingForm.checkIn" [min]="todayDate"
+                class="input input-ghost input-xs w-full focus:bg-transparent p-0 text-sm" />
+
+              <span class="text-gray-400">-</span>
+
+              <input type="date" [(ngModel)]="bookingForm.checkOut"
+                [min]="bookingForm.checkIn ? bookingForm.checkIn : todayDate"
+                class="input input-ghost input-xs w-full focus:bg-transparent p-0 text-sm" />
+            </div>
           </div>
-          <div class="p-3 hover:bg-base-100 cursor-pointer">
-            <div class="text-[10px] font-black uppercase">人數</div>
-            <div class="text-sm">2 位房客</div>
+
+          <div class="p-3 hover:bg-base-100 transition-colors">
+            <div class="text-[10px] font-black uppercase text-gray-500">人數</div>
+            <select [(ngModel)]="bookingForm.guestCount"
+              class="select select-ghost select-xs w-full p-0 h-auto min-h-0 focus:bg-transparent mt-1 text-sm">
+              @for (num of [1, 2, 3, 4, 5, 6]; track num) {
+              @if(num <= (selectedProperty?.capacity)){ <option [value]="num">{{ num }} 位房客</option>
+                }
+                }
+            </select>
           </div>
         </div>
 
-        <button class="btn btn-primary w-full btn-lg rounded-xl text-white shadow-lg hover:shadow-primary/30">
-          立即預約
+        @if (totalNights > 0) {
+        <div class="space-y-3 mb-6 animate-in fade-in duration-300">
+          <div class="flex justify-between text-gray-600 text-sm">
+            <span class="underline">${{ selectedProperty?.pricePerNight | number }} x {{ totalNights }} 晚</span>
+            <span>${{ totalPrice | number }}</span>
+          </div>
+          <div class="divider my-1"></div>
+          <div class="flex justify-between font-bold text-xl">
+            <span>總計</span>
+            <span class="text-primary">${{ totalPrice | number }}</span>
+          </div>
+        </div>
+        }
+
+        <button (click)="onReserveClick()" [disabled]="totalNights <= 0 || isSubmitting"
+          class="btn btn-primary w-full btn-lg rounded-xl text-white shadow-lg hover:shadow-primary/30 transition-all active:scale-95">
+          @if (isSubmitting) {
+          <span class="loading loading-spinner"></span>
+          }
+          {{ isSubmitting ? '處理中...' : '立即預約' }}
         </button>
+
         <p class="text-center text-xs text-gray-400 mt-4">預約成功後會為您保留房源</p>
       </div>
     </div>
   </div>
   }
+  <!-- 預約彈出視窗 -->
+  <dialog id="confirm_modal" class="modal modal-bottom sm:modal-middle">
+    <div class="modal-box rounded-3xl p-8">
+      <h3 class="font-bold text-2xl mb-2 text-gray-800">最後確認預約</h3>
+      <p class="text-gray-500 mb-6">請確認您的預約資訊：</p>
+
+      <div class="bg-base-100 p-5 rounded-2xl space-y-3 border border-base-200">
+        <div class="flex justify-between">
+          <span class="text-gray-400 text-sm">入住日期</span>
+          <span class="font-bold">{{ bookingForm.checkIn }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-gray-400 text-sm">退房日期</span>
+          <span class="font-bold">{{ bookingForm.checkOut }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-gray-400 text-sm">入住人數</span>
+          <span class="font-bold">{{ bookingForm.guestCount }} 位</span>
+        </div>
+        <div class="flex justify-between pt-3 border-t border-dashed border-base-300">
+          <span class="text-gray-400">應付總額</span>
+          <span class="text-2xl font-black text-primary">${{ totalPrice | number }}</span>
+        </div>
+      </div>
+
+      <div class="modal-action grid grid-cols-2 gap-3 mt-8">
+        <form method="dialog">
+          <button class="btn btn-ghost w-full rounded-xl">返回修改</button>
+        </form>
+        <button class="btn btn-primary w-full rounded-xl text-white" (click)="confirmAndCreateBooking()"
+          [disabled]="isSubmitting">
+          @if (isSubmitting) {
+          <span class="loading loading-spinner"></span>
+          }
+          確認預約
+        </button>
+      </div>
+    </div>
+
+    <form method="dialog" class="modal-backdrop">
+      <button>close</button>
+    </form>
+  </dialog>
 </div>
