@@ -59,6 +59,21 @@ export class BookingList implements OnInit {
     }
   }
 
+  loadBookings() {
+    this.isLoading = true;
+    // 這裡替換成你實際抓取使用者訂單的 API
+    this.houseService.getMemberBookings().subscribe({
+      next: (data) => {
+        this.bookings = data;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('載入訂單失敗', err);
+        this.isLoading = false;
+      }
+    });
+  }
+
   // 取消預約
   onCancelBooking(bookingId: number): void {
     if (confirm('確定要取消這筆預約嗎？')) {
