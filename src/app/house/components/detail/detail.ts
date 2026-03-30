@@ -1,3 +1,4 @@
+import { NotificationService } from './../../../shared/notifyService/notification-service';
 import { AvatarPipe } from './../../../shared/pipes/avatar-pipe';
 import { CurrentUser } from './../../../forum/interfaces/currentUser';
 import { AuthService } from './../../../core/services/auth-service';
@@ -10,7 +11,6 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { ICreateReview } from '../../interface/icreate-review';
 import { FormsModule } from '@angular/forms';
-
 
 @Component({
   selector: 'app-detail',
@@ -50,6 +50,7 @@ export class Detail implements OnInit {
     private reviewService: ReviewService,
     public HouseService: HouseService,
     private route: ActivatedRoute,
+    private notification: NotificationService
   ) { }
 
   ngOnInit(): void {
@@ -78,7 +79,7 @@ export class Detail implements OnInit {
     console.log('點擊了按鈕！目前的 userId 是:', this.userId);
 
     if (!this.userId) {
-      alert('請先登入');
+      this.notification.show('請先登入', 'error');
       return;
     }
     console.log('當前登入的 userId:', this.userId);
@@ -96,7 +97,7 @@ export class Detail implements OnInit {
     console.log('準備送出的 DTO 全貌:', dto);
     this.reviewService.addReview(dto).subscribe({
       next: (res) => {
-        alert('評論新增成功！');
+        this.notification.show('評論新增成功！', 'success');
 
         // 前端即時顯示 (提升使用者體驗)
         const newReview = {
@@ -114,7 +115,7 @@ export class Detail implements OnInit {
       error: (err) => {
         console.error('新增失敗', err);
         // 如果後端回傳 400 (沒資格)，錯誤訊息會在這裡噴出來
-        alert(err.error?.message || '新增評論失敗，請確認您是否已完成住宿且尚未評價');
+        this.notification.show(err.error?.message || '新增評論失敗，請確認您是否已完成住宿且尚未評價', 'error');
         this.isSubmitting = false;
       }
     });
@@ -195,20 +196,20 @@ export class Detail implements OnInit {
   onReserveClick() {
     // 檢查登入狀態
     if (!this.isLoggedIn) {
-      alert('請先登入後再進行預約');
+      this.notification.show('請先登入後再進行預約', 'error');
       // 如果你有做登入彈窗，可以在這裡觸發它，或者導向登入頁
       return;
     }
 
     // 檢查日期是否有選，且天數是否大於 0
     if (this.totalNights <= 0) {
-      alert('請選擇正確的入住與退房日期');
+      this.notification.show('請選擇正確的入住與退房日期', 'error');
       return;
     }
 
     // 檢查人數
     if (this.bookingForm.guestCount <= 0) {
-      alert('請選擇入住人數');
+      this.notification.show('請選擇入住人數', 'error');
       return;
     }
 
@@ -240,14 +241,14 @@ export class Detail implements OnInit {
         modal?.close();
 
         // 成功提示
-        alert(`預約成功！您的訂單編號是：${res.bookingID}`);
+        this.notification.show(`預約成功！您的訂單編號是：${res.bookingID}`, 'success');
 
         this.isSubmitting = false;
 
       },
       error: (err) => {
         console.error('預約失敗', err);
-        alert(err.error?.message || '預約失敗，請稍後再試');
+        this.notification.show('預約失敗，請稍後再試', 'error');
         this.isSubmitting = false;
       }
     });

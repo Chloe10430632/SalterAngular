@@ -2,6 +2,7 @@ import { HouseService } from './../../service/index-service';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { NotificationService } from '../../../shared/notifyService/notification-service';
 
 @Component({
   selector: 'app-booking-list',
@@ -14,7 +15,7 @@ export class BookingList implements OnInit {
   cancelLoadingId: number | null = null; // 紀錄正在取消哪一筆
   bookings: any[] = [];
   isLoading: boolean = false;
-  constructor(private houseService: HouseService) { }
+  constructor(private houseService: HouseService, private notification: NotificationService) { }
 
   ngOnInit(): void {
     this.fetchBookings();
@@ -63,12 +64,12 @@ export class BookingList implements OnInit {
     if (confirm('確定要取消這筆預約嗎？')) {
       this.houseService.cancelBooking(bookingId).subscribe({
         next: () => {
-          alert('訂單已取消');
+          this.notification.show('訂單已取消', 'success');
           this.cancelLoadingId = null;
           this.fetchBookings();
         },
         error: (err: any) => {
-          alert('取消失敗：' + err.error.message);
+          this.notification.show('取消失敗：' + err.error.message, 'error');
           this.cancelLoadingId = null;
         }
       });
