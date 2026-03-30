@@ -3,7 +3,8 @@
 
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
     @for (house of results; track house.houseId) {
-    <div class="card bg-base-100 shadow-xl hover:shadow-2xl transition-all cursor-pointer">
+    <div [routerLink]="['/houseDetail', house.roomTypeId]"
+      class="card bg-base-100 shadow-xl hover:shadow-2xl transition-all cursor-pointer">
       <figure class="h-48 overflow-hidden">
         <img [src]="houseService.getCloudinaryThumb(house.imageUrl)" class="object-cover w-full h-full" />
       </figure>

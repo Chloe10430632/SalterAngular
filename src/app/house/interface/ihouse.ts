@@ -9,9 +9,10 @@ export interface HouseListDTO {
 }
 export interface HousePreviewDTO {
   houseId: number;
+  roomTypeId: number;
   title: string;        // 顯示名稱
   price: number;
-  citie: string;
+  city: string;
   district: string;
   imageUrl: string;     // 首頁只需要一張封面圖
   guests: number;
