@@ -112,7 +112,7 @@ export const routes: Routes = [
         loadComponent: () => import('./experience/components/coach-pfedit/coach-pfedit').then(m => m.CoachPFEdit)
       },
       {
-        path: 'coachprofile', //檢視自介
+        path: 'coachprofile/:id', //檢視自介
         loadComponent: () => import('./experience/components/coach-profile/coach-profile').then(m => m.CoachProfile)
       },
       //===課程相關===//
@@ -147,7 +147,7 @@ export const routes: Routes = [
         loadComponent: () => import('./experience/myComponents/backdrop/reviewcreate/reviewcreate').then(m => m.Reviewcreate)
       },
       {
-        path: 't', //新增評論
+        path: 't', //
         loadComponent: () => import('./experience/TEST/tindex/tindex').then(m => m.Tindex)
       },
     ]

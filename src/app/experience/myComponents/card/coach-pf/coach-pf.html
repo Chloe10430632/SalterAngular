@@ -1,26 +1,17 @@
-<div class="w-full max-w-4xl mx-auto">
+<div class="w-full max-w-4xl mx-auto" data-theme="bumblebee">
   <div class="card bg-base-100 shadow-2xl border border-base-300 mt-5 mb-12">
     <div class="card-body p-8 md:p-12">
-
-      <div class="flex justify-between items-center mb-10 border-b-2 border-base-200 pb-6">
-        <div>
-          <h2 class="text-3xl font-black text-base-content tracking-tight">教練個人檔案</h2>
-          <p class="text-[10px] text-base-content/40 mt-1 uppercase tracking-[0.2em]">Coach Profile Preview</p>
-        </div>
-
-      </div>
-
       <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
         <div class="flex flex-col items-center text-center">
           <div class="avatar mb-4">
             <div class="w-32 rounded-full ring ring-primary ring-offset-base-100 ring-offset-4 shadow-xl">
-              <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" alt="Avatar" />
+              <img [src]="data?.avatarUrl" alt="Avatar" />
             </div>
           </div>
-          <h1 class="text-2xl font-black text-base-content">{{ coachName }}</h1>
+          <h1 class="text-2xl font-black text-base-content">{{ data?.coachName }}</h1>
 
           <div class="flex flex-wrap justify-center gap-2 mt-4">
-            @for (tag of coachTags; track tag) {
+            @for (tag of data?.specialities; track tag) {
             <span class="badge badge-primary font-bold py-3 px-4">{{ tag }}</span>
             }
           </div>
@@ -30,7 +21,7 @@
           <div class="divider divider-start font-black text-primary text-lg opacity-80 mt-0">關於我</div>
           <div class="px-2 mt-4">
             <p class="text-base-content/80 leading-loose text-lg text-justify">
-              {{ bioDescription }}
+              {{ data?.introduction }}
             </p>
           </div>
         </div>
@@ -39,7 +30,7 @@
       <div class="w-full border-t-2 border-base-200 mt-8 pt-4 flex justify-end">
         <div class="flex items-center gap-2 text-base-content/40">
           <span class="text-xs font-bold uppercase tracking-tight">
-            最後更新：{{ lastUpdated | date:'yyyy/MM/dd — HH:mm' }}
+            最後更新：{{ (data?.updateAt) | date:'yyyy/MM/dd — HH:mm' }}
           </span>
         </div>
       </div>

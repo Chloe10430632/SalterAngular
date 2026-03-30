@@ -14,4 +14,5 @@ export interface CoachAllInfoI {
   specialities: string[];
   introduction: string;
   createdAt: string;
+  updateAt: string;
 }

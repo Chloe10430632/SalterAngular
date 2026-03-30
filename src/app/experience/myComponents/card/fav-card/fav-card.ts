@@ -32,7 +32,7 @@ export class FavCard implements OnInit {
   @Output() removeMe = new EventEmitter<number>(); //通知父組件（例如收藏頁面要移除這張卡片）
   //------------------------------------------------------//
   ngOnInit(): void {
-     console.log('卡片：', this.coachItem().coachName);
+    console.log('卡片：', this.coachItem().coachName);
   }
   //----------------方法-----------------------------------//
   /**收藏 */
@@ -70,9 +70,14 @@ export class FavCard implements OnInit {
   // }
   //========================================//
   intro() {
+
     // 這裡直接從 input 拿 ID，不用外面傳進來
-    const id = this.coachItem().coachId;
-    this.router.navigate([`/experience/coachintro/${id}`]);
+    const data = this.coachItem();
+    if (data && data.coachId) {
+      this.router.navigate(['/experience/coachintro', data.coachId]);
+    } else {
+      this.uiS.showToast("找不到教練編號...");
+    }
   }
 
 }
