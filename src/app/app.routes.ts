@@ -265,14 +265,11 @@ export const routes: Routes = [
       loadComponent: () => import('./house/components/update-house/update-house').then(m => m.UpdateHouse),
     }]
   },
-  {
-    path: 'bookingList',
-    loadComponent: () => import('./shared/layouts/member-center-layout/member-center-layout').then(m => m.MemberCenterLayout),
-    children: [{
-      path: '',
-      loadComponent: () => import('./house/components/booking-list/booking-list').then(m => m.BookingList),
-    }]
-  },
+  // {
+  //   path: '',
+  //   loadComponent: () => import('./forum/components/index/index').then(m => m.Index),
+
+  // },
   //會員中心路由
   {
     path: 'memberCenter',
@@ -285,7 +282,10 @@ export const routes: Routes = [
           {
             path: 'member',
             loadComponent: () => import('./user/components/user-profile/user-profile').then(m => m.UserProfile),
-
+          },
+          {
+            path: 'bookingList',
+            loadComponent: () => import('./house/components/booking-list/booking-list').then(m => m.BookingList),
           }
         ]
       }
