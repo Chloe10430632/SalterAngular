@@ -11,7 +11,7 @@ import { environment } from '../../../environments/environment';
 export class MemFavListS {
   constructor(private client: HttpClient) { }
 
-  getFavList(): Observable<APIResponse<CoachAllInfoI>> {
-    return this.client.get<APIResponse<CoachAllInfoI>>(`${environment.apiUrl}/Exp/Exp/myFavList`);
+  getFavList(page: number = 1): Observable<APIResponse<CoachAllInfoI>> {
+    return this.client.get<APIResponse<CoachAllInfoI>>(`${environment.apiUrl}/Exp/Exp/myFavList?page=${page}`);
   }
 }

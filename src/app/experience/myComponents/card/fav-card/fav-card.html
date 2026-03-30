@@ -1,5 +1,5 @@
 @if (coachItem(); as c) {
-<div class="card w-72 h-[500px] bg-base-100 shadow-xl border border-base-300 relative mt-16 flex-shrink-0">
+<div class="card w-72 min-h-[480px] bg-base-100 shadow-xl border border-base-300 relative mt-16 flex-shrink-0">
 
   <div class="absolute -top-16 left-1/2 -translate-x-1/2">
     <div class="avatar">
@@ -9,7 +9,8 @@
     </div>
   </div>
 
-  <div class="card-body items-center text-center pt-20 pb-6 flex flex-col justify-between">
+  <div class="card-body items-center text-center pt-20 pb-6 flex flex-col justify-start">
+
     <div class="w-full">
       <div class="flex items-center justify-center gap-2 mb-2">
         <h2 class="card-title text-xl font-bold">{{ c.coachName }}</h2>
@@ -27,18 +28,19 @@
         </label>
       </div>
 
-      <div class="flex flex-wrap justify-center gap-1 mb-3">
+      <div class="flex flex-wrap justify-center gap-1 mb-1">
         @for(d of c.district; track $index) {
-        <span class="badge badge-sm badge-ghost opacity-70">📍 {{ d }}</span>
-        }
-      </div>
-      <div class="flex flex-wrap justify-center gap-1 mb-3">
-        @for(s of c.specialities; track $index) {
-        <span class="badge badge-sm bg-neutral text-neutral-content border-none">{{ s }}</span>
+        <span class="badge badge-sm badge-ghost opacity-70 px-1">📍 {{ d }}</span>
         }
       </div>
 
-      <div class="flex items-center justify-center gap-1 text-sm">
+      <div class="flex flex-wrap justify-center gap-1 mb-2">
+        @for(s of c.specialities; track $index) {
+        <span class="badge badge-xs bg-neutral text-neutral-content border-none">{{ s }}</span>
+        }
+      </div>
+
+      <div class="flex items-center justify-center gap-1 text-xs">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-orange-400 fill-current" viewBox="0 0 24 24">
           <path
             d="M12 .587l3.668 7.431 8.2 1.192-5.934 5.787 1.4 8.168L12 18.896l-7.334 3.869 1.4-8.168L.132 9.21l8.2-1.192z" />
@@ -48,16 +50,19 @@
       </div>
     </div>
 
-    <div class="w-full bg-primary/10 rounded-xl p-3 my-2 border border-primary/20">
-      <div class="text-xs font-bold text-primary uppercase tracking-wider">!最新開課!</div>
-      <div class="stat-value text-2xl">{{ courseName() }}</div>
+    <div class="w-full mt-8 bg-primary/10 rounded-xl p-3 border border-primary/20">
+      <div class="text-[10px] font-bold text-primary uppercase tracking-widest mb-1">! 最新開課 !</div>
+      <div class="text-lg font-bold text-base-content line-clamp-1">
+        {{ courseName() }}
+      </div>
     </div>
 
-    <div class="card-actions w-full">
+    <div class="card-actions w-full mt-4">
       <button (click)="intro()" class="btn btn-primary btn-sm w-full shadow-md hover:scale-105 transition-all">
         查看詳細資訊
       </button>
     </div>
+
   </div>
 </div>
 }

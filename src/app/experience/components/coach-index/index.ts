@@ -47,7 +47,7 @@ export class Index implements OnInit {
     this.loadHeart(); // 頁面一打開就去抓收藏清單，看看有哪些教練在裡面
   }
   //=======================================//
-  
+
 
   loadCoach() {
     this.rank.getPopRank(this.currentPage).subscribe({

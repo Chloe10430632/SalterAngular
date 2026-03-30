@@ -56,32 +56,43 @@
               class="btn btn-primary btn-outline btn-wide shadow-md hover:scale-105 transition-all">
               看更多熱門教練
             </button>
-          </div>
-          }@else{
+          </div>}@else{
           <div class="flex justify-center mt-20">
             <p class="text-base-content/50 font-bold">其他教練還在海裡</p>
           </div>}
 
-          <input type="radio" name="coach_tabs" role="tab" class="tab font-bold text-lg" aria-label="-- 最新入駐--" />
-          <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-10">
-            <!-- 最新迴圈 -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-24 pt-20 place-items-center">
-              @for (item of latestC; track item.coachId) {
-              <app-fav-card [item]="item" [courseName]="allCourseMap[item.coachId] || '載入中...'">
-              </app-fav-card>
-              } @empty {
-              <div class="col-span-full text-center py-10 text-base-content/50">
-                目前還沒有新教練入駐喔！
-              </div>
-              }
-            </div>
-          </div>
-
         </div>
+
+        <input type="radio" name="coach_tabs" role="tab" class="tab font-bold text-lg" aria-label="-- 最新入駐--" />
+        <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-10">
+          <!-- 最新迴圈 -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-24 pt-20 place-items-center">
+            @for (item of latestC; track item.coachId) {
+            <app-fav-card [item]="item" [courseName]="allCourseMap[item.coachId] || '載入中...'">
+            </app-fav-card>
+            } @empty {
+            <div class="col-span-full text-center py-10 text-base-content/50">
+              目前還沒有新教練入駐喔！
+            </div>
+            }
+          </div>
+          @if (coaches.length > 0 && hasMorePages) {
+          <div class="flex justify-center mt-20">
+            <button (click)="LoadMore()"
+              class="btn btn-primary btn-outline btn-wide shadow-md hover:scale-105 transition-all">
+              看更多最新教練
+            </button>
+          </div>}@else{
+          <div class="flex justify-center mt-20">
+            <p class="text-base-content/50 font-bold">其他教練還在海裡</p>
+          </div>}
+        </div>
+
       </div>
     </div>
-
-    <app-little-island></app-little-island>
-    <app-footer></app-footer>
-
   </div>
+
+  <app-little-island></app-little-island>
+  <app-footer></app-footer>
+
+</div>

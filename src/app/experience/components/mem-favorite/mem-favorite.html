@@ -1,67 +1,31 @@
-<app-noavatar>
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-
-    @for (coach of fav; track coach.id) {
-    <app-fav-card [item]="coach"></app-fav-card>
+<app-noavatar title="收藏教練" data-theme="bumblebee">
+  <div class="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6 px-4">
+    @for(c of coaches; track c.coachId) {
+    <app-fav-card [item]="c" [isFav]="true" [courseName]="allCourseMap[c.coachId] || '載入中...'"
+      (removeMe)="handleRemove($event)">
+    </app-fav-card>
     } @empty {
-    <div class="col-span-full flex flex-col justify-center items-center py-10">
-      <span class="text-xl">目前還沒有收藏的教練喔！</span>
-      <button class="btn btn-primary mt-4">去逛逛</button>
+    <div class="col-span-full flex flex-col items-center py-10 text-base-content/50">
+      <span class="loading loading-spinner loading-lg text-primary"></span>
+      <p class="mt-4 font-bold">教練正在游過來，請稍候...</p>
     </div>
     }
-
-    <div class="col-span-full flex flex-col items-center my-10 gap-4">
-      @if (!isEnd && !isLoading) {
-      <button (click)="getMyFav()" class="btn btn-outline btn-primary px-10">
-        看更多教練
-      </button>
-      } @else if (isEnd && fav.length > 0) {
-      <div class="badge badge-ghost p-4">—— 沒有更多教練了，請繼續收集! ——</div>
-      }
-    </div>
   </div>
+
+  @if (coaches.length > 0 && hasMorePages) {
+  <div class="flex justify-center mt-20 mb-10">
+    <button (click)="LoadMore()" class="btn btn-primary btn-outline btn-wide shadow-md hover:scale-105 transition-all">
+      看更多收藏教練
+    </button>
+  </div>
+  } @else if (coaches.length > 0) {
+  <div class="flex justify-center mt-20 mb-10">
+    <p class="text-base-content/50 font-bold">其他教練還在海裡</p>
+  </div>
+  }
 </app-noavatar>
 
-@if (isLoading) {
-<div class="flex justify-center p-5">
-  <span class="loading loading-dots loading-lg text-primary"></span>
+<div class="my-20">
+  <app-little-island></app-little-island>
 </div>
-}
-
-<app-little-island></app-little-island>
 <app-footer></app-footer>
-
-
-<!-- <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
-  @for(c of fav; track c.CoachId ){
-  <app-coach-card [fav]="c"></app-coach-card>
-  }
-  @if (isLoading) {
-  @for (i of [1,2,3,4,5,6]; track i) {
-  <div class="card bg-base-100 w-80 h-[480px] shadow-sm border border-base-200 p-4 flex flex-col gap-4">
-    <div class="skeleton h-48 w-full rounded-xl"></div>
-    <div class="skeleton h-6 w-3/4"></div>
-    <div class="flex gap-2">
-      <div class="skeleton h-4 w-12"></div>
-      <div class="skeleton h-4 w-12"></div>
-    </div>
-    <div class="skeleton h-4 w-full mt-4"></div>
-    <div class="skeleton h-4 w-full"></div>
-    <div class="skeleton h-10 w-full mt-auto"></div>
-  </div>
-  }}
-</div>
-@if(!isLoading && coaches.length === 0){
-<div class="text-center py-20 text-base-content/50">教練還在海裡</div>
-}
-@if (!isEnd){
-<div class="flex justify-center my-10">
-  <button class="btn btn-primary" [disabled]="isLoading" (click)="getgetMyFav()">
-    @if (isLoading) { <span class="loading loading-spinner"></span> }
-    {{ isLoading ? '搜尋中...' : '載入更多教練' }}
-  </button>
-</div>}
-@if(isEnd){
-<div class="text-center py-20" style="color: gray;">...其他教練還在海裡...
-</div>}
-</div> -->
