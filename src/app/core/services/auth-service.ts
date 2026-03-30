@@ -60,6 +60,14 @@ export class AuthService {
         role: decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'],
       };
 
+      //----//
+      const coachId = decoded.CoachId;
+      if (coachId && coachId !== "0") {
+        localStorage.setItem('coachId', coachId); // 把 ID 存進它專屬的抽屜
+        console.log('成功解析並存入 CoachId:', coachId);
+      }
+      //----/
+
       localStorage.setItem('token', token); // 存入錢包
       this.currentUserSource.next(user);    // 📢 廣播：「有人登入了！這是他的名字和頭像」
     } catch (error) {
