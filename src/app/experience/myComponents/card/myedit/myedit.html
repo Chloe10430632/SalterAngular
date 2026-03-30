@@ -24,104 +24,103 @@
             <div class="flex items-center gap-4">
               <div class="avatar">
                 <div class="w-16 h-16 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-                  <img [src]="coachForm.get('avatarUrl')?.value | avatar" alt="Avatar Preview" />
+                  <img [src]="coachForm.get" alt="Avatar Preview" />
                 </div>
               </div>
+              <input type="file" (change)="onFileSelected($event)"
+                class="file-input file-input-bordered file-input-primary flex-1 w-full" />
             </div>
-            <input type="file" (change)="onFileSelected($event)"
-              class="file-input file-input-bordered file-input-primary flex-1 w-full" />
           </div>
         </div>
-    </div>
 
-    <div data-theme="bumblebee" class="space-y-6">
+        <div data-theme="bumblebee" class="space-y-6">
 
-      @for (group of district.controls; track $index) {
-      <div [formGroup]="asGroup(group)"
-        class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border border-base-200 rounded-xl relative bg-base-50/50">
+          @for (group of district.controls; track $index) {
+          <div [formGroup]="asGroup(group)"
+            class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border border-base-200 rounded-xl relative bg-base-50/50">
 
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text font-bold">服務縣市</span>
-          </label>
-          <select formControlName="cityId" class="select select-bordered select-primary w-full"
-            (change)="onCityChange($index)">
-            <option [ngValue]="null" disabled>請選擇縣市</option>
-            @for (city of cities; track city.id) {
-            <option [ngValue]="city.id">{{ city.name }}</option>
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text font-bold">服務縣市</span>
+              </label>
+              <select formControlName="cityId" class="select select-bordered select-primary w-full"
+                (change)="onCityChange($index)">
+                <option [ngValue]="null" disabled>請選擇縣市</option>
+                @for (city of cities; track city.id) {
+                <option [ngValue]="city.id">{{ city.name }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text font-bold">服務區域</span>
+              </label>
+              <select formControlName="districtId" class="select select-bordered select-primary w-full">
+                <option [ngValue]="null" disabled>請選擇行政區</option>
+
+                @for (dist of districtsByGroup[$index]; track dist.id) {
+                <option [ngValue]="dist.id">{{ dist.districtName || dist.name }}</option>
+                }
+              </select>
+            </div>
+
+            @if (district.length > 1) {
+            <button type="button" (click)="removeDistrictGroup($index)"
+              class="btn btn-circle btn-ghost btn-xs absolute -top-2 -right-2 bg-error text-error-content hover:bg-error">
+              ✕
+            </button>
             }
-          </select>
+          </div>
+          }
+
+          <button type="button" (click)="addDistrictGroup()" class="btn btn-outline btn-primary btn-sm mt-2">
+            + 新增服務地區
+          </button>
+        </div>
+        <div class="form-control w-full">
+          <label class="label">
+            <span class="label-text font-bold text-lg text-primary">專業運動項目 (可多選)</span>
+          </label>
+
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 border border-base-300 rounded-xl bg-base-50">
+            @for (s of allSpecialities; track s.id) {
+            <label
+              class="label cursor-pointer flex justify-start gap-3 hover:bg-base-200 rounded-lg px-3 transition-colors">
+              <input type="checkbox" class="checkbox checkbox-primary" [checked]="isSelected(s.id)"
+                (change)="onSpecChange(s.id)" />
+              <span class="label-text font-medium">{{ s.sportsName }}</span>
+            </label>
+            }
+          </div>
         </div>
 
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text font-bold">服務區域</span>
+        <div class="form-control w-full">
+          <label class="label pb-4">
+            <span class="label-text font-bold text-lg text-primary">個人簡介</span>
           </label>
-          <select formControlName="districtId" class="select select-bordered select-primary w-full">
-            <option [ngValue]="null" disabled>請選擇行政區</option>
+          <textarea formControlName="introduction"
+            class="textarea textarea-bordered textarea-primary h-40 text-base leading-relaxed mb-2 w-full"
+            placeholder="請詳細描述您的教學風格..."></textarea>
 
-            @for (dist of districtsByGroup[$index]; track dist.id) {
-            <option [ngValue]="dist.id">{{ dist.districtName || dist.name }}</option>
-            }
-          </select>
+          @if (coachForm.get('introduction')?.invalid && coachForm.get('introduction')?.touched) {
+          <span class="text-error text-xs">簡介至少需要 100 字喔！</span>
+          }
+
+          <label class="label pt-0">
+            <span class="label-text-alt text-base-content/50 italic font-medium">
+              💡 建議字數 100-300 字，包含您的專業證照與教學經歷以提升預約率。
+            </span>
+          </label>
         </div>
 
-        @if (district.length > 1) {
-        <button type="button" (click)="removeDistrictGroup($index)"
-          class="btn btn-circle btn-ghost btn-xs absolute -top-2 -right-2 bg-error text-error-content hover:bg-error">
-          ✕
-        </button>
-        }
-      </div>
-      }
+        <div class="divider pt-4"></div>
 
-      <button type="button" (click)="addDistrictGroup()" class="btn btn-outline btn-primary btn-sm mt-2">
-        + 新增服務地區
-      </button>
+        <div class="card-actions justify-end gap-4">
+          <button (click)="island()" type="button" class="btn btn-ghost px-8">取消編輯</button>
+          <button type="submit" [disabled]="false" class="btn btn-primary px-12 shadow-lg">確認儲存</button>
+        </div>
+      </form>
     </div>
-    <div class="form-control w-full">
-      <label class="label">
-        <span class="label-text font-bold text-lg text-primary">專業運動項目 (可多選)</span>
-      </label>
-
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 border border-base-300 rounded-xl bg-base-50">
-        @for (s of allSpecialities; track s.id) {
-        <label
-          class="label cursor-pointer flex justify-start gap-3 hover:bg-base-200 rounded-lg px-3 transition-colors">
-          <input type="checkbox" class="checkbox checkbox-primary" [checked]="isSelected(s.id)"
-            (change)="onSpecChange(s.id)" />
-          <span class="label-text font-medium">{{ s.sportsName }}</span>
-        </label>
-        }
-      </div>
-    </div>
-
-    <div class="form-control w-full">
-      <label class="label pb-4">
-        <span class="label-text font-bold text-lg text-primary">個人簡介</span>
-      </label>
-      <textarea formControlName="introduction"
-        class="textarea textarea-bordered textarea-primary h-40 text-base leading-relaxed mb-2 w-full"
-        placeholder="請詳細描述您的教學風格..."></textarea>
-
-      @if (coachForm.get('introduction')?.invalid && coachForm.get('introduction')?.touched) {
-      <span class="text-error text-xs">簡介至少需要 100 字喔！</span>
-      }
-
-      <label class="label pt-0">
-        <span class="label-text-alt text-base-content/50 italic font-medium">
-          💡 建議字數 100-300 字，包含您的專業證照與教學經歷以提升預約率。
-        </span>
-      </label>
-    </div>
-
-    <div class="divider pt-4"></div>
-
-    <div class="card-actions justify-end gap-4">
-      <button (click)="island()" type="button" class="btn btn-ghost px-8">取消編輯</button>
-      <button type="submit" [disabled]="false" class="btn btn-primary px-12 shadow-lg">確認儲存</button>
-    </div>
-    </form>
   </div>
-</div>
 </div>
