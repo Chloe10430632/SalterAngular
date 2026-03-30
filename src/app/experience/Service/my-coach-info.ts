@@ -19,8 +19,8 @@ export class MyCoachInfoS {
     return this.client.post<APIResponse<CoachAllInfoI>>(`${environment.apiUrl}/Exp/Exp/EditCoach/${coachId}`, data);
   }
 
-  createMyInfo(data: CoachAllInfoI): Observable<APIResponse<CoachAllInfoI>> {
-    return this.client.post<APIResponse<CoachAllInfoI>>(`${environment.apiUrl}/Exp/Exp/BecomeCoach`, data);
+  createMyInfo(data: any): Observable<any> {
+    return this.client.post<any>(`${environment.apiUrl}/Exp/Exp/BecomeCoach`, data);
   }
 
 }

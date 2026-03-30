@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 import { MyCoachInfoS } from '../../Service/my-coach-info';
 import { APIResponse, CoachAllInfoI } from '../../Interfaces/coachallinfo';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Noavatar } from "../../myComponents/container/noavatar/noavatar";
 
 //========!!這是 父Component!!================//
 //========!!檢視自己的資訊!!================//
@@ -14,7 +15,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-coach-profile',
-  imports: [CommonModule, CoachPf, LittleIsland, Footer, Toptab],
+  imports: [CommonModule, CoachPf, LittleIsland, Footer, Toptab, Noavatar],
   templateUrl: './coach-profile.html',
   styleUrl: './coach-profile.css',
 })
@@ -29,24 +30,39 @@ export class CoachProfile {
 
   //------------------------------------------------------//
   ngOnInit(): void {
-    // 1. 只從網址拿 ID
-    const idFromRoute = this.route.snapshot.paramMap.get('id');
+    // 1. 優先從網址拿 ID
+    let idFromRoute = this.route.snapshot.paramMap.get('id');
 
-    // 2. 印出來檢查，看看程式「此時此刻」認定的 ID 是多少
-    console.log('🔴 偵測到網址 ID 為:', idFromRoute);
+    // 2. 🔴 新增：如果網址沒 ID，試著從 localStorage 拿（這是從 Token 解出來存進去的）
+    if (!idFromRoute) {
+      idFromRoute = localStorage.getItem('coachId');
+      console.log('網址沒 ID，從 localStorage 抓取結果:', idFromRoute);
+    }
 
-    if (idFromRoute) {
+    console.log('🔴 最終認定的 ID 為:', idFromRoute);
+
+    if (idFromRoute && idFromRoute !== '0') {
       const targetId = Number(idFromRoute);
+      this.isLoading = true;
 
-      // 3. 確保這裡傳給 Service 的是真的 targetId
       this.mycoachInhoS.getMyInfo(targetId).subscribe({
         next: (res) => {
-          this.coachData = res.data;
-          // 這裡也印一下，看看後端回傳的資料裡面，id 是不是 1001024
-          console.log('🟢 API 回傳資料:', res.data);
-        }
+          if (res.isSuccess) {
+            this.coachData = res.data;
+            console.log('🟢 API 回傳資料:', res.data);
+          }
+        },
+        error: (err) => {
+          console.error('抓取失敗', err);
+          this.isLoading = false;
+        },
+        complete: () => this.isLoading = false
       });
+    } else {
+      // 如果連 localStorage 都沒有，代表真的沒登入或不是教練
+      console.warn('找不到有效的 CoachId');
+      this.isLoading = false;
+      // this.router.navigate(['/login']); // 選用：踢回登入頁
     }
-    //----------------------------------------//
   }
 }
