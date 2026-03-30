@@ -289,6 +289,7 @@
                       }
 
                     </ul>
+
                   </div>
                 </div>
               </div>
@@ -296,6 +297,14 @@
 
             @if(selectedLocation){
             <div class="badge badge-soft badge-accent mt-2 tracking-wider">{{selectedLocation.name}}</div>
+            }
+
+            @if(isOptimizing) {
+            <div
+              class="flex items-center justify-center gap-2 px-2 py-1 bg-primary/10 rounded-lg border border-primary/20">
+              <span class="loading loading-dots loading-sm text-primary"></span>
+              <span class="text-xs font-bold text-primary-content tracking-widest">AI 流量密碼調製中...</span>
+            </div>
             }
 
             <textarea formControlName="content"

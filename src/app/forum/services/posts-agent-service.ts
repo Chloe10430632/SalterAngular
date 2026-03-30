@@ -16,8 +16,8 @@ export class PostsAgentService {
   }
 
   /**開始真正與Agent交換資料 */
-  PostPostAgentApi() {
-    return this.http.get<AgentData>(`${environment.apiUrl}/Forum/PostsAgent`);
+  PostPostAgentApi(dto: AgentData) {
+    return this.http.post<AgentData>(`${environment.apiUrl}/Forum/PostsAgent`, dto);
   }
 
 }

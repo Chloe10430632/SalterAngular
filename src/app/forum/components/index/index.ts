@@ -4,7 +4,7 @@ import { Component, OnInit, signal, ViewEncapsulation } from '@angular/core';
 import { Router, RouterOutlet, RouterLinkWithHref, RouterLinkActive } from '@angular/router';
 import { BoardList } from '../../interfaces/boardList';
 import { BoardsService } from '../../services/boards-service';
-import { AdData } from '../../interfaces/AdData';
+import { AdData } from '../../interfaces/adData';
 import Sortable from 'sortablejs';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../../core/services/auth-service';
@@ -89,9 +89,13 @@ export class Index implements OnInit {
   conversationId?: string;
 
   /**使用者原本的貼文內容 */
+  originalContent?: string;
 
   /**Agent生成的貼文內容 */
   postAgentContent?: string;
+
+  /**AI優化中 */
+  isOptimizing = false;
 
   /**建構子注入 */
   constructor(
@@ -400,6 +404,36 @@ export class Index implements OnInit {
   //--------AI文案優化--------
   optimizeWithAI() {
 
+    this.originalContent = this.postForm.get('content')!.value.trim();
+    if (!this.originalContent) {
+      return;
+    }
+
+    this.isOptimizing = true;
+
+    this.postAgentService.GetPostAgentApi().subscribe({
+      next: (res) => {
+        this.conversationId = res.conversationId;
+      }
+    });
+
+    const dto = {
+      conversationId: this.conversationId!,
+      userMessage: this.originalContent,
+      agentMessage: ''
+    };
+
+    this.postAgentService.PostPostAgentApi(dto).subscribe({
+      next: (res) => {
+        this.isOptimizing = false;
+        this.postAgentContent = res.agentMessage;
+        this.postForm.patchValue({ content: this.postAgentContent });
+      },
+      error: () => {
+        this.isOptimizing = false;
+        this.toastr.error('AI文案優化失敗');
+      }
+    });
   }
 
 }
