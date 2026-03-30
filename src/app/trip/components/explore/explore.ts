@@ -97,6 +97,7 @@ export class Explore implements OnInit {
   }
 
   onSearch() {
+    this.searchKeyword = this.searchKeyword.trim();
     this.currentPage = 1;
     this.loadTrips();
   }

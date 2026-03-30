@@ -7,7 +7,7 @@
       <p class="text-base-content/60 text-sm mb-4">與志同道合的夥伴一起探索台灣</p>
       <div class="join w-full">
         <input class="input input-bordered join-item flex-1 bg-base-100" placeholder="搜尋行程名稱、地點或活動類型…"
-          [(ngModel)]="searchKeyword" />
+          [(ngModel)]="searchKeyword" (keydown.enter)="onSearch()" />
         <button class="btn btn-primary join-item px-6" (click)="onSearch()">搜尋</button>
       </div>
     </div>

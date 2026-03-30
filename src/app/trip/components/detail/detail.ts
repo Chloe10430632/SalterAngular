@@ -193,6 +193,10 @@ export class Detail implements OnInit, AfterViewInit {
     return name?.charAt(0)?.toUpperCase() ?? '?';
   }
 
+  isTab(tab: string): boolean {
+    return this.activeTab === tab;
+  }
+
   loadGearItems() {
     this.tripService.getGearItems(this.tripId).subscribe({
       next: (res) => {

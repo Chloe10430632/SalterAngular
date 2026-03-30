@@ -27,26 +27,20 @@
       @if (!isCollapsed) { <span>建立揪團</span> }
     </a>
 
+    @if (!isCollapsed) {
+    <p class="px-3 pt-4 pb-1 text-xs font-bold text-base-content/30 uppercase tracking-wider">個人</p>
+    }
+
     <a routerLink="/trip/my-trips" routerLinkActive="bg-primary/10 text-primary font-semibold"
       class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors hover:bg-base-200 text-base-content">
       <i class="bi bi-calendar3 text-base w-5 text-center shrink-0"></i>
       @if (!isCollapsed) { <span>我的行程</span> }
     </a>
 
-    @if (!isCollapsed) {
-    <p class="px-3 pt-4 pb-1 text-xs font-bold text-base-content/30 uppercase tracking-wider">個人</p>
-    }
-
     <a routerLink="/trip/favorites" routerLinkActive="bg-primary/10 text-primary font-semibold"
       class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors hover:bg-base-200 text-base-content">
       <i class="bi bi-heart text-base w-5 text-center shrink-0"></i>
       @if (!isCollapsed) { <span>收藏行程</span> }
-    </a>
-
-    <a routerLink="/trip/reminders" routerLinkActive="bg-primary/10 text-primary font-semibold"
-      class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors hover:bg-base-200 text-base-content">
-      <i class="bi bi-bell text-base w-5 text-center shrink-0"></i>
-      @if (!isCollapsed) { <span>提醒設定</span> }
     </a>
     }
 
