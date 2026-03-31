@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { CoachAllInfoI } from '../../Interfaces/coachallinfo';
+import { CoachAllInfoI } from '../../Interfaces/IIcoachAllinfo';
 import { SearchS } from '../../Service/search';
 
 //===============!!子 component!!===================//

@@ -1,20 +1,20 @@
-import { CoachAllInfoS } from './../../Service/coach-all-info-s';
+import { CoachCardInfoS } from '../../Service/coach-card-info-s';
 import { Component, Injectable, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Footer } from '../../../shared/footer/footer';
 import { CommonModule } from '@angular/common';
 import { LittleIsland } from "../../myComponents/little-island/little-island";
 import { Rank } from '../../Service/rank';
-import { CoachAllInfoI } from '../../Interfaces/coachallinfo';
-import { FavCard } from '../../myComponents/card/fav-card/fav-card';
-import { UiS } from '../../Service/UiS';
-import { CourseForOneS } from '../../Service/course-for-one';
+import { CoachAllInfoI } from '../../Interfaces/IIcoachAllinfo';
+import { CourseInformationS } from '../../Service/course-information';
 import { Search } from "../../myComponents/search/search";
+import { FavCard } from '../../myComponents/card/fav-card/fav-card';
 
 
 
 
 //============!!父Component!!================//
+//=============入口==================//
 
 
 @Component({
@@ -37,9 +37,8 @@ export class Index implements OnInit {
 
   //=======================================//
   constructor(private rank: Rank,
-    private courseNameS: CourseForOneS,
-    private coachAllInfoS: CoachAllInfoS,
-    private uiS: UiS,
+    private courseNameS: CourseInformationS,
+    private coachAllInfoS: CoachCardInfoS,
   ) { }
   //=======================================//
   ngOnInit(): void {
@@ -104,8 +103,8 @@ export class Index implements OnInit {
       this.courseNameS.getLatestCourseByCoach(coach.coachId).subscribe({
         next: (res) => {
           // 有課程 → 顯示標題；後端說沒課 → 顯示提示文字
-          this.allCourseMap[coach.coachId] = res.isSuccess
-            ? (res.data?.title || '新課程準備中...')
+          this.allCourseMap[coach.coachId] = res
+            ? (res.title || '新課程準備中...')
             : '暫無開課計畫';
         },
         error: () => {
@@ -118,7 +117,6 @@ export class Index implements OnInit {
 
   // 處理子組件傳來的 removeMe 事件
   handleRemove(coachId: number) {
-    this.uiS.toastMessage.set('已從收藏中移除');
     console.log(`教練 ${coachId} 被取消收藏了（在首頁通常不執行刪除畫面動作）`);
     // 如果你在首頁也想即時連動某些狀態，可以在這寫
   }
