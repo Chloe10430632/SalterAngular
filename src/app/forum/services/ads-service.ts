@@ -2,8 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, timer, zip } from 'rxjs';
 import { environment } from './../../../environments/environment';
-import { AdDetails } from '../interfaces/AdDetails';
-
+import { AdData } from '../interfaces/AdData';
 
 @Injectable({
   providedIn: 'root',
