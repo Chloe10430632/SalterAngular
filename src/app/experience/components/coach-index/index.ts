@@ -9,6 +9,7 @@ import { CoachAllInfoI } from '../../Interfaces/coachallinfo';
 import { FavCard } from '../../myComponents/card/fav-card/fav-card';
 import { UiS } from '../../Service/UiS';
 import { CourseForOneS } from '../../Service/course-for-one';
+import { Search } from "../../myComponents/search/search";
 
 
 
@@ -19,7 +20,7 @@ import { CourseForOneS } from '../../Service/course-for-one';
 @Component({
   selector: 'app-index',
   standalone: true,
-  imports: [LittleIsland, CommonModule, FormsModule, LittleIsland, Footer, FavCard],
+  imports: [LittleIsland, CommonModule, FormsModule, LittleIsland, Footer, FavCard, Search],
   templateUrl: './index.html',
   styleUrl: './index.css',
 })
@@ -31,6 +32,8 @@ export class Index implements OnInit {
   myFavIds = signal<number[]>([]);
   PAGE_SIZE = 6; // 根據你的後端每頁筆數設定
   hasMorePages = true; // ← 新增這個旗標
+  searchCoaches: CoachAllInfoI[] = [];
+  isSearching: boolean = false;
 
   //=======================================//
   constructor(private rank: Rank,
@@ -118,6 +121,16 @@ export class Index implements OnInit {
     this.uiS.toastMessage.set('已從收藏中移除');
     console.log(`教練 ${coachId} 被取消收藏了（在首頁通常不執行刪除畫面動作）`);
     // 如果你在首頁也想即時連動某些狀態，可以在這寫
+  }
+
+  handleSearchResult(result: CoachAllInfoI[]) {
+    console.log(result);
+    this.searchCoaches = result;
+    this.isSearching = true;
+  }
+  backToDefault() {
+    this.isSearching = false;
+    this.searchCoaches = []; // 清空搜尋結果
   }
 }
 

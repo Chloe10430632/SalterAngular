@@ -1,5 +1,9 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { CoachAllInfoI } from '../../Interfaces/coachallinfo';
+import { SearchS } from '../../Service/search';
+
+//===============!!子 component!!===================//
 
 @Component({
   selector: 'app-search',
@@ -8,12 +12,24 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './search.css',
 })
 export class Search {
-  inputString = "";
-  @Output() searchEvent = new EventEmitter<string>();
+  searchTerm: string = '';
+  Result: CoachAllInfoI[] = [];
 
+  //--------------------------------------------------//
+  constructor(private searchS: SearchS) { }
+  @Output() searchComplete = new EventEmitter<CoachAllInfoI[]>;
+  //--------------------------------------------------//
   search(): void {
-    console.log('子元件：準備丟出球，內容是：', this.inputString); // 加這行測試
-    this.searchEvent.emit(this.inputString)
+    if (!this.searchTerm) return;
+
+    this.searchS.multiSearch(this.searchTerm).subscribe({
+      next: (res) => {
+        this.searchComplete.emit(res);
+        console.log('搜尋完成！', this.Result);
+      },
+      error: () => { }
+    })
+
   }
 
 }
