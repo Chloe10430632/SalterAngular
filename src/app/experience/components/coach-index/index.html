@@ -68,7 +68,8 @@
           <!-- 最新迴圈 -->
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-24 pt-20 place-items-center">
             @for (item of latestC; track item.coachId) {
-            <app-fav-card [item]="item" [courseName]="allCourseMap[item.coachId] || '載入中...'">
+            <app-fav-card [item]="item" [isFav]="myFavIds().includes(item.coachId)"
+              [courseName]="allCourseMap[item.coachId] || '載入中...'">
             </app-fav-card>
             } @empty {
             <div class="col-span-full text-center py-10 text-base-content/50">
