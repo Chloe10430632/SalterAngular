@@ -4,6 +4,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators, FormArray, For
 import { MyCoachEditS } from '../../../Service/my-coach-edit';
 import { ActivatedRoute, Route, Router } from '@angular/router';
 import { SpecI } from '../../../Interfaces/SpecSport';
+import { DistrictData } from '../../../Interfaces/districtData';
 
 
 //===========!!子 Component!!================//
@@ -19,7 +20,10 @@ export class Myedit implements OnInit {
   selectedFile: File | null = null;
   allSpecialities: SpecI[] = [];
   cities: any[] = [];
-  districtsByGroup: any[][] = []; // 用來存每一組對應的區域清單
+  districtsByGroup: any[] = []; // 用來存每一組對應的區域清單
+
+  /**選中的縣市 */
+
 
   coachForm = new FormGroup({
     coachName: new FormControl('', [Validators.required]),
@@ -133,11 +137,14 @@ export class Myedit implements OnInit {
     if (cityId) {
       this.coacheditS.getDistrictsByCity(cityId).subscribe({
         next: (res: any) => {
-          // 2. 根據你的 API 回傳結構，通常 res.data 才是陣列
-          const districts = res.isSuccess ? res.data : res;
+          // // 2. 根據你的 API 回傳結構，通常 res.data 才是陣列
+          // const districts = res.isSuccess ? res.data : res;
 
-          // 3. 塞入對應位置的區域清單
-          this.districtsByGroup[index] = districts;
+          // // 3. 塞入對應位置的區域清單
+          // this.districtsByGroup[index] = districts;
+
+          this.districtsByGroup = res.success ? res.data : res;
+          // console.log(this.districtsByGroup);
 
           // 4. 重置該組的區域選擇（因為換縣市了，舊的區域要清空）
           this.district.at(index).get('districtId')?.setValue(null);
