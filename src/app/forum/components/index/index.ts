@@ -14,7 +14,7 @@ import { HttpEventType } from '@angular/common/http';
 import { environment } from './../../../../environments/environment';
 import { TripService } from '../../../trip/services/trip';
 import { SensitiveWordsService } from '../../services/sensitive-words-service';
-import { debounceTime, distinctUntilChanged, filter, switchMap, tap } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, filter, of, switchMap, tap } from 'rxjs';
 import { PostsAgentService } from '../../services/posts-agent-service';
 
 @Component({
@@ -97,6 +97,10 @@ export class Index implements OnInit {
   /**AI優化中 */
   isOptimizing = false;
 
+  /**是否進入文案對比預覽模式 */
+  showComparison = false;
+
+
   /**建構子注入 */
   constructor(
     private boardsService: BoardsService,
@@ -136,17 +140,31 @@ export class Index implements OnInit {
 
 
     this.postForm.get('content')!.valueChanges.pipe(
-      debounceTime(500),
+      debounceTime(1000),
       distinctUntilChanged(),
       filter(val => val !== null && val !== undefined),
       tap(() => {
         this.isChecking = true;
         this.badWords = [];
       }),
-      switchMap(val => this.checkWordsService.postCheckWordsApi(val))
-    ).subscribe(res => {
-      this.isChecking = false;
-      this.badWords = res.violatedWords;
+      switchMap(val =>
+        this.checkWordsService.postCheckWordsApi(val).pipe(
+          // 重要：在 switchMap 內部 catchError，這樣外部流才不會死掉
+          catchError(err => {
+            console.error('敏感詞檢查失敗', err);
+            return of({ violatedWords: [] }); // 發生錯誤時回傳空陣列，讓流程繼續
+          })
+        )
+      )
+    ).subscribe({
+      next: (res) => {
+        this.isChecking = false;
+        this.badWords = res.violatedWords;
+      },
+      error: (err) => {
+        // 這裡通常抓不到錯誤了，因為裡面已經處理掉
+        this.isChecking = false;
+      }
     });
 
 
@@ -404,38 +422,57 @@ export class Index implements OnInit {
   //--------AI文案優化--------
   optimizeWithAI() {
 
-    this.originalContent = this.postForm.get('content')!.value.trim();
-    if (!this.originalContent) {
-      return;
-    }
+    const content = this.postForm.get('content')?.value?.trim();
+    if (!content) return;
 
+    this.originalContent = content; // 備份舊文案供 UI 對比使用
     this.isOptimizing = true;
 
-    this.postAgentService.GetPostAgentApi().subscribe({
-      next: (res) => {
-        this.conversationId = res.conversationId;
-      }
-    });
+    // 核心邏輯：如果沒有 ID 就先抓 ID，有的話直接進入下一步
+    const getConversationId$ = this.conversationId
+      ? of({ conversationId: this.conversationId }) // 已經有了，封裝成 Observable 直接過
+      : this.postAgentService.GetPostAgentApi();    // 沒有，打 API 抓
 
-    const dto = {
-      conversationId: this.conversationId!,
-      userMessage: this.originalContent,
-      agentMessage: ''
-    };
-
-    this.postAgentService.PostPostAgentApi(dto).subscribe({
+    getConversationId$.pipe(
+      tap(res => {
+        this.conversationId = res.conversationId; // 更新 ID
+      }),
+      switchMap(res => {
+        const dto = {
+          conversationId: res.conversationId,
+          userMessage: this.originalContent!,
+          agentMessage: ''
+        };
+        // 串接第二個 API
+        return this.postAgentService.PostPostAgentApi(dto);
+      })
+    ).subscribe({
       next: (res) => {
-        this.isOptimizing = false;
         this.postAgentContent = res.agentMessage;
-        this.postForm.patchValue({ content: this.postAgentContent });
-      },
-      error: () => {
+
+        this.showComparison = true;
         this.isOptimizing = false;
-        this.toastr.error('AI文案優化失敗');
+      },
+      error: (err) => {
+        console.error('AI 優化失敗:', err);
+        this.isOptimizing = false;
       }
     });
+
   }
 
+  rejectAI() {
+    this.showComparison = false;
+    this.postAgentContent = '';
+    // 內容會自動維持在原本的 postForm.value.content
+  }
+  acceptAI() {
+    this.postForm.get('content')?.patchValue(this.postAgentContent, { emitEvent: false });
+    this.badWords = []; // 手動清空，因為沒跑 API 檢查
+    this.showComparison = false;
+    // 記得清空暫存
+    this.postAgentContent = '';
+  }
 }
 
 

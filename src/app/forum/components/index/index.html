@@ -299,17 +299,53 @@
             <div class="badge badge-soft badge-accent mt-2 tracking-wider">{{selectedLocation.name}}</div>
             }
 
-            @if(isOptimizing) {
-            <div
-              class="flex items-center justify-center gap-2 px-2 py-1 bg-primary/10 rounded-lg border border-primary/20">
-              <span class="loading loading-dots loading-sm text-primary"></span>
-              <span class="text-xs font-bold text-primary-content tracking-widest">AI 流量密碼調製中...</span>
-            </div>
-            }
 
+
+            @if(!isOptimizing && !showComparison){
             <textarea formControlName="content"
               class="p-3 textarea textarea-ghost w-full focus:outline-none min-h-[80px] p-0 placeholder:text-base-content/30"
               placeholder="今天發生了什麼有趣的事呢......"></textarea>
+            }
+
+
+
+            @if (isOptimizing) {
+            <div class="flex flex-col gap-2 w-full max-w-xs mt-10">
+              <div class="flex items-center gap-2">
+                <span class="loading loading-spinner loading-xs text-info"></span>
+                <span class="text-sm text-info/80">AI 正在幫你修文案 ( ͡° ͜ʖ ͡°)</span>
+              </div>
+              <div class="skeleton h-3 w-full"></div>
+              <div class="skeleton h-3 w-2/3"></div>
+            </div>
+            }
+
+            @if (showComparison) {
+            <div class="flex flex-col gap-4 animate-in fade-in zoom-in duration-300 mt-10">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                <div class="p-4 rounded-xl bg-base-200 border border-base-300 relative">
+                  <span class="absolute -top-3 left-3 badge badge-neutral text-xs font-bold">原本的文案</span>
+                  <p class="text-sm opacity-80">{{ originalContent }}</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-primary/5 border border-primary/20 relative">
+                  <span class="absolute -top-3 left-3 badge badge-primary text-xs font-bold">AI 流量密碼</span>
+                  <p class="text-sm font-medium">{{ postAgentContent }}</p>
+                </div>
+
+              </div>
+
+              <div class="flex justify-end gap-2">
+                <button type="button" (click)="rejectAI()" class="btn btn-ghost btn-md">
+                  <i class="fa-solid fa-xmark mr-1"></i> 不用了，謝謝
+                </button>
+                <button type="button" (click)="acceptAI()" class="btn btn-success btn-md shadow-md">
+                  <i class="fa-solid fa-check mr-1"></i> 採用這個文案
+                </button>
+              </div>
+            </div>
+            }
 
             <div id="image_preview_container" class="flex flex-wrap gap-2 py-2">
               @for (src of previews(); track $index) {
