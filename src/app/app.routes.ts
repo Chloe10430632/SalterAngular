@@ -104,12 +104,8 @@ export const routes: Routes = [
         loadComponent: () => import('./experience/components/coach-island/coach-island').then(m => m.CoachIsland)
       },
       {
-        path: 'coachcreate', //空白自介(申請)
-        loadComponent: () => import('./experience/myComponents/backdrop/coach-create/coach-create').then(m => m.CoachCreate)
-      },
-      {
         path: 'coachpfe/:id', //自介編輯
-        loadComponent: () => import('./experience/components/coach-pfedit/coach-pfedit').then(m => m.CoachPFEdit)
+        loadComponent: () => import('./experience/components/coach-profile-edit/coach-profile-edit').then(m => m.CoachPFEdit)
       },
       {
         path: 'coachprofile/:id', //檢視自介
