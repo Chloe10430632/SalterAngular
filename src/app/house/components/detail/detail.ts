@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { ICreateReview } from '../../interface/icreate-review';
+import { ICreateReview, IUpdateReview } from '../../interface/icreate-review';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -252,5 +252,70 @@ export class Detail implements OnInit {
         this.isSubmitting = false;
       }
     });
+  }
+
+
+  // 開始編輯模式
+  startEdit(rv: any) {
+    // 💡 在 rv 物件中動態加入 isEditing 屬性
+    rv.isEditing = true;
+    // 備份原始資料，防止取消時內容被改掉
+    rv.tempComment = rv.comment;
+    rv.tempRating = rv.rating;
+  }
+
+  // 取消編輯
+  cancelEdit(rv: any) {
+    rv.isEditing = false;
+  }
+
+  // 執行更新
+  updateReview(rv: any) {
+    if (!rv.tempComment.trim()) return;
+
+    const updateDto: IUpdateReview = {
+      reviewId: rv.reviewId,
+      rating: rv.tempRating,
+      comment: rv.tempComment,
+      memberId: this.userId || 0
+    };
+
+    this.reviewService.updateReview(updateDto).subscribe({
+      next: () => {
+        this.notification.show('修改成功！', 'success');
+        // 更新畫面上的內容
+        rv.comment = rv.tempComment;
+        rv.rating = rv.tempRating;
+        rv.isEditing = false;
+      },
+      error: (err) => {
+        this.notification.show('修改失敗', 'error');
+        console.error(err);
+      }
+    });
+  }
+
+  // 執行刪除
+  deleteReview(reviewId: number) {
+    if (confirm('您確定要刪除這則評論嗎？此操作無法還原。')) {
+      this.reviewService.deleteReview(reviewId).subscribe({
+        next: () => {
+          this.notification.show('已刪除評論', 'success');
+          // 💡 立即從前端陣列移除，不需重刷頁面
+          this.selectedProperty.reviews = this.selectedProperty.reviews.filter(
+            (r: any) => r.reviewId !== reviewId
+          );
+        },
+        error: (err) => {
+          this.notification.show('刪除失敗', 'error');
+          console.error(err);
+        }
+      });
+    }
+  }
+
+  // 編輯時的評分控制
+  setEditRating(rv: any, score: number) {
+    rv.tempRating = score;
   }
 }

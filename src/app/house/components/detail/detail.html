@@ -91,34 +91,65 @@
         <h3 class="text-2xl font-bold mb-8 flex items-center gap-2">
           <i class="bi bi-chat-left-dots"></i> 房客真實評價
         </h3>
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-          @for (rv of selectedProperty?.reviews; track $index) {
-          <div class="space-y-4">
-            <div class="flex items-center gap-3">
-              <div class="avatar">
-                <div class="w-10 rounded-full border border-base-300">
-                  <img [src]="rv.picture | avatar" />
+          @for (rv of selectedProperty?.reviews; track rv.reviewId) {
+          <div
+            class="space-y-4 p-4 rounded-2xl hover:bg-base-100 transition-colors border border-transparent hover:border-base-300">
+
+            <div class="flex justify-between items-start">
+              <div class="flex items-center gap-3">
+                <div class="avatar">
+                  <div class="w-10 h-10 rounded-full border border-base-300 overflow-hidden">
+                    <img class="w-full h-full object-cover object-center" [src]="rv.picture | avatar" />
+                  </div>
+                </div>
+                <div>
+                  <div class="font-bold text-sm">{{ rv.name || '訪客' }}</div>
+                  <div class="text-xs opacity-50">{{ rv.createdTime | date:'yyyy年MM月dd日' }}</div>
                 </div>
               </div>
 
-              <div>
-                <div class="font-bold text-sm">{{ rv.name || '訪客' }}</div>
+              @if (userId === rv.userId && !rv.isEditing) {
+              <div class="flex gap-1">
+                <button (click)="startEdit(rv)" class="btn btn-ghost btn-xs text-info">
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button (click)="deleteReview(rv.reviewId)" class="btn btn-ghost btn-xs text-error">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+              }
+            </div>
 
-                <div class="text-xs opacity-50">{{ rv.createdTime | date:'yyyy年MM月dd日' }}</div>
+            @if (rv.isEditing) {
+            <div class="space-y-3">
+              <div class="rating rating-xs">
+                @for (star of [1,2,3,4,5]; track star) {
+                <input type="radio" [name]="'edit-star-' + rv.reviewId" class="mask mask-star-2 bg-warning"
+                  [checked]="rv.tempRating === star" (click)="setEditRating(rv, star)" />
+                }
+              </div>
+              <textarea [(ngModel)]="rv.tempComment"
+                class="textarea textarea-bordered w-full text-sm h-24 focus:border-primary"></textarea>
+              <div class="flex justify-end gap-2">
+                <button (click)="cancelEdit(rv)" class="btn btn-ghost btn-sm">取消</button>
+                <button (click)="updateReview(rv)" class="btn btn-primary btn-sm">儲存</button>
               </div>
             </div>
+            } @else {
             <div class="flex text-warning text-xs">
               @for (star of [1,2,3,4,5]; track star) {
               <i class="bi bi-star-fill" [class.opacity-20]="star > rv.rating"></i>
               }
             </div>
             <p class="text-gray-600 leading-relaxed italic">「{{ rv.comment }}」</p>
+            }
           </div>
           } @empty {
           <p class="text-gray-400">目前尚無評價，成為第一個入住的人吧！</p>
           }
         </div>
-
       </div>
 
       <div class="divider"></div>
