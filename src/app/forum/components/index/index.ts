@@ -4,7 +4,7 @@ import { Component, OnInit, signal, ViewEncapsulation } from '@angular/core';
 import { Router, RouterOutlet, RouterLinkWithHref, RouterLinkActive } from '@angular/router';
 import { BoardList } from '../../interfaces/boardList';
 import { BoardsService } from '../../services/boards-service';
-import { AdData } from '../../interfaces/AdData';
+import { AdDetails } from '../../interfaces/AdDetails';
 import Sortable from 'sortablejs';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../../core/services/auth-service';
@@ -39,7 +39,7 @@ export class Index implements OnInit {
   boardListFollow5: BoardList[] = [];
 
   /**廣告資料 */
-  adDetails?: AdData;
+  adDetails?: AdDetails;
 
   /**貼文標籤 */
   tags = signal<string[]>([]);

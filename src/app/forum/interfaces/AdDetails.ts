@@ -1,4 +1,4 @@
-export interface AdData {
+export interface AdDetails {
   id: number;
   tooltipText: string;
   targetUrl: string;
