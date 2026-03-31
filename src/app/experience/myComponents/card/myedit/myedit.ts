@@ -1,3 +1,4 @@
+import { NotificationService } from './../../../../shared/notifyService/notification-service';
 import { MyCoachInfoS } from './../../../Service/my-coach-info';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators, FormArray, FormBuilder } from '@angular/forms';
@@ -20,6 +21,8 @@ export class Myedit implements OnInit {
   allSpecialities: SpecI[] = [];
   cities: any[] = [];
   districtsByGroup: any[] = []; // 用來存每一組對應的區域清單
+  defaultAvatar = 'https://res.cloudinary.com/dnqawxc59/image/upload/v1774857067/%E8%9E%A2%E5%B9%95%E6%93%B7%E5%8F%96%E7%95%AB%E9%9D%A2_2026-03-30_155018_pbwyxk.png';
+  previewImage: string | null = null;
 
   coachForm = new FormGroup({
     coachName: new FormControl('', [Validators.required]),
@@ -43,6 +46,7 @@ export class Myedit implements OnInit {
     private activatedRoute: ActivatedRoute,
     private myCoachInfoS: MyCoachInfoS,
     private fb: FormBuilder,
+    private notifycationS: NotificationService
   ) { }
   //===========================================//
 
@@ -145,7 +149,7 @@ export class Myedit implements OnInit {
         },
         error: (err) => {
           console.error('抓取區域失敗，錯誤訊息：', err);
-          alert('抓取區域失敗，請檢查網路！');
+          this.notifycationS.show('抓取區域失敗，請檢查網路！');
         }
       });
     }
@@ -206,19 +210,17 @@ export class Myedit implements OnInit {
         });
       }
     } else {
-      alert('表單還有地方沒填對喔，請檢查紅字提示！');
+      this.notifycationS.show('error');
+
     }
   }
 
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
-      this.selectedFile = file;
-
-      // 💡 額外加分：產生一個暫時的 URL 給 <img> 用
       const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.coachForm.patchValue({ avatarUrl: e.target.result });
+      reader.onload = () => {
+        this.previewImage = reader.result as string;
       };
       reader.readAsDataURL(file);
     }

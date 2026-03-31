@@ -31,6 +31,7 @@ export class MyCoachEditS {
     // 根據選中的縣市 ID，取得該縣市下的所有行政區
     return this.client.get<any[]>(`${environment.apiUrl}/trip/Trip/cities/${cityId}/districts`);
   }
+  //---------------------------//
 
 
 }

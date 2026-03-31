@@ -7,6 +7,7 @@ import { CoachAllInfoS } from '../../../Service/coach-all-info-s';
 import { UiS } from '../../../Service/UiS';
 import { FavI } from '../../../Interfaces/myfav';
 
+
 //========!!這是 子Component!!================//
 //========!!放在首頁和收藏!!================//
 
@@ -69,15 +70,9 @@ export class FavCard implements OnInit {
   //   });
   // }
   //========================================//
-  intro() {
-
-    // 這裡直接從 input 拿 ID，不用外面傳進來
-    const data = this.coachItem();
-    if (data && data.coachId) {
-      this.router.navigate(['/experience/coachintro', data.coachId]);
-    } else {
-      this.uiS.showToast("找不到教練編號...");
-    }
+  intro(id: number) {
+    console.log('教練 ID:', id);
+    this.router.navigate(['experience/coachinfo', id]);
   }
 
 }

@@ -13,8 +13,7 @@ export class Toptab {
   private getCoachId(): string {
     const id = localStorage.getItem('coachId');
     if (!id || id === '1') {
-      console.warn('發現無效 ID，強制修正為 1001024');
-      return '1001024';
+      return '';
     }
     return id;
   } template() {

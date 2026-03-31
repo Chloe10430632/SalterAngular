@@ -1,14 +1,39 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { MemreviewCard } from "../../myComponents/card/memreview-card/memreview-card";
 import { CourseforCoachProfile } from "../../myComponents/card/coursefor-coach-profile/coursefor-coach-profile";
 import { CoachCourseExpendContent } from "../../myComponents/card/coach-course-expend-content/coach-course-expend-content";
+import { ActivatedRoute } from '@angular/router';
+import { CoachAllInfoS } from '../../Service/coach-all-info-s';
+import { CoachAllInfoI } from '../../Interfaces/coachallinfo';
+import { LittleIsland } from "../../myComponents/little-island/little-island";
+import { Footer } from "../../../shared/footer/footer";
 
 @Component({
   selector: 'app-coachintro',
-  imports: [MemreviewCard, CourseforCoachProfile, CoachCourseExpendContent],
+  imports: [MemreviewCard, CourseforCoachProfile, CoachCourseExpendContent, LittleIsland, Footer],
   templateUrl: './coach-intro.html',
   styleUrl: './coach-intro.css',
 })
-export class Coachintro {
+export class Coachintro implements OnInit {
+  coachData = signal<CoachAllInfoI | null>(null);
+  //--------------------------------------------------------//
+  constructor(
+    private route: ActivatedRoute, // 用來抓網址上的參數
+    private coachInfoS: CoachAllInfoS
+  ) { }
+  //--------------------------------------------------------//
+  ngOnInit(): void {
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    //--------------------------------------------------------//
+    if (id) {
+      // 2. 拿著 ID 去問 API 要資料
+      this.coachInfoS.getCoachInfo(id).subscribe(res => {
+        this.coachData.set(res.data); // 把抓到的教練資料存起來
+      });
+    }
+
+  }
+
+
 
 }
