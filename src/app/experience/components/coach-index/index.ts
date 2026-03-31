@@ -1,5 +1,4 @@
 import { CoachAllInfoS } from './../../Service/coach-all-info-s';
-//#region import
 import { Component, Injectable, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Footer } from '../../../shared/footer/footer';
@@ -12,7 +11,6 @@ import { UiS } from '../../Service/UiS';
 import { CourseForOneS } from '../../Service/course-for-one';
 
 
-//#endregion
 
 
 //============!!父Component!!================//
@@ -124,7 +122,6 @@ export class Index implements OnInit {
 }
 
 
-//#endregion
 
 
 
