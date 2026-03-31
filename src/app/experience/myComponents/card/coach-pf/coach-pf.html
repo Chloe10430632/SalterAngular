@@ -51,11 +51,14 @@
             <div class="flex items-center gap-2 mb-2">
               <span class="text-primary font-black text-lg">✦ 服務地區 ✦</span>
             </div>
-            <div class="px-1">
+            @for (tag of data?.district; track tag) {<div class="px-1">
               <p class="text-base-content font-bold text-lg">
-                {{ data?.district || '未設定地區' }}
+                {{ tag }}
               </p>
-            </div>
+            </div>}
+            @empty {
+            <span class="text-base-content/40 text-sm">尚無設定地區</span>
+            }
           </div>
 
         </div>

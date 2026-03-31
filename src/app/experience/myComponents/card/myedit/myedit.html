@@ -59,8 +59,8 @@
               <select formControlName="districtId" class="select select-bordered select-primary w-full">
                 <option [ngValue]="null" disabled>請選擇行政區</option>
 
-                @for (dist of districtsByGroup[$index]; track dist.id) {
-                <option [ngValue]="dist.id">{{ dist.districtName || dist.name }}</option>
+                @for (dist of districtsByGroup; track $index) {
+                <option [ngValue]="dist">{{ dist.name }}</option>
                 }
               </select>
             </div>

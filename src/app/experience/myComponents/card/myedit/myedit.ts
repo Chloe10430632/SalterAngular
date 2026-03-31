@@ -19,7 +19,7 @@ export class Myedit implements OnInit {
   selectedFile: File | null = null;
   allSpecialities: SpecI[] = [];
   cities: any[] = [];
-  districtsByGroup: any[][] = []; // 用來存每一組對應的區域清單
+  districtsByGroup: any[] = []; // 用來存每一組對應的區域清單
 
   coachForm = new FormGroup({
     coachName: new FormControl('', [Validators.required]),
@@ -137,7 +137,8 @@ export class Myedit implements OnInit {
           const districts = res.isSuccess ? res.data : res;
 
           // 3. 塞入對應位置的區域清單
-          this.districtsByGroup[index] = districts;
+          this.districtsByGroup = res.success ? res.data : res;
+          // console.log(this.districtsByGroup);
 
           // 4. 重置該組的區域選擇（因為換縣市了，舊的區域要清空）
           this.district.at(index).get('districtId')?.setValue(null);
