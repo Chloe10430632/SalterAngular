@@ -18,7 +18,7 @@ FROM nginx:stable-alpine
 
 # 刪除 Nginx 預設網頁，並從編譯階段把檔案拷貝過來
 # 注意：dist/ 後面的資料夾名稱通常跟你的專案名稱一樣，請檢查一下
-COPY --from=build /app/dist/salter/browser /usr/share/nginx/html
+COPY --from=build /app/dist/Salter/browser /usr/share/nginx/html
 
 # 曝露 80 Port
 EXPOSE 80
