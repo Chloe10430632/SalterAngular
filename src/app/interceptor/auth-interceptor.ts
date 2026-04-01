@@ -48,6 +48,10 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
             }
             errorMessage = error.error?.message || '權限不足：您的存取被禁止';
             break;
+          case 404:
+            router.navigate(['/404']);
+            errorMessage = error.error?.message || '您搜尋的資源不存在';
+            break;
           case 400:
             errorMessage = error.error?.detail || error.error?.message || '請求參數錯誤';
             break;
