@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TripService } from '../../services/trip';
 import { TripSummary } from '../../interfaces/trip';
+import { NotificationService } from '../../../shared/notifyService/notification-service';
 
 @Component({
   selector: 'app-explore',
@@ -15,6 +16,7 @@ export class Explore implements OnInit {
 
   private tripService = inject(TripService);
   private router = inject(Router);
+  private notify = inject(NotificationService);
 
   // 資料
   trips: TripSummary[] = [];
@@ -25,6 +27,9 @@ export class Explore implements OnInit {
 
   // 搜尋
   searchKeyword = '';
+
+  showShareId: number | null = null;
+
 
   // 分類
   selectedCategory = '';
@@ -192,5 +197,18 @@ export class Explore implements OnInit {
       other: '🌊 其他'
     };
     return map[type] ?? type;
+  }
+
+  copyLink(tripId: number) {
+    const url = `${window.location.origin}/trip/detail/${tripId}`;
+    navigator.clipboard.writeText(url).then(() => {
+      this.notify.show('已複製行程連結！', 'success');
+      this.showShareId = null;
+    });
+  }
+
+  toggleShare(tripId: number, event: Event) {
+    event.stopPropagation();
+    this.showShareId = this.showShareId === tripId ? null : tripId;
   }
 }

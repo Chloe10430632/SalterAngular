@@ -33,6 +33,22 @@
             [class.text-error]="isFavorite"></i>
           {{ isFavorite ? '已收藏' : '收藏' }}
         </button>
+        <div class="relative">
+          <button class="btn btn-sm bg-white/20 text-white border-white/40 hover:bg-white/30 gap-1"
+            (click)="showShareLink = !showShareLink">
+            <i class="bi bi-link-45deg"></i> 分享
+          </button>
+          @if (showShareLink) {
+          <div class="absolute bottom-full right-0 mb-2 z-50 bg-base-100 rounded-xl shadow-lg p-3 w-72"
+            (click)="$event.stopPropagation()">
+            <p class="text-xs text-base-content/50 mb-1.5">行程連結</p>
+            <div class="flex gap-1">
+              <input type="text" class="input input-bordered input-xs flex-1 text-xs" [value]="currentUrl" readonly />
+              <button class="btn btn-primary btn-xs" (click)="copyLink()">複製</button>
+            </div>
+          </div>
+          }
+        </div>
       </div>
     </div>
   </div>

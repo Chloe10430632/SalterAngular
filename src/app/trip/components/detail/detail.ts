@@ -82,6 +82,10 @@ export class Detail implements OnInit, AfterViewInit {
     return this.trip.capacity - this.trip.memberCount;
   }
 
+  get currentUrl(): string {
+    return window.location.href;
+  }
+
   ngOnInit() {
     this.authService.currentUser$.subscribe(user => {
       this.currentUserId = user?.id ?? 0;
@@ -453,6 +457,15 @@ export class Detail implements OnInit, AfterViewInit {
         this.router.navigate(['/trip/explore']);
       },
       error: () => this.isDeleting = false
+    });
+  }
+  showShareLink = false;
+
+  copyLink() {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url).then(() => {
+      this.notify.show('已複製行程連結！', 'success');
+      this.showShareLink = false;
     });
   }
 }
