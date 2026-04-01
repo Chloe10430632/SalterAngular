@@ -9,6 +9,7 @@ import { CoachAllInfoI } from '../../Interfaces/IIcoachAllinfo';
 import { CourseInformationS } from '../../Service/course-information';
 import { Search } from "../../myComponents/search/search";
 import { FavCard } from '../../myComponents/card/fav-card/fav-card';
+import { NotificationService } from '../../../shared/notifyService/notification-service';
 
 
 
@@ -39,6 +40,7 @@ export class Index implements OnInit {
   constructor(private rank: Rank,
     private courseNameS: CourseInformationS,
     private coachAllInfoS: CoachCardInfoS,
+    public notificationS: NotificationService
   ) { }
   //=======================================//
   ngOnInit(): void {
@@ -91,9 +93,25 @@ export class Index implements OnInit {
     this.loadCoach();
   }
   loadHeart() {
-    this.coachAllInfoS.HeartIds().subscribe(res => {
-      this.myFavIds.set(res.data); // 抓一次，存起來
-    });
+    const token = localStorage.getItem('token');
+    if (!token) {
+      console.log("訪客身分：不讀取收藏資料");
+      this.myFavIds.set([]); // 確保收藏清單是空的
+      return;
+    }
+
+    this.coachAllInfoS.HeartIds().subscribe({
+      next: (res) => {
+        if (res && res.data) {
+          this.myFavIds.set(res.data);
+        }
+      }, error: (err) => {
+        // 萬一 Token 過期被後端退件，也清空清單
+        this.notificationS.show("抓取收藏失敗", err);
+        this.myFavIds.set([]);
+      }
+    }
+    );
   }
   prepareCourseData() {
     const allList = [...this.coaches, ...this.latestC];

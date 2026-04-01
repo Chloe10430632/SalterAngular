@@ -88,7 +88,8 @@ export class CourseforCoachProfile implements OnInit {
     const favData: FavI = {
       coachId: coachId,
       isSuccess: false,
-      message: ''
+      message: '',
+      data: ''
     };
 
     // 直接呼叫同一隻 API
