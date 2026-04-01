@@ -20,6 +20,9 @@ FROM nginx:stable-alpine
 # 注意：dist/ 後面的資料夾名稱通常跟你的專案名稱一樣，請檢查一下
 COPY --from=build /app/dist/Salter/browser /usr/share/nginx/html
 
+# --- 加上下面這一行，把剛寫好的設定檔放進 Nginx ---
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
 # 曝露 80 Port
 EXPOSE 80
 
