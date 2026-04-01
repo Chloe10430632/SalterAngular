@@ -9,7 +9,8 @@ import { APIResponse, CourseInfoI } from '../Interfaces/course.model';
 })
 //========!!這是Service!!================//
 //====找時間+名稱====//
-export class CourseForOneS {
+//---誰再用: 教練卡、課程資訊展開(、課程上架選時間(、課程模板編輯、模板新增、課程時段刪除))
+export class CourseS {
   constructor(private client: HttpClient) { }
 
 

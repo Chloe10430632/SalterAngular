@@ -1,16 +1,20 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { MemreviewCard } from "../../myComponents/card/memreview-card/memreview-card";
 import { CourseforCoachProfile } from "../../myComponents/card/coursefor-coach-profile/coursefor-coach-profile";
-import { CoachCourseExpendContent } from "../../myComponents/card/coach-course-expend-content/coach-course-expend-content";
 import { ActivatedRoute } from '@angular/router';
 import { CoachAllInfoS } from '../../Service/coach-all-info-s';
 import { CoachAllInfoI } from '../../Interfaces/coachallinfo';
 import { LittleIsland } from "../../myComponents/little-island/little-island";
 import { Footer } from "../../../shared/footer/footer";
+import { CourseExpendDetail } from "../../myComponents/card/course-expend-detail/course-expend-detail";
+
+//========!!這是 父 元件!!================//
+//========!!教練小卡+摺疊課程+評論!!================//
+//=========CourseforCoachProfile/  /MemreviewCard================//
 
 @Component({
   selector: 'app-coachintro',
-  imports: [MemreviewCard, CourseforCoachProfile, CoachCourseExpendContent, LittleIsland, Footer],
+  imports: [MemreviewCard, CourseforCoachProfile, LittleIsland, Footer, CourseExpendDetail],
   templateUrl: './coach-intro.html',
   styleUrl: './coach-intro.css',
 })

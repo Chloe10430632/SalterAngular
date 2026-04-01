@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CoachCourseExpendContent } from './coach-course-expend-content';
+import { CourseExpendDetail } from './course-expend-detail';
 
-describe('CoachCourseExpendContent', () => {
-  let component: CoachCourseExpendContent;
-  let fixture: ComponentFixture<CoachCourseExpendContent>;
+describe('CourseExpendDetail', () => {
+  let component: CourseExpendDetail;
+  let fixture: ComponentFixture<CourseExpendDetail>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CoachCourseExpendContent]
+      imports: [CourseExpendDetail]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(CoachCourseExpendContent);
+    fixture = TestBed.createComponent(CourseExpendDetail);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

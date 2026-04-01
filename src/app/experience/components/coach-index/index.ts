@@ -8,7 +8,7 @@ import { Rank } from '../../Service/rank';
 import { CoachAllInfoI } from '../../Interfaces/coachallinfo';
 import { FavCard } from '../../myComponents/card/fav-card/fav-card';
 import { UiS } from '../../Service/UiS';
-import { CourseForOneS } from '../../Service/course-for-one';
+import { CourseS } from '../../Service/course-for-one';
 import { Search } from "../../myComponents/search/search";
 
 
@@ -37,7 +37,7 @@ export class Index implements OnInit {
 
   //=======================================//
   constructor(private rank: Rank,
-    private courseNameS: CourseForOneS,
+    private courseNameS: CourseS,
     private coachAllInfoS: CoachAllInfoS,
     private uiS: UiS,
   ) { }
