@@ -67,31 +67,31 @@
 
       <div class="space-y-1">
         <p class="text-[20px] font-black  uppercase tracking-tighter text-primary">暱稱 / 姓名</p>
-        <p class="text-xl font-bold text-base-content">{{ fullUserData?.userName || '未設定' }}</p>
+        <p class="text-base font-bold text-base-content">{{ fullUserData?.userName || '未設定' }}</p>
       </div>
 
       <div class="space-y-1">
         <p class="text-[20px] font-black  uppercase tracking-tighter text-primary">電子信箱(帳號)</p>
-        <p class="text-lg font-medium text-base-content/70 italic">{{ fullUserData?.email || 'N/A' }}</p>
+        <p class="text-base font-bold text-base-content">{{ fullUserData?.email || 'N/A' }}</p>
       </div>
 
       <div class="space-y-1">
         <p class="text-[20px] font-black  uppercase tracking-tighter text-primary">會員等級</p>
         <div class="mt-1">
-          <span class="badge badge-secondary badge-md font-black italic gap-1">
-            <i class="bi bi-shield-lock"></i> {{ fullUserData?.roleName || '一般會員' }}
-          </span>
+
+          <p class="text-base font-bold text-base-content"> {{ fullUserData?.roleName || '一般會員' }}</p>
+
         </div>
       </div>
 
       <div class="space-y-1">
         <p class="text-[20px] font-black  uppercase tracking-tighter text-primary">電話號碼</p>
-        <p class="text-lg font-medium">{{ fullUserData?.phone || '--' }}</p>
+        <p class="text-base font-bold text-base-content">{{ fullUserData?.phone || '--' }}</p>
       </div>
 
       <div class="space-y-1">
         <p class="text-[20px] font-black uppercase tracking-tighter text-primary">性別/生日</p>
-        <p class="text-lg font-medium text-base-content/80">
+        <p class="text-base  text-base-content">
           {{ fullUserData?.gender || '未填' }} / {{ fullUserData?.birthday || '未填' }}
         </p>
       </div>

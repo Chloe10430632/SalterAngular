@@ -84,7 +84,7 @@ export class Login implements OnInit {
   forgotForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
     otp: new FormControl('', [Validators.required, Validators.pattern('^[0-9]{6}$')]),
-    newPassword: new FormControl('', [Validators.required, Validators.minLength(6)]),
+    newPassword: new FormControl('', [Validators.required, Validators.minLength(6), Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/)]),
     confirmPassword: new FormControl('', [Validators.required])
   });
 
@@ -116,7 +116,7 @@ export class Login implements OnInit {
 
   registerForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
-    password: new FormControl('', [Validators.required, Validators.minLength(6)]),
+    password: new FormControl('', [Validators.required, Validators.minLength(6), Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/)]),
     confirmPassword: new FormControl('', [Validators.required]),
     userName: new FormControl('', [Validators.required]),
     phone: new FormControl(''),

@@ -552,7 +552,8 @@
               <div class="relative group">
                 <input [type]="isRegPasswordVisible ? 'text' : 'password'" formControlName="newPassword"
                   class="w-full h-16 px-8 bg-white border-2 transition-all outline-none rounded-3xl font-bold
-          {{ (forgotForm.get('newPassword')?.touched && forgotForm.get('newPassword')?.invalid) ? 'border-red-400 bg-red-50/30' : 'border-[#8B5A2B]/40 focus:border-[#8B5A2B]' }}" />
+          {{ (forgotForm.get('newPassword')?.touched && forgotForm.get('newPassword')?.invalid) ? 'border-red-400 bg-red-50/30' : 'border-[#8B5A2B]/40 focus:border-[#8B5A2B]' }}"
+                  placeholder="至少6碼，含大小寫英文與數字" />
 
                 <button type="button" (click)="toggleRegPassword()"
                   class="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#8B5A2B] transition-colors p-2">
@@ -573,7 +574,21 @@
                 </button>
               </div>
               @if (forgotForm.get('newPassword')?.touched && forgotForm.get('newPassword')?.invalid) {
-              <p class="text-[14px] text-red-500 font-bold ml-2 animate-in slide-in-from-left-1">密碼長度至少需要 6 位元</p>
+              <div class="ml-2 animate-in slide-in-from-left-1 flex flex-col gap-1">
+
+                @if (forgotForm.get('newPassword')?.hasError('minlength')) {
+                <p class="text-[14px] text-red-500 font-bold">密碼長度至少需要 6 位</p>
+                }
+
+                @if (forgotForm.get('newPassword')?.hasError('pattern')) {
+                <p class="text-[14px] text-red-500 font-bold">需包含大小寫英文及數字</p>
+                }
+
+                @if (forgotForm.get('newPassword')?.hasError('required')) {
+                <p class="text-[14px] text-red-500 font-bold">請輸入新密碼</p>
+                }
+
+              </div>
               }
             </div>
 
@@ -711,7 +726,8 @@
                 <div class="relative">
                   <input [type]="isRegPasswordVisible ? 'text' : 'password'" formControlName="password"
                     class="w-full h-11 px-6 pr-14 bg-white rounded-2xl border-2 transition-all outline-none font-bold
-                      {{ (registerForm.get('password')?.touched && registerForm.get('password')?.invalid) ? 'border-red-400 bg-red-50/30' : 'border-[#8B5A2B]/40 focus:border-[#8B5A2B]' }}" />
+                      {{ (registerForm.get('password')?.touched && registerForm.get('password')?.invalid) ? 'border-red-400 bg-red-50/30' : 'border-[#8B5A2B]/40 focus:border-[#8B5A2B]' }} placeholder:text-[12px]"
+                    placeholder="至少6碼，含大小寫英文與數字" />
                   <button type="button" (click)="toggleRegPassword()"
                     class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#8B5A2B] transition-colors p-2 z-10">
                     @if (isRegPasswordVisible) {
@@ -732,7 +748,21 @@
                   </button>
                 </div>
                 @if (registerForm.get('password')?.touched && registerForm.get('password')?.invalid) {
-                <p class="text-[15px] text-red-500 font-bold ml-2 animate-in slide-in-from-left-1">至少 6 位元</p>
+                <div class="ml-2 animate-in slide-in-from-left-1 flex flex-col gap-1">
+
+                  @if (registerForm.get('password')?.hasError('minlength')) {
+                  <p class="text-[14px] text-red-500 font-bold">密碼長度至少需要 6 位</p>
+                  }
+
+                  @if (registerForm.get('password')?.hasError('pattern')) {
+                  <p class="text-[14px] text-red-500 font-bold">需包含大小寫英文及數字</p>
+                  }
+
+                  @if (registerForm.get('password')?.hasError('required')) {
+                  <p class="text-[14px] text-red-500 font-bold">請輸入密碼</p>
+                  }
+
+                </div>
                 }
               </div>
               <div class="space-y-1">
