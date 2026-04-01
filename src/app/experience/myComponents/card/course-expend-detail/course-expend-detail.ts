@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { CourseInfoI } from '../../../Interfaces/course.model';
+
 
 //================!! 子 元件!!==============================//
 //================課程折疊==================================//

@@ -9,9 +9,6 @@ import { CoachAllInfoI } from '../../Interfaces/IIcoachAllinfo';
 import { CourseInformationS } from '../../Service/course-information';
 import { Search } from "../../myComponents/search/search";
 import { FavCard } from '../../myComponents/card/fav-card/fav-card';
-import { UiS } from '../../Service/UiS';
-import { CourseS } from '../../Service/course-for-one';
-import { Search } from "../../myComponents/search/search";
 
 
 
