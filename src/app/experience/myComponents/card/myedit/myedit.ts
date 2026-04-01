@@ -1,5 +1,5 @@
 import { NotificationService } from './../../../../shared/notifyService/notification-service';
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators, FormArray, FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Route, Router } from '@angular/router';
 import { SpecI } from '../../../Interfaces/IISpecSport';
@@ -117,14 +117,14 @@ export class Myedit implements OnInit {
     });
 
     const index = this.district.length;
+    this.districtsByGroup[index] = []; // ✅ 先給空陣列
     this.district.push(group);
-    this.districtsByGroup.push([]);
 
-    // 如果有初始縣市，立刻抓取該縣市的區域清單，否則區域選單會是空的
     if (initialCityId) {
-      this.coachS.getDistrictsByCity(initialCityId).subscribe((res: DistI[]) => {
-        this.districtsByGroup[index] = res;
-        console.log(res);
+      this.coachS.getDistrictsByCity(initialCityId).subscribe((res: any) => {
+        const updated = [...this.districtsByGroup];
+        updated[index] = Array.isArray(res.data) ? res.data : [];  // 取 res.data
+        this.districtsByGroup = updated;
       });
     }
   }
@@ -137,27 +137,26 @@ export class Myedit implements OnInit {
 
   //  當縣市選單切換時
   onCityChange(index: number) {
-    // 1. 從正確的 index 拿到該組的 cityId
     const cityId = this.district.at(index).get('cityId')?.value;
-
-    console.log('選中的縣市 ID 是：', cityId);
 
     if (cityId) {
       this.coachS.getDistrictsByCity(cityId).subscribe({
-        next: (res: DistI[]) => {
-
-          // 3. 塞入對應位置的區域清單
-          this.districtsByGroup[index] = res;
-          //  console.log(this.districtsByGroup);
-
-          // 4. 重置該組的區域選擇（因為換縣市了，舊的區域要清空）
+        next: (res: any) => {  // 改成 any 避免型別衝突
+          const updated = [...this.districtsByGroup];
+          updated[index] = Array.isArray(res.data) ? res.data : [];  // 取 res.data
+          this.districtsByGroup = updated;
           this.district.at(index).get('districtId')?.setValue(null);
+          console.log('API 回傳的 res 型別:', typeof res, Array.isArray(res), res);
         },
         error: (err) => {
-          console.error('抓取區域失敗，錯誤訊息：', err);
-          this.notifycationS.show('抓取區域失敗，請檢查網路！');
+          console.error('抓取區域失敗', err);
+          this.notifycationS.show('抓取區域失敗，請稍後再試');
         }
       });
+    } else {
+      const updated = [...this.districtsByGroup];
+      updated[index] = [];
+      this.districtsByGroup = updated;
     }
   }
 
@@ -221,6 +220,7 @@ export class Myedit implements OnInit {
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
+      this.selectedFile = file;
       const reader = new FileReader();
       reader.onload = () => {
         this.previewImage = reader.result as string;
