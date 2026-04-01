@@ -25,6 +25,8 @@ export class CourseInformationS {
   }
 
   /**建模板 */
-  // createCourseT():{}
+  createCourseT(data: FormData): Observable<any> {
+    return this.client.post<any>(`${environment.apiUrl}/Exp/Exp/AddCourseT`, data);
+  }
 
 }

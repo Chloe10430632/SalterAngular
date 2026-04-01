@@ -16,5 +16,5 @@ export interface CourseInfoI {
   updatedAt: string;
   photoUrls?: string[];
   price?: number;
-
+  difficulty: string;
 }
