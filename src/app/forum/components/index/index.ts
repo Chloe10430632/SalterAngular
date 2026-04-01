@@ -140,7 +140,7 @@ export class Index implements OnInit {
 
 
     this.postForm.get('content')!.valueChanges.pipe(
-      debounceTime(1000),
+      debounceTime(1200),
       distinctUntilChanged(),
       filter(val => val !== null && val !== undefined),
       tap(() => {
