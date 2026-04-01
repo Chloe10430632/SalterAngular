@@ -1144,7 +1144,7 @@
   <div class="px-5 py-4 border-t border-gray-100 bg-white flex gap-2">
     <input #msgInput (keyup.enter)="send(msgInput.value); msgInput.value=''" type="text"
       class="input input-bordered input-md flex-1 focus:outline-none focus:border-warning" placeholder="請輸入...">
-    <button (click)="send(msgInput.value); msgInput.value=''" [disabled]="isLoading"
+    <button (click)="send(msgInput.value); msgInput.value=''" [disabled]="isLoading2"
       class="btn btn-warning btn-md px-6 text-white shadow-sm">
       發送
     </button>

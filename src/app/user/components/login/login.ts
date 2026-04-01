@@ -727,22 +727,31 @@ export class Login implements OnInit {
     this.isChatOpen = !this.isChatOpen;
   }
 
-  private scrollToBottom(): void {
+  private scrollToBottom(force: boolean = false): void {
     try {
-      // 在 DOM 更新後執行捲動
-      setTimeout(() => {
-        this.chatContainer.nativeElement.scrollTop = this.chatContainer.nativeElement.scrollHeight;
-      }, 100);
+      const element = this.chatContainer.nativeElement;
+      // 判斷旅伴是否快到部了 (預留 100px 的邊距)
+      const isAtBottom = element.scrollHeight - element.scrollTop <= element.clientHeight + 100;
+
+      if (force || isAtBottom) {
+        setTimeout(() => {
+          element.scrollTo({
+            top: element.scrollHeight,
+            behavior: 'smooth' // 加個平滑捲動，更有海邊悠閒感 🌊
+          });
+        }, 100);
+      }
     } catch (err) { }
   }
 
   send(message: string) {
-    if (!message.trim() || this.isLoading) return;
+    if (!message.trim() || this.isLoading2) return;
 
     this.chatHistory.push({ role: 'user', content: message });
 
     this.reply = '正在思考中...'; // 先給使用者心理回饋
     this.isLoading2 = true;
+    this.scrollToBottom(true);
 
     const promptForApi = `請使用【繁體中文】回答：${message}`;
 
@@ -751,7 +760,7 @@ export class Login implements OnInit {
         console.log('收到後端回覆：', res);
         this.chatHistory.push({ role: 'bot', content: res.reply });
         this.isLoading2 = false;
-        this.scrollToBottom();
+        this.scrollToBottom(false);
       },
       error: (err) => {
         this.notification.show("小助手暫時無法回應", 'error');
@@ -762,7 +771,7 @@ export class Login implements OnInit {
           content: '🌊 哎呀！海風太強，小沙不小心被吹走了... 請再試著呼喚我一次！'
         });
 
-        this.scrollToBottom();
+        this.scrollToBottom(false);
 
       }
     });
