@@ -90,8 +90,15 @@ export class Myedit implements OnInit {
                 specialities: specIds,
               });
               // 處理地區回填
+              this.district.clear();
               if (apiData.districtId) {
+                // 先用 districtId 去抓所有縣市的 districts，找到對應的 cityId
                 this.addDistrictGroup(apiData.cityId, apiData.districtId);
+
+                // 如果 cityId 是 null，等縣市清單載入後再反查
+                if (!apiData.cityId) {
+                  // 需要遍歷所有縣市去找，比較麻煩
+                }
               } else {
                 this.addDistrictGroup();
               }
@@ -124,6 +131,7 @@ export class Myedit implements OnInit {
         this.districtsByGroup = updated;
       });
     }
+
   }
 
   //  刪除一組地區
