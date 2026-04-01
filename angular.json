@@ -64,6 +64,11 @@
           "defaultConfiguration": "production"
         },
         "serve": {
+          "options": {
+            "allowedHosts": [
+              "sartorially-carbonylic-bennie.ngrok-free.dev"
+            ]
+          },
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
