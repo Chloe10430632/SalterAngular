@@ -13,7 +13,7 @@ export class SensitiveWordsService {
   /**POST 檢查使用者輸入文字 */
   postCheckWordsApi(content: string) {
     // 注意：後端接收 string 需確保 Headers 正確
-    return this.http.post<CheckSensitiveWords>(`${environment.apiUrl}/Forum/SensitiveWords/check`, `"${content}"`, {
+    return this.http.post<CheckSensitiveWords>(`${environment.apiUrl}/Forum/SensitiveWords/check`, JSON.stringify(content), {
       headers: { 'Content-Type': 'application/json' }
     });
   }
