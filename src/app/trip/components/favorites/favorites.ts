@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, NgZone, ElementRef } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { DatePipe, NgClass } from '@angular/common';
 import { TripService } from '../../services/trip';
@@ -14,13 +14,32 @@ export class Favorites implements OnInit {
 
   private tripService = inject(TripService);
   private router = inject(Router);
+  private ngZone = inject(NgZone);
+  private el = inject(ElementRef);
 
   trips: TripSummary[] = [];
   isLoading = true;
-
+  showLoginRequired = false;
+  countdown = 6;
   confirmingRemoveId: number | null = null;
 
   ngOnInit() {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      this.showLoginRequired = true;
+      this.ngZone.runOutsideAngular(() => {
+        const timer = setInterval(() => {
+          this.countdown--;
+          const el = this.el.nativeElement.querySelector('#countdown-text');
+          if (el) el.textContent = `${this.countdown} 秒後自動跳轉至登入頁面`;
+          if (this.countdown === 0) {
+            clearInterval(timer);
+            this.ngZone.run(() => this.router.navigate(['/login']));
+          }
+        }, 1000);
+      });
+      return;
+    }
     this.loadFavorites();
   }
 
@@ -45,10 +64,6 @@ export class Favorites implements OnInit {
     });
   }
 
-  goToDetail(id: number) {
-    this.router.navigate(['/trip/detail', id]);
-  }
-
   getStatusLabel(status: string): string {
     const map: Record<string, string> = {
       active: '揪團中', locked: '即將成行', completed: '已結束', cancelled: '已取消'
@@ -71,5 +86,4 @@ export class Favorites implements OnInit {
     };
     return map[type] ?? type;
   }
-
 }
