@@ -275,13 +275,20 @@
                   }
                 </div>
                 @if (isOrganizer) {
-                <div class="flex gap-1 shrink-0">
+                <div class="flex gap-1 shrink-0 items-center">
                   <button class="btn btn-ghost btn-xs" (click)="openEditGearForm(gear)">
                     <i class="bi bi-pencil"></i>
                   </button>
-                  <button class="btn btn-ghost btn-xs text-error" (click)="deleteGearItem(gear.id)">
+
+                  @if (confirmingDeleteGearId === gear.id) {
+                  <span class="text-xs text-base-content/50">確定刪除?</span>
+                  <button class="btn btn-error btn-xs" (click)="deleteGearItem(gear.id)">確定</button>
+                  <button class="btn btn-ghost btn-xs" (click)="confirmingDeleteGearId = null">取消</button>
+                  } @else {
+                  <button class="btn btn-ghost btn-xs text-error" (click)="confirmingDeleteGearId = gear.id">
                     <i class="bi bi-trash"></i>
                   </button>
+                  }
                 </div>
                 }
               </div>
@@ -346,16 +353,23 @@
                 <h3 class="font-bold text-sm truncate">{{ a.title }}</h3>
               </div>
               @if (isOrganizer) {
-              <div class="flex gap-1 shrink-0">
+              <div class="flex gap-1 shrink-0 items-center">
                 <button class="btn btn-ghost btn-xs" (click)="togglePin(a.id)" [title]="a.isPinned ? '取消置頂' : '置頂'">
                   <i class="bi text-xs" [class.bi-pin-fill]="a.isPinned" [class.bi-pin]="!a.isPinned"></i>
                 </button>
                 <button class="btn btn-ghost btn-xs" (click)="openEditAnnouncementForm(a)">
                   <i class="bi bi-pencil text-xs"></i>
                 </button>
-                <button class="btn btn-ghost btn-xs text-error" (click)="deleteAnnouncement(a.id)">
+
+                @if (confirmingDeleteAnnouncementId === a.id) {
+                <span class="text-xs text-base-content/50">確定刪除?</span>
+                <button class="btn btn-error btn-xs" (click)="deleteAnnouncement(a.id)">確定</button>
+                <button class="btn btn-ghost btn-xs" (click)="confirmingDeleteAnnouncementId = null">取消</button>
+                } @else {
+                <button class="btn btn-ghost btn-xs text-error" (click)="confirmingDeleteAnnouncementId = a.id">
                   <i class="bi bi-trash text-xs"></i>
                 </button>
+                }
               </div>
               }
             </div>

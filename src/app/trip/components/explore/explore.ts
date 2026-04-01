@@ -140,8 +140,21 @@ export class Explore implements OnInit {
 
   toggleFavorite(trip: TripSummary, event: Event) {
     event.stopPropagation();
-    trip.isFavorite = !trip.isFavorite;
-    // TODO:  串接收藏 API
+    if (trip.isFavorite) {
+      this.tripService.removeFavorite(trip.id).subscribe({
+        next: () => {
+          const t = this.trips.find(t => t.id === trip.id);
+          if (t) t.isFavorite = false;
+        }
+      });
+    } else {
+      this.tripService.addFavorite(trip.id).subscribe({
+        next: () => {
+          const t = this.trips.find(t => t.id === trip.id);
+          if (t) t.isFavorite = true;
+        }
+      });
+    }
   }
 
   goToDetail(id: number) {

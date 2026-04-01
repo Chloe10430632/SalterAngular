@@ -64,6 +64,10 @@ export class Detail implements OnInit, AfterViewInit {
   showEndPicker = false;
   today = new Date().toISOString().split('T')[0];
 
+  // inline 刪除確認
+  confirmingDeleteGearId: number | null = null;
+  confirmingDeleteAnnouncementId: number | null = null;
+
   get myCheckedCount(): number {
     return this.gearItems.filter(g => g.isCheckedByMe).length;
   }
@@ -91,9 +95,11 @@ export class Detail implements OnInit, AfterViewInit {
       this.loadTrip();
     });
   }
+
   ngAfterViewInit() {
     import('cally');
   }
+
   loadTrip() {
     this.isLoading = true;
     this.tripService.getTripById(this.tripId).subscribe({
@@ -117,7 +123,6 @@ export class Detail implements OnInit, AfterViewInit {
     if (!this.trip) return;
     this.isOrganizer = this.trip.organizerUserId === this.currentUserId;
     this.isMember = this.isOrganizer || this.trip.members.some(m => m.userId === this.currentUserId);
-    console.log('isMember:', this.isMember, 'currentUserId:', this.currentUserId);
     this.tripState.isMember.set(this.isMember);
   }
 
@@ -197,6 +202,8 @@ export class Detail implements OnInit, AfterViewInit {
     return this.activeTab === tab;
   }
 
+  // 裝備清單
+
   loadGearItems() {
     this.tripService.getGearItems(this.tripId).subscribe({
       next: (res) => {
@@ -243,7 +250,10 @@ export class Detail implements OnInit, AfterViewInit {
 
   deleteGearItem(gearId: number) {
     this.tripService.deleteGearItem(gearId).subscribe({
-      next: () => this.loadGearItems()
+      next: () => {
+        this.loadGearItems();
+        this.confirmingDeleteGearId = null;
+      }
     });
   }
 
@@ -255,6 +265,8 @@ export class Detail implements OnInit, AfterViewInit {
       }
     });
   }
+
+  // 公告
 
   loadAnnouncements() {
     this.tripService.getAnnouncements(this.tripId).subscribe({
@@ -297,7 +309,10 @@ export class Detail implements OnInit, AfterViewInit {
 
   deleteAnnouncement(aid: number) {
     this.tripService.deleteAnnouncement(aid).subscribe({
-      next: () => this.loadAnnouncements()
+      next: () => {
+        this.loadAnnouncements();
+        this.confirmingDeleteAnnouncementId = null;
+      }
     });
   }
 
@@ -307,6 +322,7 @@ export class Detail implements OnInit, AfterViewInit {
     });
   }
 
+  //  編輯行程
 
   editForm = {
     title: '',
@@ -355,6 +371,7 @@ export class Detail implements OnInit, AfterViewInit {
     });
   }
 
+  // 封面上傳
 
   onDragOver(event: DragEvent) {
     event.preventDefault();
@@ -380,8 +397,6 @@ export class Detail implements OnInit, AfterViewInit {
 
   async uploadCover(file: File) {
     this.isUploading = true;
-
-    // 本地預覽（不等上傳完成就先顯示）
     const reader = new FileReader();
     reader.onload = () => this.coverPreview = reader.result as string;
     reader.readAsDataURL(file);
@@ -399,7 +414,7 @@ export class Detail implements OnInit, AfterViewInit {
       this.editForm.coverImagePublicId = data.public_id;
     } catch {
       this.notify.show('圖片上傳失敗', 'error');
-      this.coverPreview = this.editForm.coverImageUrl; // 還原預覽
+      this.coverPreview = this.editForm.coverImageUrl;
     } finally {
       this.isUploading = false;
     }
@@ -410,6 +425,8 @@ export class Detail implements OnInit, AfterViewInit {
     this.editForm.coverImagePublicId = '';
     this.coverPreview = '';
   }
+
+  //  日期選擇
 
   onStartDateChange(event: Event) {
     const value = (event as CustomEvent).detail ?? (event.target as any).value ?? '';
@@ -426,6 +443,7 @@ export class Detail implements OnInit, AfterViewInit {
     this.showEndPicker = false;
   }
 
+  //  刪除行程
 
   confirmDelete() {
     this.isDeleting = true;
