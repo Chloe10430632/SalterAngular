@@ -4,7 +4,7 @@ import { Component, OnInit, signal, ViewEncapsulation } from '@angular/core';
 import { Router, RouterOutlet, RouterLinkWithHref, RouterLinkActive } from '@angular/router';
 import { BoardList } from '../../interfaces/boardList';
 import { BoardsService } from '../../services/boards-service';
-import { AdData } from '../../interfaces/AdData';
+
 import Sortable from 'sortablejs';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../../core/services/auth-service';
@@ -16,6 +16,7 @@ import { TripService } from '../../../trip/services/trip';
 import { SensitiveWordsService } from '../../services/sensitive-words-service';
 import { debounceTime, distinctUntilChanged, filter, switchMap, tap } from 'rxjs';
 import { PostsAgentService } from '../../services/posts-agent-service';
+import { AdDetails } from '../../interfaces/AdDetails';
 
 @Component({
   selector: 'app-index',

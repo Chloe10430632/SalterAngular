@@ -20,7 +20,8 @@ import { CoachS } from '../../Service/coach-s';
   styleUrl: './coach-profile.css',
 })
 export class CoachProfile {
-  coachData?: CoachAllInfoI;
+  coachData?: APIResponse<CoachAllInfoI>;
+  //coachData? :CoachAllInfoI;
   isLoading = true;
   //------------------------------------------------------//
   constructor(
@@ -41,28 +42,26 @@ export class CoachProfile {
 
     console.log('🔴 最終認定的 ID 為:', idFromRoute);
 
-    // if (idFromRoute && idFromRoute !== '0') {
-    //   const targetId = Number(idFromRoute);
-    //   this.isLoading = true;
+    if (idFromRoute && idFromRoute !== '0') {
+      const targetId = Number(idFromRoute);
+      this.isLoading = true;
 
-    //   this.mycoachInhoS.getMyInfo(targetId).subscribe({
-    //     next: (res) => {
-    //       if (res.isSuccess) {
-    //         this.coachData = res.data;
-    //         console.log('🟢 API 回傳資料:', res.data);
-    //       }
-    //     },
-    //     error: (err) => {
-    //       console.error('抓取失敗', err);
-    //       this.isLoading = false;
-    //     },
-    //     complete: () => this.isLoading = false
-    //   });
-    // } else {
-    //   // 如果連 localStorage 都沒有，代表真的沒登入或不是教練
-    //   console.warn('找不到有效的 CoachId');
-    //   this.isLoading = false;
-    //   // this.router.navigate(['/login']); // 選用：踢回登入頁
-    // }
+      this.coachS.getMyInfoNum(targetId).subscribe({
+        next: (res) => {
+          console.log('🔴 父組件收到回應：', res); // 這裡沒印代表你可能在看舊的程式碼
+          if (res && res.isSuccess) {
+            this.coachData = res; // 確保變數名稱是 coachData
+          }
+        },
+        complete: () => {
+          this.isLoading = false; // 🟢 關鍵：一定要設為 false，不然畫面會一直卡在轉圈圈或空白
+        }
+      });
+    } else {
+      // 如果連 localStorage 都沒有，代表真的沒登入或不是教練
+      console.warn('找不到有效的 CoachId');
+      this.isLoading = false;
+      // this.router.navigate(['/login']); // 選用：踢回登入頁
+    }
   }
 }

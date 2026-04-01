@@ -32,8 +32,13 @@ export class Coachintro implements OnInit {
     //--------------------------------------------------------//
     if (id) {
       // 2. 拿著 ID 去問 API 要資料
-      this.coachS.getMyInfoNum(id).subscribe(res => {
-        this.coachData.set(res); // 把抓到的教練資料存起來
+      this.coachS.getMyInfoNum(id).subscribe({
+        next: (res) => {
+          this.coachData.set(res.data);
+        },
+        error: (err) => {
+          console.error('抓資料失敗了！', err); // 這樣失敗時你才會在 Console 看到為什麼
+        }
       });
     }
 

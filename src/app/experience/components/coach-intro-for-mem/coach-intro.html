@@ -25,8 +25,10 @@
           </div>
           <app-memreview-card></app-memreview-card>
           <div class="space-y-4">
-            <div *ngFor="let review of reviews" class="bg-base-100 p-6 rounded-2xl shadow-sm border border-base-200">
+            <!-- @for(review of coachData()?.review; track $index){
+            <div class="bg-base-100 p-6 rounded-2xl shadow-sm border border-base-200">
             </div>
+          } -->
           </div>
 
         </main>

@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators, FormArray, FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Route, Router } from '@angular/router';
 import { SpecI } from '../../../Interfaces/IISpecSport';
-import { CoachAllInfoI } from '../../../Interfaces/IIcoachAllinfo';
+import { APIResponse, CoachAllInfoI } from '../../../Interfaces/IIcoachAllinfo';
 import { DistI } from '../../../Interfaces/IIDistrict';
 import { CoachS } from '../../../Service/coach-s';
 import { CoachCardInfoS } from '../../../Service/coach-card-info-s';
@@ -67,9 +67,9 @@ export class Myedit implements OnInit {
       // 2. 清單拿到了，才去抓「教練個人資料」
       if (this.currentCoachId) {
         this.coachS.getMyInfoStr(this.currentCoachId).subscribe({
-          next: (res: CoachAllInfoI) => {
-            if (res) {
-              const apiData = res; console.log("教練個人資料:", res);
+          next: (res: APIResponse<CoachAllInfoI>) => {
+            if (res.data) {
+              const apiData = res.data; console.log("教練個人資料:", res);
 
               const specIds = apiData.specialities.map((name: string) => {
                 const found = this.allSpecialities.find(s => s.sportsName === name);

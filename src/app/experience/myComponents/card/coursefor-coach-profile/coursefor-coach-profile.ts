@@ -10,7 +10,7 @@ import { CoachS } from '../../../Service/coach-s';
 
 //========!!這是 子Component!!================//
 //========!!放在教練介紹頁!!==================//
-//========!!教練小卡!!=======================//
+//========!!一頁大卡!!=======================//
 
 
 @Component({
@@ -50,8 +50,11 @@ export class CourseforCoachProfile implements OnInit {
   /**是哪個教練的介紹 */
   loadCoach(coachId: number) {
     this.coachS.getMyInfoNum(coachId).subscribe({
-      next: (result) => {
-        this.coach.set(result);
+      next: (result: any) => {
+        if (result && result.data) {
+          this.coach.set(result.data); // 這裡存入的是 CoachAllInfoI 本人
+          console.log('🟢 成功設定教練資料:', this.coach());
+        }
       },
       error: (err) => {
         console.error('抓取教練資料失敗', err);

@@ -4,9 +4,10 @@ import { environment } from '../../../environments/environment';
 import { SpecI } from '../Interfaces/IISpecSport';
 import { CityI, DistI } from '../Interfaces/IIDistrict';
 import { Observable } from 'rxjs';
-import { CoachAllInfoI, CoachEditInfoI } from '../Interfaces/IIcoachAllinfo';
+import { APIResponse, CoachAllInfoI, CoachEditInfoI } from '../Interfaces/IIcoachAllinfo';
 
 //===========!!Service!!================//
+//教練、專業、地區//
 
 @Injectable({
   providedIn: 'root',
@@ -14,11 +15,11 @@ import { CoachAllInfoI, CoachEditInfoI } from '../Interfaces/IIcoachAllinfo';
 export class CoachS {
   constructor(private client: HttpClient) { }
   //===========================================//
-  getMyInfoStr(coachId: string): Observable<CoachAllInfoI> {
-    return this.client.get<CoachAllInfoI>(`${environment.apiUrl}/Exp/Exp/Info/${coachId}`);
+  getMyInfoStr(coachId: string): Observable<APIResponse<CoachAllInfoI>> {
+    return this.client.get<APIResponse<CoachAllInfoI>>(`${environment.apiUrl}/Exp/Exp/Info/${coachId}`);
   }
-  getMyInfoNum(coachId: number): Observable<CoachAllInfoI> {
-    return this.client.get<CoachAllInfoI>(`${environment.apiUrl}/Exp/Exp/Info/${coachId}`);
+  getMyInfoNum(coachId: number): Observable<APIResponse<CoachAllInfoI>> {
+    return this.client.get<APIResponse<CoachAllInfoI>>(`${environment.apiUrl}/Exp/Exp/Info/${coachId}`);
   }
   editMyInfo(coachId: string, data: FormData): Observable<any> {
     return this.client.post<any>(`${environment.apiUrl}/Exp/Exp/EditCoach/${coachId}`, data);
