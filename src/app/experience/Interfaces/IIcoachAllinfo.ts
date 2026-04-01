@@ -14,7 +14,8 @@ export interface CoachAllInfoI {
   reviewCount: number;
   specialities: string[];
   introduction: string;
-  
+  districtId: number;
+  cityId: number;
 }
 
 export interface CoachEditInfoI {

@@ -90,14 +90,11 @@ export class Myedit implements OnInit {
                 specialities: specIds,
               });
               // 處理地區回填
-              if (apiData.district && apiData.district.length > 0) {
-                apiData.district.join(',').split(',').map(Number).forEach((dId: number) => {
-                  this.addDistrictGroup(dId);
-                });
+              if (apiData.districtId) {
+                this.addDistrictGroup(apiData.cityId, apiData.districtId);
               } else {
-                this.addDistrictGroup(); // 若無資料，預設給一組空的
+                this.addDistrictGroup();
               }
-
             }
           }
         });
@@ -113,7 +110,7 @@ export class Myedit implements OnInit {
   addDistrictGroup(initialCityId: number | null = null, initialDistrictId: number | null = null) {
     const group = new FormGroup({
       cityId: new FormControl(initialCityId),
-      districtId: new FormControl(initialDistrictId, [Validators.required])
+      districtId: new FormControl(initialDistrictId)
     });
 
     const index = this.district.length;
@@ -163,6 +160,20 @@ export class Myedit implements OnInit {
   //#endregion
 
   onSave() {
+    console.log('表單狀態:', this.coachForm.valid);
+    console.log('表單錯誤:', this.coachForm.errors);
+    Object.keys(this.coachForm.controls).forEach(key => {
+      const ctrl = this.coachForm.get(key);
+      console.log(`${key} => valid: ${ctrl?.valid}, value:`, ctrl?.value, 'errors:', ctrl?.errors);
+    });
+    // district 內部每一組也檢查
+    this.district.controls.forEach((group, i) => {
+      const g = group as FormGroup;
+      Object.keys(g.controls).forEach(key => {
+        console.log(`district[${i}].${key} => valid: ${g.get(key)?.valid}, value:`, g.get(key)?.value, 'errors:', g.get(key)?.errors);
+      });
+    });
+    //================
     if (this.coachForm.valid) {
       const formData = new FormData();
       const rawValue = this.coachForm.getRawValue();

@@ -22,7 +22,7 @@ export class CoachS {
     return this.client.get<APIResponse<CoachAllInfoI>>(`${environment.apiUrl}/Exp/Exp/Info/${coachId}`);
   }
   editMyInfo(coachId: string, data: FormData): Observable<any> {
-    return this.client.post<any>(`${environment.apiUrl}/Exp/Exp/EditCoach/${coachId}`, data);
+    return this.client.put<any>(`${environment.apiUrl}/Exp/Exp/EditCoach/${coachId}`, data);
   }
 
   createMyInfo(data: FormData): Observable<any> {
