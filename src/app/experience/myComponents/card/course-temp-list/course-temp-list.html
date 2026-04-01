@@ -28,52 +28,69 @@
         <div class="col-span-1">
           <div class="carousel w-full rounded-xl h-48 shadow-inner">
             <!--  -->
-            <div id="slide1" class="carousel-item relative w-full">
-              <img [src]="course?.photoUrls" class="w-full object-cover" />
-              <div class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
-                <a href="#slide3" class="btn btn-circle btn-xs opacity-50">❮</a>
-                <a href="#slide2" class="btn btn-circle btn-xs opacity-50">❯</a>
+            <div class="col-span-1">
+              <div class="carousel w-full rounded-xl h-48 shadow-inner bg-base-200">
+
+                @for (photo of course?.photoUrls; track $index) {
+                <div [id]="'course-' + course?.coachId + '-slide-' + $index" class="carousel-item relative w-full">
+
+                  <img [src]="photo" class="w-full object-cover" />
+
+                  <div class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
+
+                    <a [href]="'#course-' + course?.coachId + '-slide-' + ($index === 0 ? (course?.photoUrls?.length ?? 1) - 1 : $index - 1)"
+                      class="btn btn-circle btn-xs opacity-50">❮</a>
+
+                    <a [href]="'#course-' + course?.coachId + '-slide-' + ($index === (course?.photoUrls?.length ?? 1) - 1 ? 0 : $index + 1)"
+                      class="btn btn-circle btn-xs opacity-50">❯</a>
+
+                  </div>
+                </div>
+                } @empty {
+                <div class="flex items-center justify-center h-full text-base-content/30 italic">
+                  暫無課程照片
+                </div>
+                }
               </div>
             </div>
+            <!--  -->
           </div>
-          <!--  -->
-        </div>
 
-        <div class="col-span-2 flex flex-col justify-between">
-          <div class="space-y-4">
-            <div>
-              <h4 class="text-sm font-bold text-base-content/50 uppercase tracking-widest">課程簡述</h4>
-              <p class="text-lg">{{ course?.description }}</p>
-            </div>
+          <div class="col-span-2 flex flex-col justify-between">
+            <div class="space-y-4">
+              <div>
+                <h4 class="text-sm font-bold text-base-content/50 uppercase tracking-widest">課程簡述</h4>
+                <p class="text-lg">{{ course?.description }}</p>
+              </div>
 
-            <div class="flex flex-wrap gap-8">
-              <div class="stats shadow bg-base-200">
-                <div class="stat">
-                  <div class="stat-title">價格</div>
-                  <div class="stat-value text-primary text-2xl">NT$ {{ course?.price }}</div>
+              <div class="flex flex-wrap gap-8">
+                <div class="stats shadow bg-base-200">
+                  <div class="stat">
+                    <div class="stat-title">價格</div>
+                    <div class="stat-value text-primary text-2xl">NT$ {{ course?.price }}</div>
+                  </div>
+                </div>
+
+                <div class="stats shadow bg-base-200">
+                  <div class="stat">
+                    <div class="stat-title">難度</div>
+                    <div class="stat-value text-secondary text-2xl">{{ course?.difficulty }}</div>
+                  </div>
                 </div>
               </div>
+            </div>
 
-              <div class="stats shadow bg-base-200">
-                <div class="stat">
-                  <div class="stat-title">難度</div>
-                  <div class="stat-value text-secondary text-2xl">{{ course?.difficulty }}</div>
-                </div>
-              </div>
+            <div class="mt-6 text-xs text-base-content/40 flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              最後更新時間：{{ course?.updatedAt | date:'yyyy-MM-dd HH:mm' }}
             </div>
           </div>
 
-          <div class="mt-6 text-xs text-base-content/40 flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            最後更新時間：{{ course?.updatedAt | date:'yyyy-MM-dd HH:mm' }}
-          </div>
         </div>
-
       </div>
     </div>
   </div>
-</div>

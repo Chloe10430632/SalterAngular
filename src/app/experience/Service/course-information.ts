@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
 import { CourseInfoI } from '../Interfaces/IICourse';
+import { APIResponse } from '../Interfaces/IIcoachAllinfo';
 
 @Injectable({
   providedIn: 'root',
@@ -13,13 +14,13 @@ export class CourseInformationS {
   constructor(private client: HttpClient) { }
 
   /**找課程資訊 */
-  getCourseInfo(sessionId: number): Observable<CourseInfoI> {
-    return this.client.get<CourseInfoI>(`${environment.apiUrl}/Exp/Exp/CourseInfo/${sessionId}`);
+  getCourseInfo(sessionId: number): Observable<APIResponse<CourseInfoI>> {
+    return this.client.get<APIResponse<CourseInfoI>>(`${environment.apiUrl}/Exp/Exp/CourseInfo/${sessionId}`);
   }
 
   /**找最新課程 */
-  getLatestCourseByCoach(coachId: number): Observable<CourseInfoI> {
-    return this.client.get<CourseInfoI>(
+  getLatestCourseByCoach(coachId: number): Observable<APIResponse<CourseInfoI>> {
+    return this.client.get<APIResponse<CourseInfoI>>(
       `${environment.apiUrl}/Exp/Exp/LatestCourse/${coachId}`
     );
   }
