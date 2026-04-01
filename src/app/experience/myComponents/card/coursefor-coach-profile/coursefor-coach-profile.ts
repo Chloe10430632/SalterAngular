@@ -1,11 +1,11 @@
-import { UiS } from './../../../Service/UiS';
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit, signal } from '@angular/core';
-import { CoachAllInfoS } from '../../../Service/coach-all-info-s';
-import { CoachAllInfoI as CoachAllInfoI } from '../../../Interfaces/coachallinfo';
+import { CoachCardInfoS } from '../../../Service/coach-card-info-s';
+import { CoachAllInfoI as CoachAllInfoI } from '../../../Interfaces/IIcoachAllinfo';
 import { ActivatedRoute } from '@angular/router';
-import { FavI } from '../../../Interfaces/myfav';
+import { FavI } from '../../../Interfaces/IImyfav';
 import { AvatarPipe } from '../../../../shared/pipes/avatar-pipe';
+import { CoachS } from '../../../Service/coach-s';
 
 
 //========!!這是 子Component!!================//
@@ -25,9 +25,10 @@ export class CourseforCoachProfile implements OnInit {
   isFav = false;
   myFavId: number[] = [];
   //------------------------------------------------------//
-  constructor(private coachInfoS: CoachAllInfoS,
+  constructor(
+    private coachS: CoachS,
+    private coachInfoS: CoachCardInfoS,
     private route: ActivatedRoute, // 注入網址工具
-    private uiS: UiS // 注入 UI 服務
   ) { }
   @Input() coachId: number = 1000010; // 讓外部決定要抓哪一個 ID，預設值先給1000010
   //------------------------------------------------------//
@@ -48,9 +49,9 @@ export class CourseforCoachProfile implements OnInit {
   //--方法-------------------------------------------------//
   /**是哪個教練的介紹 */
   loadCoach(coachId: number) {
-    this.coachInfoS.getCoachInfo(coachId).subscribe({
+    this.coachS.getMyInfoNum(coachId).subscribe({
       next: (result) => {
-        this.coach.set(result.data);
+        this.coach.set(result);
       },
       error: (err) => {
         console.error('抓取教練資料失敗', err);
@@ -96,14 +97,11 @@ export class CourseforCoachProfile implements OnInit {
           // 檢查：如果原本陣列裡「沒有」這個 ID，代表剛才是執行「新增」
           if (!this.myFavId.includes(coachId)) {
             this.myFavId = [...this.myFavId, coachId]; // 加進去，愛心變紅
-            this.uiS.showToast("收藏教練一人！");
             console.log(this.myFavId);
           }
           // 檢查：如果原本陣列裡「有」這個 ID，代表剛才是執行「取消」
           else {
             this.myFavId = this.myFavId.filter(id => id !== coachId); // 踢掉，愛心變灰
-
-            this.uiS.showToast("教練出走了QAQ"); // 顯示取消收藏的提示訊息
           }
 
         } else {

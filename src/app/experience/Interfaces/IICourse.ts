@@ -3,7 +3,8 @@ export interface APIResponse<T> {
   message: string;
   data: T;
 }
-
+//================!!Interface!!================//
+//================!!課程模板、上架、評論、教練卡(最新課)!!================//
 export interface CourseInfoI {
   coachId: number,
   title?: string;

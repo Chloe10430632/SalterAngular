@@ -1,10 +1,12 @@
 import { NotificationService } from './../../../../shared/notifyService/notification-service';
-import { MyCoachInfoS } from './../../../Service/my-coach-info';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators, FormArray, FormBuilder } from '@angular/forms';
-import { MyCoachEditS } from '../../../Service/my-coach-edit';
 import { ActivatedRoute, Route, Router } from '@angular/router';
-import { SpecI } from '../../../Interfaces/SpecSport';
+import { SpecI } from '../../../Interfaces/IISpecSport';
+import { CoachAllInfoI } from '../../../Interfaces/IIcoachAllinfo';
+import { DistI } from '../../../Interfaces/IIDistrict';
+import { CoachS } from '../../../Service/coach-s';
+import { CoachCardInfoS } from '../../../Service/coach-card-info-s';
 
 
 //===========!!子 Component!!================//
@@ -41,10 +43,10 @@ export class Myedit implements OnInit {
   }
   //===========================================//
   constructor(
-    private coacheditS: MyCoachEditS,
+    private coachS: CoachS,
     private route: Router,
     private activatedRoute: ActivatedRoute,
-    private myCoachInfoS: MyCoachInfoS,
+    private coachCardS: CoachCardInfoS,
     private fb: FormBuilder,
     private notifycationS: NotificationService
   ) { }
@@ -53,37 +55,43 @@ export class Myedit implements OnInit {
   ngOnInit(): void {
     this.currentCoachId = this.activatedRoute.snapshot.params['id'];
     //抓取縣市清單
-    this.coacheditS.getCityList().subscribe(res => {
+    this.coachS.getCityList().subscribe(res => {
       this.cities = Array.isArray(res) ? res : (res as any).data || [];
       console.log('縣市清單已載入', this.cities);
     });
     // 1. 先抓「所有專業項目清單」
-    this.coacheditS.getSpecialityList().subscribe(list => {
+    this.coachS.getSpecialityList().subscribe(list => {
       this.allSpecialities = list;
       console.log('1. 專業清單已載入', this.allSpecialities);
 
       // 2. 清單拿到了，才去抓「教練個人資料」
       if (this.currentCoachId) {
-        this.coacheditS.getOriginInfo(this.currentCoachId).subscribe({
-          next: (res: any) => {
-            if (res.isSuccess) {
-              const apiData = res.data;
+        this.coachS.getMyInfoStr(this.currentCoachId).subscribe({
+          next: (res: CoachAllInfoI) => {
+            if (res) {
+              const apiData = res; console.log("教練個人資料:", res);
 
-              // ⭐ 關鍵：把 ["衝浪", "SUP"] 轉換成 [1, 2] (ID 陣列)
               const specIds = apiData.specialities.map((name: string) => {
                 const found = this.allSpecialities.find(s => s.sportsName === name);
                 return found ? found.id : null;
-              }).filter((id: any) => id !== null);
+              }).filter((id: number | null) => id !== null);
+              console.log("專業對應 ID 清單:", specIds);
+
+              //抓原本頭像
+              if (apiData.avatarUrl) {
+                this.previewImage = apiData.avatarUrl;
+              }
+
 
               // 3. 填入表單
               this.coachForm.patchValue({
-                coachName: apiData.coachName || apiData.name,
+                coachName: apiData.coachName,
                 introduction: apiData.introduction,
-                specialities: specIds, // 這裡現在是 [1, 2, 3] 了，Checkbox 會乖乖打勾！
+                specialities: specIds,
               });
-              // 處理地區回填 (假設 API 回傳 districtIds: [1, 5, 10])
-              if (apiData.districtIds && apiData.districtIds.length > 0) {
-                apiData.districtIds.forEach((dId: number, index: number) => {
+              // 處理地區回填
+              if (apiData.district && apiData.district.length > 0) {
+                apiData.district.join(',').split(',').map(Number).forEach((dId: number) => {
                   this.addDistrictGroup(dId);
                 });
               } else {
@@ -95,14 +103,13 @@ export class Myedit implements OnInit {
         });
       }
       else {
-        // 【新增】 新增模式預設給一組選單
-        this.addDistrictGroup();
+        console.log('沒有教練 ID，表單保持空白');
       }
     });
   }
   //===========================================//
   //#region 地區相關邏輯
-  // 【新增方法】 新增一組地區選單
+  //  新增一組地區選單
   addDistrictGroup(initialCityId: number | null = null, initialDistrictId: number | null = null) {
     const group = new FormGroup({
       cityId: new FormControl(initialCityId),
@@ -113,36 +120,35 @@ export class Myedit implements OnInit {
     this.district.push(group);
     this.districtsByGroup.push([]);
 
-    // 💡 如果有初始縣市，立刻抓取該縣市的區域清單，否則區域選單會是空的
+    // 如果有初始縣市，立刻抓取該縣市的區域清單，否則區域選單會是空的
     if (initialCityId) {
-      this.coacheditS.getDistrictsByCity(initialCityId).subscribe((res: any) => {
-        this.districtsByGroup[index] = res.isSuccess ? res.data : res;
+      this.coachS.getDistrictsByCity(initialCityId).subscribe((res: DistI[]) => {
+        this.districtsByGroup[index] = res;
+        console.log(res);
       });
     }
   }
 
-  // 【新增方法】 刪除一組地區
+  //  刪除一組地區
   removeDistrictGroup(index: number) {
     this.district.removeAt(index);
     this.districtsByGroup.splice(index, 1);
   }
 
-  // 【新增方法】 當縣市選單切換時
+  //  當縣市選單切換時
   onCityChange(index: number) {
     // 1. 從正確的 index 拿到該組的 cityId
     const cityId = this.district.at(index).get('cityId')?.value;
 
-    console.log('選中的縣市 ID 是：', cityId); // 這裡可以用來檢查有沒有抓到數字
+    console.log('選中的縣市 ID 是：', cityId);
 
     if (cityId) {
-      this.coacheditS.getDistrictsByCity(cityId).subscribe({
-        next: (res: any) => {
-          // 2. 根據你的 API 回傳結構，通常 res.data 才是陣列
-          const districts = res.isSuccess ? res.data : res;
+      this.coachS.getDistrictsByCity(cityId).subscribe({
+        next: (res: DistI[]) => {
 
           // 3. 塞入對應位置的區域清單
-          this.districtsByGroup = res.success ? res.data : res;
-          // console.log(this.districtsByGroup);
+          this.districtsByGroup[index] = res;
+          //  console.log(this.districtsByGroup);
 
           // 4. 重置該組的區域選擇（因為換縣市了，舊的區域要清空）
           this.district.at(index).get('districtId')?.setValue(null);
@@ -165,16 +171,13 @@ export class Myedit implements OnInit {
       // 1. 填入基本資料
       formData.append('Name', rawValue.coachName || '');
       formData.append('Introduction', rawValue.introduction || '');
+      const selectedDistIds = (this.coachForm.getRawValue().district as any[])
+        .map(item => item.districtId)
+        .filter(id => id !== null && id !== undefined);
+      selectedDistIds.forEach(id => formData.append('DistrictId', id.toString()));
+      const selectedSpecs = this.coachForm.getRawValue().specialities as number[] || [];
+      selectedSpecs.forEach(id => formData.append('SpecialityIds', id.toString()));
 
-      const selectedIds = this.district.value
-        .map((item: any) => item.districtId)
-        .filter((id: any) => id !== null);
-
-      // 2. 處理專業項目 (對應後端 List<int> SpecialityIds)
-      const selectedSpecs = rawValue.specialities as number[] || [];
-      selectedSpecs.forEach(id => {
-        formData.append('SpecialityIds', id.toString());
-      });
 
       // 3. 處理圖片
       if (this.selectedFile) {
@@ -184,7 +187,7 @@ export class Myedit implements OnInit {
       // 4. 根據「有無 ID」決定動作
       if (this.currentCoachId) {
         // --- 情況 A：編輯既有教練 ---
-        this.coacheditS.updateCoach(this.currentCoachId, formData).subscribe({
+        this.coachS.editMyInfo(this.currentCoachId, formData).subscribe({
           next: (res: any) => {
             console.log('更新成功：', res);
             alert('教練資料更新成功！');
@@ -197,7 +200,7 @@ export class Myedit implements OnInit {
         });
       } else {
         // --- 情況 B：申請成為新教練 ---
-        this.myCoachInfoS.createMyInfo(formData).subscribe({
+        this.coachS.createMyInfo(formData).subscribe({
           next: (res: any) => {
             console.log('申請成功：', res);
             alert('恭喜！申請教練成功！');

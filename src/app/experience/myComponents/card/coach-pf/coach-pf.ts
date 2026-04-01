@@ -1,5 +1,5 @@
-import { Component, Input} from '@angular/core';
-import { CoachAllInfoI } from '../../../Interfaces/coachallinfo';
+import { Component, Input } from '@angular/core';
+import { CoachAllInfoI } from '../../../Interfaces/IIcoachAllinfo';
 import { CommonModule } from '@angular/common';
 
 //========!!這是 子Component!!================//

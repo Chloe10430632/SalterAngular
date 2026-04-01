@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CoachPFEdit } from './coach-pfedit';
+import { CoachPFEdit } from './coach-profile-edit';
 
 describe('CoachPFEdit', () => {
   let component: CoachPFEdit;
@@ -10,7 +10,7 @@ describe('CoachPFEdit', () => {
     await TestBed.configureTestingModule({
       imports: [CoachPFEdit]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(CoachPFEdit);
     component = fixture.componentInstance;

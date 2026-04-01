@@ -1,16 +1,16 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, signal } from '@angular/core';
 import { FavCard } from "../../myComponents/card/fav-card/fav-card";
 import { Footer } from "../../../shared/footer/footer";
 import { LittleIsland } from "../../myComponents/little-island/little-island";
 import { Noavatar } from "../../myComponents/container/noavatar/noavatar";
 import { MemFavListS } from '../../Service/mem-fav-list';
-import { CoachAllInfoI } from '../../Interfaces/coachallinfo';
-import { CoachAllInfoS } from '../../Service/coach-all-info-s';
-import { CourseS } from '../../Service/course-for-one';
-import { UiS } from '../../Service/UiS';
+import { CoachAllInfoI } from '../../Interfaces/IIcoachAllinfo';
+import { CoachCardInfoS } from '../../Service/coach-card-info-s';
+import { CourseInformationS } from '../../Service/course-information';
 
 //============!!父Component!!================//
+//=============收藏==================//
+
 
 @Component({
   selector: 'app-coach-favorite',
@@ -30,10 +30,9 @@ export class MemFavorite {
   isLoading = false;
   //=======================================//
 
-  constructor(private coachAllInfoS: CoachAllInfoS,
-    private courseNameS: CourseS,
+  constructor(private coachAllInfoS: CoachCardInfoS,
+    private courseNameS: CourseInformationS,
     private memFavS: MemFavListS,
-    private uiS: UiS
   ) { }
   //=======================================//
 
@@ -82,8 +81,8 @@ export class MemFavorite {
       this.courseNameS.getLatestCourseByCoach(coach.coachId).subscribe({
         next: (res) => {
           // 有課程 → 顯示標題；後端說沒課 → 顯示提示文字
-          this.allCourseMap[coach.coachId] = res.isSuccess
-            ? (res.data?.title || '新課程準備中...')
+          this.allCourseMap[coach.coachId] = res
+            ? (res.title || '新課程準備中...')
             : '暫無開課計畫';
         },
         error: () => {
@@ -95,7 +94,6 @@ export class MemFavorite {
   }
   // 處理子組件傳來的 removeMe 事件
   handleRemove(coachId: number) {
-    this.uiS.toastMessage.set('已從收藏中移除');
     console.log(`教練 ${coachId} 被取消收藏了（在首頁通常不執行刪除畫面動作）`);
   }
 }

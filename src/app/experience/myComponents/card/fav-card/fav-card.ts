@@ -1,14 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, input, Input, OnInit, output, Output } from '@angular/core';
+import { Component, EventEmitter, input,  OnInit,  Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { AvatarPipe } from '../../../../shared/pipes/avatar-pipe';
-import { CoachAllInfoI } from '../../../Interfaces/coachallinfo';
-import { CoachAllInfoS } from '../../../Service/coach-all-info-s';
-import { UiS } from '../../../Service/UiS';
-import { FavI } from '../../../Interfaces/myfav';
+import { CoachAllInfoI } from '../../../Interfaces/IIcoachAllinfo';
+import { CoachCardInfoS } from '../../../Service/coach-card-info-s';
+import { FavI } from '../../../Interfaces/IImyfav';
 
 
 //========!!這是 子Component!!================//
+//========!!教練卡!!================//
 //========!!放在首頁和收藏!!================//
 
 @Component({
@@ -16,6 +16,7 @@ import { FavI } from '../../../Interfaces/myfav';
   imports: [CommonModule, AvatarPipe],
   templateUrl: './fav-card.html',
   styleUrl: './fav-card.css',
+  standalone: true,
 })
 export class FavCard implements OnInit {
   // --- 核心改動：改用 input signal 接收整個物件 ---
@@ -27,8 +28,7 @@ export class FavCard implements OnInit {
   //------------------------------------------------------//
   constructor(
     private router: Router,
-    private coachInfoS: CoachAllInfoS,
-    private uiS: UiS // 注入 UI 服務
+    private coachInfoS: CoachCardInfoS,
   ) { }
   @Output() removeMe = new EventEmitter<number>(); //通知父組件（例如收藏頁面要移除這張卡片）
   //------------------------------------------------------//
@@ -46,11 +46,9 @@ export class FavCard implements OnInit {
         if (res.isSuccess) {
           // 用 isFav() 的當下值判斷目前狀態
           if (!this.isFav()) {
-            this.uiS.showToast("收藏教練一人！");
             // 父層會在下次 HeartIds 更新時同步，或你可以 emit 事件讓父層加
           } else {
             this.removeMe.emit(id);
-            this.uiS.showToast("教練出走了QAQ");
           }
         }
       }

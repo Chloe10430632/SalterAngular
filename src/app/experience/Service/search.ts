@@ -1,4 +1,4 @@
-import { CoachAllInfoI } from './../Interfaces/coachallinfo';
+import { CoachAllInfoI } from '../Interfaces/IIcoachAllinfo';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { forkJoin, map, Observable } from 'rxjs';
