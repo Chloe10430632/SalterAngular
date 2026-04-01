@@ -7,7 +7,7 @@ import { Noavatar } from "../../myComponents/container/noavatar/noavatar";
 import { MemFavListS } from '../../Service/mem-fav-list';
 import { CoachAllInfoI } from '../../Interfaces/coachallinfo';
 import { CoachAllInfoS } from '../../Service/coach-all-info-s';
-import { CourseForOneS } from '../../Service/course-for-one';
+import { CourseS } from '../../Service/course-for-one';
 import { UiS } from '../../Service/UiS';
 
 //============!!父Component!!================//
@@ -31,7 +31,7 @@ export class MemFavorite {
   //=======================================//
 
   constructor(private coachAllInfoS: CoachAllInfoS,
-    private courseNameS: CourseForOneS,
+    private courseNameS: CourseS,
     private memFavS: MemFavListS,
     private uiS: UiS
   ) { }

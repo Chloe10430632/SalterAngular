@@ -1,7 +1,7 @@
 import { Component, computed, OnDestroy, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CourseInfoI } from '../../../Interfaces/course.model';
-import { CourseForOneS } from '../../../Service/course-for-one';
+import { CourseS } from '../../../Service/course-for-one';
 
 //========!!這是 子Component!!================//
 
@@ -23,7 +23,7 @@ export class CourseforCoach implements OnInit, OnDestroy {
     else return (c.currentStudents || 0) >= (c.maxStudents || 0)
   })
   //------------------------------------------------------//
-  constructor(private courseOneS: CourseForOneS) { }
+  constructor(private courseOneS: CourseS) { }
 
   //------------------------------------------------------//
   ngOnInit(): void {

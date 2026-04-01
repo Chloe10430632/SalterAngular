@@ -1,4 +1,7 @@
 import { Component, Input } from '@angular/core';
+//================!! 子 元件!!==============================//
+//================學生評論==================================//
+
 
 @Component({
   selector: 'app-memreview-card',
