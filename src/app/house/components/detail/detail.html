@@ -211,6 +211,31 @@
     <!-- 右側顯示價格商品區 -->
     <div class="relative">
       <div class="card bg-white shadow-2xl border border-base-200 p-8 sticky top-28 rounded-3xl">
+
+        @if (isAlreadyBooked) {
+        <div class="text-center py-6 animate-in zoom-in duration-300">
+          <div class="w-20 h-20 bg-info/10 text-info rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="bi bi-calendar-check text-4xl"></i>
+          </div>
+          <h3 class="text-xl font-bold text-gray-800 mb-2">您已預約此房型</h3>
+          <p class="text-sm text-gray-500 mb-8 px-4">
+            您目前有這間房型的待付款或已確認訂單，請至個人中心管理。
+          </p>
+
+          <div class="space-y-3">
+            <button routerLink="/memberCenter/bookingList"
+              class="btn btn-primary w-full btn-lg rounded-xl text-white shadow-lg hover:shadow-primary/30 transition-all active:scale-95">
+              <i class="bi bi-card-list mr-2"></i> 前往我的訂單
+            </button>
+
+            <button (click)="isAlreadyBooked = false" class="btn btn-ghost btn-sm text-gray-400">
+              想幫別人預約？點此解鎖
+            </button>
+          </div>
+        </div>
+        }
+
+        @else {
         <div class="flex justify-between items-baseline mb-6">
           <div class="text-3xl font-bold text-primary">${{ selectedProperty?.pricePerNight | number }}</div>
           <div class="text-gray-500">/ 晚</div>
@@ -222,9 +247,7 @@
             <div class="flex items-center gap-1 mt-1">
               <input type="date" [(ngModel)]="bookingForm.checkIn" [min]="todayDate"
                 class="input input-ghost input-xs w-full focus:bg-transparent p-0 text-sm" />
-
               <span class="text-gray-400">-</span>
-
               <input type="date" [(ngModel)]="bookingForm.checkOut"
                 [min]="bookingForm.checkIn ? bookingForm.checkIn : todayDate"
                 class="input input-ghost input-xs w-full focus:bg-transparent p-0 text-sm" />
@@ -236,7 +259,7 @@
             <select [(ngModel)]="bookingForm.guestCount"
               class="select select-ghost select-xs w-full p-0 h-auto min-h-0 focus:bg-transparent mt-1 text-sm">
               @for (num of [1, 2, 3, 4, 5, 6]; track num) {
-              @if(num <= (selectedProperty?.capacity)){ <option [value]="num">{{ num }} 位房客</option>
+              @if(num <= (selectedProperty?.capacity || 0)){ <option [value]="num">{{ num }} 位房客</option>
                 }
                 }
             </select>
@@ -266,6 +289,8 @@
         </button>
 
         <p class="text-center text-xs text-gray-400 mt-4">預約成功後會為您保留房源</p>
+        }
+
       </div>
     </div>
   </div>

@@ -8,7 +8,7 @@ import { ReviewService } from './../../service/review-service';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ICreateReview, IUpdateReview } from '../../interface/icreate-review';
 import { FormsModule } from '@angular/forms';
 
@@ -31,6 +31,7 @@ export class Detail implements OnInit {
 
   todayDate: string = new Date().toISOString().split('T')[0];
 
+  isAlreadyBooked: boolean = false;
 
   newComment = {
     rating: 4,
@@ -50,7 +51,8 @@ export class Detail implements OnInit {
     private reviewService: ReviewService,
     public HouseService: HouseService,
     private route: ActivatedRoute,
-    private notification: NotificationService
+    private notification: NotificationService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -128,6 +130,7 @@ export class Detail implements OnInit {
       next: (data) => {
         this.selectedProperty = data;
         this.isLoading = false;
+        this.isAlreadyBooked = data.isAlreadyBooked;
       },
       error: (err) => {
         console.error('API Error:', err);
@@ -197,6 +200,7 @@ export class Detail implements OnInit {
     // 檢查登入狀態
     if (!this.isLoggedIn) {
       this.notification.show('請先登入後再進行預約', 'error');
+      this.router.navigate(['/login']);
       // 如果你有做登入彈窗，可以在這裡觸發它，或者導向登入頁
       return;
     }
@@ -204,6 +208,12 @@ export class Detail implements OnInit {
     // 檢查日期是否有選，且天數是否大於 0
     if (this.totalNights <= 0) {
       this.notification.show('請選擇正確的入住與退房日期', 'error');
+      return;
+    }
+
+    // 檢查退房日期是否晚於入住日期
+    if (new Date(this.bookingForm.checkOut) <= new Date(this.bookingForm.checkIn)) {
+      this.notification.show('退房日期必須晚於入住日期', 'error');
       return;
     }
 
@@ -242,7 +252,7 @@ export class Detail implements OnInit {
 
         // 成功提示
         this.notification.show(`預約成功！您的訂單編號是：${res.bookingID}`, 'success');
-
+        this.isAlreadyBooked = true;
         this.isSubmitting = false;
 
       },

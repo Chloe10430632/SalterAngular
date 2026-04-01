@@ -14,7 +14,12 @@
       <tr class="hover transition-colors">
         <td class="font-mono text-[10px] text-gray-400">#{{ item.bookingId }}</td>
 
-        <td class="font-bold text-base-content">{{ item.roomTypeName }}</td>
+        <td class="font-bold text-base-content hover:text-primary transition-colors">
+          <a [routerLink]="['/houseDetail', item.roomTypeId]" class="flex items-center gap-1 group">
+            {{ item.roomTypeName }}
+            <i class="bi bi-box-arrow-up-right text-[10px] opacity-0 group-hover:opacity-100 transition-opacity"></i>
+          </a>
+        </td>
 
         <td class="py-4">
           <div class="flex flex-col gap-1 min-w-[120px]">
