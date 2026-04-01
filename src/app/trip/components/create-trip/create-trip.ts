@@ -48,6 +48,7 @@ export class CreateTrip implements OnInit, AfterViewInit {
   showEndPicker = false;
   showLoginRequired = false;
   countdown = 6;
+  showCoverPreview = false;
 
   // ── 步驟一表單 ──
   step1Form: FormGroup = this.fb.group({

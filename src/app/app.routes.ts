@@ -220,8 +220,12 @@ export const routes: Routes = [
             loadComponent: () => import('./trip/components/create-trip/create-trip').then(m => m.CreateTrip),
           },
           {
-            path: 'my-trips', //我的行程
+            path: 'my-trips',
             loadComponent: () => import('./trip/components/my-trips/my-trips').then(m => m.MyTrips)
+          },
+          {
+            path: 'favorites',
+            loadComponent: () => import('./trip/components/favorites/favorites').then(m => m.Favorites) //收藏行程
           },
           {
             path: 'detail/:id',

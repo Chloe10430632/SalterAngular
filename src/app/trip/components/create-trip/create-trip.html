@@ -142,7 +142,8 @@
           }
           @if (f['coverImageUrl'].value) {
           <div class="relative rounded-box overflow-hidden h-36">
-            <img [src]="f['coverImageUrl'].value" class="w-full h-full object-cover" alt="封面圖" />
+            <img [src]="f['coverImageUrl'].value" class="w-full h-full object-cover cursor-zoom-in" alt="封面圖"
+              (click)="showCoverPreview = true" />
             <button type="button" class="absolute top-2 right-2 btn btn-circle btn-xs bg-base-100/80"
               (click)="removeCover()">
               <i class="bi bi-x"></i>
@@ -407,6 +408,19 @@
 
     <p class="text-xs text-base-content/30">{{ countdown }} 秒後自動跳轉至登入頁面</p>
 
+  </div>
+</div>
+}
+
+<!-- 封面圖片預覽 Modal -->
+@if (showCoverPreview) {
+<div class="fixed inset-0 z-[300] flex items-center justify-center bg-black/80 backdrop-blur-sm cursor-zoom-out"
+  (click)="showCoverPreview = false">
+  <div class="max-w-4xl w-full mx-4" (click)="$event.stopPropagation()">
+    <img [src]="f['coverImageUrl'].value" class="w-full rounded-xl object-contain max-h-[80vh]" alt="封面圖預覽" />
+    <button class="absolute top-4 right-4 btn btn-circle btn-sm bg-base-100/80" (click)="showCoverPreview = false">
+      <i class="bi bi-x text-lg"></i>
+    </button>
   </div>
 </div>
 }
