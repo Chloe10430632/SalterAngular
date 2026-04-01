@@ -51,9 +51,11 @@
     <div class="w-full text-left space-y-2">
       <div class="flex items-center gap-2">
         <span class="font-bold">地區：</span>
-        @for (dist of c.district; track $index) {
-        <div class="badge badge-outline badge-sm">{{ dist }}</div>
-        }
+
+        <div class="badge badge-outline badge-sm">
+          <div clas="justify-center">{{ c.district }}</div>
+        </div>
+
       </div>
       <div class="flex items-center gap-2">
         <span class="font-bold">專業：</span>

@@ -30,7 +30,7 @@
 
       <div class="flex flex-wrap justify-center gap-1 mb-1">
         @for(d of c.district; track $index) {
-        <span class="badge badge-sm badge-ghost opacity-70 px-1">📍 {{ d }}</span>
+        <span class="badge badge-sm badge-ghost opacity-70 px-1">{{ d }}</span>
         }
       </div>
 
@@ -58,7 +58,7 @@
     </div>
 
     <div class="card-actions w-full mt-4">
-      <button (click)="intro()" class="btn btn-primary btn-sm w-full shadow-md hover:scale-105 transition-all">
+      <button (click)="intro(c.coachId)" class="btn btn-primary btn-sm w-full shadow-md hover:scale-105 transition-all">
         查看詳細資訊
       </button>
     </div>

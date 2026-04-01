@@ -4,10 +4,10 @@ import { Footer } from "../../../shared/footer/footer";
 import { Toptab } from "../../myComponents/btn/toptab/toptab";
 import { CoachPf } from "../../myComponents/card/coach-pf/coach-pf";
 import { CommonModule } from '@angular/common';
-import { MyCoachInfoS } from '../../Service/my-coach-info';
-import { APIResponse, CoachAllInfoI } from '../../Interfaces/coachallinfo';
+import { APIResponse, CoachAllInfoI } from '../../Interfaces/IIcoachAllinfo';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Noavatar } from "../../myComponents/container/noavatar/noavatar";
+import { CoachS } from '../../Service/coach-s';
 
 //========!!這是 父Component!!================//
 //========!!檢視自己的資訊!!================//
@@ -20,10 +20,12 @@ import { Noavatar } from "../../myComponents/container/noavatar/noavatar";
   styleUrl: './coach-profile.css',
 })
 export class CoachProfile {
-  coachData?: CoachAllInfoI;
+  coachData?: APIResponse<CoachAllInfoI>;
+  //coachData? :CoachAllInfoI;
   isLoading = true;
   //------------------------------------------------------//
-  constructor(private mycoachInhoS: MyCoachInfoS,
+  constructor(
+    private coachS: CoachS,
     private route: ActivatedRoute,
     private router: Router
   ) { }
@@ -36,7 +38,6 @@ export class CoachProfile {
     // 2. 🔴 新增：如果網址沒 ID，試著從 localStorage 拿（這是從 Token 解出來存進去的）
     if (!idFromRoute) {
       idFromRoute = localStorage.getItem('coachId');
-      console.log('網址沒 ID，從 localStorage 抓取結果:', idFromRoute);
     }
 
     console.log('🔴 最終認定的 ID 為:', idFromRoute);
@@ -45,18 +46,16 @@ export class CoachProfile {
       const targetId = Number(idFromRoute);
       this.isLoading = true;
 
-      this.mycoachInhoS.getMyInfo(targetId).subscribe({
+      this.coachS.getMyInfoNum(targetId).subscribe({
         next: (res) => {
-          if (res.isSuccess) {
-            this.coachData = res.data;
-            console.log('🟢 API 回傳資料:', res.data);
+          console.log('🔴 父組件收到回應：', res); // 這裡沒印代表你可能在看舊的程式碼
+          if (res && res.isSuccess) {
+            this.coachData = res; // 確保變數名稱是 coachData
           }
         },
-        error: (err) => {
-          console.error('抓取失敗', err);
-          this.isLoading = false;
-        },
-        complete: () => this.isLoading = false
+        complete: () => {
+          this.isLoading = false; // 🟢 關鍵：一定要設為 false，不然畫面會一直卡在轉圈圈或空白
+        }
       });
     } else {
       // 如果連 localStorage 都沒有，代表真的沒登入或不是教練

@@ -9,7 +9,7 @@
       <div class="flex flex-col items-center text-center">
         <div class="avatar mb-4">
           <div class="w-32 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 shadow-sm">
-            <img [src]="data?.avatarUrl || '/assets/imgs/default-coach-avatar.png'" alt="Avatar" />
+            <img [src]=" data?.avatarUrl" alt="Avatar" />
           </div>
         </div>
         <h1 class="text-2xl font-black text-[#8B4513]">{{ data?.coachName }}</h1>
@@ -51,11 +51,15 @@
             <div class="flex items-center gap-2 mb-2">
               <span class="text-primary font-black text-lg">✦ 服務地區 ✦</span>
             </div>
+            @for (tag of data?.district; track tag) {
             <div class="px-1">
               <p class="text-base-content font-bold text-lg">
-                {{ data?.district || '未設定地區' }}
+                {{ tag }}
               </p>
-            </div>
+            </div>}
+            @empty {
+            <span class="text-base-content/40 text-sm">尚無設定地區</span>
+            }
           </div>
 
         </div>

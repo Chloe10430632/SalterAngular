@@ -11,24 +11,38 @@
         <p class="mb-8 text-lg font-bold opacity-90">探索全台最頂尖的水域運動教練，開啟你的海洋冒險。</p>
 
         <div class="form-control w-full max-w-md mx-auto">
-          <div class="relative">
-            <input type="text" placeholder="輸入運動項目或教練姓名..."
-              class="input input-bordered input-lg w-full pr-16 text-base-content focus:input-primary" />
-            <button class="btn btn-primary btn-lg absolute top-0 right-0 rounded-l-none">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-              搜尋
-            </button>
-          </div>
+          <!--  -->
+          <app-search (searchComplete)="handleSearchResult($event)"></app-search>
+          <!--  -->
         </div>
       </div>
     </div>
   </div>
 
+
+  <!-- 卡片們 -->
+
   <div class="container mx-auto px-4 py-10">
+
+    @if (isSearching) {
+    <div class="flex justify-between items-center mb-10">
+      <h2 class="text-3xl font-bold text-primary">搜尋結果</h2>
+      <button (click)="backToDefault()" class="btn btn-outline btn-sm">返回推薦列表</button>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-24 pt-10 place-items-center">
+      @for (item of searchCoaches; track item.coachId) {
+      <app-fav-card [item]="item" [isFav]="myFavIds().includes(item.coachId)"
+        [courseName]="allCourseMap[item.coachId] || '查詢中...'">
+      </app-fav-card>
+      } @empty {
+      <div class="text-center py-20 w-full col-span-full">
+        <p class="text-xl opacity-50">哎呀！找不到符合關鍵字的教練...</p>
+      </div>
+      }
+    </div>
+    }
+    @else{
     <div class="flex flex-col w-full items-center">
 
       <div role="tablist" class="tabs tabs-lifted tabs-lg w-full max-w-6xl">
@@ -68,7 +82,8 @@
           <!-- 最新迴圈 -->
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-24 pt-20 place-items-center">
             @for (item of latestC; track item.coachId) {
-            <app-fav-card [item]="item" [courseName]="allCourseMap[item.coachId] || '載入中...'">
+            <app-fav-card [item]="item" [isFav]="myFavIds().includes(item.coachId)"
+              [courseName]="allCourseMap[item.coachId] || '載入中...'">
             </app-fav-card>
             } @empty {
             <div class="col-span-full text-center py-10 text-base-content/50">
@@ -90,6 +105,7 @@
 
       </div>
     </div>
+    }
   </div>
 
   <app-little-island></app-little-island>

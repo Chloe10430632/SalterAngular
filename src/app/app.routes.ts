@@ -104,12 +104,8 @@ export const routes: Routes = [
         loadComponent: () => import('./experience/components/coach-island/coach-island').then(m => m.CoachIsland)
       },
       {
-        path: 'coachcreate', //空白自介(申請)
-        loadComponent: () => import('./experience/myComponents/backdrop/coach-create/coach-create').then(m => m.CoachCreate)
-      },
-      {
         path: 'coachpfe/:id', //自介編輯
-        loadComponent: () => import('./experience/components/coach-pfedit/coach-pfedit').then(m => m.CoachPFEdit)
+        loadComponent: () => import('./experience/components/coach-profile-edit/coach-profile-edit').then(m => m.CoachPFEdit)
       },
       {
         path: 'coachprofile/:id', //檢視自介
@@ -117,7 +113,7 @@ export const routes: Routes = [
       },
       //===課程相關===//
       {
-        path: 'coursetemp/:id', //模板
+        path: 'coursetemp', //模板
         loadComponent: () => import('./experience/components/coach-course-temp/coach-course-temp').then(m => m.CoachCourseTemp)
       },
       {
@@ -132,7 +128,7 @@ export const routes: Routes = [
       //===使用者定位===//
       {
         path: 'coachinfo/:id', //看指定教練介紹
-        loadComponent: () => import('./experience/components/coach-intro/coach-intro').then(m => m.Coachintro)
+        loadComponent: () => import('./experience/components/coach-intro-for-mem/coach-intro').then(m => m.Coachintro)
       },
       {
         path: 'myattend', //報名過的課
