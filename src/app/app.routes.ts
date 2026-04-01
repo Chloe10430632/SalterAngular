@@ -113,7 +113,7 @@ export const routes: Routes = [
       },
       //===課程相關===//
       {
-        path: 'coursetemp/:id', //模板
+        path: 'coursetemp', //模板
         loadComponent: () => import('./experience/components/coach-course-temp/coach-course-temp').then(m => m.CoachCourseTemp)
       },
       {
