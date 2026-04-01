@@ -106,7 +106,7 @@
                   <a [routerLink]="'/forum/boards/'+post.boardId">
                     <div class="badge badge-primary ml-5 font-bold">{{post.boardTitle}}</div>
                   </a>
-                  <span class="text-base-content/50 text-[13px] font-medium ml-1 lg:ml-3">{{post.createdAt |
+                  <span class="text-base-content/50 text-[13px] font-medium lg:ml-3">{{post.createdAt |
                     relativeTime}}</span>
                 </div>
 
@@ -144,7 +144,7 @@
                 @if(post.locationTitle){
                 <div class="badge badge-soft badge-accent mt-2">{{post.locationTitle}}</div>
                 }
-                <p class="text-[15px] leading-relaxed text-base-content mt-4">
+                <p style="white-space: pre-line;" class="text-[15px] leading-relaxed text-base-content mt-4">
                   {{post.contentPreview}}
                   @if(post.contentPreview.length === 50){
                   <span class="ml-5 text-base-content/50 text-sm">........(點擊查看完整內容)</span>
