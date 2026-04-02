@@ -1,0 +1,131 @@
+<app-withavatar title="新增課程模板">
+  <div data-theme="bumblebee" class="p-6 bg-base-200 min-h-screen">
+
+    <div class="collapse collapse-open border border-base-300 bg-base-100 rounded-2xl shadow-xl max-w-5xl mx-auto">
+
+      <div class="collapse-title flex items-center justify-between py-4 px-6 border-b border-base-200">
+        <div class="flex items-center gap-3">
+          <div class="p-2 bg-primary/10 rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+          </div>
+          <h2 class="text-xl font-black text-[#8B4513] tracking-tight">建立新課程模板</h2>
+        </div>
+
+        <div class="flex gap-2">
+          <button (click)="onCancel()" class="btn btn-ghost">取消</button>
+          <button (click)="onCreate()" class="btn btn-primary px-8" [disabled]="createForm.invalid || isSaving">
+            <span *ngIf="isSaving" class="loading loading-spinner loading-xs"></span>
+            建立模板
+          </button>
+        </div>
+      </div>
+
+      <div class="collapse-content p-6">
+        <form [formGroup]="createForm" class="grid grid-cols-1 md:grid-cols-2 gap-10">
+
+          <div class="space-y-4">
+            <div class="form-control w-full">
+              <label class="label">
+                <span class="label-text font-bold text-base-content/60 uppercase text-xs tracking-widest">課程相片 </span>
+              </label>
+
+              <div
+                class="grid grid-cols-2 gap-4 border-2 border-dashed border-base-300 rounded-2xl p-4 min-h-[200px] bg-base-50/50">
+                @for (url of previewUrls; track $index) {
+                <div class="relative aspect-video group">
+                  <img [src]="url" class="w-full h-full object-cover rounded-xl border-2 border-primary/20 shadow-sm" />
+                  <button (click)="removePhoto($index)"
+                    class="absolute -top-2 -right-2 btn btn-circle btn-xs btn-error shadow shadow-error/40">✕</button>
+                </div>
+                }
+
+                <label
+                  class="flex flex-col items-center justify-center aspect-video rounded-xl border-2 border-dashed border-primary/30 cursor-pointer hover:bg-primary/5 hover:border-primary transition-all group">
+                  <div class="bg-primary/10 p-3 rounded-full group-hover:scale-110 transition-transform">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24"
+                      stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <span class="text-xs font-medium mt-2 text-primary">上傳圖檔</span>
+                  <input type="file" class="hidden" (change)="onFileSelected($event)" multiple accept="image/*" />
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-6">
+
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text font-bold text-base-content/60 uppercase text-xs tracking-widest">課程名稱</span>
+              </label>
+              <input type="text" formControlName="title"
+                class="input input-bordered focus:input-primary w-full text-lg font-medium" />
+            </div>
+
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text font-bold text-base-content/60 uppercase text-xs tracking-widest">課程詳情</span>
+              </label>
+              <textarea formControlName="description"
+                class="textarea textarea-bordered focus:textarea-primary h-32 leading-relaxed"
+                placeholder="請描述課程特色、教學內容與適合對象..."></textarea>
+            </div>
+
+            <div class="form-control relative">
+              <label class="label">
+                <span class="label-text font-bold text-base-content/60 uppercase text-xs tracking-widest">授課地點</span>
+              </label>
+              <div class="input-group">
+                <input type="text" formControlName="location" class="input input-bordered focus:input-primary w-full"
+                  placeholder="請輸入地址或地標..." />
+              </div>
+              @if (locationResults.length > 0) {
+              <ul
+                class="absolute z-[100] menu bg-base-100 w-full shadow-2xl rounded-box mt-20 border border-base-200 p-2 animate-in fade-in slide-in-from-top-1">
+                @for (item of locationResults; track item) {
+                <li><a (click)="onSelectLocation(item)" class="py-3 hover:bg-primary/10">📍 {{ item.name }}</a></li>
+                }
+              </ul>
+              }
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div class="form-control">
+                <label class="label">
+                  <span class="label-text font-bold text-base-content/60 uppercase text-xs tracking-widest">課程定價</span>
+                </label>
+                <div class="relative">
+                  <span class="absolute inset-y-0 left-4 flex items-center text-base-content/40 font-bold">NT$</span>
+                  <input type="number" formControlName="price"
+                    class="input input-bordered focus:input-primary w-full pl-12 font-mono text-lg text-secondary" />
+                </div>
+              </div>
+
+              <div class="form-control">
+                <label class="label">
+                  <span class="label-text font-bold text-base-content/60 uppercase text-xs tracking-widest">挑戰難度</span>
+                </label>
+                <select formControlName="difficulty"
+                  class="select select-bordered focus:select-primary w-full font-bold text-accent">
+                  <option value="初級">初級 (新手入門)</option>
+                  <option value="中級">中級 (具備基礎)</option>
+                  <option value="高級">高級 (專業挑戰)</option>
+                </select>
+              </div>
+            </div>
+
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</app-withavatar>
+
+<app-little-island></app-little-island>
+<app-footer></app-footer>

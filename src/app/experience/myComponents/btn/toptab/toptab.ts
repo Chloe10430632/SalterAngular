@@ -20,6 +20,10 @@ export class Toptab {
     this.router.navigate(['/experience/coursetemp']);
   }
 
+  addtemplate() {
+    this.router.navigate(['/experience/coursetaddemp'])
+  }
+
   onshelf() {
     this.router.navigate(['/experience/course']);
   }
