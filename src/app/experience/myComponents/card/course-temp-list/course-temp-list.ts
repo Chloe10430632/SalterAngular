@@ -6,6 +6,7 @@ import { CourseInformationS } from '../../../Service/course-information';
 import { TempInfoI } from '../../../Interfaces/IICourse';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { LocationSearchService } from '../../../../trip/services/location-search';
+import { AvatarI, PhotoI } from '../../../Interfaces/IIPhoto';
 //===============!!這是子 元件!!=======================//
 //===============!! 課程模板 !!=======================//
 
@@ -80,21 +81,8 @@ export class CourseTempList implements OnInit {
   }
   removePhoto(index: number, isExisting: boolean) {
     if (isExisting) {
-      // 1. 先確認 tempData 及其中的 imageUrl 存在且有資料
-      if (this.tempData?.imageUrl) {
-
-        // 取得要刪除的照片網址 (可用於後續比對 PublicId)
-        const photo = this.tempData.imageUrl[index];
-
-        // 2. 執行刪除
-        // 使用非空斷言 (!) 因為我們已經在上面的 if 確認過它存在了
-        this.tempData.imageUrl.splice(index, 1);
-
-        // 如果你有紀錄刪除清單的邏輯，可以在這處理
-        // this.deletedPublicIds.push(...);
-      }
+      this.tempData?.imageUrls?.splice(index, 1);
     } else {
-      // 刪除新上傳的預覽圖
       this.previewUrls.splice(index, 1);
       this.newPhotos.splice(index, 1);
     }
@@ -139,7 +127,7 @@ export class CourseTempList implements OnInit {
   onEdit() {
     this.isEdit = true;
     if (this.tempData) {
-      const existingPhotos = this.tempData.imageUrl || this.tempData.photoUrls || [];
+      const existingPhotos = this.tempData.imageUrls || this.tempData.photoUrls || [];
 
       this.editForm.patchValue({
         title: this.tempData?.title,
@@ -161,6 +149,7 @@ export class CourseTempList implements OnInit {
     const formData = new FormData();
     const id = this.tempData?.tempId;
 
+
     if (!id) {
       console.error("錯誤：templateId 為 undefined。請檢查父組件傳入的 tempData：", this.tempData);
       this.notifyS.show("找不到模板", "error");
@@ -178,12 +167,9 @@ export class CourseTempList implements OnInit {
     this.newPhotos.forEach((file) => {
       formData.append('NewImageFiles', file, file.name);
     });
-    const remainingPhotos = (this.tempData?.photoUrls || []).map(url => {
-      return {
-        photoUrl: url
-      };
-    });
-    // 這裡的 Key 必須改為 'ExistingPhotosJson'
+    const remainingPhotos = (this.tempData?.imageUrls ?? []).map(p => ({
+      photoUrl: p.photoUrl
+    }));
     formData.append('ExistingPhotosJson', JSON.stringify(remainingPhotos));
 
     // 4. 送出！
@@ -191,10 +177,15 @@ export class CourseTempList implements OnInit {
       next: (res) => {
         if (res.isSuccess) {
           this.isEdit = false;
+
           if (this.tempData) {// 把新資料寫回畫面上的 tempData
             Object.assign(this.tempData, this.editForm.value);
-            const existing = this.tempData.imageUrl ?? this.tempData.photoUrls ?? [];
-            this.tempData.imageUrl = [...existing, ...this.previewUrls];
+            const existing = this.tempData.imageUrls ?? [];
+            const newOnes: PhotoI[] = this.previewUrls.map(url => ({
+              photoUrl: url,
+              publicId: ''
+            }));
+            this.tempData.imageUrls = [...existing, ...newOnes];
           }
           this.newPhotos = [];
           this.previewUrls = [];

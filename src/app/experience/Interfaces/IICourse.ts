@@ -1,5 +1,6 @@
 import { PhotoI } from "./IIPhoto";
 
+
 export interface APIResponse<T> {
   isSuccess: boolean;
   message: string;
@@ -23,16 +24,16 @@ export interface CourseSessionInfoI {
   tempId: number;
   sessionId: number;
 }
+
 export interface TempInfoI {
-  coachId: number,
+  coachId: number;
   title?: string;
   description?: string;
   updatedAt: string;
-  photoUrls?: string[]; //存進去
-  imageUrl?: PhotoI[]; //雲端抓下來
+  imageUrls?: PhotoI[];  // 對齊後端欄位名稱，有s
+  photoUrls?: string[];  // 送出用，保留
   price?: number;
   difficulty: string;
   location: string;
   tempId: number;
-
 }

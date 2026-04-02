@@ -31,9 +31,9 @@
         <!-- 瀏覽模式：輪播 -->
         <div #carousel
           class="carousel carousel-center w-full aspect-video rounded-xl shadow bg-base-200 overflow-x-hidden scroll-smooth">
-          @for (photo of (tempData?.imageUrl ?? tempData?.photoUrls ?? []); track $index) {
+          @for (photo of (tempData?.imageUrls ?? []); track $index) {
           <div class="carousel-item w-full flex-shrink-0">
-            <img [src]="photo" class="w-full h-full object-cover" />
+            <img [src]="photo.photoUrl" class="w-full h-full object-cover" />
           </div>
           } @empty {
           <div class="flex items-center justify-center w-full h-full text-base-content/30 text-sm italic">
@@ -46,9 +46,9 @@
         <div class="border-2 border-dashed border-base-300 rounded-xl p-4 bg-base-50">
           <p class="text-xs font-semibold text-base-content/40 uppercase tracking-widest mb-3">圖片管理（16:9）</p>
           <div class="grid grid-cols-2 gap-3">
-            @for (photo of (tempData?.imageUrl ?? tempData?.photoUrls ?? []); track $index) {
+            @for (photo of (tempData?.imageUrls ?? []); track $index) {
             <div class="relative aspect-video group">
-              <img [src]="photo" class="w-full h-full object-cover rounded-lg border border-base-300" />
+              <img [src]="photo.photoUrl" class="w-full h-full object-cover rounded-lg border border-base-300" />
               <button (click)="removePhoto($index, true)"
                 class="absolute -top-2 -right-2 btn btn-circle btn-xs btn-error shadow z-20">✕</button>
             </div>
