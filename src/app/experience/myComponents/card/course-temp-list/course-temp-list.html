@@ -1,83 +1,152 @@
-<div data-theme="bumblebee" class="p-4 bg-base-100">
-  @if (tempData) {
-  <div class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box shadow-sm mb-4">
-    <input type="checkbox" class="peer" />
+<div class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-2xl shadow-md mb-4">
+  <input type="checkbox" class="peer" />
 
-    <div class="collapse-title text-xl font-bold flex items-center justify-between pr-12">
-      <div class="flex-1">{{ tempData?.title }}</div>
-
-      <div class="flex gap-2" (click)="$event.stopPropagation()">
-        <button class="btn btn-outline btn-sm btn-secondary">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
-            stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-          </svg>
-          編輯模板
-        </button>
-        <button class="btn btn-primary btn-sm">選時段上架</button>
-      </div>
+  <!-- 標題列 -->
+  <div class="collapse-title flex items-center justify-between pr-12 py-4 px-5">
+    <div class="flex-1 truncate mr-4">
+      <span class="text-lg font-bold text-[#8B4513]">{{ tempData?.title }}</span>
+      <span class="ml-3 badge badge-outline badge-sm text-base-content/50">{{ tempData?.difficulty }}</span>
     </div>
+    <div class="flex gap-2 relative z-10" (click)="$event.stopPropagation()">
+      @if (!isEdit) {
+      <button (click)="onEdit()" class="btn btn-outline btn-sm btn-secondary">編輯模板</button>
+      <button class="btn btn-warning btn-sm">選時段上架</button>
+      } @else {
+      <button (click)="onSave()" class="btn btn-sm btn-success text-white" [disabled]="isSaving">
+        <span *ngIf="isSaving" class="loading loading-spinner loading-xs"></span>
+        {{ isSaving ? '儲存中...' : '儲存' }}
+      </button>
+      <button (click)="onCancel()" class="btn btn-sm btn-ghost" [disabled]="isSaving">取消</button>
+      }
+    </div>
+  </div>
 
-    <div class="collapse-content">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 pt-4 border-t border-base-200">
+  <!-- 展開內容 -->
+  <div class="collapse-content overflow-visible px-5 pb-5" style="overflow: visible !important;">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-5 border-t border-base-200">
 
-        <div class="col-span-1">
-          <div class="carousel w-full rounded-xl h-64 md:h-full shadow-inner bg-base-200 min-h-[200px]">
-            @for (photo of tempData?.photoUrls; track $index) {
-            <div [id]="'tem-' + tempData?.coachId + '-slide-' + $index" class="carousel-item relative w-full">
-              <img [src]="photo" class="w-full object-cover" />
-              <div class="absolute flex justify-between transform -translate-y-1/2 left-2 right-2 top-1/2">
-                <a [href]="'#tem-' + tempData?.coachId + '-slide-' + ($index === 0 ? (tempData?.photoUrls?.length ?? 1) - 1 : $index - 1)"
-                  class="btn btn-circle btn-xs btn-ghost bg-base-100/50">❮</a>
-                <a [href]="'#tem-' + tempData?.coachId + '-slide-' + ($index === (tempData?.photoUrls?.length ?? 1) - 1 ? 0 : $index + 1)"
-                  class="btn btn-circle btn-xs btn-ghost bg-base-100/50">❯</a>
-              </div>
+      <!-- 左：圖片區 -->
+      <div class="w-full">
+        @if (!isEdit) {
+        <!-- 瀏覽模式：輪播 -->
+        <div #carousel
+          class="carousel carousel-center w-full aspect-video rounded-xl shadow bg-base-200 overflow-x-hidden scroll-smooth">
+          @for (photo of (tempData?.imageUrl ?? tempData?.photoUrls ?? []); track $index) {
+          <div class="carousel-item w-full flex-shrink-0">
+            <img [src]="photo" class="w-full h-full object-cover" />
+          </div>
+          } @empty {
+          <div class="flex items-center justify-center w-full h-full text-base-content/30 text-sm italic">
+            暫無課程照片
+          </div>
+          }
+        </div>
+        } @else {
+        <!-- 編輯模式：圖片管理 -->
+        <div class="border-2 border-dashed border-base-300 rounded-xl p-4 bg-base-50">
+          <p class="text-xs font-semibold text-base-content/40 uppercase tracking-widest mb-3">圖片管理（16:9）</p>
+          <div class="grid grid-cols-2 gap-3">
+            @for (photo of (tempData?.imageUrl ?? tempData?.photoUrls ?? []); track $index) {
+            <div class="relative aspect-video group">
+              <img [src]="photo" class="w-full h-full object-cover rounded-lg border border-base-300" />
+              <button (click)="removePhoto($index, true)"
+                class="absolute -top-2 -right-2 btn btn-circle btn-xs btn-error shadow z-20">✕</button>
             </div>
-            } @empty {
-            <div class="flex items-center justify-center h-full w-full text-base-content/30 italic">
-              暫無課程照片
+            }
+            @for (url of previewUrls; track $index) {
+            <div class="relative aspect-video">
+              <img [src]="url" class="w-full h-full object-cover rounded-lg border-2 border-primary" />
+              <button (click)="removePhoto($index, false)"
+                class="absolute -top-2 -right-2 btn btn-circle btn-xs btn-error shadow">✕</button>
             </div>
+            }
+            <label
+              class="flex flex-col items-center justify-center border-2 border-dashed border-primary/30 rounded-lg aspect-video cursor-pointer hover:bg-base-200 transition-colors">
+              <span class="text-3xl text-primary/50 font-light">+</span>
+              <span class="text-xs text-base-content/40 mt-1">新增圖片</span>
+              <input type="file" class="hidden" (change)="onFileSelected($event)" multiple accept="image/*" />
+            </label>
+          </div>
+        </div>
+        }
+      </div>
+
+      <!-- 右：資訊區 -->
+      <div class="flex flex-col gap-5">
+
+        <!-- 課程名稱 -->
+        <div>
+          <p class="label-text text-xs text-base-content/40 uppercase tracking-widest mb-1">課程名稱</p>
+          @if (!isEdit) {
+          <p class="text-xl font-bold text-[#8B4513]">{{ tempData?.title }}</p>
+          } @else {
+          <input type="text" [formControl]="editForm.controls.title" class="input input-bordered w-full"
+            placeholder="課程名稱" />
+          }
+        </div>
+
+        <!-- 課程簡述 -->
+        <div>
+          <p class="label-text text-xs text-base-content/40 uppercase tracking-widest mb-1">課程簡述</p>
+          @if (!isEdit) {
+          <p class="text-sm leading-relaxed text-base-content/70">{{ tempData?.description || '尚無簡述' }}</p>
+          } @else {
+          <textarea [formControl]="editForm.controls.description" class="textarea textarea-bordered w-full h-28 text-sm"
+            placeholder="輸入課程簡介..."></textarea>
+          }
+        </div>
+
+        <!-- 上課地址 -->
+        <div class="relative" style="overflow: visible;">
+          <p class="label-text text-xs text-base-content/40 uppercase tracking-widest mb-1">上課地址</p>
+          @if (!isEdit) {
+          <p class="text-sm text-base-content/80">{{ tempData?.location || '未設定地址' }}</p>
+          } @else {
+          <p class="text-xs text-info mb-2">目前：{{ tempData?.location || '無資料' }}</p>
+          <div class="relative w-full" style="overflow: visible;">
+            <input type="text" [formControl]="editForm.controls.location" class="input input-bordered input-sm w-full"
+              placeholder="輸入關鍵字搜尋地址..." />
+            @if (locationResults.length > 0) {
+            <ul class="absolute z-[100] menu bg-base-100 w-full shadow-xl rounded-box mt-1 border border-base-300 p-2">
+              @for (item of locationResults; track item) {
+              <li><a (click)="$event.stopPropagation(); onSelectLocation(item)">{{ item.name }}</a></li>
+              }
+            </ul>
+            }
+          </div>
+          }
+        </div>
+
+        <!-- 價格 & 難度 -->
+        <div class="grid grid-cols-2 gap-3">
+          <div class="bg-base-200 rounded-xl p-4">
+            <p class="text-xs text-base-content/40 mb-1">價格（TWD）</p>
+            @if (!isEdit) {
+            <p class="text-xl font-bold text-secondary">NT$ {{ tempData?.price | number }}</p>
+            } @else {
+            <input type="number" [formControl]="editForm.controls.price" class="input input-bordered input-sm w-full" />
+            }
+          </div>
+          <div class="bg-base-200 rounded-xl p-4">
+            <p class="text-xs text-base-content/40 mb-1">難度等級</p>
+            @if (!isEdit) {
+            <p class="text-xl font-bold text-accent">{{ tempData?.difficulty }}</p>
+            } @else {
+            <select [formControl]="editForm.controls.difficulty" class="select select-bordered select-sm w-full">
+              <option value="初級">初級</option>
+              <option value="中級">中級</option>
+              <option value="高級">高級</option>
+            </select>
             }
           </div>
         </div>
 
-        <div class="col-span-1 md:col-span-2 flex flex-col justify-between">
-          <div class="space-y-6">
-            <div>
-              <h4 class="text-xs font-bold text-base-content/50 uppercase tracking-widest mb-2">課程簡述</h4>
-              <p class="text-base leading-relaxed text-base-content/80">{{ tempData?.description }}</p>
-            </div>
-
-            <div class="flex flex-wrap gap-4">
-              <div class="stats shadow-sm bg-base-200">
-                <div class="stat">
-                  <div class="stat-title text-xs">價格</div>
-                  <div class="stat-value text-primary text-xl">NT$ {{ tempData?.price | number }}</div>
-                </div>
-              </div>
-
-              <div class="stats shadow-sm bg-base-200">
-                <div class="stat">
-                  <div class="stat-title text-xs">難度</div>
-                  <div class="stat-value text-secondary text-xl">{{ tempData?.difficulty }}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="mt-8 text-xs text-base-content/40 flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            最後更新時間：{{ tempData?.updatedAt | date:'yyyy-MM-dd HH:mm' }}
-          </div>
-        </div>
+        <!-- 最後更新 -->
+        <p class="text-[11px] text-base-content/30 text-right italic mt-auto">
+          最後更新：{{ tempData?.updatedAt | date:'yyyy-MM-dd HH:mm' }}
+        </p>
 
       </div>
     </div>
   </div>
-  }
 </div>

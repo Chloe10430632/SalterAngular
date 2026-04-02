@@ -1,7 +1,7 @@
 <app-withavatar title="我的課程模板">
 
 
-  @for (item of tempList; track item.templateId) {
+  @for (item of tempList; track item.tempId) {
   <app-course-temp-list [tempData]="item"></app-course-temp-list>
   }@empty{
   <div class="text-center p-10 opacity-50">目前還沒有建立模板喔！</div>

@@ -1,3 +1,5 @@
+import { PhotoI } from "./IIPhoto";
+
 export interface APIResponse<T> {
   isSuccess: boolean;
   message: string;
@@ -18,7 +20,7 @@ export interface CourseSessionInfoI {
   price?: number;
   difficulty: string;
   location: string;
-  templateId: number;
+  tempId: number;
   sessionId: number;
 }
 export interface TempInfoI {
@@ -26,9 +28,11 @@ export interface TempInfoI {
   title?: string;
   description?: string;
   updatedAt: string;
-  photoUrls?: string[];
+  photoUrls?: string[]; //存進去
+  imageUrl?: PhotoI[]; //雲端抓下來
   price?: number;
   difficulty: string;
   location: string;
-  templateId: number;
+  tempId: number;
+
 }

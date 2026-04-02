@@ -1,0 +1,4 @@
+/* 讓 collapse 內容區允許下拉選單溢出 */
+.collapse-content {
+  overflow: visible !important;
+}
