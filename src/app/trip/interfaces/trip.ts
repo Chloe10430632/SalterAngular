@@ -114,14 +114,6 @@ export interface CheckedMember {
   isChecked: boolean;
 }
 
-// 提醒
-export interface TripReminder {
-  id: number;
-  remindOffsetMinutes: number;
-  isEnabled: boolean;
-  lastSentAt: string | null;
-}
-
 // 城市
 export interface TripCity {
   id: number;
