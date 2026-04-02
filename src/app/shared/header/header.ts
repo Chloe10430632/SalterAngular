@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from "@angular/router";
 import { AuthService } from '../../core/services/auth-service';
 import { FormsModule } from '@angular/forms';
+import { ChatStateService } from '../../user/Services/chat-state-service';
 
 
 @Component({
@@ -19,7 +20,7 @@ export class Header implements OnInit {
   /**關鍵字搜尋 */
   searchTerm: string = '';
 
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(private authService: AuthService, private router: Router, public chatState: ChatStateService) { }
 
 
   ngOnInit(): void {
@@ -43,6 +44,7 @@ export class Header implements OnInit {
   onLogout() {
     this.authService.logout();
     this.router.navigate(['/login'])
+    this.chatState.resetChat();
   }
 
   /**測試攔截器 */

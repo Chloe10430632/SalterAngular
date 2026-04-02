@@ -142,7 +142,7 @@
             <li><a routerLink="/forum/member/wall" [queryParams]="{ sortBy: 'posted' }">我的貼文</a></li>
             <li><a routerLink="/memberCenter/bookingList"><span>我的房屋預約訂單</span></a></li>
             <li><a>點數中心 (0 pts)</a></li>
-            <li><a>設定</a></li>
+            <li><a (click)="chatState.toggle()" class="cursor-pointer">客服機器人</a></li>
             <!-- <li><button (click)="testAuth()" class="btn btn-outline btn-info btn-sm">
                 🔍 測試 Token
               </button></li> -->
