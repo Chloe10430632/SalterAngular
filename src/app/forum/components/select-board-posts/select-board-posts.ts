@@ -12,6 +12,7 @@ import { CurrentUser } from '../../interfaces/currentUser';
 import { AuthService } from '../../../core/services/auth-service';
 import { HandleInteractions } from '../../services/handle-interactions';
 import { AvatarPipe } from "../../../shared/pipes/avatar-pipe";
+import { NotificationService } from '../../../shared/notifyService/notification-service';
 
 @Component({
   selector: 'app-select-board-posts',
@@ -55,7 +56,8 @@ export class SelectBoardPosts implements OnInit {
     private toastr: ToastrService,
     private authService: AuthService,
     private handleInteractionsService: HandleInteractions,
-    private router: Router) { }
+    private router: Router,
+    private n: NotificationService) { }
 
   ngOnInit(): void {
     this.activatedRoute.paramMap.subscribe(params => {
@@ -206,8 +208,13 @@ export class SelectBoardPosts implements OnInit {
 
   /**確認送出檢舉單 */
   confirmReport(post: any, reason: string, detail: string) {
+    if (!this.currentUser) {
+      this.n.show("欲檢舉貼文，請先登入。", "error");
+      return;
+    }
+
     if (reason === '請選擇原因') {
-      this.toastr.warning('請先選擇檢舉原因', '提示');
+      this.n.show('請先選擇檢舉原因', 'error');
       return;
     }
     reason = `${reason}:${detail}`;

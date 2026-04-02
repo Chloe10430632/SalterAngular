@@ -17,6 +17,7 @@ import { SensitiveWordsService } from '../../services/sensitive-words-service';
 import { catchError, debounceTime, distinctUntilChanged, filter, of, switchMap, tap } from 'rxjs';
 import { PostsAgentService } from '../../services/posts-agent-service';
 import { AdDetails } from '../../interfaces/AdDetails';
+import { NotificationService } from '../../../shared/notifyService/notification-service';
 
 @Component({
   selector: 'app-index',
@@ -113,7 +114,8 @@ export class Index implements OnInit {
     private formBuilder: FormBuilder,
     private router: Router,
     private checkWordsService: SensitiveWordsService,
-    private postAgentService: PostsAgentService) { }
+    private postAgentService: PostsAgentService,
+    private n: NotificationService) { }
 
   ngOnInit(): void {
     this.boardsService.GetTop5PopBoardsApi().subscribe(data => {
@@ -247,7 +249,8 @@ export class Index implements OnInit {
   /**判斷是否登入 */
   isLogin() {
     if (!this.currentUser) {
-      this.router.navigate(["/login"]);
+      this.n.show("發佈貼文請先登入喔!", "error");
+      this.router.navigate(["/login"], { queryParams: { showModal: 'true' } });
     }
   }
 

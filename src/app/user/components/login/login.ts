@@ -1,6 +1,6 @@
 import { Component, NgZone, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { UserService } from '../../Services/user-service';
 import { LoginResult } from '../../interfaces/ILoginResponse';
 import { ILogin } from '../../interfaces/ILogin';
@@ -41,7 +41,8 @@ export class Login implements OnInit {
     private router: Router,
     private ngZone: NgZone,
     private notification: NotificationService,
-    private chatService: ChatService
+    private chatService: ChatService,
+    private activateRouter: ActivatedRoute
   ) { }
 
 
@@ -143,6 +144,13 @@ export class Login implements OnInit {
         auto_select: false, // 讓使用者自己選帳號
       });
     }
+
+    //如果有帶Query參數，就打開登入Modal
+    this.activateRouter.queryParams.subscribe(params => {
+      if (params['showModal'] === 'true') {
+        this.openLoginModal();
+      }
+    });
   }
 
   ngOnDestroy() {
