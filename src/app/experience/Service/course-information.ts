@@ -34,10 +34,9 @@ export class CourseInformationS {
     return this.client.put<any>(`${environment.apiUrl}/Exp/Exp/EditCourseTemplate/${tempId}`, data)
   }
   /**找模板資訊 */
-  getCourseT(tempId: number): Observable<APIResponse<TempInfoI>> {
-    return this.client.get<APIResponse<TempInfoI>>(
-      `${environment.apiUrl}/api/Exp/Exp/Temp/${tempId}`
-    );
+  getCourseT(): Observable<APIResponse<TempInfoI[]>> {
+    return this.client.get<APIResponse<TempInfoI[]>>(
+      `${environment.apiUrl}/Exp/Exp/Temp`);
   }
   /**課程上架 */
   createSession(tempId: number, data: FormData): Observable<any> {
@@ -52,6 +51,6 @@ export class CourseInformationS {
 // GET /api/Exp/Exp/LatestCourse/{coachId}
 // POST /api/Exp/Exp/AddCourseT
 // PUT /api/Exp/Exp/EditCourseTemplate/{tempId}
-// GET /api/Exp/Exp/Temp/{tempId}
+// GET /api/Exp/Exp/Temp
 // POST /api/Exp/Exp/CourseTime/{templateId}
 // DELETE /api/Exp/Exp/DeleteSession/{sessionId}

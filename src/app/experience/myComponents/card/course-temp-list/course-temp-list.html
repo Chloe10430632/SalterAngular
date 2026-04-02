@@ -1,15 +1,13 @@
 <div data-theme="bumblebee" class="p-4 bg-base-100">
-  <div class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box shadow-sm">
+  @if (tempData) {
+  <div class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box shadow-sm mb-4">
     <input type="checkbox" class="peer" />
 
-    <div class="collapse-title text-xl font-medium flex items-center justify-between pr-12">
-      <div class="flex-1">
-        {{ course?.title }}
-      </div>
+    <div class="collapse-title text-xl font-bold flex items-center justify-between pr-12">
+      <div class="flex-1">{{ tempData?.title }}</div>
 
       <div class="flex gap-2" (click)="$event.stopPropagation()">
         <button class="btn btn-outline btn-sm btn-secondary">
-          <!-- (click)="onEditTemplate()" -->
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
             stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -17,82 +15,69 @@
           </svg>
           編輯模板
         </button>
-        <button class="btn btn-primary btn-sm">
-          <!-- (click)="onSchedule()" -->
-          選時段上架
-        </button>
+        <button class="btn btn-primary btn-sm">選時段上架</button>
       </div>
     </div>
 
     <div class="collapse-content">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-base-200">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 pt-4 border-t border-base-200">
 
         <div class="col-span-1">
-          <div class="carousel w-full rounded-xl h-48 shadow-inner">
-            <!--  -->
-            <div class="col-span-1">
-              <div class="carousel w-full rounded-xl h-48 shadow-inner bg-base-200">
-
-                @for (photo of course?.photoUrls; track $index) {
-                <div [id]="'course-' + course?.coachId + '-slide-' + $index" class="carousel-item relative w-full">
-
-                  <img [src]="photo" class="w-full object-cover" />
-
-                  <div class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
-
-                    <a [href]="'#course-' + course?.coachId + '-slide-' + ($index === 0 ? (course?.photoUrls?.length ?? 1) - 1 : $index - 1)"
-                      class="btn btn-circle btn-xs opacity-50">❮</a>
-
-                    <a [href]="'#course-' + course?.coachId + '-slide-' + ($index === (course?.photoUrls?.length ?? 1) - 1 ? 0 : $index + 1)"
-                      class="btn btn-circle btn-xs opacity-50">❯</a>
-
-                  </div>
-                </div>
-                } @empty {
-                <div class="flex items-center justify-center h-full text-base-content/30 italic">
-                  暫無課程照片
-                </div>
-                }
+          <div class="carousel w-full rounded-xl h-64 md:h-full shadow-inner bg-base-200 min-h-[200px]">
+            @for (photo of tempData?.photoUrls; track $index) {
+            <div [id]="'tem-' + tempData?.coachId + '-slide-' + $index" class="carousel-item relative w-full">
+              <img [src]="photo" class="w-full object-cover" />
+              <div class="absolute flex justify-between transform -translate-y-1/2 left-2 right-2 top-1/2">
+                <a [href]="'#tem-' + tempData?.coachId + '-slide-' + ($index === 0 ? (tempData?.photoUrls?.length ?? 1) - 1 : $index - 1)"
+                  class="btn btn-circle btn-xs btn-ghost bg-base-100/50">❮</a>
+                <a [href]="'#tem-' + tempData?.coachId + '-slide-' + ($index === (tempData?.photoUrls?.length ?? 1) - 1 ? 0 : $index + 1)"
+                  class="btn btn-circle btn-xs btn-ghost bg-base-100/50">❯</a>
               </div>
             </div>
-            <!--  -->
+            } @empty {
+            <div class="flex items-center justify-center h-full w-full text-base-content/30 italic">
+              暫無課程照片
+            </div>
+            }
           </div>
-
-          <div class="col-span-2 flex flex-col justify-between">
-            <div class="space-y-4">
-              <div>
-                <h4 class="text-sm font-bold text-base-content/50 uppercase tracking-widest">課程簡述</h4>
-                <p class="text-lg">{{ course?.description }}</p>
-              </div>
-
-              <div class="flex flex-wrap gap-8">
-                <div class="stats shadow bg-base-200">
-                  <div class="stat">
-                    <div class="stat-title">價格</div>
-                    <div class="stat-value text-primary text-2xl">NT$ {{ course?.price }}</div>
-                  </div>
-                </div>
-
-                <div class="stats shadow bg-base-200">
-                  <div class="stat">
-                    <div class="stat-title">難度</div>
-                    <div class="stat-value text-secondary text-2xl">{{ course?.difficulty }}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="mt-6 text-xs text-base-content/40 flex items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              最後更新時間：{{ course?.updatedAt | date:'yyyy-MM-dd HH:mm' }}
-            </div>
-          </div>
-
         </div>
+
+        <div class="col-span-1 md:col-span-2 flex flex-col justify-between">
+          <div class="space-y-6">
+            <div>
+              <h4 class="text-xs font-bold text-base-content/50 uppercase tracking-widest mb-2">課程簡述</h4>
+              <p class="text-base leading-relaxed text-base-content/80">{{ tempData?.description }}</p>
+            </div>
+
+            <div class="flex flex-wrap gap-4">
+              <div class="stats shadow-sm bg-base-200">
+                <div class="stat">
+                  <div class="stat-title text-xs">價格</div>
+                  <div class="stat-value text-primary text-xl">NT$ {{ tempData?.price | number }}</div>
+                </div>
+              </div>
+
+              <div class="stats shadow-sm bg-base-200">
+                <div class="stat">
+                  <div class="stat-title text-xs">難度</div>
+                  <div class="stat-value text-secondary text-xl">{{ tempData?.difficulty }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-8 text-xs text-base-content/40 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            最後更新時間：{{ tempData?.updatedAt | date:'yyyy-MM-dd HH:mm' }}
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
+  }
+</div>

@@ -4,7 +4,11 @@
 
     <div class="avatar shrink-0">
       <div class="w-32 h-32 md:w-40 md:h-40 rounded-full ring ring-primary ring-offset-base-100 ring-offset-4">
-        <img [src]="ava | avatar" alt="Avatar" />
+        @if (coachData()) {
+        <img [src]="coachData()?.avatarUrl |avatar" alt="Avatar" />
+        } @else {
+        <img [src]="null | avatar" alt="Default Avatar" />
+        }
       </div>
     </div>
 
