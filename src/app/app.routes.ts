@@ -117,7 +117,7 @@ export const routes: Routes = [
         loadComponent: () => import('./experience/components/coach-course-temp/coach-course-temp').then(m => m.CoachCourseTemp)
       },
       {
-        path: 'coursetemp', //新增模板
+        path: 'courseaddtemp', //新增模板
         loadComponent: () => import('./experience/components/coach-course-add-temp/coach-course-add-temp').then(m => m.CoachCourseAddTemp)
       },
       {

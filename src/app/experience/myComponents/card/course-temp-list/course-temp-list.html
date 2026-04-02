@@ -97,24 +97,47 @@
         </div>
 
         <!-- 上課地址 -->
-        <div class="relative" style="overflow: visible;">
-          <p class="label-text text-xs text-base-content/40 uppercase tracking-widest mb-1">上課地址</p>
-          @if (!isEdit) {
-          <p class="text-sm text-base-content/80">{{ tempData?.location || '未設定地址' }}</p>
-          } @else {
-          <p class="text-xs text-info mb-2">目前：{{ tempData?.location || '無資料' }}</p>
-          <div class="relative w-full" style="overflow: visible;">
-            <input type="text" [formControl]="editForm.controls.location" class="input input-bordered input-sm w-full"
-              placeholder="輸入關鍵字搜尋地址..." />
-            @if (locationResults.length > 0) {
-            <ul class="absolute z-[100] menu bg-base-100 w-full shadow-xl rounded-box mt-1 border border-base-300 p-2">
-              @for (item of locationResults; track item) {
-              <li><a (click)="$event.stopPropagation(); onSelectLocation(item)">{{ item.name }}</a></li>
+        <div data-theme="bumblebee" class="space-y-4">
+
+          <div class="relative" style="overflow: visible;">
+            <p class="label-text text-xs text-base-content/40 uppercase tracking-widest mb-1">上課地址</p>
+
+            @if (!isEdit) {
+            <p class="text-sm text-base-content/80 px-1">{{ tempData?.location || '未設定地址' }}</p>
+            } @else {
+            <p class="text-xs text-info mb-2">目前：{{ tempData?.location || '無資料' }}</p>
+
+            <div class="form-control relative" style="overflow: visible;">
+              <label class="label">
+                <span class="label-text font-bold text-xs uppercase tracking-widest text-primary">授課地點搜尋</span>
+              </label>
+
+              <div class="relative">
+                <span class="absolute inset-y-0 left-4 flex items-center text-primary">
+                  <span class="iconify" data-icon="tabler:map-pin-filled"></span>📍
+                </span>
+                <input type="text" [formControl]="editForm.controls.location"
+                  class="input input-bordered focus:input-primary w-full pl-12 shadow-sm" placeholder="輸入地標或地址..." />
+              </div>
+
+              @if (locationResults.length > 0) {
+              <ul
+                class="absolute z-[100] menu bg-base-100 w-full shadow-2xl rounded-2xl mt-2 border border-base-200 p-2 top-full left-0">
+                @for (item of locationResults; track item.placeId || item.name) {
+                <li>
+                  <a (click)="$event.stopPropagation(); onSelectLocation(item)"
+                    class="py-3 flex flex-col items-start hover:bg-primary/10">
+                    <span class="font-bold text-secondary">{{ item.name }}</span>
+                    <span class="text-xs opacity-50">{{ item.addressText }}</span>
+                  </a>
+                </li>
+                }
+              </ul>
               }
-            </ul>
+            </div>
             }
           </div>
-          }
+
         </div>
 
         <!-- 價格 & 難度 -->
@@ -124,7 +147,7 @@
             @if (!isEdit) {
             <p class="text-xl font-bold text-secondary">NT$ {{ tempData?.price | number }}</p>
             } @else {
-            <input type="number" [formControl]="editForm.controls.price" class="input input-bordered input-sm w-full" />
+            <input type="text" [formControl]="editForm.controls.price" class="input input-bordered input-sm w-full" />
             }
           </div>
           <div class="bg-base-200 rounded-xl p-4">

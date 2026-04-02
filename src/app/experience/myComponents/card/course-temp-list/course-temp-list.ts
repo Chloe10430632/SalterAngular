@@ -149,7 +149,6 @@ export class CourseTempList implements OnInit {
     const formData = new FormData();
     const id = this.tempData?.tempId;
 
-
     if (!id) {
       console.error("錯誤：templateId 為 undefined。請檢查父組件傳入的 tempData：", this.tempData);
       this.notifyS.show("找不到模板", "error");
@@ -168,7 +167,8 @@ export class CourseTempList implements OnInit {
       formData.append('NewImageFiles', file, file.name);
     });
     const remainingPhotos = (this.tempData?.imageUrls ?? []).map(p => ({
-      photoUrl: p.photoUrl
+      photoUrl: p.photoUrl,
+      publicId: p.publicId
     }));
     formData.append('ExistingPhotosJson', JSON.stringify(remainingPhotos));
 

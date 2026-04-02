@@ -21,7 +21,7 @@ export class Toptab {
   }
 
   addtemplate() {
-    this.router.navigate(['/experience/coursetaddemp'])
+    this.router.navigate(['/experience/courseaddtemp'])
   }
 
   onshelf() {
