@@ -59,6 +59,7 @@ export class BookingList implements OnInit {
     }
   }
 
+
   loadBookings() {
     this.isLoading = true;
     // 這裡替換成你實際抓取使用者訂單的 API
@@ -89,6 +90,32 @@ export class BookingList implements OnInit {
         }
       });
     }
+  }
+
+  // 金流
+  onPay(bookingId: number) {
+    this.houseService.payBooking(bookingId).subscribe({
+      next: (htmlForm: string) => {
+        // 建立一個隱藏的 div 容器
+        const payDiv = document.createElement('div');
+        payDiv.id = 'ecpay-payment-container';
+        payDiv.style.display = 'none'; // 不要讓使用者看到表單內容
+        payDiv.innerHTML = htmlForm;
+
+        // 加入到 body 中
+        document.body.appendChild(payDiv);
+
+        // 找出表單並提交
+        const form = payDiv.querySelector('form') as HTMLFormElement;
+        if (form) {
+          form.submit();
+        }
+      },
+      error: (err) => {
+        console.error('金流發送失敗：', err);
+        // 這裡可以跳一個 SweetAlert 或通知
+      }
+    });
   }
 }
 

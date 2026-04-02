@@ -85,6 +85,13 @@ export class HouseService {
     return this.http.get<CityGroupDTO[]>(`${this.apiUrl}/Home/city-groups`);
   }
 
+  //付款
+  payBooking(bookingId: number): Observable<string> {
+    const url = `${this.apiUrl}/Home/PayBooking/${bookingId}`;
+    return this.http.post(url, {}, { responseType: 'text' });
+  }
+
+
   changeAdult(delta: number) {
     this.adultCount += delta;
     if (this.adultCount < 0) this.adultCount = 0; // 防止變成負數

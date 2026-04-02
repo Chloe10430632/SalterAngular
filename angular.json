@@ -66,7 +66,7 @@
         "serve": {
           "options": {
             "allowedHosts": [
-              "sartorially-carbonylic-bennie.ngrok-free.dev"
+              "nontangentially-triable-elmer.ngrok-free.dev"
             ]
           },
           "builder": "@angular/build:dev-server",
