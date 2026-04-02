@@ -47,6 +47,7 @@ export interface TripSummary {
   favoriteCount: number;
   createdAt: string;
   isFavorite?: boolean; // 前端加的
+  folderId?: number | null;
 }
 
 // 行程詳情
@@ -81,6 +82,7 @@ export interface TripLocation {
   locationRole: string;
   note: string;
   sortOrder: number;
+  dayNumber: number;
   lat?: number | null;
   lng?: number | null;
 }
@@ -143,4 +145,16 @@ export interface TripLocationSearch {
   cityName?: string;
   districtName?: string;
 
+}
+
+//收藏資料夾
+export interface TripFavoriteFolder {
+  id: number;
+  name: string;
+  favoriteCount: number;
+  createdAt: string;
+}
+
+export interface MoveFavoriteToFolderDto {
+  folderId: number | null;
 }

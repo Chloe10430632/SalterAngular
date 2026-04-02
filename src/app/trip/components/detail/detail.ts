@@ -86,6 +86,16 @@ export class Detail implements OnInit, AfterViewInit {
     return window.location.href;
   }
 
+  get daysUntilTrip(): number | null {
+    if (!this.trip) return null;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const start = new Date(this.trip.startAt);
+    start.setHours(0, 0, 0, 0);
+    const diff = Math.ceil((start.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    return diff;
+  }
+
   ngOnInit() {
     this.authService.currentUser$.subscribe(user => {
       this.currentUserId = user?.id ?? 0;

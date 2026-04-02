@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { TripQuery, ApiResponse, TripListResult, TripSummary, TripDetail, TripAnnouncement, TripGearItem, TripLocation, TripReminder, TripCity, TripDistrict, TripLocationSearch } from '../interfaces/trip';
+import { TripQuery, ApiResponse, TripListResult, TripSummary, TripDetail, TripAnnouncement, TripGearItem, TripLocation, TripReminder, TripCity, TripDistrict, TripLocationSearch, TripFavoriteFolder } from '../interfaces/trip';
 import { environment } from '../../../environments/environment';
 
 @Injectable({
@@ -91,6 +91,27 @@ export class TripService {
 
   removeFavorite(tripId: number): Observable<ApiResponse<string>> {
     return this.http.delete<ApiResponse<string>>(`${this.baseUrl}/${tripId}/favorite`);
+  }
+
+  // 資料夾
+  getFolders(): Observable<ApiResponse<TripFavoriteFolder[]>> {
+    return this.http.get<ApiResponse<TripFavoriteFolder[]>>(`${this.baseUrl}/folders`);
+  }
+
+  createFolder(name: string): Observable<ApiResponse<TripFavoriteFolder>> {
+    return this.http.post<ApiResponse<TripFavoriteFolder>>(`${this.baseUrl}/folders`, { name });
+  }
+
+  updateFolder(folderId: number, name: string): Observable<ApiResponse<string>> {
+    return this.http.put<ApiResponse<string>>(`${this.baseUrl}/folders/${folderId}`, { name });
+  }
+
+  deleteFolder(folderId: number): Observable<ApiResponse<string>> {
+    return this.http.delete<ApiResponse<string>>(`${this.baseUrl}/folders/${folderId}`);
+  }
+
+  moveFavoriteToFolder(tripId: number, folderId: number | null): Observable<ApiResponse<string>> {
+    return this.http.put<ApiResponse<string>>(`${this.baseUrl}/${tripId}/favorite/folder`, { folderId });
   }
 
   // ── 公告 ──

@@ -22,8 +22,24 @@
           </span>
         </div>
         <h1 class="text-2xl font-bold text-white">{{ trip.title }}</h1>
-        <p class="text-white/70 text-sm mt-1">
+        <p class="text-white/70 text-sm mt-1 flex items-center gap-2 flex-wrap">
           {{ trip.startAt | date:'MM/dd' }} – {{ trip.endAt | date:'MM/dd' }}
+          @if (daysUntilTrip !== null && daysUntilTrip > 0) {
+          <span class="inline-flex items-center gap-1 text-xs bg-white/20 rounded-full px-2 py-0.5 whitespace-nowrap">
+            <i class="bi bi-hourglass-split text-white text-xs"></i>
+            距離出發還有 {{ daysUntilTrip }} 天
+          </span>
+          } @else if (daysUntilTrip === 0) {
+          <span class="inline-flex items-center gap-1 text-xs bg-primary/80 rounded-full px-2 py-0.5 whitespace-nowrap">
+            <i class="bi bi-airplane text-white text-xs"></i>
+            🎉 今天出發！
+          </span>
+          } @else if (daysUntilTrip !== null && daysUntilTrip < 0) { <span
+            class="inline-flex items-center gap-1 text-xs bg-white/10 rounded-full px-2 py-0.5 whitespace-nowrap">
+            <i class="bi bi-check-circle text-white text-xs"></i>
+            {{ -daysUntilTrip }} 天前已出發
+            </span>
+            }
         </p>
       </div>
       <div class="flex gap-2">

@@ -2,3 +2,41 @@ google-map {
   display: block;
   height: 100%;
 }
+
+@keyframes slide-down-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+    max-height: 0;
+    overflow: hidden;
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 100px;
+  }
+}
+
+@keyframes slide-down-leave {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 100px;
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+    max-height: 0;
+    overflow: hidden;
+  }
+}
+
+.slide-down-enter {
+  animation: slide-down-enter 200ms ease-out forwards;
+}
+
+.slide-down-leave {
+  animation: slide-down-leave 150ms ease-in forwards;
+}
