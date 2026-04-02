@@ -82,7 +82,7 @@ export class MemFavorite {
         next: (res) => {
           // 有課程 → 顯示標題；後端說沒課 → 顯示提示文字
           this.allCourseMap[coach.coachId] = res
-            ? (res.title || '新課程準備中...')
+            ? (res.data.title || '新課程準備中...')
             : '暫無開課計畫';
         },
         error: () => {

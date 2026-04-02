@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { CourseInformationS } from '../../../Service/course-information';
-import { CourseInfoI } from '../../../Interfaces/IICourse';
-import { Router } from '@angular/router';
+import { CourseSessionInfoI, TempInfoI } from '../../../Interfaces/IICourse';
+import { ActivatedRoute, Router } from '@angular/router';
 //===============!!這是子 元件!!=======================//
 //===============!! 課程模板 !!=======================//
 
@@ -16,23 +16,32 @@ import { Router } from '@angular/router';
 //========!!課程模板!!================//
 
 export class CourseTempList implements OnInit {
-  course: CourseInfoI | null = null;
+  course: CourseSessionInfoI | null = null;
+  template: TempInfoI | null = null;
   //--------------------------------------//
   constructor(private courseInfoS: CourseInformationS,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) { }
   //--------------------------------------//
   ngOnInit(): void {
-    if (this.course?.templateId != null)
-      this.loadRemp(this.course?.templateId);
+    //從路由抓id
+    const idFromUrl = this.route.snapshot.paramMap.get('id');
+
+    if (idFromUrl) {
+      // 網址抓到的是字串，我們要轉成數字餵給 Service
+      this.loadTemp(Number(idFromUrl));
+    } else {
+      console.warn('網址上找不到課程 ID 喔！');
+    }
   }
   //--------------------------------------//
-  loadRemp(tempId: number) {
-    this.courseInfoS.getCourseInfo(id).subscribe({
+  loadTemp(tempId: number) {
+    this.courseInfoS.getCourseT(tempId).subscribe({
       next: (result) => {
         if (result.isSuccess) {
-          this.course = result.data;
-          console.log('抓到課程內容囉：', this.course);
+          this.template = result.data;
+          console.log('抓到模板內容囉：', this.course);
         } else {
           console.error('後端說失敗：', result.message);
         }
@@ -44,12 +53,12 @@ export class CourseTempList implements OnInit {
 
 //--------------------------------------//
 
-onEditTemplate() {
-  this.router.navigate(['/'])
-  console.log('開啟模板編輯器...');
-}
+// onEditTemplate() {
+//   this.router.navigate(['/'])
+//   console.log('開啟模板編輯器...');
+// }
 
-onSchedule() {
-  console.log('跳轉至排程頁面...');
-}
-}
+// onSchedule() {
+//   console.log('跳轉至排程頁面...');
+// }}
+

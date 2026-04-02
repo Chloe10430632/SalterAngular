@@ -2,25 +2,25 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
-import { CourseInfoI } from '../Interfaces/IICourse';
+import { CourseSessionInfoI, TempInfoI } from '../Interfaces/IICourse';
 import { APIResponse } from '../Interfaces/IIcoachAllinfo';
 
 @Injectable({
   providedIn: 'root',
 })
 //========!!這是Service!!================//
-//====找時間+名稱====//
+//====找課程相關====//
 export class CourseInformationS {
   constructor(private client: HttpClient) { }
 
   /**找課程資訊 */
-  getCourseInfo(sessionId: number): Observable<APIResponse<CourseInfoI>> {
-    return this.client.get<APIResponse<CourseInfoI>>(`${environment.apiUrl}/Exp/Exp/CourseInfo/${sessionId}`);
+  getCourseInfo(sessionId: number): Observable<APIResponse<CourseSessionInfoI>> {
+    return this.client.get<APIResponse<CourseSessionInfoI>>(`${environment.apiUrl}/Exp/Exp/CourseInfo/${sessionId}`);
   }
 
   /**找最新課程 */
-  getLatestCourseByCoach(coachId: number): Observable<APIResponse<CourseInfoI>> {
-    return this.client.get<APIResponse<CourseInfoI>>(
+  getLatestCourseByCoach(coachId: number): Observable<APIResponse<CourseSessionInfoI>> {
+    return this.client.get<APIResponse<CourseSessionInfoI>>(
       `${environment.apiUrl}/Exp/Exp/LatestCourse/${coachId}`
     );
   }
@@ -29,5 +29,29 @@ export class CourseInformationS {
   createCourseT(data: FormData): Observable<any> {
     return this.client.post<any>(`${environment.apiUrl}/Exp/Exp/AddCourseT`, data);
   }
-
+  /**編輯模板 */
+  editCourseT(tempId: number, data: FormData): Observable<any> {
+    return this.client.put<any>(`${environment.apiUrl}/Exp/Exp/EditCourseTemplate/${tempId}`, data)
+  }
+  /**找模板資訊 */
+  getCourseT(tempId: number): Observable<APIResponse<TempInfoI>> {
+    return this.client.get<APIResponse<TempInfoI>>(
+      `${environment.apiUrl}/api/Exp/Exp/Temp/${tempId}`
+    );
+  }
+  /**課程上架 */
+  createSession(tempId: number, data: FormData): Observable<any> {
+    return this.client.post<any>(`${environment.apiUrl}/api/Exp/Exp/CourseTime/${tempId}`, data)
+  }
+  /**課程下架 */
+  deleteSession(sessionId: number,): Observable<any> {
+    return this.client.delete<any>(`${environment.apiUrl}/api/Exp/Exp/DeleteSession/${sessionId}`)
+  }
 }
+// GET /api/Exp/Exp/CourseInfo/{sessionId}
+// GET /api/Exp/Exp/LatestCourse/{coachId}
+// POST /api/Exp/Exp/AddCourseT
+// PUT /api/Exp/Exp/EditCourseTemplate/{tempId}
+// GET /api/Exp/Exp/Temp/{tempId}
+// POST /api/Exp/Exp/CourseTime/{templateId}
+// DELETE /api/Exp/Exp/DeleteSession/{sessionId}
