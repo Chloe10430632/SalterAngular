@@ -424,6 +424,14 @@ export class Detail implements OnInit, AfterViewInit {
         body: formData
       });
       const data = await res.json();
+
+      if (!res.ok) {
+        console.error('Cloudinary 上傳失敗:', data);
+        this.notify.show('圖片上傳失敗', 'error');
+        this.coverPreview = this.editForm.coverImageUrl;
+        return;
+      }
+
       this.editForm.coverImageUrl = data.secure_url;
       this.editForm.coverImagePublicId = data.public_id;
     } catch {

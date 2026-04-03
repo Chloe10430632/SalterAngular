@@ -49,6 +49,7 @@ export class CreateTrip implements OnInit, AfterViewInit {
   showLoginRequired = false;
   countdown = 6;
   showCoverPreview = false;
+  coverPreview = '';
 
   // ── 步驟一表單 ──
   step1Form: FormGroup = this.fb.group({
@@ -172,15 +173,35 @@ export class CreateTrip implements OnInit, AfterViewInit {
 
   async uploadFile(file: File) {
     this.isUploading = true;
+    const reader = new FileReader();
+    reader.onload = () => this.coverPreview = reader.result as string;
+    reader.readAsDataURL(file);
+
     const formData = new FormData();
     formData.append('file', file);
     formData.append('upload_preset', 'salter-trip');
     try {
-      const res = await fetch('https://api.cloudinary.com/v1_1/dn5drigh2/image/upload', { method: 'POST', body: formData });
+      const res = await fetch('https://api.cloudinary.com/v1_1/dn5drigh2/image/upload', {
+        method: 'POST',
+        body: formData
+      });
       const data = await res.json();
-      this.step1Form.patchValue({ coverImageUrl: data.secure_url, coverImagePublicId: data.public_id });
-    } catch {
+
+      if (!res.ok) {
+        console.error('Cloudinary 上傳失敗:', data);
+        this.notify.show('圖片上傳失敗', 'error');
+        this.coverPreview = '';
+        return;
+      }
+
+      this.step1Form.patchValue({
+        coverImageUrl: data.secure_url,
+        coverImagePublicId: data.public_id
+      });
+    } catch (err) {
+      console.error('上傳失敗:', err);
       this.notify.show('圖片上傳失敗', 'error');
+      this.coverPreview = '';
     } finally {
       this.isUploading = false;
     }
@@ -188,6 +209,7 @@ export class CreateTrip implements OnInit, AfterViewInit {
 
   removeCover() {
     this.step1Form.patchValue({ coverImageUrl: '', coverImagePublicId: '' });
+    this.coverPreview = '';
   }
 
   // ── 地點搜尋 ──

@@ -63,6 +63,10 @@ export class Explore implements OnInit {
     { label: '已結束', value: 'completed', checked: false },
   ];
 
+  get origin(): string {
+    return window.location.origin;
+  }
+
   ngOnInit() {
     this.loadTrips();
   }

@@ -350,7 +350,7 @@
         @if (isOrganizer && showAnnouncementForm) {
         <div class="card bg-base-200 border border-base-300">
           <div class="card-body p-4 flex flex-col gap-3">
-            <input type="text" class="input input-bordered w-full input-sm" placeholder="公告標題 *"
+            <input type="text" class="input input-bordered w-full input-sm" placeholder="*公告標題（必填）"
               [(ngModel)]="announcementFormData.title" />
             <textarea class="textarea textarea-bordered w-full text-sm" rows="4" placeholder="公告內容（選填）"
               [(ngModel)]="announcementFormData.content"></textarea>
