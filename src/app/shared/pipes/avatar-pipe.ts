@@ -8,9 +8,11 @@ import { environment } from '../../../environments/environment';
 export class AvatarPipe implements PipeTransform {
 
   transform(avatar: string | null | undefined): string {
+
+    const baseUrl = environment.domain;
     // 1. 處理空值
     if (!avatar) {
-      return 'user/default-avatar.png';
+      return `${baseUrl}/admin/imgs/default-avatar.png`;
     }
 
     // 2. 處理已經是完整 URL 的情況
@@ -19,7 +21,7 @@ export class AvatarPipe implements PipeTransform {
     }
 
     // 3. 處理路徑拼接
-    const baseUrl = environment.domain;
+
     const path = avatar.startsWith('/') ? avatar : `/${avatar}`;
 
     return `${baseUrl}${path}`;
