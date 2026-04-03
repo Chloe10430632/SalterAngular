@@ -1,8 +1,8 @@
 /* 讓 collapse 內容區允許下拉選單溢出 */
-/* @import "flatpickr/dist/flatpickr.min.css"; */
+@import "flatpickr/dist/flatpickr.min.css";
 
 /* 1. 解放所有父層級，讓地點搜尋顯示 */
-/* :host ::ng-deep .collapse,
+:host ::ng-deep .collapse,
 :host ::ng-deep .collapse-content {
   overflow: visible !important;
 }
@@ -17,30 +17,30 @@
 
 .bsolute {
   z-index: 99999 !important;
-} */
+}
 
 /* 2. 定製月曆風格 - 符合 bumblebee 黃棕色系 */
-/* ::ng-deep .flatpickr-calendar {
+::ng-deep .flatpickr-calendar {
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  border: 2px solid #facc15 !important; */
-/* 選用主題黃色 */
-/* border-radius: 1rem !important;
-} */
+  border: 2px solid #facc15 !important;
+  /* 選用主題黃色 */
+  border-radius: 1rem !important;
+}
 
-/* ::ng-deep .flatpickr-day.selected {
+::ng-deep .flatpickr-day.selected {
   background: #8B4513 !important;
-  選用課程標題的咖啡色
+  /* 選用課程標題的咖啡色 */
   border-color: #8B4513 !important;
-} */
-/*
+}
+
 ::ng-deep .flatpickr-day:hover {
   background: #fef08a !important;
-  淺黃色 hover
-} */
+  /* 淺黃色 hover */
+}
 
 /* 3. 確保地點搜尋列表不會被切掉且在最上層 */
-/* .menu.absolute {
+.menu.absolute {
   z-index: 101 !important;
   max-height: 200px;
   overflow-y: auto;
-} */
+}
