@@ -1,12 +1,13 @@
 import { NotificationService } from './../../../../shared/notifyService/notification-service';
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, ViewChild, AfterViewInit } from '@angular/core';
 import { debounceTime, switchMap, distinctUntilChanged } from 'rxjs';
 import { CourseInformationS } from '../../../Service/course-information';
 import { TempInfoI } from '../../../Interfaces/IICourse';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LocationSearchService } from '../../../../trip/services/location-search';
-import { AvatarI, PhotoI } from '../../../Interfaces/IIPhoto';
+import { PhotoI } from '../../../Interfaces/IIPhoto';
+import flatpickr from 'flatpickr';
 //===============!!這是子 元件!!=======================//
 //===============!! 課程模板 !!=======================//
 
@@ -18,10 +19,12 @@ import { AvatarI, PhotoI } from '../../../Interfaces/IIPhoto';
 })
 //========!!這是 子 元件!!================//
 //========!!課程模板!!================//
+//=========展示+編輯+上架==========//
 
 export class CourseTempList implements OnInit {
   isEdit: boolean = false;
   isSaving: boolean = false;
+  isSelectingTime = false;
   locationResults: any[] = [];
   newPhotos: File[] = [];
   previewUrls: string[] = [];
@@ -35,10 +38,16 @@ export class CourseTempList implements OnInit {
     location: new FormControl(''),
     photoUrls: new FormControl<string[]>([]),
   });
+
+  sessionForm = new FormGroup({
+    selectedDates: new FormControl<string[]>([], Validators.required),
+    timeSlot: new FormControl('早上場(9:00~12:00)', Validators.required),
+    maxStudents: new FormControl(1, Validators.min(1))
+  });
   //--------------------------------------//
   constructor(private localS: LocationSearchService,
     private courseS: CourseInformationS,
-    private notifyS: NotificationService
+    private notifyS: NotificationService,
   ) { }
   //--------------------------------------//
   ngOnInit(): void {
@@ -46,7 +55,7 @@ export class CourseTempList implements OnInit {
     console.log('tempData:', this.tempData);
     // 監聽地址輸入框，自動搜尋
     this.editForm.get('location')?.valueChanges.pipe(
-      debounceTime(400), // 等使用者停下 0.4 秒才搜尋，省資源
+      debounceTime(300), // 等使用者停下 0.3 秒才搜尋，省資源
       distinctUntilChanged(),
       switchMap(value => this.localS.search(value || ''))
     ).subscribe(results => {
@@ -70,8 +79,9 @@ export class CourseTempList implements OnInit {
     }
   }
   @ViewChild('carousel') carouselElement?: ElementRef;
+  @ViewChild('datePicker') datePickerElement!: ElementRef;
   //--------------------------------------//
-  // 點擊下拉清單的項目
+  //#region 地點
   onSelectLocation(item: any) {
     this.localS.getDetails(item).subscribe(detail => {
       // 填入完整的地址文字
@@ -87,7 +97,8 @@ export class CourseTempList implements OnInit {
       this.newPhotos.splice(index, 1);
     }
   }
-
+  //#endregion
+  //#region 圖片
   onFileSelected(event: any) {
     const files: FileList = event.target.files;
     if (files) {
@@ -122,7 +133,29 @@ export class CourseTempList implements OnInit {
       }
     }, 2500); // 建議改成3秒，1秒太快了
   }
-
+  //#endregion
+  //#region 時段
+  selectime() {
+    this.isSelectingTime = true;
+    // 給 Angular 一點時間渲染 DOM
+    setTimeout(() => {
+      if (this.datePickerElement) {
+        flatpickr(this.datePickerElement.nativeElement, {
+          mode: "multiple",
+          dateFormat: "Y-m-d",
+          onChange: (dates, dateStr) => {
+            // dateStr 會是 "2024-01-01, 2024-01-02"
+            const dateArr = dateStr ? dateStr.split(', ') : [];
+            this.sessionForm.controls.selectedDates.setValue(dateArr);
+          }
+        });
+      }
+    }, 100);
+  }
+  onCancelTime() {
+    this.isSelectingTime = false;
+  }
+  //#endregion
   //--------------------------------------//
   onEdit() {
     this.isEdit = true;
@@ -159,7 +192,7 @@ export class CourseTempList implements OnInit {
     formData.append('Title', this.editForm.get('title')?.value || '');
     formData.append('Price', this.editForm.get('price')?.value?.toString() || '0');
     formData.append('Description', this.editForm.get('description')?.value || '');
-    formData.append('Difficulty', this.editForm.get('difficulty')?.value || ''); // 注意這裡
+    formData.append('Difficulty', this.editForm.get('difficulty')?.value || '');
     formData.append('Location', this.editForm.get('location')?.value || '');
 
     //3.圖片
@@ -194,7 +227,7 @@ export class CourseTempList implements OnInit {
       },
       error: (err) => {
         console.error("API 報錯：", err);
-        // 如果還是 400，請看 Browser Network 裡的 Response Body，後端通常會寫哪個欄位格式不對
+        this.notifyS.show("儲存失敗", "error")
       }
     });
     this.isSaving = true;
@@ -205,5 +238,46 @@ export class CourseTempList implements OnInit {
     }, 2000);
     console.log("修改資料", this.editForm.value);
   }
+  //------------------------------------------------//
+  onSaveSession() {
+    const formData = new FormData();
+    const id = this.tempData?.tempId;
 
+    if (!id) {
+      console.error("錯誤：templateId 為 undefined。請檢查父組件傳入的 tempData：", this.tempData);
+      this.notifyS.show("找不到模板", "error");
+      return;
+    }
+
+    const dates = this.sessionForm.controls.selectedDates.value || [];
+    const slot = this.sessionForm.controls.timeSlot.value || '';
+    const maxStu = this.sessionForm.controls.maxStudents.value ?? 0; // 使用 ?? 處理 null/undefined
+
+    formData.append('SelectedDates', JSON.stringify(dates));
+    formData.append('TimeSlot', slot);
+    formData.append('MaxStudents', maxStu.toString());
+
+    this.isSaving = true;
+
+    this.courseS.createSession(id, formData).subscribe({
+      next: (res) => {
+        if (res.isSuccess) {
+          this.isSelectingTime = false;
+          this.notifyS.show("儲存成功", "success")
+        }
+        this.isSaving = false;
+      },
+      error: (err) => {
+        console.error("API 報錯：", err);
+        this.notifyS.show("儲存失敗", "error")
+      }
+    });
+    this.isSaving = true;
+    setTimeout(() => {
+      // API 成功後
+      this.isSaving = false;
+      this.isEdit = false;
+    }, 2000);
+    console.log("新增時段", this.editForm.value);
+  }
 }

@@ -10,7 +10,7 @@
     <div class="flex gap-2 relative z-10" (click)="$event.stopPropagation()">
       @if (!isEdit) {
       <button (click)="onEdit()" class="btn btn-outline btn-sm btn-secondary">編輯模板</button>
-      <button class="btn btn-warning btn-sm">選時段上架</button>
+      <button (click)="selectime()" class="btn btn-warning btn-sm">選上架時段</button>
       } @else {
       <button (click)="onSave()" class="btn btn-sm btn-success text-white" [disabled]="isSaving">
         <span *ngIf="isSaving" class="loading loading-spinner loading-xs"></span>
@@ -163,13 +163,67 @@
             }
           </div>
         </div>
+        <div class="collapse-content px-5 pb-5" data-theme="bumblebee">
 
-        <!-- 最後更新 -->
-        <p class="text-[11px] text-base-content/30 text-right italic mt-auto">
-          最後更新：{{ tempData?.updatedAt | date:'yyyy-MM-dd HH:mm' }}
-        </p>
+          <!-- 選時間 -->
+          @if (isSelectingTime) {
+          <div class="p-6 bg-base-200 rounded-2xl space-y-6 animate-in fade-in duration-300">
+            <h3 class="font-bold text-lg text-primary">設定上架時段</h3>
 
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="form-control">
+                <label class="label"><span class="label-text font-bold text-primary">選擇日期 (可多選)</span></label>
+                <div class="relative">
+                  <input #datePicker type="text" class="input input-bordered input-primary w-full bg-white"
+                    placeholder="點擊選擇日期..." readonly />
+                </div>
+                <div class="mt-3 flex flex-wrap gap-2">
+                  @for (date of sessionForm.controls.selectedDates.value; track date) {
+                  <div class="badge badge-secondary badge-outline px-3 py-3 font-medium">
+                    {{ date }}
+                  </div>
+                  } @empty {
+                  <span class="text-xs text-base-content/30 italic">尚未選擇日期</span>
+                  }
+                </div>
+              </div>
+            </div>
+
+            <div class="space-y-4">
+              <div class="form-control">
+                <label class="label"><span class="label-text font-bold">選擇場次</span></label>
+                <select [formControl]="sessionForm.controls.timeSlot" class="select select-bordered w-full">
+                  <option>早上場(9:00~12:00)</option>
+                  <option>下午場(13:00~16:00)</option>
+                  <option>全日場(8:00~17:00)</option>
+                </select>
+              </div>
+              <!-- 設人數 -->
+              <div class="form-control">
+                <label class="label"><span class="label-text font-bold">人數限制</span></label>
+                <input type="number" [formControl]="sessionForm.controls.maxStudents"
+                  class="input input-bordered w-full" />
+              </div>
+            </div>
+          </div>
+
+          <div class="flex justify-end gap-2 pt-4">
+            <button (click)="onCancelTime()" class="btn btn-ghost">返回</button>
+            <button (click)="onSaveSession()" class="btn btn-primary">確認上架</button>
+          </div>
+        </div>
+
+        } @else {
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-5 border-t border-base-200">
+        </div>
+        }
       </div>
+      <!-- 最後更新 -->
+      <p class="text-[11px] text-base-content/30 text-right italic mt-auto">
+        最後更新：{{ tempData?.updatedAt | date:'yyyy-MM-dd HH:mm' }}
+      </p>
+
     </div>
   </div>
+</div>
 </div>

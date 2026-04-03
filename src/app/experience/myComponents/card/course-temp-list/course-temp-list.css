@@ -1,4 +1,6 @@
 /* 讓 collapse 內容區允許下拉選單溢出 */
+@import "flatpickr/dist/flatpickr.min.css";
+
 .collapse-content {
   overflow: visible !important;
 }

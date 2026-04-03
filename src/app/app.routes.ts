@@ -121,11 +121,15 @@ export const routes: Routes = [
         loadComponent: () => import('./experience/components/coach-course-add-temp/coach-course-add-temp').then(m => m.CoachCourseAddTemp)
       },
       {
+        path: 'coursetime', //選時間
+        loadComponent: () => import('./experience/components/coach-course/coach-course').then(m => m.CoachCourse)
+      },
+      {
         path: 'course', //上架中
         loadComponent: () => import('./experience/components/coach-course/coach-course').then(m => m.CoachCourse)
       },
       {
-        path: 'coachcoursemore', //課程月曆
+        path: 'coachcoursemore/:id', //課程月曆
         loadComponent: () => import('./experience/components/coach-more-course-calendar/coach-more-course-calendar').then(m => m.CoachMoreCourseCalendar)
       },
       //===============//

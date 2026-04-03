@@ -38,7 +38,7 @@ export class CourseInformationS {
     return this.client.get<APIResponse<TempInfoI[]>>(
       `${environment.apiUrl}/Exp/Exp/Temp`);
   }
-  /**課程上架 */
+  /**課程選時間上架 */
   createSession(tempId: number, data: FormData): Observable<any> {
     return this.client.post<any>(`${environment.apiUrl}/api/Exp/Exp/CourseTime/${tempId}`, data)
   }
