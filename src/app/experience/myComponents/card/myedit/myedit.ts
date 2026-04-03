@@ -66,7 +66,7 @@ export class Myedit implements OnInit {
 
       // 2. 清單拿到了，才去抓「教練個人資料」
       if (this.currentCoachId) {
-        this.coachS.getMyInfoStr(this.currentCoachId).subscribe({
+        this.coachS.getCoachInfoStr(this.currentCoachId).subscribe({
           next: (res: APIResponse<CoachAllInfoI>) => {
             if (res.data) {
               const apiData = res.data; console.log("教練個人資料:", res);

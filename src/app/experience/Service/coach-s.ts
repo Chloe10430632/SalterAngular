@@ -15,11 +15,14 @@ import { APIResponse, CoachAllInfoI, CoachEditInfoI } from '../Interfaces/IIcoac
 export class CoachS {
   constructor(private client: HttpClient) { }
   //===========================================//
-  getMyInfoStr(coachId: string): Observable<APIResponse<CoachAllInfoI>> {
+  getCoachInfoStr(coachId: string): Observable<APIResponse<CoachAllInfoI>> {
     return this.client.get<APIResponse<CoachAllInfoI>>(`${environment.apiUrl}/Exp/Exp/Info/${coachId}`);
   }
-  getMyInfoNum(coachId: number): Observable<APIResponse<CoachAllInfoI>> {
+  getCoachInfoNum(coachId: number): Observable<APIResponse<CoachAllInfoI>> {
     return this.client.get<APIResponse<CoachAllInfoI>>(`${environment.apiUrl}/Exp/Exp/Info/${coachId}`);
+  }
+  getMyOwnInfo(): Observable<APIResponse<CoachAllInfoI>> {
+    return this.client.get<APIResponse<CoachAllInfoI>>(`${environment.apiUrl}/Exp/Exp/MyInfo`);
   }
   editMyInfo(coachId: string, data: FormData): Observable<any> {
     return this.client.put<any>(`${environment.apiUrl}/Exp/Exp/EditCoach/${coachId}`, data);

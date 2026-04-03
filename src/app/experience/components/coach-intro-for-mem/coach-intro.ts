@@ -39,7 +39,7 @@ export class Coachintro implements OnInit {
     //--------------------------------------------------------//
     if (id) {
       // 2. 拿著 ID 去問 API 要資料
-      this.coachS.getMyInfoNum(id).subscribe({
+      this.coachS.getCoachInfoNum(id).subscribe({
         next: (res) => {
           this.coachData.set(res.data);
         },

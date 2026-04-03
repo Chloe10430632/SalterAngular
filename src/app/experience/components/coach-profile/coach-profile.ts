@@ -23,6 +23,7 @@ export class CoachProfile {
   coachData?: APIResponse<CoachAllInfoI>;
   //coachData? :CoachAllInfoI;
   isLoading = true;
+  id?: number;
   //------------------------------------------------------//
   constructor(
     private coachS: CoachS,
@@ -35,8 +36,9 @@ export class CoachProfile {
     // 1. 優先從網址拿 ID
     let idFromRoute = this.route.snapshot.paramMap.get('id');
 
-    // 2. 🔴 新增：如果網址沒 ID，試著從 localStorage 拿（這是從 Token 解出來存進去的）
-    if (!idFromRoute) {
+
+      // 2. 🔴 新增：如果網址沒 ID，試著從 localStorage 拿（這是從 Token 解出來存進去的）
+      if(!idFromRoute) {
       idFromRoute = localStorage.getItem('coachId');
     }
 
@@ -46,7 +48,7 @@ export class CoachProfile {
       const targetId = Number(idFromRoute);
       this.isLoading = true;
 
-      this.coachS.getMyInfoNum(targetId).subscribe({
+      this.coachS.getCoachInfoNum(targetId).subscribe({
         next: (res) => {
           console.log('🔴 父組件收到回應：', res); // 這裡沒印代表你可能在看舊的程式碼
           if (res && res.isSuccess) {

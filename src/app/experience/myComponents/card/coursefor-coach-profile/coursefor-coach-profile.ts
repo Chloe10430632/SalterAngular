@@ -65,7 +65,7 @@ export class CourseforCoachProfile implements OnInit {
   //--方法-------------------------------------------------//
   /**是哪個教練的介紹 */
   loadCoach(coachId: number) {
-    this.coachS.getMyInfoNum(coachId).subscribe({
+    this.coachS.getCoachInfoNum(coachId).subscribe({
       next: (result: any) => {
         if (result && result.data) {
           this.coach.set(result.data); // 這裡存入的是 CoachAllInfoI 本人
