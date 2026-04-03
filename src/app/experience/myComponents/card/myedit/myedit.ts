@@ -208,12 +208,12 @@ export class Myedit implements OnInit {
         this.coachS.editMyInfo(this.currentCoachId, formData).subscribe({
           next: (res: any) => {
             console.log('更新成功：', res);
-            alert('教練資料更新成功！');
+            this.notifycationS.show('教練資料更新成功！', "success");
             this.island(); // 跳轉回小島
           },
           error: (err) => {
             console.error('更新失敗：', err);
-            alert('更新失敗，請檢查網路或欄位格式');
+            this.notifycationS.show('更新失敗，請檢查網路或欄位格式', "error");
           }
         });
       } else {
@@ -221,12 +221,12 @@ export class Myedit implements OnInit {
         this.coachS.createMyInfo(formData).subscribe({
           next: (res: any) => {
             console.log('申請成功：', res);
-            alert('恭喜！申請教練成功！');
+            this.notifycationS.show('恭喜！申請教練成功！', "success");
             this.island(); // 跳轉回小島
           },
           error: (err) => {
             console.error('申請失敗：', err);
-            alert('申請失敗，可能您已經是教練，或資料填寫不全');
+            this.notifycationS.show('申請失敗，可能您已經是教練，或資料填寫不全', "error");
           }
         });
       }
