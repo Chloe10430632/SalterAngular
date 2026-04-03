@@ -43,7 +43,8 @@ export class Header implements OnInit {
   /**登出 */
   onLogout() {
     this.authService.logout();
-    // this.router.navigate(['/login'])
+    this.router.navigate(['/login'])
+    this.chatState.resetChat();
   }
 
   /**測試攔截器 */
