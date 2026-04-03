@@ -2,11 +2,40 @@
 
   <!-- 標題列 -->
   <div class="flex items-center justify-between mb-6">
-    <div>
-      <h1 class="text-2xl font-bold">收藏行程</h1>
-      <p class="text-sm text-base-content/50 mt-0.5">你收藏的所有行程</p>
+    <div class="flex items-center gap-2">
+      @if (currentFolderId !== null) {
+      <button class="btn btn-ghost btn-sm btn-circle" (click)="goBack()">
+        <i class="bi bi-arrow-left"></i>
+      </button>
+      }
+      <div>
+        <h1 class="text-2xl font-bold">
+          {{ currentFolderId === null ? '收藏行程' : currentFolderName }}
+        </h1>
+        <p class="text-sm text-base-content/50 mt-0.5">
+          {{ currentFolderId === null ? '你收藏的所有行程' : '資料夾內的收藏' }}
+        </p>
+      </div>
+    </div>
+    @if (currentFolderId === null) {
+    <button class="btn btn-outline btn-sm gap-1" (click)="showCreateFolder = true">
+      <i class="bi bi-folder-plus"></i> 新增資料夾
+    </button>
+    }
+  </div>
+
+  <!-- 新增資料夾 -->
+  @if (showCreateFolder) {
+  <div class="card bg-base-100 border border-base-300 shadow-sm mb-4">
+    <div class="card-body p-4 flex-row items-center gap-3">
+      <i class="bi bi-folder text-primary text-xl"></i>
+      <input type="text" class="input input-bordered input-sm flex-1" placeholder="資料夾名稱…" [(ngModel)]="newFolderName"
+        (keydown.enter)="createFolder()" />
+      <button class="btn btn-primary btn-sm" (click)="createFolder()">建立</button>
+      <button class="btn btn-ghost btn-sm" (click)="showCreateFolder = false; newFolderName = ''">取消</button>
     </div>
   </div>
+  }
 
   @if (isLoading) {
   <div class="flex items-center justify-center py-32">
@@ -16,7 +45,77 @@
 
   @if (!isLoading) {
 
-  @if (trips.length === 0) {
+  <!-- 根目錄：顯示資料夾 + 未分類行程 -->
+  @if (currentFolderId === null) {
+
+  <!-- 資料夾區 -->
+  @if (folders.length > 0) {
+  <div class="mb-4">
+    <p class="text-xs text-base-content/40 font-medium mb-2">資料夾</p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+      @for (folder of folders; track folder.id) {
+      <div
+        class="flex items-center gap-3 bg-base-100 border border-base-300 rounded-xl px-4 py-3 cursor-pointer hover:bg-base-200 transition-colors relative"
+        (click)="enterFolder(folder.id)">
+        <i class="bi bi-folder-fill text-warning text-xl shrink-0"></i>
+        <div class="flex-1 min-w-0">
+          @if (editingFolderId === folder.id) {
+          <input type="text" class="input input-bordered input-xs w-full" [(ngModel)]="editingFolderName"
+            (click)="$event.stopPropagation()" (keydown.enter)="saveEditFolder(folder)"
+            (keydown.escape)="editingFolderId = null" />
+          } @else {
+          <p class="font-medium text-sm truncate">{{ folder.name }}</p>
+          <p class="text-xs text-base-content/40">{{ folder.favoriteCount }} 個行程</p>
+          }
+        </div>
+
+        <!-- 資料夾操作選單 -->
+        <div (click)="$event.stopPropagation()">
+          <div class="dropdown dropdown-end">
+            <div tabindex="0" role="button" class="btn btn-ghost btn-xs btn-circle">
+              <i class="bi bi-three-dots-vertical text-base-content/40"></i>
+            </div>
+            <ul tabindex="-1"
+              class="dropdown-content menu bg-base-100 rounded-box shadow border border-base-300 text-sm w-36 z-10">
+              @if (confirmingDeleteFolderId === folder.id) {
+              <li>
+                <div class="flex flex-col gap-2 p-1" (click)="$event.stopPropagation()">
+                  <span class="text-xs text-error font-medium">資料夾內行程將移至未分類</span>
+                  <div class="flex gap-1">
+                    <button class="btn btn-error btn-xs flex-1" (click)="confirmDeleteFolder()">確定</button>
+                    <button class="btn btn-ghost btn-xs flex-1" (click)="confirmingDeleteFolderId = null">取消</button>
+                  </div>
+                </div>
+              </li>
+              } @else {
+              <li><a (click)="startEditFolder(folder, $event)">重新命名</a></li>
+              <li><a class="text-error" (click)="requestDeleteFolder(folder.id, $event)">刪除</a></li>
+              }
+            </ul>
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+  }
+
+  <!-- 未分類行程 -->
+  @if (unclassifiedCount > 0) {
+  <p class="text-xs text-base-content/40 font-medium mb-2">未分類</p>
+  }
+
+  }
+
+  <!-- 行程列表 -->
+  @if (filteredTrips.length === 0 && currentFolderId !== null) {
+  <div class="flex flex-col items-center justify-center py-24 gap-3 text-base-content/30">
+    <i class="bi bi-folder2-open text-5xl"></i>
+    <p class="text-base">此資料夾沒有收藏行程</p>
+  </div>
+  }
+
+  @if (currentFolderId === null && trips.length === 0 && folders.length === 0) {
   <div class="flex flex-col items-center justify-center py-24 gap-3 text-base-content/30">
     <i class="bi bi-heart text-5xl"></i>
     <p class="text-base">還沒有收藏任何行程</p>
@@ -25,7 +124,7 @@
   }
 
   <div class="flex flex-col gap-3">
-    @for (trip of trips; track trip.id) {
+    @for (trip of filteredTrips; track trip.id) {
     <div class="card bg-base-100 shadow-sm border border-base-300 hover:shadow-md transition-shadow cursor-pointer"
       [routerLink]="['/trip/detail', trip.id]">
       <div class="card-body p-0 flex-row items-stretch">
@@ -54,6 +153,36 @@
                 <i class="bi bi-people mr-1"></i>{{ trip.memberCount }}/{{ trip.capacity }}
               </p>
 
+              <!-- 移動到資料夾 -->
+              <div class="relative">
+                <button class="btn btn-ghost btn-xs gap-1 text-base-content/40"
+                  (click)="toggleMoveMenu(trip.id, $event)">
+                  <i class="bi bi-folder-symlink"></i>
+                </button>
+                @if (showMoveMenu === trip.id) {
+                <div
+                  class="absolute right-0 top-full z-50 bg-base-100 border border-base-300 rounded-xl shadow-lg p-2 w-44"
+                  (click)="$event.stopPropagation()">
+                  <p class="text-xs text-base-content/40 px-2 pb-1">移動到</p>
+                  <button
+                    class="w-full text-left text-xs px-2 py-1.5 rounded-lg hover:bg-base-200 flex items-center gap-2"
+                    (click)="moveTo(trip, null, $event)">
+                    <i class="bi bi-inbox"></i> 未分類
+                    @if (!trip.folderId) { <i class="bi bi-check ml-auto text-primary"></i> }
+                  </button>
+                  @for (folder of folders; track folder.id) {
+                  <button
+                    class="w-full text-left text-xs px-2 py-1.5 rounded-lg hover:bg-base-200 flex items-center gap-2"
+                    (click)="moveTo(trip, folder.id, $event)">
+                    <i class="bi bi-folder"></i> {{ folder.name }}
+                    @if (trip.folderId === folder.id) { <i class="bi bi-check ml-auto text-primary"></i> }
+                  </button>
+                  }
+                </div>
+                }
+              </div>
+
+              <!-- 取消收藏 -->
               @if (confirmingRemoveId === trip.id) {
               <div class="flex items-center gap-1" (click)="$event.stopPropagation()">
                 <span class="text-xs text-base-content/50">確定取消?</span>
@@ -77,3 +206,28 @@
   }
 
 </div>
+
+<!-- 未登入提示 Modal -->
+@if (showLoginRequired) {
+<div class="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm">
+  <div
+    class="bg-base-100 rounded-3xl shadow-2xl p-10 max-w-md w-full mx-4 flex flex-col items-center gap-6 text-center">
+    <div class="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
+      <i class="bi bi-lock text-4xl text-primary"></i>
+    </div>
+    <div>
+      <h2 class="text-2xl font-black mb-2">需要先登入</h2>
+      <p class="text-base-content/60 text-sm leading-relaxed">
+        查看收藏行程需要登入帳號。<br />
+        請先至登入頁面右下角
+        <span class="inline-block px-4 py-1.5 rounded-full text-white font-black text-xs tracking-widest mx-1"
+          style="background-color: #8B5A2B">
+          登入
+        </span><br />
+        登入後再來查看收藏！
+      </p>
+    </div>
+    <p id="countdown-text" class="text-xs text-base-content/30">{{ countdown }} 秒後自動跳轉至登入頁面</p>
+  </div>
+</div>
+}

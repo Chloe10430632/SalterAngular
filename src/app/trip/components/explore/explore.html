@@ -95,6 +95,7 @@
         }
       </div>
       }
+
       <!-- 沒有資料 -->
       @if (!isLoading && trips.length === 0) {
       <div class="flex flex-col items-center justify-center py-20 text-base-content/30">
@@ -107,20 +108,43 @@
       @if (!isLoading && trips.length > 0) {
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         @for (trip of trips; track trip.id) {
+
         <div
-          class="card bg-base-100 shadow-sm border border-base-300 hover:shadow-md hover:-translate-y-0.5 transition-all overflow-hidden flex flex-col h-full">
-          <figure class="relative h-44">
+          class="card bg-base-100 shadow-sm border border-base-300 hover:shadow-md hover:-translate-y-0.5 transition-all overflow-visible flex flex-col h-full relative">
+
+          <!-- 分享在 card 層級 -->
+          @if (showShareId === trip.id) {
+          <div class="absolute top-12 right-2 z-50 bg-base-100 rounded-xl shadow-lg border border-base-300 p-3 w-64"
+            (click)="$event.stopPropagation()">
+            <p class="text-xs text-base-content/50 mb-1.5">行程連結</p>
+            <div class="flex gap-1">
+              <input type="text" class="input input-bordered input-xs flex-1 text-xs"
+                [value]="'http://localhost:4200/trip/detail/' + trip.id" readonly />
+              <button class="btn btn-primary btn-xs" (click)="copyLink(trip.id)">複製</button>
+            </div>
+          </div>
+          }
+
+          <figure class="relative h-44 rounded-t-2xl overflow-hidden">
             <img [src]="trip.coverImageUrl || 'trip/default-trip-cover.jpg'" class="w-full h-full object-cover"
               [alt]="trip.title" />
             <span class="absolute top-2 left-2 badge text-xs font-semibold" [class]="getStatusBadgeClass(trip.status)">
               {{ getStatusLabel(trip.status) }}
             </span>
-            <button class="absolute top-2 right-2 btn btn-circle btn-xs bg-base-100/80 border-none hover:bg-base-100"
-              (click)="toggleFavorite(trip, $event)">
-              <i class="bi text-base-content/40" [class.bi-heart-fill]="trip.isFavorite"
-                [class.bi-heart]="!trip.isFavorite" [class.text-error]="trip.isFavorite"></i>
-            </button>
+
+            <div class="absolute top-2 right-2 flex gap-1">
+              <button class="btn btn-circle btn-xs bg-base-100/80 border-none hover:bg-base-100"
+                (click)="toggleShare(trip.id, $event)" title="分享">
+                <i class="bi bi-share text-base-content/50 text-xs"></i>
+              </button>
+              <button class="btn btn-circle btn-xs bg-base-100/80 border-none hover:bg-base-100"
+                (click)="toggleFavorite(trip, $event)">
+                <i class="bi text-xs" [class.bi-heart-fill]="trip.isFavorite" [class.bi-heart]="!trip.isFavorite"
+                  [class.text-error]="trip.isFavorite"></i>
+              </button>
+            </div>
           </figure>
+
           <div class="card-body p-4 gap-2 flex flex-col flex-1">
             <div class="flex items-start justify-between gap-2">
               <h3 class="font-bold text-sm">{{ trip.title }}</h3>

@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { TripQuery, ApiResponse, TripListResult, TripSummary, TripDetail, TripAnnouncement, TripGearItem, TripLocation, TripReminder, TripCity, TripDistrict, TripLocationSearch } from '../interfaces/trip';
+import { TripQuery, ApiResponse, TripListResult, TripSummary, TripDetail, TripAnnouncement, TripGearItem, TripLocation, TripCity, TripDistrict, TripLocationSearch, TripFavoriteFolder } from '../interfaces/trip';
 import { environment } from '../../../environments/environment';
 
 @Injectable({
@@ -93,6 +93,27 @@ export class TripService {
     return this.http.delete<ApiResponse<string>>(`${this.baseUrl}/${tripId}/favorite`);
   }
 
+  // 資料夾
+  getFolders(): Observable<ApiResponse<TripFavoriteFolder[]>> {
+    return this.http.get<ApiResponse<TripFavoriteFolder[]>>(`${this.baseUrl}/folders`);
+  }
+
+  createFolder(name: string): Observable<ApiResponse<TripFavoriteFolder>> {
+    return this.http.post<ApiResponse<TripFavoriteFolder>>(`${this.baseUrl}/folders`, { name });
+  }
+
+  updateFolder(folderId: number, name: string): Observable<ApiResponse<string>> {
+    return this.http.put<ApiResponse<string>>(`${this.baseUrl}/folders/${folderId}`, { name });
+  }
+
+  deleteFolder(folderId: number): Observable<ApiResponse<string>> {
+    return this.http.delete<ApiResponse<string>>(`${this.baseUrl}/folders/${folderId}`);
+  }
+
+  moveFavoriteToFolder(tripId: number, folderId: number | null): Observable<ApiResponse<string>> {
+    return this.http.put<ApiResponse<string>>(`${this.baseUrl}/${tripId}/favorite/folder`, { folderId });
+  }
+
   // ── 公告 ──
 
   getAnnouncements(tripId: number): Observable<ApiResponse<TripAnnouncement[]>> {
@@ -156,24 +177,6 @@ export class TripService {
   }
   updateLocationSort(tripId: number, items: { locationId: number; sortOrder: number }[]): Observable<ApiResponse<string>> {
     return this.http.put<ApiResponse<string>>(`${this.baseUrl}/${tripId}/locations/sort`, { items });
-  }
-
-  // ── 提醒 ──
-
-  getReminders(tripId: number): Observable<ApiResponse<TripReminder[]>> {
-    return this.http.get<ApiResponse<TripReminder[]>>(`${this.baseUrl}/${tripId}/reminders`);
-  }
-
-  createReminder(tripId: number, dto: any): Observable<ApiResponse<string>> {
-    return this.http.post<ApiResponse<string>>(`${this.baseUrl}/${tripId}/reminders`, dto);
-  }
-
-  updateReminder(reminderId: number, dto: any): Observable<ApiResponse<string>> {
-    return this.http.put<ApiResponse<string>>(`${this.baseUrl}/reminders/${reminderId}`, dto);
-  }
-
-  toggleReminder(reminderId: number): Observable<ApiResponse<string>> {
-    return this.http.patch<ApiResponse<string>>(`${this.baseUrl}/reminders/${reminderId}/toggle`, {});
   }
 
   // ── 城市 ──
