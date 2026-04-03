@@ -19,18 +19,18 @@ export class CoursePublish {
   //-------------------------------------------//
   constructor(private notifyS: NotificationService) { }
   //-------------------------------------------//
-  checkIsPast(dates: string[]): boolean {
-    if (!dates || dates.length === 0) return true;
+  checkIsPast(startDate: string): boolean {
+    if (!startDate || startDate.length === 0) return true;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const lastDate = new Date(dates[dates.length - 1]);
-    return lastDate < today;
+    const courseDate = new Date(startDate);
+    courseDate.setHours(0, 0, 0, 0);
+    return courseDate < today;
   }
 
   onDelete(id: number) {
     if (!id) return;
     if (this.data.currentStudents && this.data.currentStudents > 0) {
-      // 這裡建議用 Swal 或 Notify 告訴教練原因
       Swal.fire({
         title: '無法下架',
         text: `目前已有 ${this.data.currentStudents} 位學生報名，不可以任性`,

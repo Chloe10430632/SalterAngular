@@ -12,7 +12,7 @@ export interface CourseSessionInfoI {
   coachId: number,
   title?: string;
   description?: string;
-  selectedDates: string[];
+  startDate:string;
   timeSlot: string;
   maxStudents: number;
   currentStudents: number;

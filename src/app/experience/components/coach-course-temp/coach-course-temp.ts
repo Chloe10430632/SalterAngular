@@ -34,7 +34,12 @@ export class CoachCourseTemp implements OnInit {
     this.courseInfoS.getCourseT().subscribe({
       next: (result) => {
         if (result.isSuccess) {
-          this.tempList = result.data; // 確保變數名稱一致
+          this.tempList = result.data.sort((a, b) =>
+          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+        );
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
           console.log('成功抓到模板：', this.tempList);
         } else {
           console.error('後端回傳失敗：', result.message);
