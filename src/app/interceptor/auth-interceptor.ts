@@ -3,11 +3,31 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
 import { NotificationService } from '../shared/notifyService/notification-service';
+import { AuthService } from '../core/services/auth-service';
+
+
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
   const notify = inject(NotificationService);
   const token = localStorage.getItem('token');
+  const authService = inject(AuthService); // 👈 注入 AuthService
+
+  if (token) {
+    // 1. 解析 Token 裡的過期時間 (exp)
+    // JWT 是三段式，第二段是資料區，我們把它解開來看時間
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const expiry = payload.exp; // 這是秒數
+    const now = Math.floor(Date.now() / 1000); // 現在也是秒數
+
+    if (now >= expiry) {
+      // 🚨 發現過期了！根本不要發送請求，直接在前端踢人
+      authService.logout();
+      notify.show("登入已過期，請重新登入", 'error');
+      // 返回一個空的 Observable，攔截這次請求
+      return throwError(() => new Error('Token Expired'));
+    }
+  }
 
   const skipUrls = [
     '/login',
@@ -17,9 +37,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     '/verify-register-otp',
     '/resend-otp'
   ];
+
   const isPublicApi = skipUrls.some(url => req.url.includes(url));
-
-
 
   // 1. 處理 Request (注入 Token)
   let authReq = req;
@@ -39,8 +58,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       } else {
         switch (error.status) {
           case 401:
+            authService.logout();
             errorMessage = error.error?.detail || error.error?.message || '登入逾時或尚未登入，請登入後查看!';
-            router.navigate(['/login']);
             break;
           case 403:
             if (error.error?.status === 'NeedVerification') {

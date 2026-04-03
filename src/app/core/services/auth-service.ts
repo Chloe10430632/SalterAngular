@@ -7,6 +7,7 @@ import { jwtDecode } from "jwt-decode";
 import { IGoogleLogin } from '../../user/interfaces/IGoogleLogin';
 import { CurrentUser } from '../../forum/interfaces/currentUser';
 import { environment } from '../../../environments/environment';
+import { Router } from '@angular/router';
 
 
 @Injectable({
@@ -21,7 +22,7 @@ export class AuthService {
   /**目前登入的使用者 */
   currentUser$ = this.currentUserSource.asObservable();
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private router: Router) {
     // 網頁一打開，自動檢查有沒有舊的 Token
     this.loadStoredToken();
   }
@@ -82,6 +83,8 @@ export class AuthService {
   logout() {
     localStorage.removeItem('token');
     this.currentUserSource.next(null); // 📢 廣播：「有人登出了」
+
+    this.router.navigate(['/login']);
   }
 
   // 自動載入
