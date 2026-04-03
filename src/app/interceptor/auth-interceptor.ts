@@ -13,19 +13,29 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const token = localStorage.getItem('token');
   const authService = inject(AuthService); // 👈 注入 AuthService
 
-  if (token) {
-    // 1. 解析 Token 裡的過期時間 (exp)
-    // JWT 是三段式，第二段是資料區，我們把它解開來看時間
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    const expiry = payload.exp; // 這是秒數
-    const now = Math.floor(Date.now() / 1000); // 現在也是秒數
+  if (token && token.includes('.')) {
+    try {
+      const parts = token.split('.');
+      if (parts.length === 3) {
+        // 使用更安全的解碼方式，處理 Base64 的特殊字元
+        const base64Url = parts[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const payload = JSON.parse(atob(base64));
 
-    if (now >= expiry) {
-      // 🚨 發現過期了！根本不要發送請求，直接在前端踢人
-      authService.logout();
-      notify.show("登入已過期，請重新登入", 'error');
-      // 返回一個空的 Observable，攔截這次請求
-      return throwError(() => new Error('Token Expired'));
+        const expiry = payload.exp;
+        const now = Math.floor(Date.now() / 1000);
+
+        if (now >= expiry) {
+          authService.logout();
+          notify.show("登入已過期，請重新登入", 'error');
+          return throwError(() => new Error('Token Expired'));
+        }
+      }
+    } catch (error) {
+      // 🚨 如果解析失敗（格式不對），不要讓程式掛掉，直接視為無效 Token 處理
+      console.error('Interceptor JWT 解析失敗:', error);
+      // 視情況決定是否要強制登出
+      // authService.logout();
     }
   }
 
