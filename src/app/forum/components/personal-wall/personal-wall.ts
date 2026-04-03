@@ -17,6 +17,7 @@ import { TripService } from '../../../trip/services/trip';
 import { CreatePostDto } from '../../interfaces/CreatePostDto';
 import { PostDetailsData } from '../../interfaces/PostDetailsData';
 import { AvatarPipe } from "../../../shared/pipes/avatar-pipe";
+import { NotificationService } from '../../../shared/notifyService/notification-service';
 
 @Component({
   selector: 'app-personal-wall',
@@ -94,7 +95,8 @@ export class PersonalWall implements OnInit {
     private tripService: TripService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private n: NotificationService
   ) { }
 
   ngOnInit(): void {
@@ -232,8 +234,12 @@ export class PersonalWall implements OnInit {
 
   /**確認送出檢舉 */
   confirmReport(post: any, reason: string, detail: string) {
+    if (!this.currentUser) {
+      this.n.show("欲檢舉貼文，請先登入。", "error");
+      return;
+    }
     if (reason === '請選擇原因') {
-      this.toastr.warning('請先選擇檢舉原因', '提示');
+      this.n.show('請先選擇檢舉原因', 'error');
       return;
     }
 
