@@ -28,7 +28,7 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          platforms: linux/amd64
+          platforms: linux/arm64
           push: true
           # 這裡我們取名為 salter_angular
           tags: ${{ secrets.DOCKER_USERNAME }}/salter_angular:latest
