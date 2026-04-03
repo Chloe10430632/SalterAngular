@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit, signal } from '@angular/core';
+import { Component, EventEmitter, input, Input, OnInit, Output, signal } from '@angular/core';
 import { CoachCardInfoS } from '../../../Service/coach-card-info-s';
 import { CoachAllInfoI as CoachAllInfoI } from '../../../Interfaces/IIcoachAllinfo';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -23,8 +23,9 @@ import { NotificationService } from '../../../../shared/notifyService/notificati
 export class CourseforCoachProfile implements OnInit {
   coach = signal<CoachAllInfoI | null>(null);
   coaches: any[] = [];
-  isFav = false;
+  isFav = input<boolean>(false);
   myFavId: number[] = [];
+  coachItem = input.required<CoachAllInfoI>({ alias: 'item' });
   //------------------------------------------------------//
   constructor(
     private coachS: CoachS,
@@ -44,7 +45,7 @@ export class CourseforCoachProfile implements OnInit {
   get isLoggedIn(): boolean {
     return !!localStorage.getItem('token');
   }
-
+  @Output() removeMe = new EventEmitter<number>(); //通知父組件（例如收藏頁面要移除這張卡片）
   //------------------------------------------------------//
   ngOnInit(): void {
 
@@ -99,38 +100,38 @@ export class CourseforCoachProfile implements OnInit {
     });
   }
   /**收藏 */
-  toggleFav(coachId: number) {
-    const favData: FavI = {
-      coachId: coachId,
-      isSuccess: false,
-      message: '',
-      data: ''
-    };
+  toggleFav(event: Event) {
+    if (!this.isLoggedIn) {
+      event.preventDefault();
+      this.notificationS.show('登入才能收藏', 'error');
+      return;
+    }
+
+    const currentCoach = this.coach();
+    if (!currentCoach) return;
+
+    const id = currentCoach.coachId; // ← 用 coach() 而不是 coachItem()
+    const favData: FavI = { coachId: id, isSuccess: false, message: '', data: '' };
 
     this.coachInfoS.changeFav(favData).subscribe({
-      next: (res: any) => {
-        // 注意後端回傳大小寫，如果是 issuccess 請改為 res.issuccess
-        if (res.isSuccess || res.issuccess) {
-          if (res.data === "請先登入後才能收藏喔！") {
-            this.notificationS.show(res.data, 'error');
-            return;
-          }
-
-          // --- 修正 3：邏輯判斷與狀態同步 ---
-          if (!this.checkIsFav) {
-            // 原本沒收藏 -> 現在變收藏
-            this.myFavId.push(coachId); // 手動加入陣列，讓畫面愛心立即變亮
-            this.notificationS.show('收藏成功', 'success');
+      next: (res) => {
+        if (res.isSuccess) {
+          if (this.myFavId.includes(id)) {
+            // 原本有收藏 → 取消
+            this.myFavId = this.myFavId.filter(x => x !== id);
+            this.notificationS.show('取消收藏QAQ', 'success');
           } else {
-            // 原本有收藏 -> 現在取消收藏
-            this.myFavId = this.myFavId.filter(id => id !== coachId); // 從陣列移除
-            this.notificationS.show('已取消收藏', 'success');
+            // 原本沒收藏 → 新增
+            this.myFavId = [...this.myFavId, id];
+            this.notificationS.show('收藏成功', 'success');
           }
         } else {
-          this.notificationS.show(res.data || '收藏失敗', 'error');
+          event.preventDefault(); // API 失敗時也阻止視覺切換
+          this.notificationS.show('登入後才能收藏', 'error');
         }
       },
-      error: (err) => {
+      error: () => {
+        event.preventDefault();
         this.notificationS.show('連線伺服器失敗', 'error');
       }
     });

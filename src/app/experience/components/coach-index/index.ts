@@ -10,6 +10,9 @@ import { CourseInformationS } from '../../Service/course-information';
 import { Search } from "../../myComponents/search/search";
 import { FavCard } from '../../myComponents/card/fav-card/fav-card';
 import { NotificationService } from '../../../shared/notifyService/notification-service';
+import { UserService } from '../../../user/Services/user-service';
+import { catchError, of } from 'rxjs';
+import { AuthStore as AuthStoreS } from '../../Service/auth-store';
 
 
 
@@ -35,18 +38,22 @@ export class Index implements OnInit {
   hasMorePages = true; // ← 新增這個旗標
   searchCoaches: CoachAllInfoI[] = [];
   isSearching: boolean = false;
+  isLoggedIn = signal(false);
 
   //=======================================//
   constructor(private rank: Rank,
     private courseNameS: CourseInformationS,
     private coachAllInfoS: CoachCardInfoS,
-    public notificationS: NotificationService
+    public notificationS: NotificationService,
+    public userS: UserService,
+    public authS: AuthStoreS
   ) { }
   //=======================================//
   ngOnInit(): void {
     this.loadCoach();
     this.loadlatestC();
-    this.loadHeart(); // 頁面一打開就去抓收藏清單，看看有哪些教練在裡面
+    this.loadHeart();
+    this.isLoggedIn.set(!!localStorage.getItem('token'));
   }
   //=======================================//
 
@@ -96,8 +103,10 @@ export class Index implements OnInit {
     const token = localStorage.getItem('token');
     if (!token) {
       this.myFavIds.set([]);
+      this.isLoggedIn.set(false);
       return;
     }
+    this.isLoggedIn.set(true);
 
     this.coachAllInfoS.HeartIds().subscribe({
       next: (res) => {
@@ -109,6 +118,7 @@ export class Index implements OnInit {
         // token 過期就清掉，靜默處理，不要跳通知
         if (err.status === 401) {
           localStorage.removeItem('token');
+          this.isLoggedIn.set(false);
         }
         this.myFavIds.set([]);
       }

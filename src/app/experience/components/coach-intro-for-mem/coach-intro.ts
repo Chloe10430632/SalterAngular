@@ -8,6 +8,8 @@ import { CoachAllInfoI } from '../../Interfaces/IIcoachAllinfo';
 import { LittleIsland } from "../../myComponents/little-island/little-island";
 import { Footer } from "../../../shared/footer/footer";
 import { CourseExpendDetail } from "../../myComponents/card/course-expend-detail/course-expend-detail";
+import { UserService } from '../../../user/Services/user-service';
+import { AuthStore as AuthStoreS } from '../../Service/auth-store';
 
 //========!!這是 父 元件!!================//
 //========!!教練小卡+摺疊課程+評論!!================//
@@ -21,14 +23,19 @@ import { CourseExpendDetail } from "../../myComponents/card/course-expend-detail
 })
 export class Coachintro implements OnInit {
   coachData = signal<CoachAllInfoI | null>(null);
+  isLoggedIn = signal(false);
   //--------------------------------------------------------//
   constructor(
     private route: ActivatedRoute, // 用來抓網址上的參數
-    private coachS: CoachS
+    private coachS: CoachS,
+    public userS: UserService,
+    public authS: AuthStoreS
   ) { }
   //--------------------------------------------------------//
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
+    this.isLoggedIn.set(!!localStorage.getItem('token'));
+
     //--------------------------------------------------------//
     if (id) {
       // 2. 拿著 ID 去問 API 要資料

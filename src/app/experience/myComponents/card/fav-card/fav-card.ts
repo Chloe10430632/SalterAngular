@@ -43,8 +43,10 @@ export class FavCard implements OnInit {
   }
   //----------------方法-----------------------------------//
   /**收藏 */
-  toggleFav() {
+  toggleFav(event: Event) {
     if (!this.isLoggedIn) {
+      event.preventDefault(); // ← 阻止 checkbox 狀態被 DOM 切換
+      this.notificationS.show('登入才能收藏', 'error');
       return;
     }
 
@@ -59,15 +61,17 @@ export class FavCard implements OnInit {
             return;
           }
           // 用 isFav() 的當下值判斷目前狀態
-          if (!this.isFav()) {
-            // 父層會在下次 HeartIds 更新時同步，或你可以 emit 事件讓父層加
-            this.notificationS.show('收藏成功', 'success');
-          } else {
+          if (this.isFav()) {
             this.removeMe.emit(id);
-            this.notificationS.show('取消收藏QAQ', 'success');
+            this.notificationS.show('取消收藏QAQ', 'error');
+           
+          } else {
+            // 如果本來「不是」收藏，現在要「加入」
+            this.notificationS.show('收藏成功', 'success');
+            // this.isFav.set(true);
           }
-        }
-        else {
+
+        } else {
           // --- 這裡很重要：如果後端回傳 false (例如請先登入)，要跳錯誤提示 ---
           this.notificationS.show('登入後才能收藏', 'error');
         }
