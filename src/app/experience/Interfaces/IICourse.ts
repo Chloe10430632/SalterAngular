@@ -1,3 +1,6 @@
+import { PhotoI } from "./IIPhoto";
+
+
 export interface APIResponse<T> {
   isSuccess: boolean;
   message: string;
@@ -5,7 +8,7 @@ export interface APIResponse<T> {
 }
 //================!!Interface!!================//
 //================!!課程模板、上架、評論、教練卡(最新課)!!================//
-export interface CourseInfoI {
+export interface CourseSessionInfoI {
   coachId: number,
   title?: string;
   description?: string;
@@ -15,6 +18,27 @@ export interface CourseInfoI {
   currentStudents: number;
   updatedAt: string;
   photoUrls?: string[];
+  imageUrls?: {
+    photoUrl: string;
+    publicId?: string;
+  }[];
   price?: number;
   difficulty: string;
+  location: string;
+  tempId: number;
+  sessionId: number;
+}
+
+export interface TempInfoI {
+  tempId: number;
+  coachId: number;
+  title?: string;
+  description?: string;
+  updatedAt: string;
+  imageUrls?: PhotoI[];  // 對齊後端欄位名稱，有s
+  photoUrls?: string[];  // 送出用，保留
+  price?: number;
+  difficulty: string;
+  location: string;
+  googlePlaceId?: string;
 }

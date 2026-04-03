@@ -1,5 +1,6 @@
+import { NotificationService } from './../../../../shared/notifyService/notification-service';
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, input,  OnInit,  Output } from '@angular/core';
+import { Component, EventEmitter, input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { AvatarPipe } from '../../../../shared/pipes/avatar-pipe';
 import { CoachAllInfoI } from '../../../Interfaces/IIcoachAllinfo';
@@ -29,7 +30,12 @@ export class FavCard implements OnInit {
   constructor(
     private router: Router,
     private coachInfoS: CoachCardInfoS,
+    public notificationS: NotificationService
   ) { }
+  //------------------------------------------------------//
+  get isLoggedIn(): boolean {
+    return !!localStorage.getItem('token');
+  }
   @Output() removeMe = new EventEmitter<number>(); //通知父組件（例如收藏頁面要移除這張卡片）
   //------------------------------------------------------//
   ngOnInit(): void {
@@ -38,21 +44,40 @@ export class FavCard implements OnInit {
   //----------------方法-----------------------------------//
   /**收藏 */
   toggleFav() {
+    if (!this.isLoggedIn) {
+      return;
+    }
+
     const id = this.coachItem().coachId;
-    const favData: FavI = { coachId: id, isSuccess: false, message: '' };
+    const favData: FavI = { coachId: id, isSuccess: false, message: '', data: '' };
 
     this.coachInfoS.changeFav(favData).subscribe({
       next: (res) => {
         if (res.isSuccess) {
+          if (res.data === "請先登入後才能收藏喔！") {
+            this.notificationS.show(res.data, 'error');
+            return;
+          }
           // 用 isFav() 的當下值判斷目前狀態
           if (!this.isFav()) {
             // 父層會在下次 HeartIds 更新時同步，或你可以 emit 事件讓父層加
+            this.notificationS.show('收藏成功', 'success');
           } else {
             this.removeMe.emit(id);
+            this.notificationS.show('取消收藏QAQ', 'success');
           }
         }
+        else {
+          // --- 這裡很重要：如果後端回傳 false (例如請先登入)，要跳錯誤提示 ---
+          this.notificationS.show('登入後才能收藏', 'error');
+        }
+      },
+      error: (err) => {
+        this.notificationS.show('連線伺服器失敗', 'error');
       }
-    });
+
+    }
+    );
   }
 
 

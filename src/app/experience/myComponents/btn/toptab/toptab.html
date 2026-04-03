@@ -1,34 +1,33 @@
 <div class="dropdown dropdown-hover">
-      <div tabindex="0" role="button"
-        class="btn btn-ghost btn-lg text-xl font-black text-[#4A423E] hover:bg-[#4A423E]/10 transition-all flex items-center gap-1 border-none">
-        課程
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 opacity-50" fill="none" viewBox="0 0 24 24"
-          stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" />
-        </svg>
-      </div>
-      <ul tabindex="0"
-        class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow-2xl border border-base-200">
-        <li><a (click)="template()" class="text-lg font-bold py-3 active:bg-primary">課程模板</a></li>
-        <li><a (click)="onshelf()" class="text-lg font-bold py-3 active:bg-primary">上架中課程</a></li>
-      </ul>
-    </div>
+  <div tabindex="0" role="button"
+    class="btn btn-ghost btn-lg text-xl font-black text-[#4A423E] hover:bg-[#4A423E]/10 transition-all flex items-center gap-1 border-none">
+    課程
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 opacity-50" fill="none" viewBox="0 0 24 24"
+      stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" />
+    </svg>
+  </div>
+  <ul tabindex="0"
+    class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow-2xl border border-base-200">
+    <li><a (click)="template()" class="text-lg font-bold py-3 active:bg-primary">課程模板列表</a></li>
+    <li><a (click)="addtemplate()" class="text-lg font-bold py-3 active:bg-primary">新增課程模板</a></li>
+    <li><a (click)="onshelf()" class="text-lg font-bold py-3 active:bg-primary">上架中課程</a></li>
+    <li><a (click)="pastcourse()" class="text-lg font-bold py-3 active:bg-primary">過往開課紀錄</a></li>
+  </ul>
+</div>
 
-    <div class="dropdown dropdown-hover">
-      <div tabindex="0" role="button"
-        class="btn btn-ghost btn-lg text-xl font-black text-[#4A423E] hover:bg-[#4A423E]/10 transition-all flex items-center gap-1 border-none">
-        我的資料
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 opacity-50" fill="none" viewBox="0 0 24 24"
-          stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" />
-        </svg>
-      </div>
-      <ul tabindex="0"
-        class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow-2xl border border-base-200">
-        <li><a (click)="profile()" class="text-lg font-bold py-3 active:bg-primary">檢視我的資料</a></li>
-        <li><a (click)="profiledit()" class="text-lg font-bold py-3 active:bg-primary">編輯我的資料</a></li>
-      </ul>
-    </div>
-
-
-
+<div class="dropdown dropdown-hover">
+  <div tabindex="0" role="button"
+    class="btn btn-ghost btn-lg text-xl font-black text-[#4A423E] hover:bg-[#4A423E]/10 transition-all flex items-center gap-1 border-none">
+    我的資料
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 opacity-50" fill="none" viewBox="0 0 24 24"
+      stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" />
+    </svg>
+  </div>
+  <ul tabindex="0"
+    class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow-2xl border border-base-200">
+    <li><a (click)="profile()" class="text-lg font-bold py-3 active:bg-primary">檢視我的資料</a></li>
+    <li><a (click)="profiledit()" class="text-lg font-bold py-3 active:bg-primary">編輯我的資料</a></li>
+  </ul>
+</div>

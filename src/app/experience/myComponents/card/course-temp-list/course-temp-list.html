@@ -1,79 +1,216 @@
-<div data-theme="bumblebee" class="p-4 bg-base-100">
-  <div class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box shadow-sm">
-    <input type="checkbox" class="peer" />
+<div class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-2xl shadow-md mb-4"
+  data-theme="bumblebee">
+  <input type="checkbox" class="peer" />
 
-    <div class="collapse-title text-xl font-medium flex items-center justify-between pr-12">
-      <div class="flex-1">
-        {{ course?.title }}
-      </div>
-
-      <div class="flex gap-2" (click)="$event.stopPropagation()">
-        <button class="btn btn-outline btn-sm btn-secondary" (click)="onEditTemplate()">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
-            stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-          </svg>
-          編輯模板
-        </button>
-        <button class="btn btn-primary btn-sm" (click)="onSchedule()">
-          選時段上架
-        </button>
-      </div>
+  <div class="collapse-title flex items-center justify-between pr-12 py-4 px-5">
+    <div class="flex-1 truncate mr-4">
+      <span class="text-lg font-bold text-[#8B4513]">{{ tempData?.title }}</span>
+      <span class="ml-3 badge badge-outline badge-sm text-base-content/50">{{ tempData?.difficulty }}</span>
     </div>
 
-    <div class="collapse-content">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-base-200">
+    <div class="flex gap-2 relative z-10" (click)="$event.stopPropagation()">
+      @if (!isEdit && !isSelectingTime) {
+      <button (click)="onEdit()" class="btn btn-outline btn-sm btn-secondary">編輯模板</button>
+      <button (click)="selectime()" class="btn btn-warning btn-sm">選上架時段</button>
+      } @else if (isEdit) {
+      <button (click)="onSave()" class="btn btn-sm btn-success text-white" [disabled]="isSaving">
+        @if (isSaving) { <span class="loading loading-spinner loading-xs"></span> }
+        {{ isSaving ? '儲存中...' : '儲存' }}
+      </button>
+      <button (click)="onCancel()" class="btn btn-sm btn-ghost" [disabled]="isSaving">取消</button>
+      } @else if (isSelectingTime) {
+      <span class="text-sm font-bold text-warning animate-pulse">正在設定上架...</span>
+      }
+    </div>
+  </div>
 
-        <div class="col-span-1">
-          <div class="carousel w-full rounded-xl h-48 shadow-inner">
-            <!--  -->
-            <div id="slide1" class="carousel-item relative w-full">
-              <img [src]="course?.photoUrls" class="w-full object-cover" />
-              <div class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
-                <a href="#slide3" class="btn btn-circle btn-xs opacity-50">❮</a>
-                <a href="#slide2" class="btn btn-circle btn-xs opacity-50">❯</a>
+  <div class="collapse-content overflow-visible px-5 pb-5" style="overflow: visible !important;">
+
+    @if (isSelectingTime) {
+    <div class="pt-5 border-t border-base-200 animate-in fade-in zoom-in duration-300">
+      <div class="p-6 bg-base-200 rounded-2xl space-y-6 shadow-inner">
+        <h3 class="font-bold text-lg text-primary flex items-center gap-2">
+          設定課程上架時段
+        </h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text font-bold text-primary">選擇日期 (可多選)</span>
+            </label>
+            <div class="relative">
+              <input #datePicker type="text"
+                class="input input-bordered input-primary w-full bg-white text-base-content" placeholder="請點擊開啟日曆..."
+                readonly />
+            </div>
+
+            <div class="mt-4 flex flex-wrap gap-2">
+              @for (date of sessionForm.controls.selectedDates.value; track date) {
+              <div class="badge badge-secondary badge-outline gap-1 px-3 py-3">
+                {{ date }}
               </div>
+              } @empty {
+              <div
+                class="text-xs text-base-content/40 italic p-2 border-2 border-dashed border-base-300 rounded-lg w-full text-center">
+                尚未選擇任何日期
+              </div>
+              }
             </div>
           </div>
-          <!--  -->
-        </div>
 
-        <div class="col-span-2 flex flex-col justify-between">
           <div class="space-y-4">
-            <div>
-              <h4 class="text-sm font-bold text-base-content/50 uppercase tracking-widest">課程簡述</h4>
-              <p class="text-lg">{{ course?.description }}</p>
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text font-bold text-primary">選擇上課場次</span>
+              </label>
+              <select [formControl]="sessionForm.controls.timeSlot"
+                class="select select-bordered select-primary w-full bg-white">
+                <option>早上場(9:00~12:00)</option>
+                <option>下午場(13:00~16:00)</option>
+                <option>全日場(8:00~17:00)</option>
+              </select>
             </div>
 
-            <div class="flex flex-wrap gap-8">
-              <div class="stats shadow bg-base-200">
-                <div class="stat">
-                  <div class="stat-title">價格</div>
-                  <div class="stat-value text-primary text-2xl">NT$ {{ course?.price }}</div>
-                </div>
-              </div>
-
-              <div class="stats shadow bg-base-200">
-                <div class="stat">
-                  <div class="stat-title">難度</div>
-                  <div class="stat-value text-secondary text-2xl">{{ course?.difficulty }}</div>
-                </div>
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text font-bold text-primary">開放報名人數</span>
+              </label>
+              <div class="join w-full">
+                <input type="number" [formControl]="sessionForm.controls.maxStudents"
+                  class="input input-bordered input-primary join-item w-full bg-white" />
+                <button class="btn btn-primary join-item">人</button>
               </div>
             </div>
-          </div>
-
-          <div class="mt-6 text-xs text-base-content/40 flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            最後更新時間：{{ course?.updatedAt | date:'yyyy-MM-dd HH:mm' }}
           </div>
         </div>
 
+        <div class="flex justify-end gap-2 pt-6 border-t border-base-300">
+          <button (click)="onCancelTime()" class="btn btn-ghost btn-sm" [disabled]="isSaving">返回</button>
+          <button (click)="onSaveSession()" class="btn btn-primary btn-sm px-8"
+            [disabled]="isSaving || !sessionForm.valid">
+            @if (isSaving) { <span class="loading loading-spinner loading-xs"></span> }
+            發佈上架
+          </button>
+        </div>
       </div>
     </div>
+
+    } @else {
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-5 border-t border-base-200 animate-in fade-in duration-500">
+
+      <div class="w-full">
+        @if (!isEdit) {
+        <div #carousel
+          class="carousel carousel-center w-full aspect-video rounded-xl shadow bg-base-200 overflow-x-hidden scroll-smooth">
+          @for (photo of (tempData?.imageUrls ?? []); track $index) {
+          <div class="carousel-item w-full flex-shrink-0">
+            <img [src]="photo.photoUrl" class="w-full h-full object-cover" />
+          </div>
+          } @empty {
+          <div class="flex items-center justify-center w-full h-full text-base-content/30 text-sm italic">暫無課程照片</div>
+          }
+        </div>
+        } @else {
+        <div class="border-2 border-dashed border-base-300 rounded-xl p-4 bg-base-50">
+          <p class="text-xs font-semibold text-base-content/40 uppercase mb-3">圖片管理</p>
+          <div class="grid grid-cols-2 gap-3">
+            @for (photo of (tempData?.imageUrls ?? []); track $index) {
+            <div class="relative aspect-video">
+              <img [src]="photo.photoUrl" class="w-full h-full object-cover rounded-lg border" />
+              <button (click)="$event.stopPropagation(); removePhoto($index, true)"
+                class="absolute -top-2 -right-2 btn btn-circle btn-xs btn-error">✕</button>
+            </div>
+            }
+            @for (url of previewUrls; track $index) {
+            <div class="relative aspect-video">
+              <img [src]="url" class="w-full h-full object-cover rounded-lg border-2 border-primary" />
+              <button (click)="$event.stopPropagation(); removePhoto($index, false)"
+                class="absolute -top-2 -right-2 btn btn-circle btn-xs btn-error">✕</button>
+            </div>
+            }
+            <label
+              class="flex flex-col items-center justify-center border-2 border-dashed border-primary/30 rounded-lg aspect-video cursor-pointer hover:bg-base-200">
+              <span class="text-2xl text-primary/50">+</span>
+              <input type="file" class="hidden" (change)="onFileSelected($event)" multiple accept="image/*" />
+            </label>
+          </div>
+        </div>
+        }
+      </div>
+
+      <div class="flex flex-col gap-5">
+        <div>
+          <p class="label-text text-xs text-base-content/40 uppercase mb-1">課程名稱</p>
+          @if (!isEdit) {
+          <p class="text-xl font-bold text-[#8B4513]">{{ tempData?.title }}</p>
+          } @else {
+          <input type="text" [formControl]="editForm.controls.title" class="input input-bordered w-full" />
+          }
+        </div>
+
+        <div>
+          <p class="label-text text-xs text-base-content/40 uppercase mb-1">課程簡述</p>
+          @if (!isEdit) {
+          <p class="text-sm leading-relaxed text-base-content/70">{{ tempData?.description || '尚無簡述' }}</p>
+          } @else {
+          <textarea [formControl]="editForm.controls.description"
+            class="textarea textarea-bordered w-full h-24 text-sm"></textarea>
+          }
+        </div>
+
+        <div class="form-control relative">
+          <p class="label-text text-xs text-base-content/40 uppercase mb-1">上課地點搜尋</p>
+          @if (!isEdit) {
+          <p class="text-sm text-base-content/80">{{ tempData?.location || '未設定地址' }}</p>
+          } @else {
+          <div class="relative">
+            <input type="text" [formControl]="editForm.controls.location"
+              class="input input-bordered focus:input-primary w-full pl-4 shadow-sm" placeholder="搜尋地點..." />
+
+            @if (locationResults.length > 0) {
+            <ul
+              class="absolute z-[101] menu bg-base-100 w-full shadow-2xl rounded-box border-2 border-primary mt-1 p-2">
+              @for (item of locationResults; track item.placeId) {
+              <li class="border-b border-base-200 last:border-0">
+                <a (click)="onSelectLocation(item)" class="py-3">
+                  <span class="font-bold text-[#8B4513]">{{ item.name }}</span>
+                </a>
+              </li>
+              }
+            </ul>
+            }
+          </div>
+          }
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 mt-auto">
+          <div class="bg-base-200 rounded-xl p-3">
+            <p class="text-[10px] text-base-content/40 mb-1">價格</p>
+            @if (!isEdit) {
+            <p class="font-bold text-secondary">NT$ {{ tempData?.price | number }}</p>
+            } @else {
+            <input type="number" [formControl]="editForm.controls.price" class="input input-bordered input-xs w-full" />
+            }
+          </div>
+          <div class="bg-base-200 rounded-xl p-3">
+            <p class="text-[10px] text-base-content/40 mb-1">難度</p>
+            @if (!isEdit) {
+            <p class="font-bold text-accent">{{ tempData?.difficulty }}</p>
+            } @else {
+            <select [formControl]="editForm.controls.difficulty" class="select select-bordered select-xs w-full">
+              <option value="初級">初級</option>
+              <option value="中級">中級</option>
+              <option value="高級">高級</option>
+            </select>
+            }
+          </div>
+        </div>
+
+        <p class="text-[10px] text-base-content/30 text-right italic">
+          最後更新：{{ tempData?.updatedAt | date:'yyyy-MM-dd HH:mm' }}
+        </p>
+      </div>
+    </div>
+    }
   </div>
 </div>

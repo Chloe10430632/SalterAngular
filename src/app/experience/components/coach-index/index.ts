@@ -9,6 +9,7 @@ import { CoachAllInfoI } from '../../Interfaces/IIcoachAllinfo';
 import { CourseInformationS } from '../../Service/course-information';
 import { Search } from "../../myComponents/search/search";
 import { FavCard } from '../../myComponents/card/fav-card/fav-card';
+import { NotificationService } from '../../../shared/notifyService/notification-service';
 
 
 
@@ -39,6 +40,7 @@ export class Index implements OnInit {
   constructor(private rank: Rank,
     private courseNameS: CourseInformationS,
     private coachAllInfoS: CoachCardInfoS,
+    public notificationS: NotificationService
   ) { }
   //=======================================//
   ngOnInit(): void {
@@ -91,8 +93,25 @@ export class Index implements OnInit {
     this.loadCoach();
   }
   loadHeart() {
-    this.coachAllInfoS.HeartIds().subscribe(res => {
-      this.myFavIds.set(res.data); // 抓一次，存起來
+    const token = localStorage.getItem('token');
+    if (!token) {
+      this.myFavIds.set([]);
+      return;
+    }
+
+    this.coachAllInfoS.HeartIds().subscribe({
+      next: (res) => {
+        if (res && res.data) {
+          this.myFavIds.set(res.data);
+        }
+      },
+      error: (err) => {
+        // token 過期就清掉，靜默處理，不要跳通知
+        if (err.status === 401) {
+          localStorage.removeItem('token');
+        }
+        this.myFavIds.set([]);
+      }
     });
   }
   prepareCourseData() {
@@ -102,10 +121,10 @@ export class Index implements OnInit {
     allList.forEach(coach => {
       this.courseNameS.getLatestCourseByCoach(coach.coachId).subscribe({
         next: (res) => {
-          // 有課程 → 顯示標題；後端說沒課 → 顯示提示文字
-          this.allCourseMap[coach.coachId] = res
-            ? (res.title || '新課程準備中...')
-            : '暫無開課計畫';
+          this.allCourseMap[coach.coachId] = res?.data?.title
+            ? res.data.title
+            : '新課程準備中...';
+          // console.log(res);
         },
         error: () => {
           // 這裡只剩真正的網路錯誤才會進來

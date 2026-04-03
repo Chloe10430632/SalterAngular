@@ -20,8 +20,16 @@ export class Toptab {
     this.router.navigate(['/experience/coursetemp']);
   }
 
+  addtemplate() {
+    this.router.navigate(['/experience/courseaddtemp'])
+  }
+
   onshelf() {
     this.router.navigate(['/experience/course']);
+  }
+
+  pastcourse() {
+    this.router.navigate(['/experience/coursepast'])
   }
 
   profile() {

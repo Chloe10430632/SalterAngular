@@ -2,10 +2,11 @@ import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit, signal } from '@angular/core';
 import { CoachCardInfoS } from '../../../Service/coach-card-info-s';
 import { CoachAllInfoI as CoachAllInfoI } from '../../../Interfaces/IIcoachAllinfo';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FavI } from '../../../Interfaces/IImyfav';
 import { AvatarPipe } from '../../../../shared/pipes/avatar-pipe';
 import { CoachS } from '../../../Service/coach-s';
+import { NotificationService } from '../../../../shared/notifyService/notification-service';
 
 
 //========!!這是 子Component!!================//
@@ -29,8 +30,21 @@ export class CourseforCoachProfile implements OnInit {
     private coachS: CoachS,
     private coachInfoS: CoachCardInfoS,
     private route: ActivatedRoute, // 注入網址工具
+    public notificationS: NotificationService,
+    private router: Router
   ) { }
-  @Input() coachId: number = 1000010; // 讓外部決定要抓哪一個 ID，預設值先給1000010
+  //------------------------------------------------------//
+  get checkIsFav(): boolean {
+    const currentCoach = this.coach();
+    if (!currentCoach) return false;
+    return this.myFavId.includes(currentCoach.coachId);
+  }
+
+  // 判斷是否已登入
+  get isLoggedIn(): boolean {
+    return !!localStorage.getItem('token');
+  }
+
   //------------------------------------------------------//
   ngOnInit(): void {
 
@@ -41,7 +55,8 @@ export class CourseforCoachProfile implements OnInit {
         this.loadCoach(id);
       } else {
         // 2. 如果網址沒參數，用 Input 的 ID
-        this.loadCoach(this.coachId);
+        this.notificationS.show('教練資料沉入海底', "error")
+        this.router.navigate(['/'])
       }
     });
     this.loadHeart(); // 頁面一打開就去抓收藏清單，看看這個教練有沒有在裡面
@@ -88,35 +103,37 @@ export class CourseforCoachProfile implements OnInit {
     const favData: FavI = {
       coachId: coachId,
       isSuccess: false,
-      message: ''
+      message: '',
+      data: ''
     };
 
-    // 直接呼叫同一隻 API
     this.coachInfoS.changeFav(favData).subscribe({
-      next: (res) => {
-        // 假設後端執行成功（不論是新增還是刪除成功）
-        if (res.isSuccess) {
-
-          // 檢查：如果原本陣列裡「沒有」這個 ID，代表剛才是執行「新增」
-          if (!this.myFavId.includes(coachId)) {
-            this.myFavId = [...this.myFavId, coachId]; // 加進去，愛心變紅
-            console.log(this.myFavId);
-          }
-          // 檢查：如果原本陣列裡「有」這個 ID，代表剛才是執行「取消」
-          else {
-            this.myFavId = this.myFavId.filter(id => id !== coachId); // 踢掉，愛心變灰
+      next: (res: any) => {
+        // 注意後端回傳大小寫，如果是 issuccess 請改為 res.issuccess
+        if (res.isSuccess || res.issuccess) {
+          if (res.data === "請先登入後才能收藏喔！") {
+            this.notificationS.show(res.data, 'error');
+            return;
           }
 
+          // --- 修正 3：邏輯判斷與狀態同步 ---
+          if (!this.checkIsFav) {
+            // 原本沒收藏 -> 現在變收藏
+            this.myFavId.push(coachId); // 手動加入陣列，讓畫面愛心立即變亮
+            this.notificationS.show('收藏成功', 'success');
+          } else {
+            // 原本有收藏 -> 現在取消收藏
+            this.myFavId = this.myFavId.filter(id => id !== coachId); // 從陣列移除
+            this.notificationS.show('已取消收藏', 'success');
+          }
         } else {
-          console.error("後端處理失敗:", res.message);
+          this.notificationS.show(res.data || '收藏失敗', 'error');
         }
       },
       error: (err) => {
-        console.error("網路或伺服器錯誤", err);
+        this.notificationS.show('連線伺服器失敗', 'error');
       }
     });
   }
-
 }
-
 
