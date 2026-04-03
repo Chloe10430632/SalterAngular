@@ -2,7 +2,12 @@
   <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
     <!-- 左邊教練小卡 -->
     <aside class="lg:col-span-1">
-      <app-coursefor-coach-profile></app-coursefor-coach-profile>
+      @if (coachData()) {
+      <app-coursefor-coach-profile [item]="coachData()!">
+      </app-coursefor-coach-profile>
+      } @else {
+      <span class="loading loading-dots loading-lg text-primary"></span>
+      }
     </aside>
 
     <main class="lg:col-span-2 space-y-8">
