@@ -8,6 +8,8 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { LocationSearchService } from '../../../../trip/services/location-search';
 import { PhotoI } from '../../../Interfaces/IIPhoto';
 import flatpickr from 'flatpickr';
+import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
 //===============!!這是子 元件!!=======================//
 //===============!! 課程模板 !!=======================//
 
@@ -48,6 +50,7 @@ export class CourseTempList implements OnInit {
   constructor(private localS: LocationSearchService,
     private courseS: CourseInformationS,
     private notifyS: NotificationService,
+    private router: Router
   ) { }
   //--------------------------------------//
   ngOnInit(): void {
@@ -140,20 +143,54 @@ export class CourseTempList implements OnInit {
     // 給 Angular 一點時間渲染 DOM
     setTimeout(() => {
       if (this.datePickerElement) {
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const maxDate = new Date();
+        maxDate.setDate(maxDate.getDate() + 60);
+
         flatpickr(this.datePickerElement.nativeElement, {
-          mode: "multiple",
+          mode: "range",
+          minDate: tomorrow,
+          maxDate: maxDate,
           dateFormat: "Y-m-d",
-          onChange: (dates, dateStr) => {
-            // dateStr 會是 "2024-01-01, 2024-01-02"
-            const dateArr = dateStr ? dateStr.split(', ') : [];
-            this.sessionForm.controls.selectedDates.setValue(dateArr);
+          onChange: (selectedDates: Date[]) => {
+            // 如果選好了開始跟結束（選了兩個日期）
+            if (selectedDates.length === 2) {
+              // 複製一份 start date，避免污染原始資料
+            let current = new Date(selectedDates[0]);
+
+              const end = selectedDates[1];
+              const dateArr: string[] = [];
+
+              // 迴圈計算中間的每一天
+              while (current <= end) {
+                const yyyy = current.getFullYear();
+                const mm = String(current.getMonth() + 1).padStart(2,'0'); // 月份從0開始，要+1
+                const dd = String(current.getDate()).padStart(2, '0');
+                // 2. 組成 YYYY-MM-DD
+                const formattedDate = `${yyyy}-${mm}-${dd}`;
+
+                dateArr.push(formattedDate);
+                // 3. 往下加一天
+                current.setDate(current.getDate() + 1);
+              }
+
+              // 存進表單
+              this.sessionForm.controls.selectedDates.setValue(dateArr);
+              console.log('轉換後的日期陣列：', dateArr);
+            }
           }
         });
       }
-    }, 100);
+    }, 150);
   }
   onCancelTime() {
     this.isSelectingTime = false;
+  }
+  isPastDate(dateStr: string): boolean {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return new Date(dateStr) < today;
   }
   //#endregion
   //--------------------------------------//
@@ -205,6 +242,7 @@ export class CourseTempList implements OnInit {
     }));
     formData.append('ExistingPhotosJson', JSON.stringify(remainingPhotos));
 
+    this.isSaving = true;
     // 4. 送出！
     this.courseS.editCourseT(id, formData).subscribe({
       next: (res) => {
@@ -224,60 +262,82 @@ export class CourseTempList implements OnInit {
           this.previewUrls = [];
           this.notifyS.show("儲存成功", "success")
         }
+        this.isSaving = false;
       },
       error: (err) => {
         console.error("API 報錯：", err);
         this.notifyS.show("儲存失敗", "error")
+        this.isSaving = false;
       }
     });
-    this.isSaving = true;
-    setTimeout(() => {
-      // API 成功後
-      this.isSaving = false;
-      this.isEdit = false;
-    }, 2000);
-    console.log("修改資料", this.editForm.value);
   }
   //------------------------------------------------//
   onSaveSession() {
     const formData = new FormData();
     const id = this.tempData?.tempId;
 
+    // 1. 檢查模板 ID 是否存在
     if (!id) {
       console.error("錯誤：templateId 為 undefined。請檢查父組件傳入的 tempData：", this.tempData);
       this.notifyS.show("找不到模板", "error");
       return;
     }
 
+    // 2. 取得表單數值
     const dates = this.sessionForm.controls.selectedDates.value || [];
     const slot = this.sessionForm.controls.timeSlot.value || '';
     const maxStu = this.sessionForm.controls.maxStudents.value ?? 0; // 使用 ?? 處理 null/undefined
 
-    formData.append('SelectedDates', JSON.stringify(dates));
+    // 3. 組裝 FormData (注意：欄位名稱需與後端 API 參數一致)
+    dates.forEach(date => {
+      formData.append('SelectedDates', date);
+    });
     formData.append('TimeSlot', slot);
     formData.append('MaxStudents', maxStu.toString());
 
     this.isSaving = true;
 
+    // 4. 呼叫 Service API 進行上架
     this.courseS.createSession(id, formData).subscribe({
       next: (res) => {
         if (res.isSuccess) {
           this.isSelectingTime = false;
-          this.notifyS.show("儲存成功", "success")
+
+          // 使用 SweetAlert2 詢問後續動作
+          Swal.fire({
+            title: '上架成功！',
+            text: '課程已成功發布，要前往查看嗎？',
+            icon: 'success',
+            showCancelButton: true,
+            confirmButtonColor: '#facc15', // Bumblebee 黃
+            cancelButtonColor: '#aaa',
+            confirmButtonText: '前往「上架中」頁面',
+            cancelButtonText: '留在原地新增下一筆'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              // 跳轉到你剛寫好的那個父元件路由
+              this.router.navigate(['/experience/course']);
+            } else {
+              // 留在原地，重置表單
+              this.sessionForm.reset({
+                timeSlot: '早上場(9:00~12:00)',
+                maxStudents: 1
+              });
+              // 重置後記得手動清空 selectedDates，因為它是陣列
+              this.sessionForm.controls.selectedDates.setValue([]);
+            }
+          });
         }
-        this.isSaving = false;
+        this.isSaving = false; // API 完成後解除讀取狀態
       },
       error: (err) => {
-        console.error("API 報錯：", err);
-        this.notifyS.show("儲存失敗", "error")
+        console.error("上架發生錯誤：", err);
+        this.notifyS.show("發布失敗，請稍後再試", "error");
+        this.isSaving = false; // 發生錯誤也要解除讀取狀態
       }
     });
-    this.isSaving = true;
-    setTimeout(() => {
-      // API 成功後
-      this.isSaving = false;
-      this.isEdit = false;
-    }, 2000);
-    console.log("新增時段", this.editForm.value);
+
+    // 調試用途
+    console.log("新增時段內容：", { id, dates, slot, maxStu });
   }
 }

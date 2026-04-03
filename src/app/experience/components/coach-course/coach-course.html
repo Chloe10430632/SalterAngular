@@ -1,7 +1,15 @@
 <app-withavatar title="上架中的課程">
 
-</app-withavatar>
+  <div class="max-w-5xl mx-auto p-4">
+    @for (item of publishedList; track item.sessionId) {
+    <app-course-publish [data]="item" (remove)="deleteFromDB($event)">
+    </app-course-publish>
+    } @empty {
+    <div class="text-center p-10 opacity-50">目前沒有上架中的課程喔！</div>
+    }
+  </div>
 
+</app-withavatar>
 
 <app-little-island></app-little-island>
 <app-footer></app-footer>

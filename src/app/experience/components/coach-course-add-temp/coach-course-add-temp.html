@@ -19,7 +19,7 @@
             </div>
 
             <div class="flex gap-3">
-              <button (click)="onCancel()" class="btn btn-ghost btn-sm md:btn-md">取消</button>
+              <button (click)="onCancel()" class="btn btn-ghost btn-sm md:btn-md">清除</button>
               <button (click)="onCreate()" class="btn btn-primary px-8 shadow-lg shadow-primary/30"
                 [disabled]="createForm.invalid || isSaving">
                 @if (isSaving) { <span class="loading loading-spinner loading-xs"></span> }
@@ -94,13 +94,12 @@
 
                 <div class="form-control relative">
                   <label class="label"><span
-                      class="label-text font-bold text-xs uppercase tracking-widest opacity-60">授課地點搜尋</span></label>
+                      class="label-text font-bold text-xs uppercase tracking-widest opacity-60">搜尋地點</span></label>
                   <div class="relative">
                     <span class="absolute inset-y-0 left-4 flex items-center text-primary"><span class="iconify"
                         data-icon="tabler:map-pin-filled"></span>📍</span>
                     <input type="text" formControlName="location"
-                      class="input input-bordered focus:input-primary w-full pl-12 shadow-sm"
-                      placeholder="輸入地標或地址..." />
+                      class="input input-bordered focus:input-primary w-full pl-12 shadow-sm" placeholder="搜尋地點..." />
                   </div>
 
                   @if (locationResults.length > 0) {

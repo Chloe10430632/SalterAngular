@@ -18,6 +18,10 @@ export interface CourseSessionInfoI {
   currentStudents: number;
   updatedAt: string;
   photoUrls?: string[];
+  imageUrls?: {
+    photoUrl: string;
+    publicId?: string;
+  }[];
   price?: number;
   difficulty: string;
   location: string;
@@ -26,6 +30,7 @@ export interface CourseSessionInfoI {
 }
 
 export interface TempInfoI {
+  tempId: number;
   coachId: number;
   title?: string;
   description?: string;
@@ -35,5 +40,5 @@ export interface TempInfoI {
   price?: number;
   difficulty: string;
   location: string;
-  tempId: number;
+  googlePlaceId?: string;
 }

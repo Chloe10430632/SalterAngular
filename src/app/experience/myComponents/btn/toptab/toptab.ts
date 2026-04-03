@@ -28,6 +28,10 @@ export class Toptab {
     this.router.navigate(['/experience/course']);
   }
 
+  pastcourse() {
+    this.router.navigate(['/experience/coursepast'])
+  }
+
   profile() {
     const id = this.getCoachId();
     // ✅ 正確寫法：陣列的第二個元素就是 :id

@@ -129,6 +129,10 @@ export const routes: Routes = [
         loadComponent: () => import('./experience/components/coach-course/coach-course').then(m => m.CoachCourse)
       },
       {
+        path: 'coursepast', //過往開課
+        loadComponent: () => import('./experience/components/coach-course-past/coach-course-past').then(m => m.CoachCoursePast)
+      },
+      {
         path: 'coachcoursemore/:id', //課程月曆
         loadComponent: () => import('./experience/components/coach-more-course-calendar/coach-more-course-calendar').then(m => m.CoachMoreCourseCalendar)
       },

@@ -25,6 +25,11 @@ export class CourseInformationS {
     );
   }
 
+  /**教練上架中 */
+  getPublishedSessions(): Observable<APIResponse<CourseSessionInfoI[]>> {
+    return this.client.get<APIResponse<CourseSessionInfoI[]>>(`${environment.apiUrl}/Exp/Exp/AllSessions`);
+  }
+
   /**建模板 */
   createCourseT(data: FormData): Observable<any> {
     return this.client.post<any>(`${environment.apiUrl}/Exp/Exp/AddCourseT`, data);
@@ -40,11 +45,11 @@ export class CourseInformationS {
   }
   /**課程選時間上架 */
   createSession(tempId: number, data: FormData): Observable<any> {
-    return this.client.post<any>(`${environment.apiUrl}/api/Exp/Exp/CourseTime/${tempId}`, data)
+    return this.client.post<any>(`${environment.apiUrl}/Exp/Exp/CourseTime/${tempId}`, data)
   }
   /**課程下架 */
   deleteSession(sessionId: number,): Observable<any> {
-    return this.client.delete<any>(`${environment.apiUrl}/api/Exp/Exp/DeleteSession/${sessionId}`)
+    return this.client.delete<any>(`${environment.apiUrl}/Exp/Exp/DeleteSession/${sessionId}`)
   }
 }
 // GET /api/Exp/Exp/CourseInfo/{sessionId}
