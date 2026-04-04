@@ -16,7 +16,7 @@ import Swal from 'sweetalert2';
   styleUrl: './course-publish.css',
 })
 export class CoursePublish {
-  @Input() data!: CourseSessionInfoI; 
+  @Input() data!: CourseSessionInfoI;
   @Output() remove = new EventEmitter<number>();
   //-------------------------------------------//
 

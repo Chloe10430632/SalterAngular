@@ -4,6 +4,7 @@ import { CourseSessionInfoI } from '../../../Interfaces/IICourse';
 import { CourseInformationS } from '../../../Service/course-information';
 
 //========!!這是 子Component!!================//
+//假課程折疊//
 
 @Component({
   selector: 'app-coursefor-coach',
