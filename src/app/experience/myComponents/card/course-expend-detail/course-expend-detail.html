@@ -93,9 +93,9 @@
 
               @if (!isCoachSelf) {
               <div [attr.data-tip]="!authS.isLoggedIn ? '請先登入' : ''" [class.tooltip]="!authS.isLoggedIn">
-                <button class="btn btn-primary" [disabled]="authS.isLoggedIn && !canBook" (click)="onBooking()">
-                  立即預約
-                </button>
+                 <button (click)="onReserve()" [disabled]="isLoading">
+      {{ isLoading ? '處理中...' : '立即預約' }}
+    </button>
               </div>
               }
             </div>

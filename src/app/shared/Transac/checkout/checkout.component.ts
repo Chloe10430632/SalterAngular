@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { TransactionService } from '../../../experience/Service/transaction.service';
+import { TransactionServiceS } from '../../../experience/Service/transaction.service';
 import { CommonModule, DecimalPipe } from '@angular/common';
 
 @Component({
@@ -20,7 +20,7 @@ export class CheckoutComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private transactionService: TransactionService
+    private transactionService: TransactionServiceS
   ) { }
 
   ngOnInit(): void {
