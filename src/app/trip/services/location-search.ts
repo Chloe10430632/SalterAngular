@@ -21,6 +21,9 @@ export class LocationSearchService {
 
   // 搜尋地點，回傳下拉清單
   search(keyword: string): Observable<TripLocationSearch[]> {
+    if (typeof google !== 'undefined' && !this.autocompleteService) {
+      this.autocompleteService = new google.maps.places.AutocompleteService();
+    }
     return new Observable(observer => {
       if (!keyword || keyword.length < 2) {
         observer.next([]);

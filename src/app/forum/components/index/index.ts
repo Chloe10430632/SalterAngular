@@ -1,6 +1,6 @@
 import { CurrentUser } from './../../interfaces/currentUser';
 import { AdsService } from './../../services/ads-service';
-import { Component, OnInit, signal, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, inject, OnInit, signal, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router, RouterOutlet, RouterLinkWithHref, RouterLinkActive } from '@angular/router';
 import { BoardList } from '../../interfaces/boardList';
 import { BoardsService } from '../../services/boards-service';
@@ -14,25 +14,46 @@ import { HttpEventType } from '@angular/common/http';
 import { environment } from './../../../../environments/environment';
 import { TripService } from '../../../trip/services/trip';
 import { SensitiveWordsService } from '../../services/sensitive-words-service';
-import { catchError, debounceTime, distinctUntilChanged, filter, of, switchMap, tap } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, filter, of, Subject, Subscription, switchMap, tap } from 'rxjs';
 import { PostsAgentService } from '../../services/posts-agent-service';
 import { AdDetails } from '../../interfaces/AdDetails';
 import { NotificationService } from '../../../shared/notifyService/notification-service';
+import { LocationSearchService } from '../../../trip/services/location-search';
+import { GoogleMapsModule } from '@angular/google-maps';
 
 @Component({
   selector: 'app-index',
-  imports: [RouterOutlet, RouterLinkWithHref, RouterLinkActive, ReactiveFormsModule],
+  imports: [RouterOutlet, RouterLinkWithHref, RouterLinkActive, ReactiveFormsModule, GoogleMapsModule],
   templateUrl: './index.html',
   styleUrl: './index.css',
   encapsulation: ViewEncapsulation.None,
 })
 export class Index implements OnInit {
 
+  public locationSearchService = inject(LocationSearchService);
+
   /**全部看板選單列表 */
   allBoardList: BoardList[] = [];
 
+  //--------GoogleMap打卡地點搜尋相關--------
+
   /**全部打卡地點選單列表 */
   allLocationList: any[] = [];
+
+  /**地點搜尋中 */
+  isLocationSearching = false;
+
+  /**是否顯示下拉選單 */
+  showLocationDropdown = false;
+
+  /**用來承接地點關鍵字輸入值的資料流 */
+  private searchSubject = new Subject<string>();
+
+  private searchSubscription?: Subscription;
+
+  @ViewChild('searchInput') searchInput!: ElementRef;
+
+  //--------GoogleMap打卡地點搜尋結束--------
 
   /**Top5熱門看板列表 */
   boardListPop5: BoardList[] = [];
@@ -165,22 +186,55 @@ export class Index implements OnInit {
         this.badWords = res.violatedWords;
       },
       error: (err) => {
-        // 這裡通常抓不到錯誤了，因為裡面已經處理掉
         this.isChecking = false;
       }
     });
 
 
-  }
+    /**搜尋地點關鍵字的資料流 */
+    this.searchSubscription = this.searchSubject.pipe(
+      debounceTime(800),         // 等使用者停手 0.5 秒
+      distinctUntilChanged(),    // 如果關鍵字沒變就不重複噴 API
 
-  /**讀取所有地點資料 */
-  getAllLocations() {
-    if (this.allLocationList.length > 0) return;
-    this.tripService.getAllLocations().subscribe({
-      next: (res) => {
-        this.allLocationList = res.data;
+      // 使用 switchMap 切換流
+      switchMap(keyword => {
+        if (!keyword || keyword.length < 2) {
+          this.allLocationList = [];
+          this.showLocationDropdown = false;
+          this.isLocationSearching = false;
+          return of([]); // 回傳一個立即發出的空陣列 Observable
+        }
+        this.isLocationSearching = true;
+        return this.locationSearchService.search(keyword).pipe(
+          catchError(err => {
+            return of([]); // 報錯時回傳空陣列，維持水管暢通
+          })
+        );
+      })
+    ).subscribe({
+      next: (results: any) => {
+        this.allLocationList = results;
+        this.showLocationDropdown = results.length > 0;
+        this.isLocationSearching = false;
+      },
+      error: (err) => {
+        console.error('--- 外部資料流發生致命錯誤：', err);
+        this.isLocationSearching = false;
       }
     });
+  }
+
+  /**搜尋地點 */
+  onKeySearch(event: any) {
+    const value = event.target.value;
+    console.log(value);
+    this.isLocationSearching = true; // 觸發 Skeleton
+    this.searchSubject.next(value);
+  }
+
+  /**避免記憶體洩漏 */
+  ngOnDestroy() {
+    this.searchSubscription?.unsubscribe();
   }
 
   /**發佈貼文 - File */
@@ -275,6 +329,12 @@ export class Index implements OnInit {
   selectLocation(location: any) {
     this.selectedLocation = location;
     this.postForm.patchValue({ locationId: location.id });
+    this.allLocationList = [];
+    this.showLocationDropdown = false;
+    this.isLocationSearching = false;
+    if (this.searchInput) {
+      this.searchInput.nativeElement.value = '';
+    }
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
     }
