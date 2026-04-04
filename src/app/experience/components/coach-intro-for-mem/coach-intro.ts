@@ -3,7 +3,6 @@ import { Component, OnInit, signal } from '@angular/core';
 import { MemreviewCard } from "../../myComponents/card/memreview-card/memreview-card";
 import { CourseforCoachProfile } from "../../myComponents/card/coursefor-coach-profile/coursefor-coach-profile";
 import { ActivatedRoute } from '@angular/router';
-import { CoachCardInfoS } from '../../Service/coach-card-info-s';
 import { CoachAllInfoI } from '../../Interfaces/IIcoachAllinfo';
 import { LittleIsland } from "../../myComponents/little-island/little-island";
 import { Footer } from "../../../shared/footer/footer";

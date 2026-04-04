@@ -1,9 +1,11 @@
 import { CoursePublish } from './../../myComponents/card/course-publish/course-publish';
-import { Component } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { Calender } from "../../myComponents/calender/calender";
 import { CourseSessionInfoI } from '../../Interfaces/IICourse';
-import { DatePipe } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { CourseInformationS } from '../../Service/course-information';
+import { LittleIsland } from "../../myComponents/little-island/little-island";
+import { Footer } from "../../../shared/footer/footer";
 
 
 //這是 父 //
@@ -11,33 +13,40 @@ import { CourseInformationS } from '../../Service/course-information';
 
 @Component({
   selector: 'app-coach-more-course-calendar',
-  imports: [Calender],
+  imports: [Calender, CommonModule, CoursePublish, LittleIsland, Footer],
   templateUrl: './coach-more-course-calendar.html',
   styleUrl: './coach-more-course-calendar.css',
 })
-export class CoachMoreCourseCalendar {
-
+export class CoachMoreCourseCalendar implements OnInit {
   dailyCourses: CourseSessionInfoI[] = [];
-  selectedDate = Number(Date.now);
-  weekDays = ['日', '一', '二', '三', '四', '五', '六'];
-  calendarDays = [22, 23, 24, 25, 26, 27, 28]; // 模擬一週
-  //-------------------------------------------------------//
+  selectDate: string = "";
+  isLoggedIn = signal(false);
+  coachId: number = 0;
+  //------------------//
   constructor(private courseS: CourseInformationS) { }
-  //-------------------------------------------------------//
-  selectDate(day: number) {
-    this.selectedDate = day;
-    this.loadCoursesByDate(day);
+  //------------------//
+  ngOnInit(): void {
+    this.isLoggedIn.set(!!localStorage.getItem('token'));
   }
-  loadCoursesByDate(id: number) {
-    // 這裡打 API，帶日期參數
-    this.courseS.getCourseInfo(id).subscribe({
+  //------------------//
+  dateSelected(dateStr: string) {
+    this.selectDate = dateStr;
+    this.loadCoursesByDate(dateStr);
+  }
+  loadCoursesByDate(day: string) {
+    this.courseS.getCoursesByDate(this.coachId, day).subscribe({
       next: (res) => {
-        this.dailyCourses.startDate = this.res;
+        // res 是 APIResponse<CourseSessionInfoI[]>，要取 .data
+        this.dailyCourses = res.data ?? [];
+      },
+      error: (err) => {
+        console.error(err);
+        this.dailyCourses = [];
       }
-    })
+    });
   }
+
   onRemoveCourse(sessionId: number) {
-    // 呼叫 API 下架，成功後重新撈當天課程
     this.dailyCourses = this.dailyCourses.filter(c => c.sessionId !== sessionId);
   }
 }

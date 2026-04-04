@@ -2,7 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 //這是 子 //
-//月曆殼//
+//小月曆殼//
 
 interface CalendarDay {
   date: number;

@@ -25,6 +25,13 @@ export class CourseInformationS {
     );
   }
 
+  /**教練當日課程 */
+  getCoursesByDate(coachId: number, day: string): Observable<APIResponse<CourseSessionInfoI[]>> {
+    return this.client.get<APIResponse<CourseSessionInfoI[]>>(
+      `${environment.apiUrl}/Exp/Exp/CourseDate/${coachId}/${day}`
+    )
+  };
+
   /**教練上架中 */
   getPublishedSessions(): Observable<APIResponse<CourseSessionInfoI[]>> {
     return this.client.get<APIResponse<CourseSessionInfoI[]>>(`${environment.apiUrl}/Exp/Exp/AllSessions`);
@@ -51,11 +58,5 @@ export class CourseInformationS {
   deleteSession(sessionId: number,): Observable<any> {
     return this.client.delete<any>(`${environment.apiUrl}/Exp/Exp/DeleteSession/${sessionId}`)
   }
+  
 }
-// GET /api/Exp/Exp/CourseInfo/{sessionId}
-// GET /api/Exp/Exp/LatestCourse/{coachId}
-// POST /api/Exp/Exp/AddCourseT
-// PUT /api/Exp/Exp/EditCourseTemplate/{tempId}
-// GET /api/Exp/Exp/Temp
-// POST /api/Exp/Exp/CourseTime/{templateId}
-// DELETE /api/Exp/Exp/DeleteSession/{sessionId}
