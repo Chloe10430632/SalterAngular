@@ -1,15 +1,17 @@
-import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, Input } from '@angular/core';
+import { ReviewI } from '../../../Interfaces/IIreview';
 
-//這是父元件//
+//這是Modal元件//
 //跳出浮在前面的畫面//
 //裝這個教練的所有評論//
 
 @Component({
   selector: 'app-all-reviews',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './all-reviews.html',
   styleUrl: './all-reviews.css',
 })
 export class AllReviews {
-  
+  @Input() reviews: ReviewI[] = [];
 }

@@ -10,6 +10,7 @@ import { CourseExpendDetail } from "../../myComponents/card/course-expend-detail
 import { UserService } from '../../../user/Services/user-service';
 import { ReviewI } from '../../Interfaces/IIreview';
 import { ReviewsS } from '../../Service/reviews';
+import { AllReviews } from "../../myComponents/card/all-reviews/all-reviews";
 
 //========!!這是 父 元件!!================//
 //========!!教練小卡+摺疊課程+評論!!================//
@@ -17,7 +18,7 @@ import { ReviewsS } from '../../Service/reviews';
 
 @Component({
   selector: 'app-coachintro',
-  imports: [MemreviewCard, CourseforCoachProfile, LittleIsland, Footer, CourseExpendDetail],
+  imports: [MemreviewCard, CourseforCoachProfile, LittleIsland, Footer, CourseExpendDetail, AllReviews],
   templateUrl: './coach-intro.html',
   styleUrl: './coach-intro.css',
 })
