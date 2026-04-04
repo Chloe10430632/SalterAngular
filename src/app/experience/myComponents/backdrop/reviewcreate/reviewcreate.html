@@ -1,0 +1,59 @@
+<div data-theme="bumblebee">
+  <button class="btn btn-primary" onclick="review_modal.showModal()">撰寫評價</button>
+
+  <dialog id="review_modal" class="modal">
+    <div class="modal-box max-w-lg border border-base-300 shadow-2xl">
+      <form method="dialog">
+        <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+      </form>
+
+      <h3 class="font-bold text-lg mb-4 text-primary">課程評論</h3>
+
+      <div class="bg-base-200 p-4 rounded-xl mb-4">
+        <div class="flex justify-between items-center">
+          <div>
+            <p class="text-sm opacity-70">課程名稱</p>
+            <p class="font-bold text-base-content">進階重量訓練課</p>
+          </div>
+          <div class="text-right">
+            <p class="text-sm opacity-70">授課教練</p>
+            <p class="font-bold">Coach Daisy</p>
+          </div>
+        </div>
+        <div class="divider my-1"></div>
+        <div class="flex gap-4 text-xs">
+          <span>📅 2026-03-27</span>
+          <span>⏰ 14:00 - 16:00</span>
+        </div>
+      </div>
+
+      <div class="form-control w-full mb-4">
+        <label class="label"><span class="label-text font-semibold">評分</span></label>
+        <div class="rating rating-lg">
+          <input type="radio" name="rating-1" class="mask mask-star-2 bg-orange-400" (click)="setScore(1)" />
+          <input type="radio" name="rating-1" class="mask mask-star-2 bg-orange-400" (click)="setScore(2)" />
+          <input type="radio" name="rating-1" class="mask mask-star-2 bg-orange-400" (click)="setScore(3)" checked />
+          <input type="radio" name="rating-1" class="mask mask-star-2 bg-orange-400" (click)="setScore(4)" />
+          <input type="radio" name="rating-1" class="mask mask-star-2 bg-orange-400" (click)="setScore(5)" />
+        </div>
+        <p class="text-xs mt-2 text-base-content/60">您給予了 {{ currentScore }} 分</p>
+      </div>
+
+      <div class="form-control">
+        <label class="label"><span class="label-text font-semibold">評論內容</span></label>
+        <textarea class="textarea textarea-bordered h-24 focus:textarea-primary" placeholder="分享您的上課心得..."></textarea>
+      </div>
+
+      <div class="modal-action">
+        <form method="dialog">
+          <button class="btn btn-ghost">取消</button>
+          <button class="btn btn-primary" (click)="submitReview()">送出評論</button>
+        </form>
+      </div>
+    </div>
+
+    <form method="dialog" class="modal-backdrop">
+      <button>close</button>
+    </form>
+  </dialog>
+</div>
