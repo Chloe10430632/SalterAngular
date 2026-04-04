@@ -1,3 +1,5 @@
+import { CurrentUser } from './../../../../forum/interfaces/currentUser';
+import { CourseInformationS } from './../../../Service/course-information';
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CourseSessionInfoI } from '../../../Interfaces/IICourse';
@@ -14,11 +16,10 @@ import Swal from 'sweetalert2';
   styleUrl: './course-publish.css',
 })
 export class CoursePublish {
-  @Input() data!: CourseSessionInfoI; // 建議換成你的 Interface
+  @Input() data!: CourseSessionInfoI; 
   @Output() remove = new EventEmitter<number>();
   //-------------------------------------------//
-  constructor(private notifyS: NotificationService) { }
-  //-------------------------------------------//
+
   checkIsPast(startDate: string): boolean {
     if (!startDate || startDate.length === 0) return true;
     const today = new Date();

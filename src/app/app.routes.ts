@@ -165,10 +165,6 @@ export const routes: Routes = [
     loadComponent: () => import('./shared/layouts/with-navbar/with-navbar').then(m => m.WithNavbar),
     children: [
       {
-        path: 'buy',
-        loadComponent: () => import('./experience/components/mem-buycourse/mem-buycourse').then(m => m.CoachBuycourse),
-      },
-      {
         path: 'finish',
         loadComponent: () => import('./shared/Transac/paylist/paylist').then(m => m.Paylist)
       },
