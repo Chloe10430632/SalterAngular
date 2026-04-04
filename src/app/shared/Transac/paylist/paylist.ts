@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { TransactionServiceS } from './../../../experience/Service/transaction.service';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Footer } from "../../footer/footer";
 import { Header } from "../../header/header";
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-paylist',
@@ -10,18 +11,30 @@ import { Router } from '@angular/router';
   templateUrl: './paylist.html',
   styleUrl: './paylist.css',
 })
-export class Paylist {
-  // 模擬數據綁定
-  transactionAmount: number = 2480;
-  orderId: string = 'DAISY-2026-X99';
+export class Paylist implements OnInit {
+  transactionAmount: number = 0;
+  orderId: string = '';
+  //------------------------------//
+  constructor(private transS: TransactionServiceS,
+    private router: Router,
+    public route: ActivatedRoute
+  ) { }
+  //------------------------------//
 
-  constructor(private router: Router) { }
+  ngOnInit(): void {
+    this.orderId = this.route.snapshot.queryParams['orderId'] || '無編號';
+    this.transactionAmount = Number(this.route.snapshot.queryParams['amount']) || 0;
+  }
+
+
+
   goToDashboard() {
-    console.log('回討論版...');
-    this.router.navigate(['']);
+    const source = this.route.snapshot.queryParams['from'];
+    if (source === 3)
+      this.router.navigate(['/experienxe/myattend']);
+    else
+      this.router.navigate(['/'])
   }
 
-  printReceipt() {
-    window.print();
-  }
+
 }

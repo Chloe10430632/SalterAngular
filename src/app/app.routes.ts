@@ -143,7 +143,7 @@ export const routes: Routes = [
         loadComponent: () => import('./experience/components/coach-intro-for-mem/coach-intro').then(m => m.Coachintro)
       },
       {
-        path: 'myattend', //報名過的課
+        path: 'myattend', //學習歷程
         loadComponent: () => import('./experience/components/mem-attend/mem-attend').then(m => m.MemAttend)
       },
       {
