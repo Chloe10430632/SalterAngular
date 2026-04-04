@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
+import { ReviewI } from '../../../Interfaces/IIreview';
 //================!! 子 元件!!==============================//
-//================學生評論==================================//
+//================學生單則評論==================================//
 
 
 @Component({
@@ -10,8 +11,5 @@ import { Component, Input } from '@angular/core';
   styleUrl: './memreview-card.css',
 })
 export class MemreviewCard {
-  // 這裡可以定義 Input 屬性來接收動態數據
-  // @Input() userId: string = '';
-  // @Input() content: string = '';
-  // @Input() rating: number = 0;
+ @Input() data!: ReviewI
 }

@@ -8,6 +8,8 @@ import { LittleIsland } from "../../myComponents/little-island/little-island";
 import { Footer } from "../../../shared/footer/footer";
 import { CourseExpendDetail } from "../../myComponents/card/course-expend-detail/course-expend-detail";
 import { UserService } from '../../../user/Services/user-service';
+import { ReviewI } from '../../Interfaces/IIreview';
+import { ReviewsS } from '../../Service/reviews';
 
 //========!!這是 父 元件!!================//
 //========!!教練小卡+摺疊課程+評論!!================//
@@ -20,12 +22,16 @@ import { UserService } from '../../../user/Services/user-service';
   styleUrl: './coach-intro.css',
 })
 export class Coachintro implements OnInit {
+  coachId: number = 0;
   coachData = signal<CoachAllInfoI | null>(null);
+  reviews = signal<ReviewI[]>([]);
   isLoggedIn = signal(false);
+  allReviews = signal<ReviewI[]>([]);
   //--------------------------------------------------------//
   constructor(
     private route: ActivatedRoute, // 用來抓網址上的參數
     private coachS: CoachS,
+    private reviewS: ReviewsS,
     public userS: UserService,
   ) { }
   //--------------------------------------------------------//
@@ -39,6 +45,13 @@ export class Coachintro implements OnInit {
       this.coachS.getCoachInfoNum(id).subscribe({
         next: (res) => {
           this.coachData.set(res.data);
+          this.reviewS.getThreeReviews(res.data.coachId).subscribe({
+            next: (res) => {
+              if (res.isSuccess) {
+                this.reviews.set(res.data);
+              }
+            }
+          })
         },
         error: (err) => {
           console.error('抓資料失敗了！', err); // 這樣失敗時你才會在 Console 看到為什麼
@@ -47,7 +60,15 @@ export class Coachintro implements OnInit {
     }
 
   }
-
+  fetchAllReviews(coachId: number) {
+    this.reviewS.getReviews(coachId).subscribe({
+      next: (res) => {
+        if (res.isSuccess) {
+          this.allReviews.set(res.data);
+        }
+      }
+    });
+  }
 
 
 }

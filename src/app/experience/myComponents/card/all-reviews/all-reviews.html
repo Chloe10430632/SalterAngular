@@ -1,0 +1,35 @@
+<div data-theme="bumblebee" class="p-8">
+
+  <label for="review-modal" class="btn btn-primary">開啟一則一則看的評論</label>
+
+  <input type="checkbox" id="review-modal" class="modal-toggle" />
+  <div class="modal" role="dialog">
+    <div class="modal-box p-0 max-h-[60vh] flex flex-col overflow-hidden">
+
+      <div class="p-4 border-b border-base-200 bg-base-100 sticky top-0 z-20">
+        <h3 class="font-bold text-center">精選評論</h3>
+      </div>
+
+      <div class="overflow-y-auto grow snap-y snap-mandatory scroll-smooth">
+
+        <div class="snap-start border-b border-base-200 min-h-[150px] p-6 bg-base-50">
+          <app-review-item userID="Daisy大師" reviewTime="剛剛" content="這是一則會自動對齊的評論。當你往下捲一點點，它就會自動吸附到下一則的頂端！"></app-review-item>
+        </div>
+
+        <div class="snap-start border-b border-base-200 min-h-[150px] p-6 bg-base-100">
+          <app-review-item userID="Angular新手" reviewTime="10分鐘前" content="這樣的使用者體驗真的很好，特別是在手機上操作時非常流暢。"></app-review-item>
+        </div>
+
+        <div class="snap-start border-b border-base-200 min-h-[150px] p-6 bg-base-50">
+          <app-review-item userID="設計師小王" reviewTime="1小時前" content="數字加上一顆黃色星星的設計非常簡潔，一眼就能看到評分。"></app-review-item>
+        </div>
+
+        </div>
+
+      <div class="modal-action p-2 border-t border-base-200 bg-base-100">
+        <label for="review-modal" class="btn btn-ghost btn-sm w-full">關閉</label>
+      </div>
+    </div>
+    <label class="modal-backdrop" for="review-modal">Close</label>
+  </div>
+</div>
