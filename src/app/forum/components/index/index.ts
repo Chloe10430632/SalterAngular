@@ -194,7 +194,7 @@ export class Index implements OnInit {
     /**搜尋地點關鍵字的資料流 */
     this.searchSubscription = this.searchSubject.pipe(
       debounceTime(800),         // 等使用者停手 0.5 秒
-      distinctUntilChanged(),    // 如果關鍵字沒變就不重複噴 API
+      // distinctUntilChanged(),
 
       // 使用 switchMap 切換流
       switchMap(keyword => {
@@ -327,8 +327,47 @@ export class Index implements OnInit {
 
   /**選定打卡地點 */
   selectLocation(location: any) {
-    this.selectedLocation = location;
-    this.postForm.patchValue({ locationId: location.id });
+    if (!location) return;
+
+    // 1. 顯示讀取中，避免使用者重複點擊
+    // this.isLocationSearching = true;
+
+    // 2. 呼叫 API 建立地點
+    this.tripService.createLocation(0, {
+      locationName: location.name,
+      addressText: location.addressText,
+      googlePlaceId: location.placeId,
+      cityName: location.cityName,
+      districtName: location.districtName,
+      lat: location.lat,
+      lng: location.lng,
+      sortOrder: 0
+    }).subscribe({
+      next: (res: any) => {
+        // --- 關鍵步驟：假設 API 回傳的 res 包含新產生的 ID ---
+        // 請確認組員 API 回傳的結構，通常是 res.data.id 或 res.id
+        const newLocationId = res.data;
+
+        if (newLocationId) {
+          // A. 將資料庫生成的 ID 存入表單
+          this.postForm.patchValue({ locationId: newLocationId });
+          this.selectedLocation = location; // 畫面顯示用的地點名稱
+
+          console.log('地點已存入資料庫，取得 ID:', newLocationId);
+        }
+
+
+        // C. 成功後重置搜尋 UI
+        this.resetSearchState();
+      },
+      error: (err) => {
+        console.error('儲存地點失敗', err);
+        this.isLocationSearching = false;
+      }
+    });
+  }
+
+  resetSearchState() {
     this.allLocationList = [];
     this.showLocationDropdown = false;
     this.isLocationSearching = false;
@@ -339,6 +378,7 @@ export class Index implements OnInit {
       document.activeElement.blur();
     }
   }
+
 
   /** HashTag新增標籤 */
   addTag(event: any) {
