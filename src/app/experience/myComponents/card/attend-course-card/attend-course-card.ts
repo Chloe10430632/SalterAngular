@@ -7,6 +7,7 @@ import { DatePipe, NgClass } from '@angular/common';
 import { ReviewsS } from '../../../Service/reviews';
 import { FormsModule, NgModel } from '@angular/forms';
 import { ReviewI } from '../../../Interfaces/IIreview';
+import { CoachAllInfoI } from '../../../Interfaces/IIcoachAllinfo';
 
 //這是 子 元件//
 //學習歷程卡-上過的課//
@@ -21,6 +22,7 @@ import { ReviewI } from '../../../Interfaces/IIreview';
 })
 export class AttendCourseCard implements OnInit {
   data = signal<CourseOrderI[]>([]);
+  coach = signal<CoachAllInfoI[]>([]);
   isLoading = signal(true);
   selectedCourse = signal<CourseOrderI | null>(null);
   currentScore = 3;

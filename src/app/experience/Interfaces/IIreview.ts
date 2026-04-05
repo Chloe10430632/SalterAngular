@@ -3,8 +3,9 @@ export interface ReviewI {
   coachId: number;
   userId: number;
   rating: number;
-  ReviewContent: string;
-  ReviewedAt: Date;
+  reviewContent: string;
+  reviewedAt: Date;
   UpdateAt: Date;
   CourseOrderId: number;
+  userName?: string;
 }

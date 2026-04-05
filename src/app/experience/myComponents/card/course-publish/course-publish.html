@@ -35,7 +35,7 @@
 
       <!-- 輪播修正：加 @empty -->
       <div class="md:col-span-4">
-        <div
+        <div #carousel
           class="carousel carousel-center w-full aspect-video rounded-xl shadow bg-base-200 overflow-x-auto no-scrollbar">
           @for (photo of (data?.imageUrls ?? []); track $index) {
           <div class="carousel-item w-full flex-shrink-0">
@@ -83,7 +83,8 @@
           <!-- 前台：非教練本人才顯示預約，截止/額滿時 disable -->
           @if (mode === 'public' && !isCoachSelf) {
           <div [attr.data-tip]="!authS.isLoggedIn ? '請先登入' : ''" [class.tooltip]="!authS.isLoggedIn">
-            <button (click)="onReserve()" [disabled]="isLoading || !authS.isLoggedIn || isFull" class="btn btn-primary btn-md">
+            <button (click)="onReserve()" [disabled]="isLoading || !authS.isLoggedIn || isFull"
+              class="btn btn-primary btn-md">
               {{ isLoading ? '處理中...' : isFull ? '已額滿' : '立即預約' }}
             </button>
           </div>

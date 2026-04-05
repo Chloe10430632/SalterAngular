@@ -1,6 +1,6 @@
 import { AuthStore } from './../../../Service/auth-store';
 import { CourseSessionInfoI } from './../../../Interfaces/IICourse';
-import { Component, Input, OnDestroy, OnInit, Pipe } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy, OnInit, Pipe, ViewChild } from '@angular/core';
 import { NotificationService } from '../../../../shared/notifyService/notification-service';
 import { CourseInformationS } from '../../../Service/course-information';
 import { firstValueFrom, Subscription } from 'rxjs';
@@ -24,6 +24,7 @@ export class CourseExpendDetail implements OnInit, OnDestroy {
   data?: CourseSessionInfoI | null = null;
   private sub = new Subscription();
   isLoading: boolean = false;
+  private timer: any;
   //--------------------------------------------//
   constructor(private notifyS: NotificationService,
     private couresS: CourseInformationS,
@@ -33,12 +34,14 @@ export class CourseExpendDetail implements OnInit, OnDestroy {
   ) { }
   //--------------------------------------------//
   ngOnInit() {
-
+    this.sub.unsubscribe();
+    this.stopCarousel();
   }
   ngOnDestroy() {
     this.sub.unsubscribe();
   }
   //--------------------------------------------//
+  @ViewChild('carousel') carouselRef!: ElementRef;
   @Input() set coachId(id: number | undefined) {
     if (id && id > 0) {
       this.loadLatestCourse(id); // 當 id 變動時，才去抓資料
@@ -50,8 +53,8 @@ export class CourseExpendDetail implements OnInit, OnDestroy {
     const user = this.authS.currentUser();
     if (!user || !this.data) return false;
 
-    console.log('當前登入者 ID:', user.id);
-    console.log('課程教練 ID:', this.data.coachId);
+    // console.log('當前登入者 ID:', user.id);
+    // console.log('課程教練 ID:', this.data.coachId);
 
     return user.id == this.data.coachId;
   }
@@ -71,9 +74,29 @@ export class CourseExpendDetail implements OnInit, OnDestroy {
       if (res.isSuccess) {
         this.data = res.data;
         console.log("課程:  ", res);
+        this.stopCarousel();
+        setTimeout(() => this.startCarousel(), 100);
       }
     });
+  }
+  startCarousel() {
+    const images = this.data?.imageUrls ?? [];
+    if (images.length <= 1) return;
+    this.timer = setInterval(() => {
+      const el = this.carouselRef?.nativeElement;
+      if (!el) return;
+      const itemWidth = el.offsetWidth;
+      const maxScroll = el.scrollWidth - itemWidth;
+      const next = el.scrollLeft + itemWidth;
+      el.scrollTo({ left: next >= maxScroll - 1 ? 0 : next, behavior: 'smooth' });
+    }, 2000);
+  }
 
+  stopCarousel() {
+    if (this.timer) {
+      clearInterval(this.timer);
+      this.timer = null;
+    }
   }
 
   moreCourses(id: number) {

@@ -40,6 +40,7 @@ export class FavCard implements OnInit {
   //------------------------------------------------------//
   ngOnInit(): void {
     console.log('卡片：', this.coachItem().coachName);
+    console.log("地區:", this.coachItem().district);
   }
   //----------------方法-----------------------------------//
   /**收藏 */

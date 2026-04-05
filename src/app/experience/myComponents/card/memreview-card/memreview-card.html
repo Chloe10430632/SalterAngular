@@ -1,19 +1,25 @@
-<div class="flex flex-col gap-3">
-  <div class="flex items-center gap-4">
-    <span class="font-black text-lg text-base-content">{{ data.userId }}</span>
-    <div class="flex items-center gap-1 bg-warning/20 px-2 py-0.5 rounded-full">
-      <span class="text-sm font-bold text-warning-content">{{data.rating}}</span>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-4 h-4 fill-warning">
-        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-      </svg>
-    </div>
+<div
+  style="display:flex; align-items:flex-start; gap:14px; background:white; border:0.5px solid #e5e7eb; border-radius:12px; padding:14px 16px;">
+  <div
+    style="width:38px; height:38px; border-radius:50%; background:#FAEEDA; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:500; color:#633806; flex-shrink:0;">
+    {{ data.userId % 10 }}
   </div>
-
-  <p class="text-base-content/80 text-sm leading-relaxed line-clamp-3 min-h-[3em]">
-    {{ data.ReviewContent }}
-  </p>
-
-  <div class="text-right">
-    <span class="text-xs opacity-40">{{ data.ReviewedAt }}</span>
+  <div style="flex:1; min-width:0;">
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px; flex-wrap:wrap;">
+      <span style="font-size:14px; font-weight:500;">{{ data.userName }}</span>
+      <div style="display:flex; gap:2px;">
+        @for (s of getStars(data.rating); track $index) {
+        <svg style="width:13px; height:13px;" [style.fill]="s ? '#EF9F27' : '#e5e7eb'" viewBox="0 0 24 24">
+          <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+        </svg>
+        }
+      </div>
+      <span style="font-size:11px; color:#9ca3af; margin-left:auto;">
+        {{ data.reviewedAt | date:'yyyy-MM-dd' }}
+      </span>
+    </div>
+    <p style="font-size:13px; color:#6b7280; line-height:1.6; margin:0;">
+      {{ data.reviewContent }}
+    </p>
   </div>
 </div>

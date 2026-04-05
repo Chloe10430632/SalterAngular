@@ -7,19 +7,29 @@
       <h3 class="font-bold text-center">所有評論 ({{ reviews.length }})</h3>
     </div>
 
-    <div class="overflow-y-auto grow snap-y snap-mandatory scroll-smooth">
+    <div class="overflow-y-auto grow scroll-smooth">
       @for (item of reviews; track item.reviewId) {
-      <div class="snap-start border-b border-base-200 min-h-[150px] p-6 bg-base-100 last:border-0">
-        <div class="flex flex-col gap-2">
-          <div class="flex justify-between items-center">
-            <span class="font-bold text-primary">學員 #{{ item.userId }}</span>
-            <span class="text-xs opacity-50">{{ item.ReviewedAt | date:'yyyy-MM-dd' }}</span>
+      <div class="border-b border-base-200 p-5 bg-base-100 last:border-0">
+
+        <!-- 同一行：頭像 + 名字 + 星星 + 日期 -->
+        <div class="flex items-center gap-3 mb-2">
+          <div style="width:34px; height:34px; border-radius:50%; background:#FAEEDA; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:500; color:#633806; flex-shrink:0;">
+            {{ (item.userName || '#')[0] }}
           </div>
-          <div class="rating rating-xs">
-            <span class="badge badge-warning badge-sm">★ {{ item.rating }}</span>
-          </div>
-          <p class="text-sm mt-2">{{ item.ReviewContent }}</p>
+          <span class="font-bold text-primary text-sm">
+            {{ item.userName || '學員 #' + item.userId }}
+          </span>
+          <span class="badge badge-warning badge-sm">★ {{ item.rating }}</span>
+          <span class="text-xs opacity-50 ml-auto">
+            {{ item.reviewedAt | date:'yyyy-MM-dd' }}
+          </span>
         </div>
+
+        <!-- 評論內容 -->
+        <p class="text-sm text-base-content/80 leading-relaxed pl-[46px]">
+          {{ item.reviewContent }}
+        </p>
+
       </div>
       } @empty {
       <div class="p-10 text-center opacity-50">暫時還沒有評論喔！</div>
