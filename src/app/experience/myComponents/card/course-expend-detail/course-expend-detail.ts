@@ -33,15 +33,16 @@ export class CourseExpendDetail implements OnInit, OnDestroy {
   ) { }
   //--------------------------------------------//
   ngOnInit() {
-    this.loadLatestCourse(1001024);
+
   }
   ngOnDestroy() {
     this.sub.unsubscribe();
   }
   //--------------------------------------------//
   @Input() set coachId(id: number | undefined) {
-    if (id) {
+    if (id && id > 0) {
       this.loadLatestCourse(id); // 當 id 變動時，才去抓資料
+      console.log("子接到:", id);
     }
   }
 
@@ -66,13 +67,13 @@ export class CourseExpendDetail implements OnInit, OnDestroy {
     return new Date(date) < new Date();
   }
   loadLatestCourse(coachId: number) {
-    this.sub.add(
-      this.couresS.getLatestCourseByCoach(coachId).subscribe(res => {
-        if (res.isSuccess) {
-          this.data = res.data;
-        }
-      })
-    );
+    this.couresS.getLatestCourseByCoach(coachId).subscribe(res => {
+      if (res.isSuccess) {
+        this.data = res.data;
+        console.log("課程:  ", res);
+      }
+    });
+
   }
   async onReserve() {
     // 1. 先檢查有沒有登入
@@ -98,11 +99,16 @@ export class CourseExpendDetail implements OnInit, OnDestroy {
       cancelButtonText: '取消'
     });
     if (!confirm.isConfirmed) return;
+    if (!this.data || !this.data?.sessionId) {
+      this.notifyS.show('課程資料尚未載入完成，請稍後再試', "error");
+      return;
+    }
+
     this.isLoading = true;
 
     try {
       const reserveRes = await firstValueFrom(
-        this.transS.reserve({ courseSessionId: this.courseSessionId })
+        this.transS.reserve({ courseSessionId: this.data.sessionId })
       );
       const transactionId = reserveRes?.data?.data;
       if (!transactionId) throw new Error('拿不到 TransactionId');

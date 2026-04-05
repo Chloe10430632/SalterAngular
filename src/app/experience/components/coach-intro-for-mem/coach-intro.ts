@@ -46,7 +46,8 @@ export class Coachintro implements OnInit {
     this.isLoggedIn.set(!!localStorage.getItem('token'));
 
     if (id) {
-      // A. 抓教練基本資料
+      this.coachId = id;
+      // 抓教練基本資料
       this.coachS.getCoachInfoNum(id).subscribe({
         next: (res) => {
           this.coachData.set(res.data);
