@@ -4,41 +4,48 @@
 
   <div class="collapse-title flex items-center justify-between pr-12 py-4 px-5">
     <div class="flex items-center gap-4">
-      @if (data.currentStudents >= data.maxStudents) {
-      <div class="badge badge-error badge-sm text-white px-3 py-3 font-bold">
-        已額滿
-      </div>
+
+      @if ((data.maxParticipants ?? 0) > 0 && (data.currentParticipants ?? 0) >= (data.maxParticipants ?? 0)) {
+      <div class="badge badge-error badge-sm text-white px-3 py-3 font-bold">已額滿</div>
+      } @else if (checkIsPast(data.startDate)) {
+      <div class="badge bg-[#8B4513] border-none badge-sm text-white px-3 py-3">已截止</div>
+      } @else {
+      <div class="badge badge-success badge-sm text-white px-3 py-3">報名中</div>
       }
-      @else if (checkIsPast(data.startDate)) {
-      <div class="badge bg-[#8B4513] border-none badge-sm text-white px-3 py-3">
-        已截止
-      </div>
-      }
-      @else {
-      <div class="badge badge-success badge-sm text-white px-3 py-3">
-        報名中
-      </div>
-      }
+
       <span class="text-lg font-bold text-[#8B4513]">{{ data?.title }}</span>
     </div>
-    @if (!checkIsPast(data.startDate)) {
+
+    <!-- 後台：下架按鈕，截止後隱藏 -->
+    @if (mode === 'admin' && !checkIsPast(data.startDate)) {
     <button (click)="$event.stopPropagation(); onDelete(data.sessionId)" class="btn btn-sm relative z-10"
-      [ngClass]="(data?.currentStudents ?? 0) > 0 ? 'btn-disabled opacity-50' : 'btn-ghost text-error hover:bg-error/10'">
+      [ngClass]="(data?.currentParticipants ?? 0) > 0 ? 'btn-disabled opacity-50' : 'btn-ghost text-error hover:bg-error/10'">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
           d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
       </svg>
-      {{ (data?.currentStudents ?? 0) > 0 ? '已有學生報名' : '下架課程' }}
+      {{ (data?.currentParticipants ?? 0) > 0 ? '已有學生報名' : '下架課程' }}
     </button>
     }
+
   </div>
 
   <div class="collapse-content px-5 pb-5">
     <div class="grid grid-cols-1 md:grid-cols-12 gap-6 pt-5 border-t border-base-100">
 
+      <!-- 輪播修正：加 @empty -->
       <div class="md:col-span-4">
-        <div class="aspect-video rounded-xl overflow-hidden shadow-inner bg-base-200">
-          <img [src]="data?.imageUrls?.[0]?.photoUrl" class="w-full h-full object-cover" />
+        <div
+          class="carousel carousel-center w-full aspect-video rounded-xl shadow bg-base-200 overflow-x-auto no-scrollbar">
+          @for (photo of (data?.imageUrls ?? []); track $index) {
+          <div class="carousel-item w-full flex-shrink-0">
+            <img [src]="photo.photoUrl" class="w-full h-full object-cover rounded-xl" alt="課程照片" />
+          </div>
+          } @empty {
+          <div class="flex items-center justify-center w-full h-full text-base-content/30 text-sm italic">
+            暫無課程照片
+          </div>
+          }
         </div>
       </div>
 
@@ -47,32 +54,43 @@
           <p class="text-xs opacity-50 uppercase">上課日期</p>
           <div class="flex flex-wrap gap-2 mt-1">
             @if (data?.startDate) {
-            <span class="badge badge-outline badge-md border-primary text-primary font-medium">{{ data?.startDate
-              }}</span>
+            <span class="badge badge-outline badge-md border-primary text-primary font-medium">
+              {{ data?.startDate }}
+            </span>
             }
           </div>
         </div>
 
         <div class="bg-base-50 p-3 rounded-xl">
           <p class="text-xs opacity-50">上課時段</p>
-          <p class="font-bold">{{ data?.timeSlot }}</p>
+          <p class="font-bold">{{ data?.timeSlot || '—' }}</p>
         </div>
 
         <div class="bg-base-50 p-3 rounded-xl">
           <p class="text-xs opacity-50">剩餘名額 / 總名額</p>
-          <p class="font-bold">{{ data?.currentStudents || 0 }} / {{ data?.maxStudents }} 人</p>
+          <p class="font-bold">{{ data?.currentParticipants ?? 0 }} / {{ data?.maxParticipants ?? 0 }} 人</p>
         </div>
 
         <div class="col-span-2 bg-base-50 p-3 rounded-xl">
           <p class="text-xs opacity-50">上課地點</p>
-          <p class="text-sm font-medium">{{ data?.location }}</p>
+          <p class="text-sm font-medium">{{ data?.location || '—' }}</p>
         </div>
 
-        <div class="col-span-2 text-right">
+        <!-- 價格 + 預約按鈕 -->
+        <div class="col-span-2 flex justify-between items-end mt-2">
           <p class="text-2xl font-black text-secondary">NT$ {{ data?.price | number }}</p>
-        </div>
-      </div>
 
+          <!-- 前台：非教練本人才顯示預約，截止/額滿時 disable -->
+          @if (mode === 'public' && !isCoachSelf) {
+          <div [attr.data-tip]="!authS.isLoggedIn ? '請先登入' : ''" [class.tooltip]="!authS.isLoggedIn">
+            <button (click)="onReserve()" [disabled]="isLoading || !authS.isLoggedIn || isFull" class="btn btn-primary btn-md">
+              {{ isLoading ? '處理中...' : isFull ? '已額滿' : '立即預約' }}
+            </button>
+          </div>
+          }
+        </div>
+
+      </div>
     </div>
   </div>
 </div>

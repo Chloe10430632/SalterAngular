@@ -44,7 +44,7 @@ export class CourseTempList implements OnInit {
   sessionForm = new FormGroup({
     selectedDates: new FormControl<string[]>([], Validators.required),
     timeSlot: new FormControl('早上場(9:00~12:00)', Validators.required),
-    maxStudents: new FormControl(1, Validators.min(1))
+    maxParticipants: new FormControl(1, Validators.min(1))
   });
   //--------------------------------------//
   constructor(private localS: LocationSearchService,
@@ -123,16 +123,14 @@ export class CourseTempList implements OnInit {
       const el = this.carouselElement?.nativeElement;
       if (!el || this.isEdit) return;
 
-      const itemWidth = el.offsetWidth;
+      const itemWidth = el.clientWidth;
       const totalWidth = el.scrollWidth;
       const currentScroll = el.scrollLeft;
-      const isAtEnd = currentScroll + itemWidth >= totalWidth - 5; // 加5px容錯
 
-      if (isAtEnd) {
-        // 回到第一張
+      if (currentScroll + itemWidth >= totalWidth - 15) {
         el.scrollTo({ left: 0, behavior: 'smooth' });
       } else {
-        el.scrollBy({ left: itemWidth, behavior: 'smooth' });
+        el.scrollTo({ left: currentScroll + itemWidth, behavior: 'smooth' });
       }
     }, 2500); // 建議改成3秒，1秒太快了
   }
@@ -174,7 +172,7 @@ export class CourseTempList implements OnInit {
     this.sessionForm.controls.selectedDates.setValue([]);
     this.sessionForm.reset({
       timeSlot: '早上場(9:00~12:00)',
-      maxStudents: 1
+      maxParticipants: 1
     });
     this.sessionForm.controls.selectedDates.setValue([]);
   }
@@ -277,12 +275,12 @@ export class CourseTempList implements OnInit {
     // 2. 取得表單數值
     const dates = this.sessionForm.controls.selectedDates.value || [];
     const slot = this.sessionForm.controls.timeSlot.value || '';
-    const maxStu = this.sessionForm.controls.maxStudents.value ?? 0; // 使用 ?? 處理 null/undefined
+    const maxStu = this.sessionForm.controls.maxParticipants.value ?? 0; // 使用 ?? 處理 null/undefined
 
     // 3. 組裝 FormData (注意：欄位名稱需與後端 API 參數一致)
     formData.append('StartDate', dates[0]);
     formData.append('TimeSlot', slot);
-    formData.append('MaxStudents', maxStu.toString());
+    formData.append('maxParticipants', maxStu.toString());
 
     this.isSaving = true;
 
@@ -310,7 +308,7 @@ export class CourseTempList implements OnInit {
               // 留在原地，重置表單
               this.sessionForm.reset({
                 timeSlot: '早上場(9:00~12:00)',
-                maxStudents: 1
+                maxParticipants: 1
               });
               // 重置後記得手動清空 selectedDates，因為它是陣列
               this.sessionForm.controls.selectedDates.setValue([]);

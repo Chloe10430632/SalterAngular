@@ -21,7 +21,7 @@ export class CourseforCoach implements OnInit, OnDestroy {
   isFull = computed(() => {
     const c = this.course();
     if (!c) return false;
-    else return (c.currentStudents || 0) >= (c.maxStudents || 0)
+    else return (c.currentParticipants || 0) >= (c.maxParticipants || 0)
   })
   //------------------------------------------------------//
   constructor(private courseOneS: CourseInformationS) { }

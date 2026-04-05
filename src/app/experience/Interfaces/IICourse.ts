@@ -12,10 +12,10 @@ export interface CourseSessionInfoI {
   coachId: number,
   title?: string;
   description?: string;
-  startDate:string;
+  startDate: string;
   timeSlot: string;
-  maxStudents: number;
-  currentStudents: number;
+  maxParticipants: number;
+  currentParticipants: number;
   updatedAt: string;
   photoUrls?: string[];
   imageUrls?: {

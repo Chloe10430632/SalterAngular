@@ -25,12 +25,23 @@ export class CourseInformationS {
     );
   }
 
-  /**教練當日課程 */
+  /**教練當日課程-月曆 */
+  GetCoachCourseDates(coachId: number): Observable<APIResponse<CourseSessionInfoI[]>> {
+    return this.client.get<APIResponse<CourseSessionInfoI[]>>(
+      `${environment.apiUrl}/Exp/Exp/GetCoachCourseDates/${coachId}`)
+  }
+  /**教練當日課程-課程 */
   getCoursesByDate(coachId: number, day: string): Observable<APIResponse<CourseSessionInfoI[]>> {
     return this.client.get<APIResponse<CourseSessionInfoI[]>>(
-      `${environment.apiUrl}/Exp/Exp/CourseDate/${coachId}/${day}`
+      `${environment.apiUrl}/Exp/Exp/GetCoursesByDate/${coachId}/${day}`
     )
   };
+
+  /**教練所有課程日期 */
+  getCoachCourseDates(coachId: number): Observable<APIResponse<string[]>> {
+    // 注意：這裡回傳的是 ApiResponse 包著 string[]
+    return this.client.get<APIResponse<string[]>>(`${environment.apiUrl}/Exp/Exp/GetCoachCourseDates/${coachId}`);
+  }
 
   /**教練上架中 */
   getPublishedSessions(): Observable<APIResponse<CourseSessionInfoI[]>> {
@@ -58,5 +69,5 @@ export class CourseInformationS {
   deleteSession(sessionId: number,): Observable<any> {
     return this.client.delete<any>(`${environment.apiUrl}/Exp/Exp/DeleteSession/${sessionId}`)
   }
-  
+
 }

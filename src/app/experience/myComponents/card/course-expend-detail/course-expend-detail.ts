@@ -57,7 +57,7 @@ export class CourseExpendDetail implements OnInit, OnDestroy {
   }
   get canBook(): boolean {
     if (!this.data) return false;
-    const isFull = this.data.currentStudents >= this.data.maxStudents;
+    const isFull = this.data.currentParticipants >= this.data.maxParticipants;
     return !this.isCoachSelf && !isFull && !this.checkIsPast(this.data.startDate);
   }
 
@@ -75,70 +75,9 @@ export class CourseExpendDetail implements OnInit, OnDestroy {
     });
 
   }
-  async onReserve() {
-    // 1. 先檢查有沒有登入
-    if (!this.authS.isLoggedIn) {
-      this.notifyS.show('請先登入才能預約喔！', "error");
-      // 可以導向登入頁
-      this.router.navigate(['/login']);
-      return;
-    }
-    if (this.isCoachSelf) {
-      this.notifyS.show('教練不能預約自己的課程喔！', "error");
-      return;
-    }
-    console.log('當前學生 ID:', this.authS.currentUser()?.id);
-    console.log('準備結帳課程 ID:', this.data?.sessionId);
-    //去寫交易S//
-    const confirm = await Swal.fire({
-      title: '確認預約？',
-      text: '預約後將導向綠界付款頁面',
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonText: '確認預約',
-      cancelButtonText: '取消'
-    });
-    if (!confirm.isConfirmed) return;
-    if (!this.data || !this.data?.sessionId) {
-      this.notifyS.show('課程資料尚未載入完成，請稍後再試', "error");
-      return;
-    }
 
-    this.isLoading = true;
-
-    try {
-      const reserveRes = await firstValueFrom(
-        this.transS.reserve({ courseSessionId: this.data.sessionId })
-      );
-      const transactionId = reserveRes?.data?.data;
-      if (!transactionId) throw new Error('拿不到 TransactionId');
-      // Step 3: 拿綠界 HTML 表單
-      const htmlForm = await firstValueFrom(
-        this.transS.getOrderForm({
-          transactionId: Number(transactionId),
-          description: '課程預約'
-        })
-      )
-
-
-      // Step 4: 寫入 DOM，讓 <script> 自動 submit 導去綠界
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(htmlForm!, 'text/html');
-      const form = doc.querySelector('form') as HTMLFormElement;
-
-      if (!form) throw new Error('找不到付款表單');
-      document.body.appendChild(form);
-      form.submit(); // 導去綠界
-
-    }
-    catch (err: any) {
-      Swal.fire({
-        title: '預約失敗',
-        text: err?.error?.message ?? '請稍後再試',
-        icon: 'error'
-      });
-    }
-    finally { this.isLoading = false; }
+  moreCourses(id: number) {
+    this.router.navigate([`/experience/coachcoursemore/${id}`])
   }
 }
 

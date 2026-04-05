@@ -1,29 +1,18 @@
 <section>
-  <!-- 上面標題 -->
   <div class="flex justify-between items-center mb-6">
-
     <h3 class="text-2xl font-bold flex items-center gap-2">
-
       <span class="w-2 h-8 bg-secondary rounded-full"></span> 開課中的課程
-
     </h3>
 
-    <button class="btn btn-ghost btn-sm gap-2 text-secondary">
-
+    @if (data) {
+    <button (click)="moreCourses(data.coachId)" class="btn btn-ghost btn-sm gap-2 text-secondary">
       看更多課程
-
       <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-
       </svg>
-
     </button>
-
+    }
   </div>
-  <!-- 上面標題 -->
-
-
   <div data-theme="bumblebee">
     @if (data) {
     <div class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-2xl shadow-md mb-4">
@@ -31,7 +20,7 @@
 
       <div class="collapse-title flex items-center justify-between pr-12 py-4 px-5">
         <div class="flex items-center gap-4">
-          @if (data.currentStudents >= data.maxStudents) {
+          @if ((data.maxParticipants ?? 0) > 0 && (data.currentParticipants ?? 0) >= (data.maxParticipants ?? 0)) {
           <div class="badge badge-error badge-sm text-white px-3 py-3 font-bold">已額滿</div>
           } @else if (checkIsPast(data.startDate)) {
           <div class="badge bg-[#8B4513] border-none badge-sm text-white px-3 py-3">已截止</div>
@@ -42,23 +31,30 @@
         </div>
 
         @if (isCoachSelf && !checkIsPast(data.startDate)) {
-        <button (click)="$event.stopPropagation(); " class="btn btn-sm relative z-10"
-          [ngClass]="(data?.currentStudents ?? 0) > 0 ? 'btn-disabled opacity-50' : 'btn-ghost text-error hover:bg-error/10'">
+        <button (click)="$event.stopPropagation();" class="btn btn-sm relative z-10"
+          [ngClass]="(data?.currentParticipants ?? 0) > 0 ? 'btn-disabled opacity-50' : 'btn-ghost text-error hover:bg-error/10'">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
           </svg>
-          {{ (data?.currentStudents ?? 0) > 0 ? '已有學生報名' : '下架課程' }}
+          {{ (data?.currentParticipants ?? 0) > 0 ? '已有學生報名' : '下架課程' }}
         </button>
         }
       </div>
 
       <div class="collapse-content px-5 pb-5">
         <div class="grid grid-cols-1 md:grid-cols-12 gap-6 pt-5 border-t border-base-100">
-
           <div class="md:col-span-4">
-            <div class="aspect-video rounded-xl overflow-hidden shadow-inner bg-base-200">
-              <img [src]="data?.imageUrls?.[0]?.photoUrl" class="w-full h-full object-cover" />
+            <div #carousel
+              class="carousel carousel-center w-full aspect-video rounded-xl shadow bg-base-200 scroll-smooth overflow-x-auto no-scrollbar">
+              @for (photo of (data?.imageUrls ?? []); track $index) {
+              <div class="carousel-item w-full flex-shrink-0">
+                <img [src]="photo.photoUrl" class="w-full h-full object-cover" />
+              </div>
+              } @empty {
+              <div class="flex items-center justify-center w-full h-full text-base-content/30 text-sm italic">暫無課程照片
+              </div>
+              }
             </div>
           </div>
 
@@ -80,7 +76,7 @@
 
             <div class="bg-base-50 p-3 rounded-xl">
               <p class="text-xs opacity-50">剩餘名額 / 總名額</p>
-              <p class="font-bold">{{ data?.currentStudents || 0 }} / {{ data?.maxStudents }} 人</p>
+              <p class="font-bold">{{ data?.currentParticipants || 0 }} / {{ data?.maxParticipants }} 人</p>
             </div>
 
             <div class="col-span-2 bg-base-50 p-3 rounded-xl">
@@ -90,22 +86,13 @@
 
             <div class="col-span-2 flex justify-between items-end mt-2">
               <p class="text-2xl font-black text-secondary">NT$ {{ data?.price | number }}</p>
-
-              @if (!isCoachSelf) {
-              <div [attr.data-tip]="!authS.isLoggedIn ? '請先登入' : ''" [class.tooltip]="!authS.isLoggedIn">
-                <button (click)="onReserve()" [disabled]="isLoading">
-                  {{ isLoading ? '處理中...' : '立即預約' }}
-                </button>
-              </div>
-              }
+              
             </div>
           </div>
-
         </div>
       </div>
     </div>
-    }
-    @else{
+    } @else {
     <div class="alert alert-warning shadow-sm rounded-2xl">
       <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -115,3 +102,4 @@
     </div>
     }
   </div>
+</section>

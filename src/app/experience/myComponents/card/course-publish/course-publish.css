@@ -41,3 +41,13 @@
   max-height: 200px;
   overflow-y: auto;
 }
+
+/* 輪播 */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
