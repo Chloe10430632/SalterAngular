@@ -16,7 +16,7 @@ export class ReviewsS {
   }
   /**拿最新三則評論 */
   getThreeReviews(coachId: number): Observable<APIResponse<ReviewI[]>> {
-    return this.client.get<APIResponse<ReviewI[]>>(`${environment.apiUrl}/Exp/Exp//ThreeReviews/${coachId}`)
+    return this.client.get<APIResponse<ReviewI[]>>(`${environment.apiUrl}/Exp/Exp/ThreeReviews/${coachId}`)
   }
   /**新增評論 */
   addReview(data: any): Observable<APIResponse<ReviewI>> {

@@ -18,14 +18,4 @@ export interface CoachAllInfoI {
   cityId: number;
 }
 
-export interface CoachEditInfoI {
-  //新增也用這個
-  coachName: string;
-  introduction: string;
-  districtId: number[];
-  cityId: number;
-  avatarUrl: string; //?
-  SpecialityIds: number[];
-  createdAt: string;
-  updateAt: string;
-}
+

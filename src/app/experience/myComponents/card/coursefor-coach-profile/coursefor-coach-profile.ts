@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, input, Input, OnInit, Output, signal } from '@angular/core';
 import { CoachCardInfoS } from '../../../Service/coach-card-info-s';
-import { CoachAllInfoI as CoachAllInfoI } from '../../../Interfaces/IIcoachAllinfo';
+import { CoachAllInfoI } from '../../../Interfaces/IIcoachAllinfo';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FavI } from '../../../Interfaces/IImyfav';
 import { AvatarPipe } from '../../../../shared/pipes/avatar-pipe';

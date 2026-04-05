@@ -4,7 +4,7 @@ import { environment } from '../../../environments/environment';
 import { SpecI } from '../Interfaces/IISpecSport';
 import { CityI, DistI } from '../Interfaces/IIDistrict';
 import { Observable } from 'rxjs';
-import { APIResponse, CoachAllInfoI, CoachEditInfoI } from '../Interfaces/IIcoachAllinfo';
+import { APIResponse, CoachAllInfoI } from '../Interfaces/IIcoachAllinfo';
 
 //===========!!Service!!================//
 //教練、專業、地區//

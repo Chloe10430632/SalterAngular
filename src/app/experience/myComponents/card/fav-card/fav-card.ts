@@ -64,7 +64,7 @@ export class FavCard implements OnInit {
           if (this.isFav()) {
             this.removeMe.emit(id);
             this.notificationS.show('取消收藏QAQ', 'error');
-           
+
           } else {
             // 如果本來「不是」收藏，現在要「加入」
             this.notificationS.show('收藏成功', 'success');
@@ -85,21 +85,10 @@ export class FavCard implements OnInit {
   }
 
 
-  /**查詢評論 */
-  // onReviewClick(coachId: number) {
-  //   this.coachInfoS.goToReview(coachId).subscribe({
-  //     next: (result) => {
-  //       this.reviewDatas = [result.data];
-  //     },
-  //     error: (err) => {
-  //       console.error("無法獲取評論資料", err);
-  //     }
-  //   });
-  // }
   //========================================//
   intro(id: number) {
     console.log('教練 ID:', id);
-    this.router.navigate(['experience/coachinfo', id]);
+    this.router.navigate([`/experience/coachinfo/${id}`]);
   }
 
 }

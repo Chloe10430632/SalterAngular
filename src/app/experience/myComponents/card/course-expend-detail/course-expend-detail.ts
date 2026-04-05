@@ -39,7 +39,11 @@ export class CourseExpendDetail implements OnInit, OnDestroy {
     this.sub.unsubscribe();
   }
   //--------------------------------------------//
-  @Input() courseSessionId!: number;
+  @Input() set coachId(id: number | undefined) {
+    if (id) {
+      this.loadLatestCourse(id); // 當 id 變動時，才去抓資料
+    }
+  }
 
   get isCoachSelf(): boolean {
     const user = this.authS.currentUser();

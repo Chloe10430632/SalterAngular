@@ -11,7 +11,8 @@ import { Search } from "../../myComponents/search/search";
 import { FavCard } from '../../myComponents/card/fav-card/fav-card';
 import { NotificationService } from '../../../shared/notifyService/notification-service';
 import { UserService } from '../../../user/Services/user-service';
-import { catchError, of } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { AuthStore as AuthStoreS } from '../../Service/auth-store';
 
 
@@ -128,19 +129,21 @@ export class Index implements OnInit {
     const allList = [...this.coaches, ...this.latestC];
     if (allList.length === 0) return;
 
-    allList.forEach(coach => {
-      this.courseNameS.getLatestCourseByCoach(coach.coachId).subscribe({
-        next: (res) => {
-          this.allCourseMap[coach.coachId] = res?.data?.title
-            ? res.data.title
-            : '新課程準備中...';
-          // console.log(res);
-        },
-        error: () => {
-          // 這裡只剩真正的網路錯誤才會進來
-          this.allCourseMap[coach.coachId] = '暫無開課計畫';
-        }
+    // 1. 準備一堆「待辦清單」（Observable 陣列）
+    const tasks = allList.map(coach =>
+      this.courseNameS.getLatestCourseByCoach(coach.coachId).pipe(
+        // 這裡很重要：如果其中一個教練查不到，我們給它一個預設值，不要讓整個清單失敗
+        catchError(() => of({ data: { title: '暫無開課計畫' } }))
+      )
+    );
+
+    // 2. 使用 forkJoin 一次發出所有請求
+    forkJoin(tasks).subscribe((results) => {
+      results.forEach((res, index) => {
+        const coachId = allList[index].coachId;
+        this.allCourseMap[coachId] = res?.data?.title || '新課程準備中...';
       });
+      console.log('所有課程資料載入完成！', this.allCourseMap);
     });
   }
 
