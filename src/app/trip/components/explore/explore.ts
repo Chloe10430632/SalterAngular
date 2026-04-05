@@ -63,12 +63,26 @@ export class Explore implements OnInit {
     { label: '已結束', value: 'completed', checked: false },
   ];
 
+  cities: { id: number; name: string }[] = [];
+  selectedCityId: number | null = null;
+
   get origin(): string {
     return window.location.origin;
   }
 
   ngOnInit() {
+    this.loadCities();
     this.loadTrips();
+  }
+
+  loadCities() {
+    this.tripService.getCities().subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.cities = res.data;
+        }
+      }
+    });
   }
 
   loadTrips() {
@@ -84,6 +98,7 @@ export class Explore implements OnInit {
       keyword: this.searchKeyword || undefined,
       tripType: this.selectedCategory || undefined,
       status: selectedStatuses || undefined,
+      cityId: this.selectedCityId ?? undefined,
       startFrom: this.filter.startFrom || undefined,
       startTo: this.filter.startTo || undefined,
       minCapacity: selectedCap?.min ?? undefined,
@@ -122,6 +137,12 @@ export class Explore implements OnInit {
     this.currentPage = 1;
   }
 
+  selectCity(cityId: number | null) {
+    this.selectedCityId = cityId;
+    this.currentPage = 1;
+    this.loadTrips();
+  }
+
   applyFilter() {
     this.currentPage = 1;
     this.loadTrips();
@@ -130,6 +151,7 @@ export class Explore implements OnInit {
   clearFilter() {
     this.filter = { startFrom: '', startTo: '' };
     this.selectedCapacity = '不限';
+    this.selectedCityId = null;
     this.statuses.forEach(s => s.checked = false);
     this.selectedCategory = '';
     this.searchKeyword = '';

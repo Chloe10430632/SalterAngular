@@ -39,6 +39,16 @@
             <i class="bi bi-funnel text-primary"></i> 進階篩選
           </h3>
           <div class="flex flex-col gap-1">
+            <p class="text-xs font-semibold text-base-content/50 uppercase tracking-wide mb-1">縣市</p>
+            <select class="select select-bordered select-xs w-full" [ngModel]="selectedCityId"
+              (ngModelChange)="selectCity($event)">
+              <option [ngValue]="null">全部縣市</option>
+              @for (city of cities; track city.id) {
+              <option [ngValue]="city.id">{{ city.name }}</option>
+              }
+            </select>
+          </div>
+          <div class="flex flex-col gap-1">
             <p class="text-xs font-semibold text-base-content/50 uppercase tracking-wide mb-1">出發日期</p>
             <input type="date" class="input input-bordered input-xs w-full" [(ngModel)]="filter.startFrom" />
             <p class="text-xs text-base-content/40 text-center py-0.5">至</p>
