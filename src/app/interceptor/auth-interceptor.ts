@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
 import { NotificationService } from '../shared/notifyService/notification-service';
 import { AuthService } from '../core/services/auth-service';
-
+import { jwtDecode } from "jwt-decode";
 
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
@@ -15,21 +15,17 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   if (token && token.includes('.')) {
     try {
-      const parts = token.split('.');
-      if (parts.length === 3) {
-        // 使用更安全的解碼方式，處理 Base64 的特殊字元
-        const base64Url = parts[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const payload = JSON.parse(atob(base64));
+      // 🎯 直接使用 jwtDecode 取代原本的 split, replace, atob
+      const payload: any = jwtDecode(token);
 
-        const expiry = payload.exp;
-        const now = Math.floor(Date.now() / 1000);
+      const expiry = payload.exp;
+      const now = Math.floor(Date.now() / 1000);
 
-        if (now >= expiry) {
-          authService.logout();
-          notify.show("登入已過期，請重新登入", 'error');
-          return throwError(() => new Error('Token Expired'));
-        }
+      // 檢查過期
+      if (expiry && now >= expiry) {
+        authService.logout();
+        notify.show("登入已過期，請重新登入", 'error');
+        return throwError(() => new Error('Token Expired'));
       }
     } catch (error) {
       // 🚨 如果解析失敗（格式不對），不要讓程式掛掉，直接視為無效 Token 處理

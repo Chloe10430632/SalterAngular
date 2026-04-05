@@ -45,7 +45,7 @@ export class AuthService {
       //判斷照片 沒照片帶預設，有照片看照片路徑是http開頭還是 /開頭，
       // 來抓是google帳戶圖片，還是自己上傳圖片
       const getAvatarPath = (avatar: string | null): string => {
-        if (!avatar) return 'user/default-avatar.png';
+        if (!avatar) return `${environment.domain}/admin/imgs/default-avatar.png`;
         if (avatar.startsWith('http')) return avatar;
 
         const baseUrl = environment.domain;
