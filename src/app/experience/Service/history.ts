@@ -17,4 +17,5 @@ export class HistoryS {
   getAttendHistory(): Observable<APIResponse<CourseOrderI[]>> {
     return this.client.get<APIResponse<CourseOrderI[]>>(`${environment.apiUrl}/Exp/Exp/AttendHistory`)
   }
+  
 }

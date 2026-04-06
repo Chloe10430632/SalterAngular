@@ -1,6 +1,8 @@
+import { CoachAllInfoI } from "./IIcoachAllinfo";
+import { CourseSessionInfoI } from "./IICourse";
+
 export interface ReviewI {
   reviewId: number;
-  coachId: number;
   userId: number;
   rating: number;
   reviewContent: string;
@@ -8,4 +10,6 @@ export interface ReviewI {
   UpdateAt: Date;
   CourseOrderId: number;
   userName?: string;
+  coachInfo?: CoachAllInfoI;
+  courseInfo?: CourseSessionInfoI;
 }

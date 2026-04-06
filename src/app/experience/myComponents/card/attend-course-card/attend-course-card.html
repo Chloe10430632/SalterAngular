@@ -1,49 +1,75 @@
-@for (item of data(); track item.courseSessionId) {
-<div class="flex items-center gap-4 bg-white rounded-xl px-5 py-4 mb-3 shadow-sm">
+<div data-theme="bumblebee" class="p-4">
+  <div class="card card-side bg-base-100 shadow-xl border border-base-200 mx-auto max-w-4xl min-h-[135px]">
 
-  <!-- 頭像 -->
-  <div class="flex-shrink-0 w-16 h-16 rounded-full overflow-hidden">
-    <img [src]="item.avatarUrl | avatar" [alt]="item.coachName" class="w-full h-full object-cover" />
-  </div>
-
-  <!-- 課程資訊 -->
-  <div class="flex-1 min-w-0 border-r border-base-200 pr-4">
-    <p class="font-medium text-base mb-1">{{ item.title }}</p>
-    <p class="text-sm text-base-content/60">
-      日期：{{ item.startDate | date:'yyyy/MM/dd' }}　時段：{{ item.timeSlot }}
-    </p>
-    <p class="text-sm text-base-content/60">
-      教練：{{ item.coachName }}　價格：${{ item.price }}
-    </p>
-  </div>
-
-  <!-- 評分 -->
-  <div class="flex-shrink-0 text-center border-r border-base-200 px-4 w-20">
-    @if (item.reviewContent) {
-    <div class="text-2xl font-medium text-warning flex items-center justify-center gap-1">
-      {{ item.rating }}<span class="text-xl">★</span>
+    <!-- 教練頭像 -->
+    <div class="flex flex-col items-center justify-center p-4 min-w-[110px] border-r border-base-200">
+      <div class="avatar">
+        <div class="w-12 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+          <img [src]="data.avatarUrl | avatar" alt="Coach" />
+        </div>
+      </div>
+      <div class="font-bold text-xs mt-2 text-center">{{ data.coachName }}</div>
     </div>
-    } @else {
-    <button class="btn btn-sm btn-outline w-full" [disabled]="!canReview(item.startDate ?? '')"
-      (click)="openReviewModal(item)">
-      撰寫評價
-    </button>
-    }
-  </div>
 
-  <!-- 評論內容 -->
-  <div class="flex-shrink-0 border-r border-base-200 px-4 w-36">
-    @if (item.reviewContent) {
-    <p class="text-sm text-base-content/70 italic line-clamp-3">"{{ item.reviewContent }}"</p>
-    }
-  </div>
+    <!-- 課程資訊 -->
+    <div class="flex flex-col justify-center px-4 flex-none w-44 border-r border-base-200">
+      <h2 class="font-bold text-sm leading-tight mb-1">{{ data.title }}</h2>
+      <p class="text-xs text-base-content/60">{{ data.startDate }} | {{ data.timeSlot }}</p>
+      <p class="text-xs text-base-content/60">{{ data.location }}</p>
+      <p class="text-xs text-base-content/60">{{ data.difficulty }} | ${{ data.price }}</p>
+    </div>
 
-  <!-- 修改/刪除 -->
-  <div class="flex-shrink-0 w-16 text-center">
-    @if (item.reviewContent) {
-    <button class="btn btn-xs btn-ghost" (click)="openReviewModal(item)">修改/刪除</button>
-    }
-  </div>
+    <!-- 評論區 -->
+    <div class="flex flex-1 items-center px-4 gap-3 overflow-hidden">
 
+      <!-- 已有評論：顯示分數+內容 -->
+      @if (hasComment && !isEditing) {
+      <div class="flex items-center gap-2 shrink-0">
+        <span class="font-mono font-bold text-lg text-primary">{{ data.rating }}</span>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 fill-warning" viewBox="0 0 20 20">
+          <path
+            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+        </svg>
+      </div>
+      <p class="text-sm italic text-base-content/80 truncate flex-1">"{{ data.reviewContent }}"</p>
+      }
+
+      <!-- 輸入框（撰寫 or 修改中） -->
+      @if (canReview && !hasComment || isEditing) {
+      <div class="flex flex-col gap-2 flex-1">
+        <!-- 星等選擇 -->
+        <div class="rating rating-sm pt-3">
+          @for (i of [1,2,3,4,5]; track i) {
+          <input type="radio" name="new-rating-{{data.expTransactionId}}" class="mask mask-star-2 bg-orange-400"
+            [checked]="tempRating === i" (click)="tempRating = i" />
+          }
+        </div>
+        <textarea class="textarea textarea-bordered textarea-sm w-full text-xs" rows="2" placeholder="分享你的課程心得..."
+          [(ngModel)]="tempContent"></textarea>
+        <div class="flex gap-2 py-3">
+          <button class="btn btn-primary btn-xs" (click)="submitReview()">送出</button>
+          @if (isEditing) {
+          <button class="btn btn-ghost btn-xs" (click)="cancelEdit()">取消</button>
+          }
+        </div>
+      </div>
+      }
+
+      <!-- 課程還沒結束，不能評論 -->
+      @if (!canReview && !hasComment) {
+      <p class="text-xs text-base-content/40 italic">課程結束後才能評論</p>
+      }
+    </div>
+
+    <!-- 右側操作按鈕 -->
+    <div class="flex items-center px-4 shrink-0 border-l border-base-200 bg-base-200/30 min-w-[90px] justify-center">
+      @if (hasComment && canEdit) {
+      <div class="flex flex-col items-center gap-1">
+        <button class="btn btn-primary btn-sm px-4" (click)="startEdit()">修改</button>
+        <span class="text-[10px] font-mono text-error">{{ countdown }}s</span>
+      </div>
+      }
+    </div>
+
+  </div>
 </div>
-} <!-- @for 結尾 -->  
