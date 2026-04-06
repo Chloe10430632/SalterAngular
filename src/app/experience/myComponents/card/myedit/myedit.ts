@@ -56,13 +56,14 @@ export class Myedit implements OnInit {
     this.currentCoachId = this.activatedRoute.snapshot.params['id'];
     //抓取縣市清單
     this.coachS.getCityList().subscribe(res => {
-      this.cities = Array.isArray(res) ? res : (res as any).data || [];
+      const raw = res as any;
+      this.cities = raw.data ?? raw ?? [];
       console.log('縣市清單已載入', this.cities);
     });
     // 1. 先抓「所有專業項目清單」
-    this.coachS.getSpecialityList().subscribe(list => {
-      this.allSpecialities = list;
-      console.log('1. 專業清單已載入', this.allSpecialities);
+    this.coachS.getSpecialityList().subscribe(res => {
+      this.allSpecialities = Array.isArray(res) ? res : (res as any).data || [];
+      console.log('專業清單已載入', this.allSpecialities);
 
       // 2. 清單拿到了，才去抓「教練個人資料」
       if (this.currentCoachId) {

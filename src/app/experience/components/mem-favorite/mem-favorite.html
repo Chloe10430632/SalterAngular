@@ -1,7 +1,7 @@
 <app-noavatar title="收藏教練" data-theme="bumblebee">
-  <div class="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6 px-4">
+  <div class="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6  pl-20">
     @for(c of coaches; track c.coachId) {
-    <app-fav-card [item]="c" [isFav]="true" [courseName]="allCourseMap[c.coachId] || '載入中...'"
+    <app-fav-card [item]="c" [isFav]="true" [courseName]="allCourseMap[c.coachId] || '新課程準備中'"
       (removeMe)="handleRemove($event)">
     </app-fav-card>
     } @empty {
