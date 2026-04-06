@@ -26,7 +26,7 @@ export class CoursePublish implements OnChanges, OnDestroy {
   constructor(public authS: AuthStore,
     private router: Router,
     private transS: TransactionServiceS,
-    private notifyS: NotificationService) { }
+    public notifyS: NotificationService) { }
   //-------------------------------------------//
   ngOnChanges(): void {
     console.log('P-子元件收到的資料:', this.data);
@@ -68,12 +68,7 @@ export class CoursePublish implements OnChanges, OnDestroy {
   onDelete(id: number) {
     if (!id) return;
     if ((this.data.currentParticipants ?? 0) > 0) {
-      Swal.fire({
-        title: '無法下架',
-        text: `目前已有 ${this.data.currentParticipants} 位學生報名，不可以任性`,
-        icon: 'error',
-        confirmButtonColor: '#8B4513'
-      });
+      this.notifyS.show("已經有學生報名，不能任性", "error");
       return;
     }
     this.remove.emit(id);
@@ -129,7 +124,7 @@ export class CoursePublish implements OnChanges, OnDestroy {
         this.transS.getOrderForm({
           transactionId: Number(transactionId),
           description: '課程預約',
-          typeId: 3  
+          typeId: 3
         })
       );
       const doc = new DOMParser().parseFromString(htmlForm!, 'text/html');
