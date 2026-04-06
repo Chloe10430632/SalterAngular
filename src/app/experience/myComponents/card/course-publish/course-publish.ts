@@ -45,9 +45,9 @@ export class CoursePublish implements OnChanges, OnDestroy {
   get isCoachSelf(): boolean {
     const user = this.authS.currentUser();
     if (!user || !this.data) return false;
-    console.log('user.id:', user.id, typeof user.id);
-    console.log('data.coachId:', this.data.coachId, typeof this.data.coachId);
-    console.log('相等?', user.id == this.data.coachId);
+    // console.log('user.id:', user.id, typeof user.id);
+    // console.log('data.coachId:', this.data.coachId, typeof this.data.coachId);
+    // console.log('相等?', user.id == this.data.coachId);
     return user.id == this.data.coachId;
   }
   get isFull(): boolean {
@@ -123,10 +123,14 @@ export class CoursePublish implements OnChanges, OnDestroy {
       const reserveRes = await firstValueFrom(
         this.transS.reserve({ courseSessionId: this.data.sessionId })
       );
-      const transactionId = reserveRes?.data?.data;
+      const transactionId = reserveRes?.data;
       if (!transactionId) throw new Error('拿不到 TransactionId');
       const htmlForm = await firstValueFrom(
-        this.transS.getOrderForm({ transactionId: Number(transactionId), description: '課程預約' })
+        this.transS.getOrderForm({
+          transactionId: Number(transactionId),
+          description: '課程預約',
+          typeId: 3  // ← 課程是 3
+        })
       );
       const doc = new DOMParser().parseFromString(htmlForm!, 'text/html');
       const form = doc.querySelector('form') as HTMLFormElement;

@@ -23,7 +23,7 @@
         <div class="stat">
           <div class="stat-title">訂單編號</div>
           <div class="stat-value text-sm">#{{ orderId }}</div>
-          <div class="stat-desc">2026-03-26</div>
+
         </div>
       </div>
 
@@ -34,13 +34,13 @@
       </ul>
 
       <div class="card-actions justify-center w-full gap-4">
-       <button class="btn btn-primary flex-1" (click)="goToDashboard()">
-  @if (route.snapshot.queryParams['from'] === 'course') {
-    回到課程列表
-  } @else {
-    返回討論板
-  }
-</button>
+        <button class="btn btn-primary flex-1" (click)="goToDashboard()">
+          @if (route.snapshot.queryParams['from'] === "3") {
+          回到課程列表
+          } @else {
+          返回討論板
+          }
+        </button>
       </div>
     </div>
 

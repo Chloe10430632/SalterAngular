@@ -3,8 +3,9 @@ export interface DCourseOrder {
 }
 
 export interface DTransacRequest {
-   transactionId: number;
-  description?: string;  // 補這行
+  transactionId: number;
+  description?: string;
   itemName?: string;
   baseUrl?: string;
+  typeId?: number;
 }

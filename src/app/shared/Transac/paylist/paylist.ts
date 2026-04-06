@@ -30,8 +30,8 @@ export class Paylist implements OnInit {
 
   goToDashboard() {
     const source = this.route.snapshot.queryParams['from'];
-    if (source === 3)
-      this.router.navigate(['/experienxe/myattend']);
+    if (source === '3')
+      this.router.navigate(['/experience/myattend']);
     else
       this.router.navigate(['/'])
   }
