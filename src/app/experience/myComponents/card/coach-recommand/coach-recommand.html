@@ -1,34 +1,45 @@
 @if (isVisible && coaches.length > 0) {
-<div class="toast toast-start z-50" data-theme="bumblebee">
-  <div class="alert shadow-lg bg-base-100 border-2 border-primary p-4 w-80">
-    <div class="flex flex-col gap-2 w-full">
-      <div class="flex justify-between items-center">
-        <span class="text-sm font-bold text-primary"> 你可能會喜歡</span>
-        <button (click)="close()" class="btn btn-ghost btn-xs">✕</button>
-      </div>
+<div class="toast toast-start z-50 p-4" data-theme="bumblebee">
+  <div class="card card-compact w-60 bg-base-100 shadow-2xl border border-base-200 relative overflow-visible">
 
-      <div class="flex items-center gap-4">
-        <div class="avatar">
-          <div class="w-16 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-            <img [src]="currentCoach.avatarUrl || 'assets/default-avatar.png'" />
-          </div>
-        </div>
-        <div>
-          <h3 class="font-bold">{{ currentCoach.coachName }}</h3>
-          <div class="flex flex-wrap gap-1 mt-1">
-            @for (tag of currentCoach.specialities; track tag) {
-            <span class="badge badge-secondary badge-xs">{{ tag }}</span>
-            }
-          </div>
+    <div class="flex justify-between items-center px-4 pt-3">
+      <span class="text-[10px] uppercase tracking-widest font-bold opacity-60 text-base-content">
+        你可能也喜歡
+      </span>
+      <button (click)="close()" class="btn btn-ghost btn-xs btn-circle hover:bg-base-200">
+        ✕
+      </button>
+    </div>
+
+    <div class="card-body items-center text-center -mt-2 pb-5">
+      <div class="avatar mb-2">
+        <div class="w-16 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+          <img [src]="currentCoach.avatarUrl | avatar" alt="coach" />
         </div>
       </div>
 
-      <div class="flex justify-end gap-2 mt-2">
-        <button class="btn btn-sm btn-ghost text-xs" (click)="nextCoach()">
-          >>
-        </button>
-        <button (click)="coachIntro(currentCoach.coachId)" class="btn btn-sm btn-primary text-xs">
-          查看介紹
+      <div class="flex flex-col gap-2 items-center w-full">
+        <h2 class="card-title justify-center text-base font-black leading-tight">
+          {{ currentCoach.coachName }}
+        </h2>
+
+        <div class="badge badge-sm badge-neutral font-bold py-2">
+          {{ currentCoach.district }}
+        </div>
+
+        <div class="flex flex-wrap justify-center gap-1 w-full mt-1">
+          @for(s of currentCoach.specialities; track $index) {
+          <div class="badge badge-sm badge-secondary badge-outline font-medium">
+            {{ s }}
+          </div>
+          }
+        </div>
+      </div>
+
+      <div class="card-actions w-full mt-4">
+        <button (click)="coachIntro(currentCoach.coachId)"
+          class="btn btn-primary btn-sm btn-block rounded-lg font-bold shadow-sm">
+          教練介紹
         </button>
       </div>
     </div>

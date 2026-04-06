@@ -2,10 +2,11 @@ import { Router } from '@angular/router';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { CoachAllInfoI } from '../../../Interfaces/IIcoachAllinfo';
 import { CoachS } from '../../../Service/coach-s';
+import { AvatarPipe } from '../../../../shared/pipes/avatar-pipe';
 
 @Component({
   selector: 'app-coach-recommand',
-  imports: [],
+  imports: [AvatarPipe],
   templateUrl: './coach-recommand.html',
   styleUrl: './coach-recommand.css',
 })
@@ -42,6 +43,6 @@ export class CoachRecommand implements OnInit, OnDestroy {
     this.isVisible = false;
   }
   coachIntro(id: number) {
-    this.router.navigate([`/experiencecoachinfo/${id}`])
+    this.router.navigate([`/experience/coachinfo/${id}`])
   }
 }

@@ -129,7 +129,7 @@ export class CoursePublish implements OnChanges, OnDestroy {
         this.transS.getOrderForm({
           transactionId: Number(transactionId),
           description: '課程預約',
-          typeId: 3  // ← 課程是 3
+          typeId: 3  
         })
       );
       const doc = new DOMParser().parseFromString(htmlForm!, 'text/html');

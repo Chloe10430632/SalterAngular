@@ -8,7 +8,7 @@ export interface CoachAllInfoI {
   coachId: number;
   coachName: string;
   avatarUrl: string;
-  district: string[];
+  district: string;
   city: string;
   avgRating: number;
   reviewCount: number;
