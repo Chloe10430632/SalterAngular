@@ -169,6 +169,13 @@ export class Myedit implements OnInit {
   //#endregion
 
   onSave() {
+    const coachId = this.currentCoachId;
+    if (coachId) {
+      this.route.navigate(['/experience/coachpfe', coachId]);
+    } else {
+      this.route.navigate(['/experience/coachpfe']);
+    }
+
     console.log('表單狀態:', this.coachForm.valid);
     console.log('表單錯誤:', this.coachForm.errors);
     Object.keys(this.coachForm.controls).forEach(key => {

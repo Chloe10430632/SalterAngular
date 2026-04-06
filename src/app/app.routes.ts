@@ -104,6 +104,10 @@ export const routes: Routes = [
         loadComponent: () => import('./experience/components/coach-island/coach-island').then(m => m.CoachIsland)
       },
       {
+        path: 'coachpfe', //教練申請
+        loadComponent: () => import('./experience/components/coach-profile-edit/coach-profile-edit').then(m => m.CoachPFEdit)
+      },
+      {
         path: 'coachpfe/:id', //自介編輯
         loadComponent: () => import('./experience/components/coach-profile-edit/coach-profile-edit').then(m => m.CoachPFEdit)
       },

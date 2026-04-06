@@ -76,6 +76,11 @@
           <p class="text-sm font-medium">{{ data?.location || '—' }}</p>
         </div>
 
+        <div class="col-span-2 bg-base-50 p-3 rounded-xl">
+          <p class="text-xs opacity-50">課程簡介</p>
+          <p class="text-sm font-medium">{{ data?.description || '—' }}</p>
+        </div>
+
         <!-- 價格 + 預約按鈕 -->
         <div class="col-span-2 flex justify-between items-end mt-2">
           <p class="text-2xl font-black text-secondary">NT$ {{ data?.price | number }}</p>

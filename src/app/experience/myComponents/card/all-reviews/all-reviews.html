@@ -1,45 +1,53 @@
 <input type="checkbox" id="review-modal" class="modal-toggle" />
 
 <div class="modal" role="dialog">
-  <div class="modal-box p-0 max-h-[70vh] flex flex-col overflow-hidden">
+
+  <div
+    class="modal-box p-0 max-h-[70vh] flex flex-col overflow-hidden shadow-2xl border border-white/20 bg-white/70 backdrop-blur-md">
 
     <div class="p-4 border-b border-base-200 bg-base-100 sticky top-0 z-20">
-      <h3 class="font-bold text-center">所有評論 ({{ reviews.length }})</h3>
+      <h3 class="font-bold text-center text-lg">所有評論 ({{ reviews.length }})</h3>
     </div>
 
-    <div class="overflow-y-auto grow scroll-smooth">
+    <div class="overflow-y-auto grow scroll-smooth bg-base-100">
       @for (item of reviews; track item.reviewId) {
-      <div class="border-b border-base-200 p-5 bg-base-100 last:border-0">
+      <div class="border-b border-base-200 p-5 last:border-0 hover:bg-base-200/30 transition-colors">
 
-        <!-- 同一行：頭像 + 名字 + 星星 + 日期 -->
         <div class="flex items-center gap-3 mb-2">
-          <div style="width:34px; height:34px; border-radius:50%; background:#FAEEDA; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:500; color:#633806; flex-shrink:0;">
-            {{ (item.userName || '#')[0] }}
+          <div class="avatar placeholder">
+            <div
+              class="bg-primary text-primary-content w-9 rounded-full ring ring-primary ring-offset-2 ring-offset-base-100">
+
+              <img [src]="item.coachInfo?.avatarUrl | avatar" />
+
+            </div>
           </div>
-          <span class="font-bold text-primary text-sm">
-            {{ item.userName || '學員 #' + item.userId }}
-          </span>
-          <span class="badge badge-warning badge-sm">★ {{ item.rating }}</span>
-          <span class="text-xs opacity-50 ml-auto">
+
+          <div class="flex flex-col">
+            <span class="font-bold text-sm text-base-content">{{ item.userName || '學員' }}</span>
+            <div class="flex items-center gap-2">
+              <span class="badge badge-warning badge-xs font-bold">★ {{ item.rating }}</span>
+            </div>
+          </div>
+
+          <span class="text-[11px] opacity-40 ml-auto self-start mt-1">
             {{ item.reviewedAt | date:'yyyy-MM-dd' }}
           </span>
         </div>
 
-        <!-- 評論內容 -->
-        <p class="text-sm text-base-content/80 leading-relaxed pl-[46px]">
+        <p class="text-sm text-base-content/80 pl-[48px] leading-relaxed">
           {{ item.reviewContent }}
         </p>
-
       </div>
       } @empty {
-      <div class="p-10 text-center opacity-50">暫時還沒有評論喔！</div>
+      <div class="p-10 text-center opacity-30">目前還沒有任何評論。</div>
       }
     </div>
 
-    <div class="modal-action p-2 border-t border-base-200 bg-base-100">
+    <div class="modal-action p-2 border-t border-base-200 bg-base-100 m-0">
       <label for="review-modal" class="btn btn-ghost btn-sm w-full">關閉</label>
     </div>
-  </div>
 
-  <label class="modal-backdrop" for="review-modal">Close</label>
+  </div> <label class="modal-backdrop bg-black/60 backdrop-blur-[2px]" for="review-modal">Close</label>
+
 </div>

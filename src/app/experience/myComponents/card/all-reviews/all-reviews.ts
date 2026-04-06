@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { ReviewI } from '../../../Interfaces/IIreview';
+import { AvatarPipe } from '../../../../shared/pipes/avatar-pipe';
 
 //這是Modal元件//
 //跳出浮在前面的畫面//
@@ -8,7 +9,7 @@ import { ReviewI } from '../../../Interfaces/IIreview';
 
 @Component({
   selector: 'app-all-reviews',
-  imports: [CommonModule],
+  imports: [CommonModule, AvatarPipe],
   templateUrl: './all-reviews.html',
   styleUrl: './all-reviews.css',
 })

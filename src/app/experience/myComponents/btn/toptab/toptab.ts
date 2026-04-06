@@ -16,7 +16,9 @@ export class Toptab {
       return '';
     }
     return id;
-  } template() {
+  }
+
+  template() {
     this.router.navigate(['/experience/coursetemp']);
   }
 
@@ -39,6 +41,10 @@ export class Toptab {
 
   profiledit() {
     const id = this.getCoachId();
-    this.router.navigate(['/experience/coachpfe', id]);
+    if (id) {
+      this.router.navigate(['/experience/coachpfe', id]);
+    } else {
+      this.router.navigate(['/experience/coachpfe']);
+    }
   }
 }

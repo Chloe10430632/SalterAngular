@@ -1,24 +1,26 @@
-<div
-  style="display:flex; align-items:flex-start; gap:14px; background:white; border:0.5px solid #e5e7eb; border-radius:12px; padding:14px 16px;">
-  <div
-    style="width:38px; height:38px; border-radius:50%; background:#FAEEDA; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:500; color:#633806; flex-shrink:0;">
-    {{ data.userId % 10 }}
+<div data-theme="bumblebee" class="card card-side bg-base-100 border border-base-200 p-4 shadow-sm gap-4">
+
+  <div class="avatar">
+    <div class="w-10 h-10 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+      <img [src]="data.coachInfo?.avatarUrl|avatar" [alt]="data.userName + ' 的頭像'" />
+    </div>
   </div>
-  <div style="flex:1; min-width:0;">
-    <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px; flex-wrap:wrap;">
-      <span style="font-size:14px; font-weight:500;">{{ data.userName }}</span>
-      <div style="display:flex; gap:2px;">
-        @for (s of getStars(data.rating); track $index) {
-        <svg style="width:13px; height:13px;" [style.fill]="s ? '#EF9F27' : '#e5e7eb'" viewBox="0 0 24 24">
-          <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-        </svg>
+  <div class="flex-1 min-w-0">
+    <div class="flex items-center flex-wrap gap-x-3 gap-y-1 mb-1.5">
+      <span class="font-bold text-sm truncate">{{ data.userName }}</span>
+
+      <div class="rating rating-xs gap-0.5">
+        @for (s of [1, 2, 3, 4, 5]; track $index) {
+        <input type="radio" class="mask mask-star-2 bg-orange-400" [checked]="$index + 1 <= data.rating" disabled />
         }
       </div>
-      <span style="font-size:11px; color:#9ca3af; margin-left:auto;">
+
+      <span class="text-xs text-base-content/50 ml-auto flex-shrink-0">
         {{ data.reviewedAt | date:'yyyy-MM-dd' }}
       </span>
     </div>
-    <p style="font-size:13px; color:#6b7280; line-height:1.6; margin:0;">
+
+    <p class="text-sm text-base-content/70 leading-relaxed break-words">
       {{ data.reviewContent }}
     </p>
   </div>

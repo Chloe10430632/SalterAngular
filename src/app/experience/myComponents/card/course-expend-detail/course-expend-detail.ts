@@ -50,13 +50,9 @@ export class CourseExpendDetail implements OnInit, OnDestroy {
   }
 
   get isCoachSelf(): boolean {
-    const user = this.authS.currentUser();
-    if (!user || !this.data) return false;
-
-    // console.log('當前登入者 ID:', user.id);
-    // console.log('課程教練 ID:', this.data.coachId);
-
-    return user.id == this.data.coachId;
+    const coachId = localStorage.getItem('coachId');
+    if (!coachId || !this.data) return false;
+    return Number(coachId) == this.data.coachId;
   }
   get canBook(): boolean {
     if (!this.data) return false;

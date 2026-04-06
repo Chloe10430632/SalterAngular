@@ -1,5 +1,5 @@
 <div class="relative">
-  <input type="text" [(ngModel)]="searchTerm" placeholder="輸入運動項目或教練姓名..."
+  <input type="text" [(ngModel)]="searchTerm" (keydown.enter)="search()" placeholder="輸入運動專業或地區或教練姓名..."
     class="input input-bordered input-lg w-full pr-16 text-base-content focus:input-primary" />
   <button (click)="search()" class="btn btn-primary btn-lg absolute top-0 right-0   rounded-l-none">
     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

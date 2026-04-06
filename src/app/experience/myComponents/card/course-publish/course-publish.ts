@@ -43,12 +43,9 @@ export class CoursePublish implements OnChanges, OnDestroy {
   @ViewChild('carousel') carouselRef!: ElementRef;
   //-------------------------------------------//
   get isCoachSelf(): boolean {
-    const user = this.authS.currentUser();
-    if (!user || !this.data) return false;
-    // console.log('user.id:', user.id, typeof user.id);
-    // console.log('data.coachId:', this.data.coachId, typeof this.data.coachId);
-    // console.log('相等?', user.id == this.data.coachId);
-    return user.id == this.data.coachId;
+    const coachId = localStorage.getItem('coachId');
+    if (!coachId || !this.data) return false;
+    return Number(coachId) == this.data.coachId;
   }
   get isFull(): boolean {
     const max = this.data?.maxParticipants ?? 0;
@@ -102,6 +99,15 @@ export class CoursePublish implements OnChanges, OnDestroy {
     if (!this.data?.sessionId) {
       this.notifyS.show('課程資料尚未載入完成', 'error');
       return;
+    }
+    const user = this.authS.currentUser();
+    const isOwner = user && String(user.id) === String(this.data?.coachUserId);
+
+    console.log("誰:", user);
+    console.log("另一個是誰", this.data.coachUserId);
+    if (isOwner) {
+      this.notifyS.show('教練不能預約自己的課程', "error");
+      return; // 直接攔截，不讓它往下走
     }
     const confirm = await Swal.fire({
       title: '確認預約？',
