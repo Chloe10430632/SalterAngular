@@ -43,6 +43,6 @@ export class CoachRecommand implements OnInit, OnDestroy {
     this.isVisible = false;
   }
   coachIntro(id: number) {
-    this.router.navigate([`/experience/coachinfo/${id}`])
+    window.location.href = `/experience/coachinfo/${id}`;
   }
 }
