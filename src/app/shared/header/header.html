@@ -40,12 +40,7 @@
       <button class="btn btn-ghost btn-circle">
         <i class="bi bi-search text-xl"></i>
       </button>
-      <button class="btn btn-ghost btn-circle">
-        <div class="indicator">
-          <i class="bi bi-bell text-xl"></i>
-          <span class="badge badge-xs badge-error indicator-item"></span>
-        </div>
-      </button>
+
       } @else {
       <a class="btn btn-ghost btn-sm text-primary-content" routerLink="/login">登入</a>
       }
@@ -122,12 +117,6 @@
       </div>
       <div class="flex items-center gap-2 border-l border-white/20 pl-4">
         @if (currentUser) {
-        <button class="btn btn-ghost btn-circle hover:bg-white/20">
-          <div class="indicator">
-            <i class="bi bi-bell text-2xl"></i>
-            <span class="badge badge-xs badge-error indicator-item"></span>
-          </div>
-        </button>
 
         <div class="dropdown dropdown-end">
           <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar online">
