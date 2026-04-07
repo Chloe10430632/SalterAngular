@@ -350,5 +350,16 @@ export class CreateTrip implements OnInit, AfterViewInit {
     return map[type] ?? type;
   }
 
+  fillDemo() {
+    this.step1Form.patchValue({
+      title: '宜蘭蜜月灣衝浪',
+      description: '這裡不只是北台灣著名的衝浪聖地，更因為獨特的半月形海灣地形，浪況穩定且適合初學者。背景擁有壯麗的龜山島海景，讓你在練習追浪的同時，也能感受太平洋的遼闊。',
+      tripType: 'surf',
+      startAt: '2026-05-12',
+      endAt: '2026-05-13',
+      capacity: 8
+    });
+  }
+
 
 }
