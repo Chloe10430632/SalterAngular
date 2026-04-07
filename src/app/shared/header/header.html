@@ -21,7 +21,11 @@
               </ul>
             </details>
           </li>
-          <li><a class="font-bold">揪團行程</a></li>
+          <li><a routerLink="/trip/explore" class="font-bold">揪團行程</a></li>
+          <li><a routerLink="/experience" class="font-bold">課程體驗</a></li>
+          <li><a routerLink="/house" class="font-bold">房源預約</a></li>
+          <li><a routerLink="/memberCenter/member" class="font-bold">會員中心</a></li>
+          <li><a class="text-error font-semibold" (click)="onLogout()">登出</a></li>
         </ul>
       </div>
       }
@@ -60,7 +64,7 @@
       <span class="dock-label">揪團</span>
     </a>
 
-    <a class="text-base-content opacity-60" routerLink="experience" routerLinkActive="text-primary">
+    <a class="text-base-content opacity-60" routerLink="/experience" routerLinkActive="text-primary">
       <i class="bi bi-tsunami text-2xl"></i>
       <span class="dock-label">體驗</span>
     </a>
@@ -70,7 +74,7 @@
       <span class="dock-label">房源</span>
     </a>
 
-    <a class="text-base-content opacity-60">
+    <a class="text-base-content opacity-60" routerLink="/memberCenter/member" routerLinkActive="text-primary">
       <i class="bi bi-person-fill text-2xl"></i>
       <span class="dock-label">會員</span>
     </a>
@@ -137,11 +141,10 @@
             <div class="px-4 py-2 font-bold border-b border-base-200 mb-1 text-primary-content">
               {{ currentUser.name }}
             </div>
-            <li><a class="justify-between" routerLink="/memberCenter/member">個人檔案 <span
+            <li><a class="justify-between" routerLink="/memberCenter/member">個人檔案<span
                   class="badge badge-primary">New</span></a></li>
             <li><a routerLink="/forum/member/wall" [queryParams]="{ sortBy: 'posted' }">我的貼文</a></li>
             <li><a routerLink="/memberCenter/bookingList"><span>我的房屋預約訂單</span></a></li>
-            <li><a>點數中心 (0 pts)</a></li>
             <li><a (click)="chatState.toggle()" class="cursor-pointer">客服機器人</a></li>
             <!-- <li><button (click)="testAuth()" class="btn btn-outline btn-info btn-sm">
                 🔍 測試 Token
