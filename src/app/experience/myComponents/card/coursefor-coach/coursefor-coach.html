@@ -1,53 +1,53 @@
 <div data-theme="bumblebee" class="p-4">
   @if (course(); as c) {
-    <div class="collapse collapse-arrow bg-base-100 border border-base-300 rounded-box shadow-sm mb-4">
-      <input type="checkbox" class="peer" />
+  <div class="collapse collapse-arrow bg-base-100 border border-base-300 rounded-box shadow-sm mb-4">
+    <input type="checkbox" class="peer" />
 
-      <div class="collapse-title flex items-center gap-4 py-2 px-4 h-24">
-        <div class="w-24 h-16 rounded-lg overflow-hidden">
-           <img [src]="c.photoUrls?.[0] || 'assets/default.jpg'" class="w-full h-full object-cover" />
-        </div>
-
-        <div class="flex-1">
-          <h2 class="text-xl font-bold">{{ c.title || '教練精選課程' }}</h2>
-          <div class="flex gap-4 text-sm text-base-content/70">
-            <span><i class="far fa-clock mr-1"></i>{{ c.timeSlot }}</span>
-            <span class="text-secondary font-semibold">${{ c.price || 0 }}</span>
-          </div>
-        </div>
+    <div class="collapse-title flex items-center gap-4 py-2 px-4 h-24">
+      <div class="w-24 h-16 rounded-lg overflow-hidden">
+        <img [src]="c.photoUrls?.[0] || 'assets/default.jpg'" class="w-full h-full object-cover" />
       </div>
 
-      <div class="collapse-content bg-base-200/30">
-        <div class="divider mt-0"></div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 p-2">
-          <div class="md:col-span-1">
-            <img [src]="c.photoUrls?.[0] || 'assets/default.jpg'" class="rounded-xl shadow-md w-full h-48 object-cover" />
+      <div class="flex-1">
+        <h2 class="text-xl font-bold">{{ c.title || '教練精選課程' }}</h2>
+        <div class="flex gap-4 text-sm text-base-content/70">
+          <span><i class="far fa-clock mr-1"></i>{{ c.timeSlot }}</span>
+          <span class="text-secondary font-semibold">${{ c.price || 0 }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="collapse-content bg-base-200/30">
+      <div class="divider mt-0"></div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 p-2">
+        <div class="md:col-span-1">
+          <img [src]="c.photoUrls?.[0] || 'assets/default.jpg'" class="rounded-xl shadow-md w-full h-48 object-cover" />
+        </div>
+
+        <div class="md:col-span-2 flex flex-col justify-between">
+          <div>
+            <p class="text-base-content/80 mb-4">{{ c.description || '暫無課程描述' }}</p>
+            <div class="flex flex-wrap gap-4 text-sm">
+              <span class="badge badge-outline" [class.badge-error]="isFull()">
+                人數：{{ c.currentParticipants || 0 }}/{{ c.maxParticipants }}
+                ({{ isFull() ? '額滿' : '招募中' }})
+              </span>
+              <span class="text-base-content/60 italic">更新：{{ c.updatedAt | date:'shortDate' }}</span>
+            </div>
           </div>
 
-          <div class="md:col-span-2 flex flex-col justify-between">
-            <div>
-              <p class="text-base-content/80 mb-4">{{ c.description || '暫無課程描述' }}</p>
-              <div class="flex flex-wrap gap-4 text-sm">
-                <span class="badge badge-outline" [class.badge-error]="isFull()">
-                  人數：{{ c.currentStudents || 0 }}/{{ c.maxStudents }}
-                  ({{ isFull() ? '額滿' : '招募中' }})
-                </span>
-                <span class="text-base-content/60 italic">更新：{{ c.updatedAt | date:'shortDate' }}</span>
-              </div>
-            </div>
-
-            <div class="card-actions justify-end mt-6">
-              <button class="btn btn-primary shadow-lg" [disabled]="isFull()">
-                立即結帳
-              </button>
-            </div>
+          <div class="card-actions justify-end mt-6">
+            <button class="btn btn-primary shadow-lg" [disabled]="isFull()">
+              立即結帳
+            </button>
           </div>
         </div>
       </div>
     </div>
+  </div>
   } @else {
-    <div class="flex flex-col gap-4 w-full">
-      <div class="skeleton h-24 w-full"></div>
-    </div>
+  <div class="flex flex-col gap-4 w-full">
+    <div class="skeleton h-24 w-full"></div>
+  </div>
   }
 </div>

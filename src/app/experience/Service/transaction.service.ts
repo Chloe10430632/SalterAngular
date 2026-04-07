@@ -3,34 +3,27 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment'; // 依你的路徑調整
+import { DCourseOrder, DTransacRequest } from '../Interfaces/IItransac';
 
-export interface DTransacRequest {
-  transactionId: number;
-  itemName: string;
-}
-
-// 如果你的 API 回傳的是 DAPIResponse<string> 包裝格式，用這個 interface
-interface DAPIResponse<T> {
-  isSuccess: boolean;
-  message: string;
-  data: T;
-}
+//============!!這是Service!!===================//
+//============!!交易!!===================//
 
 @Injectable({ providedIn: 'root' })
-export class TransactionService {
-  private readonly baseUrl = `${environment.apiUrl}/api/Transac/Transaction`;
+export class TransactionServiceS {
 
   constructor(private http: HttpClient) { }
 
+  reserve(dto: DCourseOrder): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/Exp/Exp/Reserve`, dto);
+  }
   /**
    * 取得綠界付款表單 HTML
    * 後端回傳 Content-Type: text/html，直接拿字串
    */
   getOrderForm(dto: DTransacRequest): Observable<string> {
     return this.http.post(
-      `${this.baseUrl}/GetOrderForm`,
-      dto,
-      { responseType: 'text' }   // 關鍵：後端 return Content(html, "text/html")
+      `${environment.apiUrl}/Transac/Transaction/GetOrderForm`,
+      dto, { responseType: 'text' }
     );
   }
 }

@@ -25,7 +25,7 @@ export class Withavatar implements OnInit {
 
     if (savedId) {
       // 3. 如果有 ID，就請 Service 去抓資料
-      this.coachS.getMyInfoStr(savedId).subscribe({
+      this.coachS.getCoachInfoStr(savedId).subscribe({
         next: (data) => {
           this.coachData.set(data.data); // 抓成功了，塞進 Signal
           console.log('成功抓到教練資料：', data);

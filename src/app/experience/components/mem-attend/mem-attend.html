@@ -1,5 +1,12 @@
 <app-noavatar title="學習歷程">
-  <div clacc="flex-3"> <app-attend-course-card></app-attend-course-card></div>
+  <div class="flex flex-col gap-3">
+    @for (order of orders; track order.expTransactionId) {
+      <app-attend-course-card [data]="order"></app-attend-course-card>
+    }
+    @empty {
+      <p class="text-center text-base-content/40 py-8">目前沒有課程紀錄</p>
+    }
+  </div>
 </app-noavatar>
 
 <app-little-island></app-little-island>

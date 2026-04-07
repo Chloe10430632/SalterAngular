@@ -104,6 +104,10 @@ export const routes: Routes = [
         loadComponent: () => import('./experience/components/coach-island/coach-island').then(m => m.CoachIsland)
       },
       {
+        path: 'coachpfe', //教練申請
+        loadComponent: () => import('./experience/components/coach-profile-edit/coach-profile-edit').then(m => m.CoachPFEdit)
+      },
+      {
         path: 'coachpfe/:id', //自介編輯
         loadComponent: () => import('./experience/components/coach-profile-edit/coach-profile-edit').then(m => m.CoachPFEdit)
       },
@@ -143,7 +147,7 @@ export const routes: Routes = [
         loadComponent: () => import('./experience/components/coach-intro-for-mem/coach-intro').then(m => m.Coachintro)
       },
       {
-        path: 'myattend', //報名過的課
+        path: 'myattend', //學習歷程
         loadComponent: () => import('./experience/components/mem-attend/mem-attend').then(m => m.MemAttend)
       },
       {
@@ -164,10 +168,6 @@ export const routes: Routes = [
     path: 'transaction',
     loadComponent: () => import('./shared/layouts/with-navbar/with-navbar').then(m => m.WithNavbar),
     children: [
-      {
-        path: 'buy',
-        loadComponent: () => import('./experience/components/mem-buycourse/mem-buycourse').then(m => m.CoachBuycourse),
-      },
       {
         path: 'finish',
         loadComponent: () => import('./shared/Transac/paylist/paylist').then(m => m.Paylist)

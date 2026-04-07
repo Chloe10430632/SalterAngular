@@ -12,10 +12,10 @@ export interface CourseSessionInfoI {
   coachId: number,
   title?: string;
   description?: string;
-  selectedDates: string[];
+  startDate: string;
   timeSlot: string;
-  maxStudents: number;
-  currentStudents: number;
+  maxParticipants: number;
+  currentParticipants: number;
   updatedAt: string;
   photoUrls?: string[];
   imageUrls?: {
@@ -27,6 +27,7 @@ export interface CourseSessionInfoI {
   location: string;
   tempId: number;
   sessionId: number;
+  coachUserId?: number;
 }
 
 export interface TempInfoI {
@@ -41,4 +42,6 @@ export interface TempInfoI {
   difficulty: string;
   location: string;
   googlePlaceId?: string;
+  coachUserId?: number;
+
 }

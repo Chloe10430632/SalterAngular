@@ -15,7 +15,7 @@
       <h2 class="card-title text-xl font-bold text-base-content">{{c.coachName}}</h2>
       <!-- 收藏按鈕 -->
       <label class="swap swap-rotate hover:scale-110 transition-transform cursor-pointer">
-        <input type="checkbox" [checked]="myFavId.includes(c.coachId)" (change)="toggleFav(c.coachId)" />
+        <input type="checkbox" [checked]="myFavId.includes(c.coachId)" (click)="toggleFav($event)" />
 
         <svg xmlns="http://www.w3.org/2000/svg" class="swap-on fill-error w-7 h-7" viewBox="0 0 24 24">
           <path

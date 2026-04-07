@@ -24,7 +24,7 @@
           [class.btn-primary]="selectedDateStr === day.fullDate" [class.btn-ghost]="selectedDateStr !== day.fullDate">
           {{ day.date }}
 
-          @if (courseData[day.fullDate]) {
+          @if (markedDates.includes(day.fullDate)) {
           <span class="absolute bottom-1 w-1 h-1 bg-secondary rounded-full"></span>
           }
         </button>

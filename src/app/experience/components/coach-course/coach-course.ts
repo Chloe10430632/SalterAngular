@@ -9,12 +9,13 @@ import { NotificationService } from '../../../shared/notifyService/notification-
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2'; // 1. 引入 SweetAlert2
 import { CourseSessionInfoI } from '../../Interfaces/IICourse';
+import { CoachCoursePast } from "../coach-course-past/coach-course-past";
 //===============!!這是 父 元件!!==================//
 //===============!!上架中!!==================//
 
 @Component({
   selector: 'app-coach-course',
-  imports: [Withavatar, LittleIsland, Footer, CoursePublish],
+  imports: [Withavatar, LittleIsland, Footer, CoursePublish, CoachCoursePast],
   templateUrl: './coach-course.html',
   styleUrl: './coach-course.css',
 })
@@ -35,30 +36,36 @@ export class CoachCourse implements OnInit {
   loadPublishedCourses() {
     this.courseS.getPublishedSessions().subscribe(res => {
       if (res.isSuccess) {
-        const allData = res.data;
+        // 1. 排序
+        const allData = res.data.sort((a, b) =>
+          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+        );
+
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-        // 2. 過濾「上架中」：最後一天 >= 今天
+
+        // 2. 過濾「上架中」：該課程日期 >= 今天
         this.publishedList = allData.filter(item => {
-          // 安全檢查：確保有日期
-          if (!item.selectedDates || item.selectedDates.length === 0) return false;
+          if (!item.startDate) return false; // 沒日期就淘汰
 
-          // 取得最後一天並強行將時間重置為午夜，避免「小時/分鐘」干擾比較
-          const lastDate = new Date(item.selectedDates[item.selectedDates.length - 1]);
-          lastDate.setHours(0, 0, 0, 0);
-          return lastDate >= today;
+          // 直接把 startDate 轉成日期物件
+          const courseDate = new Date(item.startDate);
+          courseDate.setHours(0, 0, 0, 0);
+
+          return courseDate >= today;
         });
 
-        // 3. 過濾「往期課程」：最後一天 < 今天
-        // 記得在元件上方宣告 pastList: CourseSessionInfoI[] = [];
+        // 3. 過濾「往期課程」：該課程日期 < 今天
         this.pastList = allData.filter(item => {
-          if (!item.selectedDates || item.selectedDates.length === 0) return true;
+          if (!item.startDate) return true; // 沒日期的放往期
 
-          const lastDate = new Date(item.selectedDates[item.selectedDates.length - 1]);
-          lastDate.setHours(0, 0, 0, 0);
-          return lastDate < today;
+          const courseDate = new Date(item.startDate);
+          courseDate.setHours(0, 0, 0, 0);
+
+          return courseDate < today;
         });
-        console.log('✅ 篩選完成！上架中數量：', this.publishedList.length);
+
+        console.log('✅ 篩選完成！上架中：', this.publishedList.length, '往期：', this.pastList.length);
       }
     });
   }

@@ -76,7 +76,7 @@
                 <span class="label-text font-bold text-primary">開放報名人數</span>
               </label>
               <div class="join w-full">
-                <input type="number" [formControl]="sessionForm.controls.maxStudents"
+                <input type="number" [formControl]="sessionForm.controls.maxParticipants"
                   class="input input-bordered input-primary join-item w-full bg-white" />
                 <button class="btn btn-primary join-item">人</button>
               </div>
@@ -101,7 +101,7 @@
       <div class="w-full">
         @if (!isEdit) {
         <div #carousel
-          class="carousel carousel-center w-full aspect-video rounded-xl shadow bg-base-200 overflow-x-hidden scroll-smooth">
+          class="carousel carousel-center w-full aspect-video rounded-xl shadow bg-base-200 scroll-smooth overflow-x-auto no-scrollbar">
           @for (photo of (tempData?.imageUrls ?? []); track $index) {
           <div class="carousel-item w-full flex-shrink-0">
             <img [src]="photo.photoUrl" class="w-full h-full object-cover" />

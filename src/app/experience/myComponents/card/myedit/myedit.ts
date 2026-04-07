@@ -56,17 +56,18 @@ export class Myedit implements OnInit {
     this.currentCoachId = this.activatedRoute.snapshot.params['id'];
     //抓取縣市清單
     this.coachS.getCityList().subscribe(res => {
-      this.cities = Array.isArray(res) ? res : (res as any).data || [];
+      const raw = res as any;
+      this.cities = raw.data ?? raw ?? [];
       console.log('縣市清單已載入', this.cities);
     });
     // 1. 先抓「所有專業項目清單」
-    this.coachS.getSpecialityList().subscribe(list => {
-      this.allSpecialities = list;
-      console.log('1. 專業清單已載入', this.allSpecialities);
+    this.coachS.getSpecialityList().subscribe(res => {
+      this.allSpecialities = Array.isArray(res) ? res : (res as any).data || [];
+      console.log('專業清單已載入', this.allSpecialities);
 
       // 2. 清單拿到了，才去抓「教練個人資料」
       if (this.currentCoachId) {
-        this.coachS.getMyInfoStr(this.currentCoachId).subscribe({
+        this.coachS.getCoachInfoStr(this.currentCoachId).subscribe({
           next: (res: APIResponse<CoachAllInfoI>) => {
             if (res.data) {
               const apiData = res.data; console.log("教練個人資料:", res);
@@ -168,6 +169,13 @@ export class Myedit implements OnInit {
   //#endregion
 
   onSave() {
+    const coachId = this.currentCoachId;
+    if (coachId) {
+      this.route.navigate(['/experience/coachpfe', coachId]);
+    } else {
+      this.route.navigate(['/experience/coachpfe']);
+    }
+
     console.log('表單狀態:', this.coachForm.valid);
     console.log('表單錯誤:', this.coachForm.errors);
     Object.keys(this.coachForm.controls).forEach(key => {
@@ -208,12 +216,12 @@ export class Myedit implements OnInit {
         this.coachS.editMyInfo(this.currentCoachId, formData).subscribe({
           next: (res: any) => {
             console.log('更新成功：', res);
-            alert('教練資料更新成功！');
+            this.notifycationS.show('教練資料更新成功！', "success");
             this.island(); // 跳轉回小島
           },
           error: (err) => {
             console.error('更新失敗：', err);
-            alert('更新失敗，請檢查網路或欄位格式');
+            this.notifycationS.show('更新失敗，請檢查網路或欄位格式', "error");
           }
         });
       } else {
@@ -221,12 +229,12 @@ export class Myedit implements OnInit {
         this.coachS.createMyInfo(formData).subscribe({
           next: (res: any) => {
             console.log('申請成功：', res);
-            alert('恭喜！申請教練成功！');
+            this.notifycationS.show('恭喜！申請教練成功！', "success");
             this.island(); // 跳轉回小島
           },
           error: (err) => {
             console.error('申請失敗：', err);
-            alert('申請失敗，可能您已經是教練，或資料填寫不全');
+            this.notifycationS.show('申請失敗，可能您已經是教練，或資料填寫不全', "error");
           }
         });
       }

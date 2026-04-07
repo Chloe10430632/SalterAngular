@@ -1,10 +1,14 @@
-<app-withavatar title="過往開課紀錄">
-
-  <!-- @for (item of tempList; track item.tempId) { -->
-  <app-coach-course-past></app-coach-course-past>
-  <!-- }
-   @empty{
-  <div class="text-center p-10 opacity-50">目前還沒有記錄喔！</div>
-  } -->
-
+<app-withavatar title="過往開課紀錄" data-theme="bumblebee">
+  <div class="grid grid-cols-1 gap-4">
+    @for (item of pastList; track item.sessionId) {
+    <app-course-publish [data]="item"></app-course-publish>
+    }
+    @empty {
+    <div class="text-center p-10 opacity-50 bg-base-200 rounded-xl">
+      目前還沒有過往記錄喔！
+    </div>
+    }
+  </div>
 </app-withavatar>
+<app-little-island></app-little-island>
+<app-footer></app-footer>

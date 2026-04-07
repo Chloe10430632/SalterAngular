@@ -16,7 +16,9 @@ export class Toptab {
       return '';
     }
     return id;
-  } template() {
+  }
+
+  template() {
     this.router.navigate(['/experience/coursetemp']);
   }
 
@@ -34,12 +36,15 @@ export class Toptab {
 
   profile() {
     const id = this.getCoachId();
-    // ✅ 正確寫法：陣列的第二個元素就是 :id
     this.router.navigate(['/experience/coachprofile', id]);
   }
 
   profiledit() {
     const id = this.getCoachId();
-    this.router.navigate(['/experience/coachpfe', id]);
+    if (id) {
+      this.router.navigate(['/experience/coachpfe', id]);
+    } else {
+      this.router.navigate(['/experience/coachpfe']);
+    }
   }
 }

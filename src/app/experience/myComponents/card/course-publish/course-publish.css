@@ -1,6 +1,3 @@
-/* 讓 collapse 內容區允許下拉選單溢出 */
-@import "flatpickr/dist/flatpickr.min.css";
-
 /* 1. 解放所有父層級，讓地點搜尋顯示 */
 :host ::ng-deep .collapse,
 :host ::ng-deep .collapse-content {
@@ -43,4 +40,14 @@
   z-index: 101 !important;
   max-height: 200px;
   overflow-y: auto;
+}
+
+/* 輪播 */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

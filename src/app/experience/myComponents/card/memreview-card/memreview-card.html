@@ -1,36 +1,27 @@
-<div data-theme="bumblebee"
-  class="collapse bg-base-100 border border-base-200 shadow-sm my-2 mx-4 rounded-xl transition-all duration-300"
-  [class.collapse-arrow]="true">
+<div data-theme="bumblebee" class="card card-side bg-base-100 border border-base-200 p-4 shadow-sm gap-4">
 
-  <input type="checkbox" class="peer" />
-
-  <div class="collapse-title p-0 flex items-center h-20">
-    <div class="w-1/4 flex items-center justify-center border-r border-base-200 h-full px-2">
-      <span class="font-bold text-base-content truncate">@user_id_01</span>
-    </div>
-
-    <div class="w-1/2 flex items-center px-4 overflow-hidden peer-checked:hidden">
-      <p class="text-sm text-base-content/80 line-clamp-1">
-        這是一個非常棒的服務！介面簡潔且使用體驗極佳... (點擊展開)
-      </p>
-    </div>
-
-    <div class="w-1/4 flex items-center justify-center gap-2 h-full px-2">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-warning fill-current" viewBox="0 0 20 20">
-        <path
-          d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-      </svg>
-      <span class="text-black font-semibold text-sm">4.8</span>
+  <div class="avatar">
+    <div class="w-10 h-10 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+      <img [src]="data.coachInfo?.avatarUrl|avatar" [alt]="data.userName + ' 的頭像'" />
     </div>
   </div>
+  <div class="flex-1 min-w-0">
+    <div class="flex items-center flex-wrap gap-x-3 gap-y-1 mb-1.5">
+      <span class="font-bold text-sm truncate">{{ data.userName }}</span>
 
-  <div class="collapse-content bg-base-50">
-    <div class="py-4 px-6 border-t border-base-200">
-      <p class="text-sm leading-relaxed text-base-content">
-        這是一個非常棒的服務！介面簡潔且使用體驗極佳，強烈推薦給所有人。
-        這裡可以放置很長很長的評論內容，無論有多少字，展開後都能完整閱讀，
-        並且會自動撐開卡片高度。
-      </p>
+      <div class="rating rating-xs gap-0.5">
+        @for (s of [1, 2, 3, 4, 5]; track $index) {
+        <input type="radio" class="mask mask-star-2 bg-orange-400" [checked]="$index + 1 <= data.rating" disabled />
+        }
+      </div>
+
+      <span class="text-xs text-base-content/50 ml-auto flex-shrink-0">
+        {{ data.reviewedAt | date:'yyyy-MM-dd' }}
+      </span>
     </div>
+
+    <p class="text-sm text-base-content/70 leading-relaxed break-words">
+      {{ data.reviewContent }}
+    </p>
   </div>
 </div>

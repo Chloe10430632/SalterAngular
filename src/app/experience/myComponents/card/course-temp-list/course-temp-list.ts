@@ -44,7 +44,7 @@ export class CourseTempList implements OnInit {
   sessionForm = new FormGroup({
     selectedDates: new FormControl<string[]>([], Validators.required),
     timeSlot: new FormControl('早上場(9:00~12:00)', Validators.required),
-    maxStudents: new FormControl(1, Validators.min(1))
+    maxParticipants: new FormControl(1, Validators.min(1))
   });
   //--------------------------------------//
   constructor(private localS: LocationSearchService,
@@ -123,16 +123,14 @@ export class CourseTempList implements OnInit {
       const el = this.carouselElement?.nativeElement;
       if (!el || this.isEdit) return;
 
-      const itemWidth = el.offsetWidth;
+      const itemWidth = el.clientWidth;
       const totalWidth = el.scrollWidth;
       const currentScroll = el.scrollLeft;
-      const isAtEnd = currentScroll + itemWidth >= totalWidth - 5; // 加5px容錯
 
-      if (isAtEnd) {
-        // 回到第一張
+      if (currentScroll + itemWidth >= totalWidth - 15) {
         el.scrollTo({ left: 0, behavior: 'smooth' });
       } else {
-        el.scrollBy({ left: itemWidth, behavior: 'smooth' });
+        el.scrollTo({ left: currentScroll + itemWidth, behavior: 'smooth' });
       }
     }, 2500); // 建議改成3秒，1秒太快了
   }
@@ -149,35 +147,19 @@ export class CourseTempList implements OnInit {
         maxDate.setDate(maxDate.getDate() + 60);
 
         flatpickr(this.datePickerElement.nativeElement, {
-          mode: "range",
+          mode: "single",
           minDate: tomorrow,
           maxDate: maxDate,
           dateFormat: "Y-m-d",
           onChange: (selectedDates: Date[]) => {
-            // 如果選好了開始跟結束（選了兩個日期）
-            if (selectedDates.length === 2) {
-              // 複製一份 start date，避免污染原始資料
-            let current = new Date(selectedDates[0]);
+            if (selectedDates.length === 1) {
+              const date = selectedDates[0];
+              const yyyy = date.getFullYear();
+              const mm = String(date.getMonth() + 1).padStart(2, '0');
+              const dd = String(date.getDate()).padStart(2, '0');
+              const formatted = `${yyyy}-${mm}-${dd}`;
 
-              const end = selectedDates[1];
-              const dateArr: string[] = [];
-
-              // 迴圈計算中間的每一天
-              while (current <= end) {
-                const yyyy = current.getFullYear();
-                const mm = String(current.getMonth() + 1).padStart(2,'0'); // 月份從0開始，要+1
-                const dd = String(current.getDate()).padStart(2, '0');
-                // 2. 組成 YYYY-MM-DD
-                const formattedDate = `${yyyy}-${mm}-${dd}`;
-
-                dateArr.push(formattedDate);
-                // 3. 往下加一天
-                current.setDate(current.getDate() + 1);
-              }
-
-              // 存進表單
-              this.sessionForm.controls.selectedDates.setValue(dateArr);
-              console.log('轉換後的日期陣列：', dateArr);
+              this.sessionForm.controls.selectedDates.setValue([formatted]); // 陣列裡只有一天
             }
           }
         });
@@ -186,6 +168,13 @@ export class CourseTempList implements OnInit {
   }
   onCancelTime() {
     this.isSelectingTime = false;
+
+    this.sessionForm.controls.selectedDates.setValue([]);
+    this.sessionForm.reset({
+      timeSlot: '早上場(9:00~12:00)',
+      maxParticipants: 1
+    });
+    this.sessionForm.controls.selectedDates.setValue([]);
   }
   isPastDate(dateStr: string): boolean {
     const today = new Date();
@@ -286,14 +275,12 @@ export class CourseTempList implements OnInit {
     // 2. 取得表單數值
     const dates = this.sessionForm.controls.selectedDates.value || [];
     const slot = this.sessionForm.controls.timeSlot.value || '';
-    const maxStu = this.sessionForm.controls.maxStudents.value ?? 0; // 使用 ?? 處理 null/undefined
+    const maxStu = this.sessionForm.controls.maxParticipants.value ?? 0; // 使用 ?? 處理 null/undefined
 
     // 3. 組裝 FormData (注意：欄位名稱需與後端 API 參數一致)
-    dates.forEach(date => {
-      formData.append('SelectedDates', date);
-    });
+    formData.append('StartDate', dates[0]);
     formData.append('TimeSlot', slot);
-    formData.append('MaxStudents', maxStu.toString());
+    formData.append('maxParticipants', maxStu.toString());
 
     this.isSaving = true;
 
@@ -310,7 +297,7 @@ export class CourseTempList implements OnInit {
             icon: 'success',
             showCancelButton: true,
             confirmButtonColor: '#facc15', // Bumblebee 黃
-            cancelButtonColor: '#aaa',
+            cancelButtonColor: '#5b2305',
             confirmButtonText: '前往「上架中」頁面',
             cancelButtonText: '留在原地新增下一筆'
           }).then((result) => {
@@ -321,7 +308,7 @@ export class CourseTempList implements OnInit {
               // 留在原地，重置表單
               this.sessionForm.reset({
                 timeSlot: '早上場(9:00~12:00)',
-                maxStudents: 1
+                maxParticipants: 1
               });
               // 重置後記得手動清空 selectedDates，因為它是陣列
               this.sessionForm.controls.selectedDates.setValue([]);
