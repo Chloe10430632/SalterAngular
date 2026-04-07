@@ -785,6 +785,31 @@ export class Login implements OnInit {
     });
   }
 
+  //快速登入按鈕
+  quickLogin(email: string, pass: string) {
+    this.loginForm.patchValue({
+      email: email,
+      password: pass
+    });
+
+    // (選填) 如果你希望填入後直接觸發登入，可以加這行：
+    this.onLogin();
+  }
+
+
+  //快速填基本資料按鈕
+  quickRegister(name: string, email: string, pass: string) {
+    this.registerForm.patchValue({
+      userName: name,      // 對應你的「會員名稱」欄位
+      email: email,        // 對應你的「電子信箱」欄位
+      password: pass,      // 對應你的「密碼」欄位
+      confirmPassword: pass // 對應你的「重新輸入密碼」欄位
+    });
+
+    // (選填) 如果你有手機號碼等其他必填項，也可以順便補齊
+    // this.registerForm.get('phone')?.setValue('0912345678');
+  }
+
 
 
 }
