@@ -110,50 +110,49 @@ export class Detail implements OnInit {
   }
 
   submitComment() {
-    console.log('點擊了按鈕！目前的 userId 是:', this.userId);
-
-    if (!this.userId) {
-      this.notification.show('請先登入', 'error');
-      return;
-    }
-    console.log('當前登入的 userId:', this.userId);
-    console.log('當前選中的房間資料:', this.selectedProperty);
+    if (!this.userId) return;
     this.isSubmitting = true;
 
-    // 依照組員解析出的 id 加上你要送出的資料
     const dto: ICreateReview = {
       roomTypeId: this.selectedProperty?.roomTypeId,
       rating: this.newComment.rating,
       comment: this.newComment.comment,
-      memberId: this.userId, // 這裡用動態抓到的 userId
-      bookingId: 0 // 後端會自動幫你找 validBookingId，這裡傳 0 即可 (或 DTO 設為可選)
+      memberId: this.userId,
+      bookingId: 0
     };
-    console.log('準備送出的 DTO 全貌:', dto);
+
     this.reviewService.addReview(dto).subscribe({
-      next: (res) => {
+      next: (res: any) => {
         this.notification.show('評論新增成功！', 'success');
 
-        // 前端即時顯示 (提升使用者體驗)
+
         const newReview = {
+          reviewId: res.reviewId,
+          userId: this.userId,
           rating: this.newComment.rating,
           comment: this.newComment.comment,
           createdTime: new Date(),
-          name: this.CurrentUserData?.name || '匿名使用者',// 顯示當前使用者名稱，或預設為匿名
-          picture: this.CurrentUserData?.picture || '/user/default-avatar.png'
+          name: this.CurrentUserData?.name || '您',
+          picture: this.CurrentUserData?.picture || '/user/default-avatar.png',
+          isEditing: false
         };
+
+
+
         this.selectedProperty.reviews = [newReview, ...(this.selectedProperty.reviews || [])];
 
-        this.newComment.comment = ''; // 清空輸入框
+
+        this.newComment.comment = '';
+        this.canReview = false;
         this.isSubmitting = false;
       },
       error: (err) => {
-        console.error('新增失敗', err);
-        // 如果後端回傳 400 (沒資格)，錯誤訊息會在這裡噴出來
-        this.notification.show(err.error?.message || '新增評論失敗，請確認您是否已完成住宿且尚未評價', 'error');
+        this.notification.show(err.error?.message || '新增失敗', 'error');
         this.isSubmitting = false;
       }
     });
   }
+
 
   //呼叫HouseDetail的APi
   fetchHouseDetail(id: string) {
