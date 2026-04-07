@@ -24,10 +24,13 @@ export class Detail implements OnInit {
   isSubmitting: boolean = false;
   userId: number | null = null;
   selectedProperty: any;
-  isLoggedIn = true;
+  isLoggedIn = false;
   isLoading = false;
   currentSlideIndex = 0;
   CurrentUserData: CurrentUser | null = null;
+
+  canReview: boolean = false;
+  isCheckingPermission: boolean = false;
 
   todayDate: string = new Date().toISOString().split('T')[0];
 
@@ -56,25 +59,54 @@ export class Detail implements OnInit {
   ) { }
 
   ngOnInit(): void {
-
     this.authService.currentUser$.subscribe(user => {
       if (user) {
         this.isLoggedIn = true;
-        this.userId = user.id; // 這裡就是 MemberId！
+        this.userId = user.id;
         this.CurrentUserData = user;
+        // 登入後，如果房間資料也好了，就去檢查
+        if (this.selectedProperty?.roomTypeId) {
+          this.checkFinalPermission();
+        }
       } else {
-        this.isLoggedIn = false;
-        this.userId = null;
-        this.CurrentUserData = null;
+        this.resetPermissionState();
       }
     });
 
+    this.route.paramMap.subscribe(params => {
+      const id = params.get('id');
+      if (id) {
+        this.fetchHouseDetail(id);
+      }
+    });
+  }
+  private resetPermissionState() {
+    this.isLoggedIn = false;
+    this.userId = null;
+    this.canReview = false;
+    this.isCheckingPermission = false;
+  }
 
+  checkFinalPermission() {
+    const roomTypeId = this.selectedProperty?.roomTypeId;
+    if (!this.userId || !roomTypeId) return;
 
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.fetchHouseDetail(id);
-    }
+    this.isCheckingPermission = true;
+    // 確保在檢查期間 canReview 是 false，防止「閃現」出輸入框
+    this.canReview = false;
+
+    this.reviewService.checkReviewPermission(this.userId, roomTypeId).subscribe({
+      next: (res) => {
+        // 後端必須回傳 { canReview: true } 且符合 Status=3 邏輯
+        this.canReview = res.canReview;
+        this.isCheckingPermission = false;
+      },
+      error: (err) => {
+        this.canReview = false;
+        this.isCheckingPermission = false;
+        console.error('權限檢查失敗', err);
+      }
+    });
   }
 
   submitComment() {
@@ -124,17 +156,21 @@ export class Detail implements OnInit {
   }
 
   //呼叫HouseDetail的APi
-  private fetchHouseDetail(id: string) {
+  fetchHouseDetail(id: string) {
     this.isLoading = true;
     this.HouseService.getHouseDetail(id).subscribe({
       next: (data) => {
         this.selectedProperty = data;
         this.isLoading = false;
-        this.isAlreadyBooked = data.isAlreadyBooked;
+
+        // 房間資料回來後，如果已登入，立刻檢查權限
+        if (this.isLoggedIn && this.userId) {
+          this.checkFinalPermission();
+        }
       },
       error: (err) => {
-        console.error('API Error:', err);
         this.isLoading = false;
+        console.error('載入房源失敗', err);
       }
     });
   }

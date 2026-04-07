@@ -26,4 +26,9 @@ export class ReviewService {
     return this.http.delete(`${this.apiUrl}/Home/delete/${reviewId}`)
   }
 
+  //審核留言權限
+  checkReviewPermission(userId: number, roomTypeId: number): Observable<{ canReview: boolean }> {
+    return this.http.get<{ canReview: boolean }>(`${this.apiUrl}/Home/CheckPermission/${userId}/${roomTypeId}`);
+  }
+
 }
