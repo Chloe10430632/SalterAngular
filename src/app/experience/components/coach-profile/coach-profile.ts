@@ -24,6 +24,7 @@ export class CoachProfile {
   //coachData? :CoachAllInfoI;
   isLoading = true;
   id?: number;
+  currentCoachId: string = '';
   //------------------------------------------------------//
   constructor(
     private coachS: CoachS,
@@ -33,12 +34,19 @@ export class CoachProfile {
 
   //------------------------------------------------------//
   ngOnInit(): void {
+    const coachId = this.currentCoachId;
+    if (coachId) {
+      this.router.navigate([`/experience/coachprofile/${coachId}`]);
+    } else {
+      this.router.navigate(['/experience/coachpfe']);
+    }
+
     // 1. 優先從網址拿 ID
     let idFromRoute = this.route.snapshot.paramMap.get('id');
 
 
-      // 2. 🔴 新增：如果網址沒 ID，試著從 localStorage 拿（這是從 Token 解出來存進去的）
-      if(!idFromRoute) {
+    // 2. 🔴 新增：如果網址沒 ID，試著從 localStorage 拿（這是從 Token 解出來存進去的）
+    if (!idFromRoute) {
       idFromRoute = localStorage.getItem('coachId');
     }
 

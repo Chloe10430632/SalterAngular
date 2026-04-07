@@ -14,7 +14,7 @@ import { FavI } from '../../../Interfaces/IImyfav';
 
 @Component({
   selector: 'app-fav-card',
-  imports: [CommonModule, AvatarPipe],
+  imports: [CommonModule, AvatarPipe,],
   templateUrl: './fav-card.html',
   styleUrl: './fav-card.css',
   standalone: true,

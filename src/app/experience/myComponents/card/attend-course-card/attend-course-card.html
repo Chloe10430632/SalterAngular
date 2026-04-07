@@ -16,7 +16,7 @@
       <h2 class="font-bold text-sm leading-tight mb-1">{{ data.title }}</h2>
       <p class="text-xs text-base-content/60">{{ data.startDate }} | {{ data.timeSlot }}</p>
       <p class="text-xs text-base-content/60">{{ data.location }}</p>
-      <p class="text-xs text-base-content/60">{{ data.difficulty }} | ${{ data.price }}</p>
+      <p class="text-xs text-base-content/60">{{ data.difficulty }} | ${{ data.price |number }}</p>
     </div>
 
     <!-- 評論區 -->

@@ -7,6 +7,7 @@ import { APIResponse, CoachAllInfoI } from '../../../Interfaces/IIcoachAllinfo';
 import { DistI } from '../../../Interfaces/IIDistrict';
 import { CoachS } from '../../../Service/coach-s';
 import { CoachCardInfoS } from '../../../Service/coach-card-info-s';
+import { AuthService } from '../../../../core/services/auth-service';
 
 
 //===========!!子 Component!!================//
@@ -19,6 +20,7 @@ import { CoachCardInfoS } from '../../../Service/coach-card-info-s';
 })
 export class Myedit implements OnInit {
   currentCoachId: string = '';
+  currentUserId: string = '';
   selectedFile: File | null = null;
   allSpecialities: SpecI[] = [];
   cities: any[] = [];
@@ -48,71 +50,76 @@ export class Myedit implements OnInit {
     private activatedRoute: ActivatedRoute,
     private coachCardS: CoachCardInfoS,
     private fb: FormBuilder,
-    private notifycationS: NotificationService
+    private notifycationS: NotificationService,
+    private authS: AuthService
   ) { }
   //===========================================//
 
   ngOnInit(): void {
-    this.currentCoachId = this.activatedRoute.snapshot.params['id'];
-    //抓取縣市清單
+    // 1. 從網址拿 coachId
+    const idFromRoute = this.activatedRoute.snapshot.params['coachid'];
+    this.currentCoachId = idFromRoute ?? '';
+
+    // 2. 從 authService 拿 userId
+    this.authS.currentUser$.subscribe((user: any) => {
+      this.currentUserId = user?.userId ?? user?.id ?? '';
+      console.log("登入的 userId:", this.currentUserId);
+      console.log("網址上的 coachId:", this.currentCoachId);
+    });
+
+    // 3. 抓縣市清單
     this.coachS.getCityList().subscribe(res => {
       const raw = res as any;
       this.cities = raw.data ?? raw ?? [];
-      console.log('縣市清單已載入', this.cities);
     });
-    // 1. 先抓「所有專業項目清單」
+
+    // 4. 先抓專業清單，再決定要不要載入教練資料
     this.coachS.getSpecialityList().subscribe(res => {
       this.allSpecialities = Array.isArray(res) ? res : (res as any).data || [];
-      console.log('專業清單已載入', this.allSpecialities);
 
-      // 2. 清單拿到了，才去抓「教練個人資料」
       if (this.currentCoachId) {
-        this.coachS.getCoachInfoStr(this.currentCoachId).subscribe({
-          next: (res: APIResponse<CoachAllInfoI>) => {
-            if (res.data) {
-              const apiData = res.data; console.log("教練個人資料:", res);
-
-              const specIds = apiData.specialities.map((name: string) => {
-                const found = this.allSpecialities.find(s => s.sportsName === name);
-                return found ? found.id : null;
-              }).filter((id: number | null) => id !== null);
-              console.log("專業對應 ID 清單:", specIds);
-
-              //抓原本頭像
-              if (apiData.avatarUrl) {
-                this.previewImage = apiData.avatarUrl;
-              }
-
-
-              // 3. 填入表單
-              this.coachForm.patchValue({
-                coachName: apiData.coachName,
-                introduction: apiData.introduction,
-                specialities: specIds,
-              });
-              // 處理地區回填
-              this.district.clear();
-              if (apiData.districtId) {
-                // 先用 districtId 去抓所有縣市的 districts，找到對應的 cityId
-                this.addDistrictGroup(apiData.cityId, apiData.districtId);
-
-                // 如果 cityId 是 null，等縣市清單載入後再反查
-                if (!apiData.cityId) {
-                  // 需要遍歷所有縣市去找，比較麻煩
-                }
-              } else {
-                this.addDistrictGroup();
-              }
-            }
-          }
-        });
-      }
-      else {
+        this.loadCoachData(this.currentCoachId); // 編輯模式
+      } else {
+        this.addDistrictGroup(); // 申請模式，給一組空的地區選單
         console.log('沒有教練 ID，表單保持空白');
       }
     });
   }
   //===========================================//
+  //#region 帶資料
+  loadCoachData(coachId: string) {
+    this.coachS.getCoachInfoStr(coachId).subscribe({
+      next: (res: APIResponse<CoachAllInfoI>) => {
+        if (res.data) {
+          const apiData = res.data;
+          console.log("教練個人資料:", res);
+
+          const specIds = apiData.specialities.map((name: string) => {
+            const found = this.allSpecialities.find(s => s.sportsName === name);
+            return found ? found.id : null;
+          }).filter((id: number | null) => id !== null);
+
+          if (apiData.avatarUrl) {
+            this.previewImage = apiData.avatarUrl;
+          }
+
+          this.coachForm.patchValue({
+            coachName: apiData.coachName,
+            introduction: apiData.introduction,
+            specialities: specIds,
+          });
+
+          this.district.clear();
+          if (apiData.districtId) {
+            this.addDistrictGroup(apiData.cityId, apiData.districtId);
+          } else {
+            this.addDistrictGroup();
+          }
+        }
+      }
+    });
+  }
+  //#endregion
   //#region 地區相關邏輯
   //  新增一組地區選單
   addDistrictGroup(initialCityId: number | null = null, initialDistrictId: number | null = null) {
