@@ -29,14 +29,14 @@
     @if (isSelectingTime) {
     <div class="pt-5 border-t border-base-200 animate-in fade-in zoom-in duration-300">
       <div class="p-6 bg-base-200 rounded-2xl space-y-6 shadow-inner">
-        <h3 class="font-bold text-lg text-primary flex items-center gap-2">
+        <h3 class="font-bold text-lg text-[#8B4513] flex items-center gap-2">
           設定課程上架時段
         </h3>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div class="form-control">
             <label class="label">
-              <span class="label-text font-bold text-primary">選擇日期 (可多選)</span>
+              <span class="label-text font-bold text-[#4A423E]">選擇日期</span>
             </label>
             <div class="relative">
               <input #datePicker type="text"
@@ -61,19 +61,20 @@
           <div class="space-y-4">
             <div class="form-control">
               <label class="label">
-                <span class="label-text font-bold text-primary">選擇上課場次</span>
+                <span class="label-text font-bold text-[#4A423E]">選擇上課場次</span>
               </label>
               <select [formControl]="sessionForm.controls.timeSlot"
                 class="select select-bordered select-primary w-full bg-white">
                 <option>早上場(9:00~12:00)</option>
                 <option>下午場(13:00~16:00)</option>
                 <option>全日場(8:00~17:00)</option>
+                <option>晚上場(20:00~22:00)</option>
               </select>
             </div>
 
             <div class="form-control">
               <label class="label">
-                <span class="label-text font-bold text-primary">開放報名人數</span>
+                <span class="label-text font-bold text-[#4A423E]">開放報名人數</span>
               </label>
               <div class="join w-full">
                 <input type="number" [formControl]="sessionForm.controls.maxParticipants"
