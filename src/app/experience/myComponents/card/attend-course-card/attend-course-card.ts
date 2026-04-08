@@ -44,7 +44,7 @@ export class AttendCourseCard implements OnInit, OnDestroy {
   get canReview(): boolean {
     if (!this.data.startDate) return false;
     const courseDate = new Date(this.data.startDate);
-    courseDate.setHours(12, 59, 59, 0);
+    courseDate.setHours(10, 59, 59, 0);
     return new Date() > courseDate;
   }
 
