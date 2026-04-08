@@ -7,7 +7,6 @@ import { firstValueFrom, Subscription } from 'rxjs';
 import { CommonModule, DecimalPipe, NgClass } from '@angular/common';
 import { Router } from '@angular/router';
 import { TransactionServiceS as TransactionServiceS } from '../../../Service/transaction.service';
-import Swal from 'sweetalert2';
 
 
 //================!! 子 元件!!==============================//

@@ -33,7 +33,7 @@ export class AttendCourseCard implements OnInit, OnDestroy {
   constructor(private reviewS: ReviewsS, private notifyS: NotificationService) { }
 
   ngOnInit(): void {
-    if (this.canEdit) this.startCountdown();
+    if (this.canReview) this.startEdit();
   }
 
   ngOnDestroy(): void {
@@ -53,22 +53,22 @@ export class AttendCourseCard implements OnInit, OnDestroy {
   }
 
   // 評論送出後 30 秒內可修改
-  get canEdit(): boolean {
-    if (!this.data.creatReviewAt) return false;
-    const elapsed = (Date.now() - new Date(this.data.creatReviewAt).getTime()) / 1000;
-    return elapsed <= 60;
-  }
+  // get canEdit(): boolean {
+  //   if (!this.data.creatReviewAt) return false;
+  //   const elapsed = (Date.now() - new Date(this.data.creatReviewAt).getTime()) / 1000;
+  //   return elapsed <= 60;
+  // }
 
-  startCountdown(): void {
-    clearInterval(this.countdownTimer);
-    const reviewedAt = new Date(this.data.creatReviewAt!).getTime();
-    this.countdown = 30;
-    this.countdownTimer = setInterval(() => {
-      const elapsed = (Date.now() - reviewedAt) / 1000;
-      this.countdown = Math.max(0, Math.round(30 - elapsed));
-      if (this.countdown <= 0) clearInterval(this.countdownTimer);
-    }, 1000);
-  }
+  // startCountdown(): void {
+  //   clearInterval(this.countdownTimer);
+  //   const reviewedAt = new Date(this.data.creatReviewAt!).getTime();
+  //   this.countdown = 30;
+  //   this.countdownTimer = setInterval(() => {
+  //     const elapsed = (Date.now() - reviewedAt) / 1000;
+  //     this.countdown = Math.max(0, Math.round(30 - elapsed));
+  //     if (this.countdown <= 0) clearInterval(this.countdownTimer);
+  //   }, 1000);
+  // }
 
   startEdit(): void {
     clearInterval(this.countdownTimer);
@@ -99,7 +99,7 @@ export class AttendCourseCard implements OnInit, OnDestroy {
           this.data.updateReviewAt = new Date().toISOString();
           this.data.creatReviewAt = new Date().toISOString();
           this.isEditing = false;
-          this.startCountdown();
+          // this.startCountdown();
         },
         error: () => this.notifyS.show('修改失敗', 'error')
       });
@@ -111,7 +111,7 @@ export class AttendCourseCard implements OnInit, OnDestroy {
           this.data.reviewContent = this.tempContent;
           this.data.creatReviewAt = new Date().toISOString();
           this.isEditing = false;
-          this.startCountdown();
+          // this.startCountdown();
         },
         error: () => this.notifyS.show('送出失敗', 'error')
       });
