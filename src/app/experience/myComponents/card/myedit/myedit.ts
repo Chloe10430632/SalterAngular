@@ -73,6 +73,8 @@ export class Myedit implements OnInit, OnChanges {
     // 2. 從 authService 拿 userId
     this.authS.currentUser$.subscribe((user: any) => {
       this.currentUserId = user?.userId ?? user?.id ?? '';
+      console.log("登入的 userId:", this.currentUserId);
+      console.log("網址上的 coachId:", this.currentCoachId);
     });
 
     // 3. 抓縣市清單
@@ -230,7 +232,7 @@ export class Myedit implements OnInit, OnChanges {
             console.log('更新成功：', res);
             this.notifycationS.show('教練資料更新成功！', 'success');
             // ✅ 編輯完成 → 回到編輯頁（或改成 coachprofile 也可以）
-            this.route.navigate(['/experience/coachpfe', this.currentCoachId]);
+            this.route.navigate(['/experience/coachisland']);
           },
           error: (err) => {
             console.error('更新失敗：', err);
@@ -242,12 +244,26 @@ export class Myedit implements OnInit, OnChanges {
         this.coachS.createMyInfo(formData).subscribe({
           next: (res: any) => {
             console.log('申請成功：', res);
+            console.log('data 內容：', JSON.stringify(res.data)); // 看陣列裡有什麼
+
+            const newCoachId =
+              res?.data?.coachId ??       // 物件形式
+              res?.data?.[0]?.coachId ??  // 陣列第一個元素
+              res?.data?.[0]?.id ??       // 陣列第一個元素的 id
+              res?.data?.[1]?.coachId ??  // 陣列第二個元素
+              res?.coachId ??
+              res?.id;
+
+            console.log('解析到的 newCoachId：', newCoachId);
             this.notifycationS.show('恭喜！申請教練成功！', 'success');
 
             // ✅ 從 API 回傳拿 coachId（依你的 API 結構調整欄位名）
-            const newCoachId = res?.data?.coachId ?? res?.coachId ?? res?.id;
+            // const newCoachId = res?.data?.coachId ?? res?.coachId ?? res?.id;
             if (newCoachId) {
+              localStorage.setItem('coachId', newCoachId.toString());
               this.route.navigate(['/experience/coachprofile', newCoachId]);
+              console.log("newCoachId:", newCoachId);
+
             } else {
               // 如果 API 沒回傳 ID，fallback 到小島
               this.island();
