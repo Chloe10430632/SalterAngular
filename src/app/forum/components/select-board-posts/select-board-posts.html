@@ -322,8 +322,8 @@
               <div class="modal-action">
                 <form method="dialog">
                   <button class="btn btn-ghost">取消</button>
-                  <button class="btn btn-error text-white ml-2"
-                    (click)="confirmReport(selectedPostForReport, reportReason.value, reportDetail.value)">
+                  <button class="btn btn-error text-white ml-2" (click)="confirmReport(selectedPostForReport, reportReason.value, reportDetail.value);
+                 reportReason.value='請選擇原因'; reportDetail.value=''">
                     確認送出
                   </button>
                 </form>

@@ -4,7 +4,6 @@ import { Component, ElementRef, inject, OnInit, signal, ViewChild, ViewEncapsula
 import { Router, RouterOutlet, RouterLinkWithHref, RouterLinkActive } from '@angular/router';
 import { BoardList } from '../../interfaces/boardList';
 import { BoardsService } from '../../services/boards-service';
-
 import Sortable from 'sortablejs';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../../core/services/auth-service';
@@ -164,7 +163,7 @@ export class Index implements OnInit {
 
 
     this.postForm.get('content')!.valueChanges.pipe(
-      debounceTime(1200),
+      debounceTime(1000),
       distinctUntilChanged(),
       filter(val => val !== null && val !== undefined),
       tap(() => {
