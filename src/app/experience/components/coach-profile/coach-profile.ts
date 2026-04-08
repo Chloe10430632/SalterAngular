@@ -24,7 +24,7 @@ export class CoachProfile {
   //coachData? :CoachAllInfoI;
   isLoading = true;
   id?: number;
-  currentCoachId: string = '';
+  coachId: string = '';
   //------------------------------------------------------//
   constructor(
     private coachS: CoachS,
@@ -34,12 +34,14 @@ export class CoachProfile {
 
   //------------------------------------------------------//
   ngOnInit(): void {
-    const coachId = this.currentCoachId;
-    if (coachId) {
-      this.router.navigate([`/experience/coachprofile/${coachId}`]);
-    } else {
-      this.router.navigate(['/experience/coachpfe']);
-    }
+    // const coachId = this.currentCoachId;
+    // if (coachId) {
+    //   this.router.navigate([`/experience/coachprofile/${coachId}`]);
+    // } else {
+    //   this.router.navigate(['/experience/coachpfe']);
+    // }
+    this.coachId = this.route.snapshot.params['id'] ?? '';
+    console.log('CoachPFEdit 拿到的 id:', this.coachId);
 
     // 1. 優先從網址拿 ID
     let idFromRoute = this.route.snapshot.paramMap.get('id');
@@ -50,28 +52,23 @@ export class CoachProfile {
       idFromRoute = localStorage.getItem('coachId');
     }
 
-    console.log('🔴 最終認定的 ID 為:', idFromRoute);
+   console.log('最終認定的 ID 為:', idFromRoute);
 
-    if (idFromRoute && idFromRoute !== '0') {
-      const targetId = Number(idFromRoute);
-      this.isLoading = true;
-
-      this.coachS.getCoachInfoNum(targetId).subscribe({
-        next: (res) => {
-          console.log('🔴 父組件收到回應：', res); // 這裡沒印代表你可能在看舊的程式碼
-          if (res && res.isSuccess) {
-            this.coachData = res; // 確保變數名稱是 coachData
-          }
-        },
-        complete: () => {
-          this.isLoading = false; // 🟢 關鍵：一定要設為 false，不然畫面會一直卡在轉圈圈或空白
+  if (idFromRoute && idFromRoute !== '0') {
+    this.isLoading = true;
+    this.coachS.getCoachInfoNum(Number(idFromRoute)).subscribe({
+      next: (res) => {
+        if (res && res.isSuccess) {
+          this.coachData = res;
         }
-      });
-    } else {
-      // 如果連 localStorage 都沒有，代表真的沒登入或不是教練
-      console.warn('找不到有效的 CoachId');
-      this.isLoading = false;
-      // this.router.navigate(['/login']); // 選用：踢回登入頁
-    }
+      },
+      complete: () => {
+        this.isLoading = false;
+      }
+    });
+  } else {
+    console.warn('找不到有效的 CoachId');
+    this.isLoading = false;
   }
+}
 }
