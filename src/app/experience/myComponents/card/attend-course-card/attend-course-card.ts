@@ -28,12 +28,12 @@ export class AttendCourseCard implements OnInit, OnDestroy {
   tempContent = '';
   isEditing = false;
   countdown = 0;
+  isLoading = false;
   private countdownTimer: any;
 
   constructor(private reviewS: ReviewsS, private notifyS: NotificationService) { }
 
   ngOnInit(): void {
-    if (this.canReview) this.startEdit();
   }
 
   ngOnDestroy(): void {
@@ -90,15 +90,16 @@ export class AttendCourseCard implements OnInit, OnDestroy {
       reviewContent: this.tempContent
     };
 
-    if (this.hasComment) {
+    if (this.hasComment && this.data.reviewId) {
       // 修改
-      this.reviewS.editReview(this.data.reviewId!, payload).subscribe({
+      this.reviewS.editReview(this.data.reviewId, payload).subscribe({
         next: () => {
           this.data.rating = this.tempRating;
           this.data.reviewContent = this.tempContent;
           this.data.updateReviewAt = new Date().toISOString();
           this.data.creatReviewAt = new Date().toISOString();
           this.isEditing = false;
+          this.notifyS.show('修改成功！', 'success');
           // this.startCountdown();
         },
         error: () => this.notifyS.show('修改失敗', 'error')
@@ -106,12 +107,15 @@ export class AttendCourseCard implements OnInit, OnDestroy {
     } else {
       // 新增
       this.reviewS.addReview(payload).subscribe({
-        next: () => {
+        next: (res: any) => {
+          if (res && res.data) {
+            this.data.reviewId = res.data.reviewId; // 把身分證字號存起來！
+          }
           this.data.rating = this.tempRating;
           this.data.reviewContent = this.tempContent;
           this.data.creatReviewAt = new Date().toISOString();
           this.isEditing = false;
-          // this.startCountdown();
+          this.notifyS.show('評價已送出！', 'success');
         },
         error: () => this.notifyS.show('送出失敗', 'error')
       });

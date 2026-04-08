@@ -15,7 +15,7 @@ import { HistoryS } from '../../Service/history';
 })
 export class MemAttend implements OnInit {
   orders: CourseOrderI[] = [];
-
+  
   constructor(private historyS: HistoryS) { }
 
   ngOnInit(): void {

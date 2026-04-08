@@ -48,7 +48,9 @@
         <textarea class="textarea textarea-bordered textarea-sm w-full text-xs" rows="2" placeholder="分享你的課程心得..."
           [(ngModel)]="tempContent"></textarea>
         <div class="flex gap-2 py-3">
-          <button class="btn btn-primary btn-xs" (click)="submitReview()">送出</button>
+          <button class="btn btn-primary btn-xs" [disabled]="isLoading" (click)="submitReview()">@if (isLoading) {
+            <span class="loading loading-spinner"></span>
+            }送出</button>
           @if (isEditing) {
           <button class="btn btn-ghost btn-xs" (click)="cancelEdit()">取消</button>
           }
@@ -64,7 +66,7 @@
 
     <!-- 右側操作按鈕 -->
     <div class="flex items-center px-4 shrink-0 border-l border-base-200 bg-base-200/30 min-w-[90px] justify-center">
-      @if (hasComment) {
+      @if (hasComment && !isEditing) {
       <div class="flex flex-col items-center gap-1">
         <button class="btn btn-primary btn-sm px-4" (click)="startEdit()">修改</button>
 
