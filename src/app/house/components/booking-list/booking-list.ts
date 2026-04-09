@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { NotificationService } from '../../../shared/notifyService/notification-service';
+import { SweetAlertService } from '../../service/sweet-alert-service';
 
 @Component({
   selector: 'app-booking-list',
@@ -15,7 +16,7 @@ export class BookingList implements OnInit {
   cancelLoadingId: number | null = null; // 紀錄正在取消哪一筆
   bookings: any[] = [];
   isLoading: boolean = false;
-  constructor(private houseService: HouseService, private notification: NotificationService) { }
+  constructor(private houseService: HouseService, private notification: NotificationService, private alertService: SweetAlertService) { }
 
   ngOnInit(): void {
     this.fetchBookings();
@@ -77,19 +78,28 @@ export class BookingList implements OnInit {
 
   // 取消預約
   onCancelBooking(bookingId: number): void {
-    if (confirm('確定要取消這筆預約嗎？')) {
-      this.houseService.cancelBooking(bookingId).subscribe({
-        next: () => {
-          this.notification.show('訂單已取消', 'success');
-          this.cancelLoadingId = null;
-          this.fetchBookings();
-        },
-        error: (err: any) => {
-          this.notification.show('取消失敗：' + err.error.message, 'error');
-          this.cancelLoadingId = null;
+    console.log('準備取消的 BookingId:', bookingId);
+    this.alertService.confirm('確定要取消這筆預約嗎？', '取消後將無法復原。')
+      .then((result) => {
+        //  判斷使用者是否點擊「確定」
+        if (result.isConfirmed) {
+          // 設定 loading 狀態 (讓按鈕轉圈圈)
+          this.cancelLoadingId = bookingId;
+
+          this.houseService.cancelBooking(bookingId).subscribe({
+            next: () => {
+              this.alertService.success('訂單已取消');
+              this.cancelLoadingId = null;
+              this.fetchBookings(); // 重新整理清單
+            },
+            error: (err: any) => {
+              const msg = err.error?.message || '發生未知錯誤';
+              this.alertService.error('取消失敗', msg);
+              this.cancelLoadingId = null;
+            }
+          });
         }
       });
-    }
   }
 
   // 金流
