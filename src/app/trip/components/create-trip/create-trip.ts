@@ -17,6 +17,7 @@ interface LocationDraft {
   lng: number;
   locationRole: string;
   note: string;
+  dayNumber: number;
 }
 
 interface GearDraft {
@@ -50,6 +51,8 @@ export class CreateTrip implements OnInit, AfterViewInit {
   countdown = 6;
   showCoverPreview = false;
   coverPreview = '';
+  selectedDay = 1;
+  totalDays = 1;
 
   // ── 步驟一表單 ──
   step1Form: FormGroup = this.fb.group({
@@ -67,7 +70,8 @@ export class CreateTrip implements OnInit, AfterViewInit {
   locationForm: FormGroup = this.fb.group({
     locationName: [''],
     locationRole: [''],
-    note: ['']
+    note: [''],
+    dayNumber: [1]
   });
 
   // ── 步驟三表單 ──
@@ -86,6 +90,13 @@ export class CreateTrip implements OnInit, AfterViewInit {
   isSearching = false;
   showDropdown = false;
   isLocating = false;
+
+  get locationsByDay(): { day: number; locs: LocationDraft[] }[] {
+    return this.days.map(day => ({
+      day,
+      locs: this.locations.filter(loc => loc.dayNumber === day)
+    })).filter(group => group.locs.length > 0);
+  }
 
   ngOnInit() {
     const token = localStorage.getItem('token');
@@ -245,6 +256,21 @@ export class CreateTrip implements OnInit, AfterViewInit {
     });
   }
 
+  addDay() {
+    this.totalDays++;
+    this.selectedDay = this.totalDays;
+    this.locationForm.patchValue({ dayNumber: this.selectedDay });
+  }
+
+  selectDay(day: number) {
+    this.selectedDay = day;
+    this.locationForm.patchValue({ dayNumber: day });
+  }
+
+  get days(): number[] {
+    return Array.from({ length: this.totalDays }, (_, i) => i + 1);
+  }
+
   addLocation() {
     if (!this.selectedLocationSearch) {
       this.notify.show('請先從下拉選單選擇地點', 'error');
@@ -259,9 +285,10 @@ export class CreateTrip implements OnInit, AfterViewInit {
       lat: this.selectedLocationSearch.lat,
       lng: this.selectedLocationSearch.lng,
       locationRole: this.locationForm.value.locationRole,
-      note: this.locationForm.value.note
+      note: this.locationForm.value.note,
+      dayNumber: this.locationForm.value.dayNumber
     });
-    this.locationForm.reset({ locationName: '', locationRole: '', note: '' });
+    this.locationForm.reset({ locationName: '', locationRole: '', note: '', dayNumber: this.selectedDay });
     this.selectedLocationSearch = null;
     this.autocompleteResults = [];
   }
@@ -313,7 +340,7 @@ export class CreateTrip implements OnInit, AfterViewInit {
 
   private createLocationsAndGears(tripId: number) {
     const locationRequests = this.locations.map((loc, i) =>
-      this.tripService.createLocation(tripId, { ...loc, sortOrder: i + 1 })
+      this.tripService.createLocation(tripId, { ...loc, sortOrder: i + 1, dayNumber: loc.dayNumber })
     );
     const gearRequests = this.gears.map(gear =>
       this.tripService.createGearItem(tripId, gear)
@@ -350,5 +377,14 @@ export class CreateTrip implements OnInit, AfterViewInit {
     return map[type] ?? type;
   }
 
-
+  fillDemo() {
+    this.step1Form.patchValue({
+      title: '宜蘭蜜月灣衝浪',
+      description: '這裡不只是北台灣著名的衝浪聖地，更因為獨特的半月形海灣地形，浪況穩定且適合初學者。背景擁有壯麗的龜山島海景，讓你在練習追浪的同時，也能感受太平洋的遼闊。',
+      tripType: 'surf',
+      startAt: '2026-05-12',
+      endAt: '2026-05-13',
+      capacity: 8
+    });
+  }
 }

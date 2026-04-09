@@ -83,10 +83,28 @@
     <!-- 右側卡片區 -->
     <div class="flex-1 min-w-0 flex flex-col">
 
-      <!-- 行程筆數 -->
-      <p class="text-xs text-base-content/40 mb-4">
-        共 <strong class="text-base-content">{{ totalCount }}</strong> 筆行程
-      </p>
+      <!-- 行程筆數 + 分頁 -->
+      <div class="flex items-center justify-between mb-4">
+        <p class="text-xs text-base-content/40">
+          共 <strong class="text-base-content">{{ totalCount }}</strong> 筆行程
+          · 第 {{ currentPage }} / {{ totalPages }} 頁
+        </p>
+        <div class="flex items-center gap-1">
+          <button class="btn btn-ghost btn-xs" [disabled]="currentPage === 1" (click)="changePage(currentPage - 1)">
+            <i class="bi bi-chevron-left"></i>
+          </button>
+          @for (page of getPages(); track page) {
+          <button class="btn btn-xs btn-circle" [class.btn-primary]="page === currentPage"
+            [class.btn-ghost]="page !== currentPage" (click)="changePage(page)">
+            {{ page }}
+          </button>
+          }
+          <button class="btn btn-ghost btn-xs" [disabled]="currentPage === totalPages"
+            (click)="changePage(currentPage + 1)">
+            <i class="bi bi-chevron-right"></i>
+          </button>
+        </div>
+      </div>
 
       <!-- 載入中 -->
       @if (isLoading) {
@@ -182,7 +200,7 @@
       </div>
 
       <!-- 分頁 -->
-      <div class="flex items-center justify-center gap-2 mt-10 mb-2">
+      <!-- <div class="flex items-center justify-center gap-2 mt-10 mb-2">
         <button class="btn btn-ghost btn-sm btn-circle text-base-content/40" [disabled]="currentPage === 1"
           (click)="changePage(currentPage - 1)">
           <i class="bi bi-chevron-left"></i>
@@ -201,7 +219,7 @@
       <p class="text-center text-xs text-base-content/30 mb-4">
         第 {{ currentPage }} 頁，共 {{ totalPages }} 頁 · {{ totalCount }} 筆行程
       </p>
-      }
+      -->}
 
     </div>
   </div>

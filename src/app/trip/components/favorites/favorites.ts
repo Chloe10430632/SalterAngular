@@ -200,4 +200,9 @@ export class Favorites implements OnInit {
     };
     return map[type] ?? type;
   }
+
+  fillDemoFolder() {
+    this.newFolderName = '五月和朋友一起去';
+    this.showCreateFolder = true;
+  }
 }
