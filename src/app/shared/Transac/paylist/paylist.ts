@@ -33,8 +33,7 @@ export class Paylist implements OnInit {
     if (source === '3')
       this.router.navigate(['/experience/myattend']);
     else
-      this.router.navigate(['/memberCenter/bookinglist'])
+      this.router.navigate(['/memberCenter/bookingList'])
   }
-
 
 }
