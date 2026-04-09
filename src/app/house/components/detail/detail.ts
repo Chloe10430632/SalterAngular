@@ -11,6 +11,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ICreateReview, IUpdateReview } from '../../interface/icreate-review';
 import { FormsModule } from '@angular/forms';
+import { SweetAlertService } from '../../service/sweet-alert-service';
 
 @Component({
   selector: 'app-detail',
@@ -55,7 +56,8 @@ export class Detail implements OnInit {
     public HouseService: HouseService,
     private route: ActivatedRoute,
     private notification: NotificationService,
-    private router: Router
+    private router: Router,
+    private sweetalert: SweetAlertService
   ) { }
 
   ngOnInit(): void {
@@ -342,21 +344,29 @@ export class Detail implements OnInit {
 
   // 執行刪除
   deleteReview(reviewId: number) {
-    if (confirm('您確定要刪除這則評論嗎？此操作無法還原。')) {
-      this.reviewService.deleteReview(reviewId).subscribe({
-        next: () => {
-          this.notification.show('已刪除評論', 'success');
-          // 💡 立即從前端陣列移除，不需重刷頁面
-          this.selectedProperty.reviews = this.selectedProperty.reviews.filter(
-            (r: any) => r.reviewId !== reviewId
-          );
-        },
-        error: (err) => {
-          this.notification.show('刪除失敗', 'error');
-          console.error(err);
-        }
-      });
-    }
+    this.sweetalert.confirm(
+      '您確定要刪除這則評論嗎？',
+      '此操作無法還原，請謹慎操作。'
+    ).then((result) => {
+      if (result.isConfirmed) {
+
+        this.reviewService.deleteReview(reviewId).subscribe({
+          next: () => {
+            this.sweetalert.success('已刪除評論');
+
+            if (this.selectedProperty && this.selectedProperty.reviews) {
+              this.selectedProperty.reviews = this.selectedProperty.reviews.filter(
+                (r: any) => r.reviewId !== reviewId
+              );
+            }
+          },
+          error: (err) => {
+            this.sweetalert.error('刪除失敗', '請稍後再試或聯繫管理員');
+            console.error(err);
+          }
+        });
+      }
+    });
   }
 
   // 編輯時的評分控制

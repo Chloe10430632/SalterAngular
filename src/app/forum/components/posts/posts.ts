@@ -160,7 +160,7 @@ export class Posts implements OnInit {
 
   /**複製貼文網址 */
   copyToClipboard(postId: number) {
-    const fullUrl = `${this.domain}/post/${postId}`;
+    const fullUrl = `${this.domain}/forum/posts/${postId}`;
     navigator.clipboard.writeText(fullUrl).then(() => {
       this.toastr.info('', '成功複製到剪貼簿！', {
         toastClass: 'ngx-toastr shadow-xl rounded-2xl border-none',

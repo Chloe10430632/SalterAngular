@@ -177,7 +177,7 @@ export class SelectBoardPosts implements OnInit {
 
   /**複製貼文網址 */
   copyPostToClipboard(postId: number) {
-    const fullUrl = `${this.domain}/post/${postId}`;
+    const fullUrl = `${this.domain}/forum/posts/${postId}`;
 
     navigator.clipboard.writeText(fullUrl).then(() => {
 

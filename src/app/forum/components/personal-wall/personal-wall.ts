@@ -205,7 +205,7 @@ export class PersonalWall implements OnInit {
   /**複製貼文網址 */
   copyToClipboard(postId: number) {
     // 建立完整的 URL (根據你的環境調整)
-    const fullUrl = `${this.domain}/post/${postId}`;
+    const fullUrl = `${this.domain}/forum/posts/${postId}`;
 
     navigator.clipboard.writeText(fullUrl).then(() => {
 
