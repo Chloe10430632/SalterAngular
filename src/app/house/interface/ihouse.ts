@@ -8,6 +8,7 @@ export interface HouseListDTO {
   viewCount: number;
 }
 export interface HousePreviewDTO {
+  roomTypeName: string;
   houseId: number;
   roomTypeId: number;
   title: string;        // 顯示名稱

@@ -1,4 +1,9 @@
 <div class="container mx-auto p-6">
+  <div class="flex items-center justify-between mb-6">
+    <button routerLink="/house" class="btn btn-ghost gap-2 rounded-full border border-base-300">
+      <i class="bi bi-chevron-left"></i> 返回搜尋結果
+    </button>
+  </div>
   <h2 class="text-xl font-bold mb-4">📍 {{ currentCity }} 的房源推薦</h2>
 
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -10,7 +15,7 @@
       </figure>
       <div class="card-body p-4">
         <h3 class="card-title text-base">{{ house.title }}</h3>
-        <p class="text-sm text-gray-500">{{ house.district }}</p>
+        <p class="text-sm text-gray-500">{{ house.roomTypeName }}</p>
         <div class="card-actions justify-end mt-2">
           <span class="text-primary font-bold text-lg">${{ house.price | number }}</span>
           <span class="text-xs text-gray-400 self-end mb-1">/ 晚</span>

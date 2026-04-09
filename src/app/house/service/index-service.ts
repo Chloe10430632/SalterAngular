@@ -91,7 +91,6 @@ export class HouseService {
     return this.http.post(url, {}, { responseType: 'text' });
   }
 
-
   changeAdult(delta: number) {
     this.adultCount += delta;
     if (this.adultCount < 0) this.adultCount = 0; // 防止變成負數
