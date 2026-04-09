@@ -18,9 +18,14 @@
       </div>
     </div>
     @if (currentFolderId === null) {
-    <button class="btn btn-outline btn-sm gap-1" (click)="showCreateFolder = true">
-      <i class="bi bi-folder-plus"></i> 新增資料夾
-    </button>
+    <div class="flex gap-2">
+      <button class="btn btn-ghost btn-xs text-base-content/30 self-center" (click)="fillDemoFolder()">
+        帶入範例
+      </button>
+      <button class="btn btn-outline btn-sm gap-1" (click)="showCreateFolder = true">
+        <i class="bi bi-folder-plus"></i> 新增資料夾
+      </button>
+    </div>
     }
   </div>
 

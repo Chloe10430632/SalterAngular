@@ -368,6 +368,10 @@ export class Detail implements OnInit, AfterViewInit {
   }
 
   saveEdit() {
+    if (this.isUploading) {
+      this.notify.show('圖片上傳中，請稍後再儲存', 'error');
+      return;
+    }
     this.isUpdating = true;
     this.tripService.updateTrip(this.tripId, {
       ...this.editForm,
@@ -485,5 +489,30 @@ export class Detail implements OnInit, AfterViewInit {
       this.notify.show('已複製行程連結！', 'success');
       this.showShareLink = false;
     });
+  }
+  fillDemoGear1() {
+    this.gearFormData = { itemName: '海洋友善防曬乳', isRequired: true };
+    this.showGearForm = true;
+  }
+
+  fillDemoGear2() {
+    this.gearFormData = { itemName: '防水袋（放置手機與錢包）', isRequired: false };
+    this.showGearForm = true;
+  }
+
+  fillDemoAnnouncement1() {
+    this.announcementFormData = {
+      title: '安全優先',
+      content: '衝浪受天氣影響極大，若當日長浪過大或有雷雨預報，活動將於前一天 20:00 前通知取消或延期。'
+    };
+    this.showAnnouncementForm = true;
+  }
+
+  fillDemoAnnouncement2() {
+    this.announcementFormData = {
+      title: '保護海洋',
+      content: '蜜月灣沙灘美景得來不易，個人垃圾請隨手帶走，並嚴禁觸摸周邊礁石生物。'
+    };
+    this.showAnnouncementForm = true;
   }
 }

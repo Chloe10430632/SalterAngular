@@ -259,9 +259,13 @@
                 <span class="badge badge-ghost badge-sm ml-1">{{ gearItems.length }} 項</span>
               </h2>
               @if (isOrganizer) {
-              <button class="btn btn-primary btn-sm gap-1" (click)="openAddGearForm()">
-                <i class="bi bi-plus-lg"></i> 新增
-              </button>
+              <div class="flex gap-2">
+                <button class="btn btn-ghost btn-xs text-base-content/30" (click)="fillDemoGear1()">防曬乳</button>
+                <button class="btn btn-ghost btn-xs text-base-content/30" (click)="fillDemoGear2()">防水袋</button>
+                <button class="btn btn-primary btn-sm gap-1" (click)="openAddGearForm()">
+                  <i class="bi bi-plus-lg"></i> 新增
+                </button>
+              </div>
               }
             </div>
 
@@ -341,9 +345,13 @@
             <span class="badge badge-ghost badge-sm ml-1">{{ announcements.length }} 則</span>
           </h2>
           @if (isOrganizer) {
-          <button class="btn btn-primary btn-sm gap-1" (click)="openAddAnnouncementForm()">
-            <i class="bi bi-plus-lg"></i> 新增公告
-          </button>
+          <div class="flex gap-2">
+            <button class="btn btn-ghost btn-xs text-base-content/30" (click)="fillDemoAnnouncement1()">安全優先</button>
+            <button class="btn btn-ghost btn-xs text-base-content/30" (click)="fillDemoAnnouncement2()">保護海洋</button>
+            <button class="btn btn-primary btn-sm gap-1" (click)="openAddAnnouncementForm()">
+              <i class="bi bi-plus-lg"></i> 新增公告
+            </button>
+          </div>
           }
         </div>
 
@@ -667,7 +675,7 @@
 
       <div class="flex gap-2 justify-end mt-6">
         <button class="btn btn-ghost" (click)="showEditModal = false">取消</button>
-        <button class="btn btn-primary" [disabled]="isUpdating" (click)="saveEdit()">
+        <button class="btn btn-primary" [disabled]="isUpdating || isUploading" (click)="saveEdit()">
           @if (isUpdating) { <span class="loading loading-spinner loading-xs"></span> }
           儲存
         </button>
