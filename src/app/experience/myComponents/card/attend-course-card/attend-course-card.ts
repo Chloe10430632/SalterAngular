@@ -28,12 +28,12 @@ export class AttendCourseCard implements OnInit, OnDestroy {
   tempContent = '';
   isEditing = false;
   countdown = 0;
+  isLoading = false;
   private countdownTimer: any;
 
   constructor(private reviewS: ReviewsS, private notifyS: NotificationService) { }
 
   ngOnInit(): void {
-    if (this.canEdit) this.startCountdown();
   }
 
   ngOnDestroy(): void {
@@ -44,7 +44,7 @@ export class AttendCourseCard implements OnInit, OnDestroy {
   get canReview(): boolean {
     if (!this.data.startDate) return false;
     const courseDate = new Date(this.data.startDate);
-    courseDate.setHours(12, 59, 59, 0);
+    courseDate.setHours(10, 59, 59, 0);
     return new Date() > courseDate;
   }
 
@@ -53,22 +53,22 @@ export class AttendCourseCard implements OnInit, OnDestroy {
   }
 
   // 評論送出後 30 秒內可修改
-  get canEdit(): boolean {
-    if (!this.data.creatReviewAt) return false;
-    const elapsed = (Date.now() - new Date(this.data.creatReviewAt).getTime()) / 1000;
-    return elapsed <= 60;
-  }
+  // get canEdit(): boolean {
+  //   if (!this.data.creatReviewAt) return false;
+  //   const elapsed = (Date.now() - new Date(this.data.creatReviewAt).getTime()) / 1000;
+  //   return elapsed <= 60;
+  // }
 
-  startCountdown(): void {
-    clearInterval(this.countdownTimer);
-    const reviewedAt = new Date(this.data.creatReviewAt!).getTime();
-    this.countdown = 30;
-    this.countdownTimer = setInterval(() => {
-      const elapsed = (Date.now() - reviewedAt) / 1000;
-      this.countdown = Math.max(0, Math.round(30 - elapsed));
-      if (this.countdown <= 0) clearInterval(this.countdownTimer);
-    }, 1000);
-  }
+  // startCountdown(): void {
+  //   clearInterval(this.countdownTimer);
+  //   const reviewedAt = new Date(this.data.creatReviewAt!).getTime();
+  //   this.countdown = 30;
+  //   this.countdownTimer = setInterval(() => {
+  //     const elapsed = (Date.now() - reviewedAt) / 1000;
+  //     this.countdown = Math.max(0, Math.round(30 - elapsed));
+  //     if (this.countdown <= 0) clearInterval(this.countdownTimer);
+  //   }, 1000);
+  // }
 
   startEdit(): void {
     clearInterval(this.countdownTimer);
@@ -90,28 +90,32 @@ export class AttendCourseCard implements OnInit, OnDestroy {
       reviewContent: this.tempContent
     };
 
-    if (this.hasComment) {
+    if (this.hasComment && this.data.reviewId) {
       // 修改
-      this.reviewS.editReview(this.data.reviewId!, payload).subscribe({
+      this.reviewS.editReview(this.data.reviewId, payload).subscribe({
         next: () => {
           this.data.rating = this.tempRating;
           this.data.reviewContent = this.tempContent;
           this.data.updateReviewAt = new Date().toISOString();
           this.data.creatReviewAt = new Date().toISOString();
           this.isEditing = false;
-          this.startCountdown();
+          this.notifyS.show('修改成功！', 'success');
+          // this.startCountdown();
         },
         error: () => this.notifyS.show('修改失敗', 'error')
       });
     } else {
       // 新增
       this.reviewS.addReview(payload).subscribe({
-        next: () => {
+        next: (res: any) => {
+          if (res && res.data) {
+            this.data.reviewId = res.data.reviewId; // 把身分證字號存起來！
+          }
           this.data.rating = this.tempRating;
           this.data.reviewContent = this.tempContent;
           this.data.creatReviewAt = new Date().toISOString();
           this.isEditing = false;
-          this.startCountdown();
+          this.notifyS.show('評價已送出！', 'success');
         },
         error: () => this.notifyS.show('送出失敗', 'error')
       });

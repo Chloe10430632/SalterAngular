@@ -1,9 +1,8 @@
 import { Component } from '@angular/core';
-import { Toptab } from "../../myComponents/btn/toptab/toptab";
 import { LittleIsland } from "../../myComponents/little-island/little-island";
 import { Footer } from "../../../shared/footer/footer";
-import { Noavatar } from "../../myComponents/container/noavatar/noavatar";
 import { Myedit } from "../../myComponents/card/myedit/myedit";
+import { ActivatedRoute } from '@angular/router';
 
 //========!!這是 父Component!!================//
 //========!!編輯自己的資訊!!================//
@@ -15,5 +14,12 @@ import { Myedit } from "../../myComponents/card/myedit/myedit";
   styleUrl: './coach-profile-edit.css',
 })
 export class CoachPFEdit {
+  coachId: string = '';
 
+  constructor(private route: ActivatedRoute) { }
+
+  ngOnInit(): void {
+    this.coachId = this.route.snapshot.params['id'] ?? '';
+    console.log('CoachPFEdit 拿到的 id:', this.coachId);
+  }
 }

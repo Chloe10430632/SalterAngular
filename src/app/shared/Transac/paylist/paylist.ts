@@ -1,13 +1,13 @@
 import { TransactionServiceS } from './../../../experience/Service/transaction.service';
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DecimalPipe } from '@angular/common';
 import { Footer } from "../../footer/footer";
 import { Header } from "../../header/header";
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-paylist',
-  imports: [CommonModule, Footer, Header],
+  imports: [CommonModule, Footer, Header, DecimalPipe],
   templateUrl: './paylist.html',
   styleUrl: './paylist.css',
 })
@@ -15,7 +15,7 @@ export class Paylist implements OnInit {
   transactionAmount: number = 0;
   orderId: string = '';
   //------------------------------//
-  constructor(private transS: TransactionServiceS,
+  constructor(
     private router: Router,
     public route: ActivatedRoute
   ) { }

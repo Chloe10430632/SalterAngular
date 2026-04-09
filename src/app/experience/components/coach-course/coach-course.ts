@@ -7,7 +7,7 @@ import { CoursePublish } from "../../myComponents/card/course-publish/course-pub
 import { CourseInformationS } from '../../Service/course-information';
 import { NotificationService } from '../../../shared/notifyService/notification-service';
 import { Router } from '@angular/router';
-import Swal from 'sweetalert2'; // 1. 引入 SweetAlert2
+import Swal from 'sweetalert2'; 
 import { CourseSessionInfoI } from '../../Interfaces/IICourse';
 import { CoachCoursePast } from "../coach-course-past/coach-course-past";
 //===============!!這是 父 元件!!==================//

@@ -14,7 +14,7 @@ import { FavI } from '../../../Interfaces/IImyfav';
 
 @Component({
   selector: 'app-fav-card',
-  imports: [CommonModule, AvatarPipe],
+  imports: [CommonModule, AvatarPipe,],
   templateUrl: './fav-card.html',
   styleUrl: './fav-card.css',
   standalone: true,
@@ -64,11 +64,11 @@ export class FavCard implements OnInit {
           // 用 isFav() 的當下值判斷目前狀態
           if (this.isFav()) {
             this.removeMe.emit(id);
-            this.notificationS.show('取消收藏QAQ', 'error');
+            // this.notificationS.show('取消收藏QAQ', "success");
 
           } else {
             // 如果本來「不是」收藏，現在要「加入」
-            this.notificationS.show('收藏成功', 'success');
+            // this.notificationS.show('收藏成功', 'success');
             // this.isFav.set(true);
           }
 

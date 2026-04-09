@@ -1,5 +1,5 @@
 import { NotificationService } from './../../../../shared/notifyService/notification-service';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators, FormArray, FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Route, Router } from '@angular/router';
 import { SpecI } from '../../../Interfaces/IISpecSport';
@@ -7,6 +7,7 @@ import { APIResponse, CoachAllInfoI } from '../../../Interfaces/IIcoachAllinfo';
 import { DistI } from '../../../Interfaces/IIDistrict';
 import { CoachS } from '../../../Service/coach-s';
 import { CoachCardInfoS } from '../../../Service/coach-card-info-s';
+import { AuthService } from '../../../../core/services/auth-service';
 
 
 //===========!!子 Component!!================//
@@ -17,8 +18,9 @@ import { CoachCardInfoS } from '../../../Service/coach-card-info-s';
   templateUrl: './myedit.html',
   styleUrl: './myedit.css',
 })
-export class Myedit implements OnInit {
+export class Myedit implements OnInit, OnChanges {
   currentCoachId: string = '';
+  currentUserId: string = '';
   selectedFile: File | null = null;
   allSpecialities: SpecI[] = [];
   cities: any[] = [];
@@ -41,6 +43,7 @@ export class Myedit implements OnInit {
   asGroup(control: any): FormGroup {
     return control as FormGroup;
   }
+  @Input() coachId: string = ''; // ✅ 從父層接收，不再自己抓路由
   //===========================================//
   constructor(
     private coachS: CoachS,
@@ -48,71 +51,85 @@ export class Myedit implements OnInit {
     private activatedRoute: ActivatedRoute,
     private coachCardS: CoachCardInfoS,
     private fb: FormBuilder,
-    private notifycationS: NotificationService
+    private notifycationS: NotificationService,
+    private authS: AuthService
   ) { }
   //===========================================//
+  ngOnChanges(changes: SimpleChanges): void {
+    // 當父層傳入的 coachId 變化時觸發
+    if (changes['coachId'] && changes['coachId'].currentValue) {
+      this.currentCoachId = changes['coachId'].currentValue;
+    }
+  }
 
   ngOnInit(): void {
-    this.currentCoachId = this.activatedRoute.snapshot.params['id'];
-    //抓取縣市清單
+
+    // 1. 從網址拿 coachId
+    // const idFromRoute = this.activatedRoute.snapshot.params['coachid'];
+    // this.currentCoachId = idFromRoute ?? '';
+    this.currentCoachId = this.coachId; // 直接用傳進來的
+    console.log("網址上的 coachId:", this.currentCoachId);
+
+    // 2. 從 authService 拿 userId
+    this.authS.currentUser$.subscribe((user: any) => {
+      this.currentUserId = user?.userId ?? user?.id ?? '';
+      console.log("登入的 userId:", this.currentUserId);
+      console.log("網址上的 coachId:", this.currentCoachId);
+    });
+
+    // 3. 抓縣市清單
     this.coachS.getCityList().subscribe(res => {
       const raw = res as any;
       this.cities = raw.data ?? raw ?? [];
-      console.log('縣市清單已載入', this.cities);
     });
-    // 1. 先抓「所有專業項目清單」
+
+    // 4. 先抓專業清單，再決定要不要載入教練資料
     this.coachS.getSpecialityList().subscribe(res => {
       this.allSpecialities = Array.isArray(res) ? res : (res as any).data || [];
-      console.log('專業清單已載入', this.allSpecialities);
 
-      // 2. 清單拿到了，才去抓「教練個人資料」
       if (this.currentCoachId) {
-        this.coachS.getCoachInfoStr(this.currentCoachId).subscribe({
-          next: (res: APIResponse<CoachAllInfoI>) => {
-            if (res.data) {
-              const apiData = res.data; console.log("教練個人資料:", res);
-
-              const specIds = apiData.specialities.map((name: string) => {
-                const found = this.allSpecialities.find(s => s.sportsName === name);
-                return found ? found.id : null;
-              }).filter((id: number | null) => id !== null);
-              console.log("專業對應 ID 清單:", specIds);
-
-              //抓原本頭像
-              if (apiData.avatarUrl) {
-                this.previewImage = apiData.avatarUrl;
-              }
-
-
-              // 3. 填入表單
-              this.coachForm.patchValue({
-                coachName: apiData.coachName,
-                introduction: apiData.introduction,
-                specialities: specIds,
-              });
-              // 處理地區回填
-              this.district.clear();
-              if (apiData.districtId) {
-                // 先用 districtId 去抓所有縣市的 districts，找到對應的 cityId
-                this.addDistrictGroup(apiData.cityId, apiData.districtId);
-
-                // 如果 cityId 是 null，等縣市清單載入後再反查
-                if (!apiData.cityId) {
-                  // 需要遍歷所有縣市去找，比較麻煩
-                }
-              } else {
-                this.addDistrictGroup();
-              }
-            }
-          }
-        });
-      }
-      else {
+        this.loadCoachData(this.currentCoachId); // 編輯模式
+      } else {
+        this.addDistrictGroup(); // 申請模式，給一組空的地區選單
         console.log('沒有教練 ID，表單保持空白');
       }
     });
   }
   //===========================================//
+  //#region 帶資料
+  loadCoachData(coachId: string) {
+    this.coachS.getCoachInfoStr(coachId).subscribe({
+      next: (res: APIResponse<CoachAllInfoI>) => {
+        if (res.data) {
+          const apiData = res.data;
+          console.log("教練個人資料:", res);
+
+          const specIds = apiData.specialities.map((name: string) => {
+            const found = this.allSpecialities.find(s => s.sportsName === name);
+            return found ? found.id : null;
+          }).filter((id: number | null) => id !== null);
+
+          if (apiData.avatarUrl) {
+            this.previewImage = apiData.avatarUrl;
+          }
+
+          this.coachForm.patchValue({
+            coachName: apiData.coachName,
+            introduction: apiData.introduction,
+            specialities: specIds,
+          });
+
+          this.district.clear();
+          if (apiData.districtId) {
+            this.addDistrictGroup(apiData.cityId, apiData.districtId);
+          } else {
+            this.addDistrictGroup();
+          }
+        }
+      }
+    });
+  }
+  //#endregion
   //#region 地區相關邏輯
   //  新增一組地區選單
   addDistrictGroup(initialCityId: number | null = null, initialDistrictId: number | null = null) {
@@ -169,12 +186,7 @@ export class Myedit implements OnInit {
   //#endregion
 
   onSave() {
-    const coachId = this.currentCoachId;
-    if (coachId) {
-      this.route.navigate(['/experience/coachpfe', coachId]);
-    } else {
-      this.route.navigate(['/experience/coachpfe']);
-    }
+
 
     console.log('表單狀態:', this.coachForm.valid);
     console.log('表單錯誤:', this.coachForm.errors);
@@ -197,10 +209,12 @@ export class Myedit implements OnInit {
       // 1. 填入基本資料
       formData.append('Name', rawValue.coachName || '');
       formData.append('Introduction', rawValue.introduction || '');
+
       const selectedDistIds = (this.coachForm.getRawValue().district as any[])
         .map(item => item.districtId)
         .filter(id => id !== null && id !== undefined);
       selectedDistIds.forEach(id => formData.append('DistrictId', id.toString()));
+
       const selectedSpecs = this.coachForm.getRawValue().specialities as number[] || [];
       selectedSpecs.forEach(id => formData.append('SpecialityIds', id.toString()));
 
@@ -212,25 +226,48 @@ export class Myedit implements OnInit {
 
       // 4. 根據「有無 ID」決定動作
       if (this.currentCoachId) {
-        // --- 情況 A：編輯既有教練 ---
+        // --- 情況 A：編輯既有教練 → 成功後導到 coachpfe/:id ---
         this.coachS.editMyInfo(this.currentCoachId, formData).subscribe({
           next: (res: any) => {
             console.log('更新成功：', res);
-            this.notifycationS.show('教練資料更新成功！', "success");
-            this.island(); // 跳轉回小島
+            this.notifycationS.show('教練資料更新成功！', 'success');
+            // ✅ 編輯完成 → 回到編輯頁（或改成 coachprofile 也可以）
+            this.route.navigate(['/experience/coachisland']);
           },
           error: (err) => {
             console.error('更新失敗：', err);
-            this.notifycationS.show('更新失敗，請檢查網路或欄位格式', "error");
+            this.notifycationS.show('更新失敗，請檢查網路或欄位格式', 'error');
           }
         });
       } else {
-        // --- 情況 B：申請成為新教練 ---
+        // --- 情況 B：申請新教練 → 成功後拿回 coachId 並導到 coachprofile/:id ---
         this.coachS.createMyInfo(formData).subscribe({
           next: (res: any) => {
             console.log('申請成功：', res);
-            this.notifycationS.show('恭喜！申請教練成功！', "success");
-            this.island(); // 跳轉回小島
+            console.log('data 內容：', JSON.stringify(res.data)); // 看陣列裡有什麼
+
+            const newCoachId =
+              res?.data?.coachId ??       // 物件形式
+              res?.data?.[0]?.coachId ??  // 陣列第一個元素
+              res?.data?.[0]?.id ??       // 陣列第一個元素的 id
+              res?.data?.[1]?.coachId ??  // 陣列第二個元素
+              res?.coachId ??
+              res?.id;
+
+            console.log('解析到的 newCoachId：', newCoachId);
+            this.notifycationS.show('恭喜！申請教練成功！', 'success');
+
+            // ✅ 從 API 回傳拿 coachId（依你的 API 結構調整欄位名）
+            // const newCoachId = res?.data?.coachId ?? res?.coachId ?? res?.id;
+            if (newCoachId) {
+              localStorage.setItem('coachId', newCoachId.toString());
+              this.route.navigate(['/experience/coachprofile', newCoachId]);
+              console.log("newCoachId:", newCoachId);
+
+            } else {
+              // 如果 API 沒回傳 ID，fallback 到小島
+              this.island();
+            }
           },
           error: (err) => {
             console.error('申請失敗：', err);
@@ -239,7 +276,7 @@ export class Myedit implements OnInit {
         });
       }
     } else {
-      this.notifycationS.show('error');
+      this.notifycationS.show('請填寫所有必填欄位', 'error');
 
     }
   }

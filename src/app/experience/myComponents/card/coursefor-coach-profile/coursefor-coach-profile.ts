@@ -119,11 +119,11 @@ export class CourseforCoachProfile implements OnInit {
           if (this.myFavId.includes(id)) {
             // 原本有收藏 → 取消
             this.myFavId = this.myFavId.filter(x => x !== id);
-            this.notificationS.show('取消收藏QAQ', 'success');
+            // this.notificationS.show('取消收藏QAQ', 'success');
           } else {
             // 原本沒收藏 → 新增
             this.myFavId = [...this.myFavId, id];
-            this.notificationS.show('收藏成功', 'success');
+            // this.notificationS.show('收藏成功', 'success');
           }
         } else {
           event.preventDefault(); // API 失敗時也阻止視覺切換

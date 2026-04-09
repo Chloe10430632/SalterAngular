@@ -65,6 +65,11 @@ export class AuthService {
       const coachId = decoded.CoachId;
       if (coachId && coachId !== "0") {
         localStorage.setItem('coachId', coachId); // 把 ID 存進它專屬的抽屜
+        if (coachId && coachId !== 0) {
+          localStorage.setItem('coachId', coachId.toString());
+        } else {
+          localStorage.removeItem('coachId'); // 不是教練就移除
+        }
         console.log('成功解析並存入 CoachId:', coachId);
       }
       //----/
@@ -82,6 +87,7 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem('token');
+    localStorage.removeItem('coachId');
     this.currentUserSource.next(null); // 📢 廣播：「有人登出了」
 
     this.router.navigate(['/login']);

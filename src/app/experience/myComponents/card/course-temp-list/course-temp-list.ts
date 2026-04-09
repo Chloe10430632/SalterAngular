@@ -315,12 +315,30 @@ export class CourseTempList implements OnInit {
             }
           });
         }
+        else {
+          // ✅ 情況 B：後端回 200 但衝堂
+          this.isSaving = false;
+          Swal.fire({
+            title: '此時段已有課程！',
+            text: res.message ?? '請選擇其他日期或時段',
+            icon: 'warning',
+            confirmButtonColor: '#facc15',
+            confirmButtonText: '重新選擇'
+          });
+        }
         this.isSaving = false; // API 完成後解除讀取狀態
       },
       error: (err) => {
-        console.error("上架發生錯誤：", err);
-        this.notifyS.show("發布失敗，請稍後再試", "error");
-        this.isSaving = false; // 發生錯誤也要解除讀取狀態
+        // 後端回 400/409
+        const msg = err?.error?.message ?? err?.message ?? '此時段已有課程，請重新選擇';
+        Swal.fire({
+          title: '時段衝突！',
+          text: msg,
+          icon: 'warning',
+          confirmButtonColor: '#facc15',
+          confirmButtonText: '重新選擇'
+        });
+        this.isSaving = false;
       }
     });
 
