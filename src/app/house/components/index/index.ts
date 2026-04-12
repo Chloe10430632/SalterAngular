@@ -103,8 +103,22 @@ export class Index implements OnInit {
   // 1. 單純選擇城市，但不立刻跳轉（讓使用者選完地點還可以選人數）
   selectCity(city: string) {
     this.selectedCity = city;
-    // 讓 Dropdown 自動收起來 (利用 activeElement 失去焦點)
-    (document.activeElement as HTMLElement).blur();
+
+    // 1. 先執行原本的 blur
+    const currentElement = document.activeElement as HTMLElement;
+    if (currentElement) {
+      currentElement.blur();
+    }
+
+    // 2. 強制把所有 dropdown-content 藏起來（針對 DaisyUI 特性）
+    const dropdowns = document.querySelectorAll('.dropdown-content') as NodeListOf<HTMLElement>;
+    dropdowns.forEach(el => {
+      el.style.display = 'none'; // 瞬間消失
+      // 0.1 秒後恢復，才不會影響下次滑鼠移入
+      setTimeout(() => {
+        el.style.removeProperty('display');
+      }, 100);
+    });
   }
 
   // 2. 點擊放大鏡才真正執行 API 搜尋
