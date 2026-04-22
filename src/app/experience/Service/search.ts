@@ -12,27 +12,32 @@ import { environment } from '../../../environments/environment';
 export class SearchS {
   constructor(private client: HttpClient) {
   }
+
   multiSearch(keyword: string): Observable<CoachAllInfoI[]> {
-
-    const api1 = this.client.get<{ issuccess: boolean, data: CoachAllInfoI[] }>(`${environment.apiUrl}/Exp/Exp/NameSearch?key=${keyword}`);
-    const api2 = this.client.get<{ issuccess: boolean, data: CoachAllInfoI[] }>(`${environment.apiUrl}/Exp/Exp/SpeSearch?key=${keyword}`);
-    const api3 = this.client.get<{ issuccess: boolean, data: CoachAllInfoI[] }>(`${environment.apiUrl}/Exp/Exp/DistSearch?key=${keyword}`);
-
-    return forkJoin([api1, api2, api3]).pipe(
-      map(([res1, res2, res3]) => {
-        const combined = [
-          ...(res1?.data || []),
-          ...(res2?.data || []),
-          ...(res3?.data || [])
-        ];
-        const unique = combined.filter((coach, index, self) =>
-          index === self.findIndex((t) => t.coachId === coach.coachId)
-        );
-        return unique;
-      })
-
-    );
+    return this.client.get<{ IsSuccess: boolean, data: CoachAllInfoI[] }>(
+      `${environment.apiUrl}/Exp/Exp/MultiSearch?key=${keyword}`
+    ).pipe(map(res => res.data));
   }
+
+  //   const api1 = this.client.get<{ issuccess: boolean, data: CoachAllInfoI[] }>(`${environment.apiUrl}/Exp/Exp/NameSearch?key=${keyword}`);
+  //   const api2 = this.client.get<{ issuccess: boolean, data: CoachAllInfoI[] }>(`${environment.apiUrl}/Exp/Exp/SpeSearch?key=${keyword}`);
+  //   const api3 = this.client.get<{ issuccess: boolean, data: CoachAllInfoI[] }>(`${environment.apiUrl}/Exp/Exp/DistSearch?key=${keyword}`);
+
+  //   return forkJoin([api1, api2, api3]).pipe(
+  //     map(([res1, res2, res3]) => {
+  //       const combined = [
+  //         ...(res1?.data || []),
+  //         ...(res2?.data || []),
+  //         ...(res3?.data || [])
+  //       ];
+  //       const unique = combined.filter((coach, index, self) =>
+  //         index === self.findIndex((t) => t.coachId === coach.coachId)
+  //       );
+  //       return unique;
+  //     })
+
+  //   );
+  // }
 }
 // https://localhost:7017/api/Exp/Exp/NameSearch
 
